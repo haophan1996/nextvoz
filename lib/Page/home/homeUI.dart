@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:vozforums/Page/home/myController.dart';
+import 'package:vozforums/Page/home/homeController.dart';
 
 class HomePageUI extends GetView<HomeController> {
   // This widget is the root of your application.
@@ -12,44 +12,46 @@ class HomePageUI extends GetView<HomeController> {
         child: Padding(
           padding: EdgeInsets.only(top: 0),
           child: Obx(
-                () => controller.myHomePage.length == 0
+            () => controller.myHomePage.length == 0
                 ? CupertinoActivityIndicator()
                 : ListView.builder(
-              shrinkWrap: false,
-              itemCount: controller.myHomePage.length,
-              itemBuilder: (BuildContext context, int index) {
-                return Column(
-                  children: [
-                    index == 0
-                        ? theme(controller.myHomePage
-                        .elementAt(index)["theme"])
-                        : Container(),
-                    (index != 0)
-                        ? (controller.myHomePage
-                        .elementAt(index - 1)["theme"] !=
-                        controller.myHomePage
-                            .elementAt(index)["theme"]
-                        ? theme(controller.myHomePage
-                        .elementAt(index)["theme"])
-                        : Container())
-                        : Container(),
-                    Card(
-                      child: Container(
-                        width: double.infinity,
-                        child: TextButton(
-                          style: TextButton.styleFrom(
-                              alignment: Alignment.centerLeft,
-                              padding: EdgeInsets.only(left: 5)),
-                          onPressed: () {},
-                          child: Text(controller.myHomePage
-                              .elementAt(index)["title"]),
-                        ),
-                      ),
-                    ),
-                  ],
-                );
-              },
-            ),
+                    shrinkWrap: false,
+                    itemCount: controller.myHomePage.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return Column(
+                        children: [
+                          index == 0
+                              ? theme(controller.myHomePage
+                                  .elementAt(index)["theme"])
+                              : Container(),
+                          (index != 0)
+                              ? (controller.myHomePage
+                                          .elementAt(index - 1)["theme"] !=
+                                      controller.myHomePage
+                                          .elementAt(index)["theme"]
+                                  ? theme(controller.myHomePage
+                                      .elementAt(index)["theme"])
+                                  : Container())
+                              : Container(),
+                          Card(
+                            child: Container(
+                              width: double.infinity,
+                              child: TextButton(
+                                style: TextButton.styleFrom(
+                                    alignment: Alignment.centerLeft,
+                                    padding: EdgeInsets.only(left: 5)),
+                                onPressed: () {
+                                  controller.navigateToThread(controller.myHomePage.elementAt(index)["theme"],controller.myHomePage.elementAt(index)["link"]);
+                                },
+                                child: Text(controller.myHomePage
+                                    .elementAt(index)["title"]),
+                              ),
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                  ),
           ),
         ),
       ),

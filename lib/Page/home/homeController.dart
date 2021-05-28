@@ -1,3 +1,5 @@
+import 'package:vozforums/Page/subThread/subThreadBinding.dart';
+import 'package:vozforums/Page/subThread/subThreadUI.dart';
 import 'package:web_scraper/web_scraper.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
@@ -6,21 +8,25 @@ import 'package:html/parser.dart' as parser;
 
 
 class HomeController extends GetxController {
+  final String _url = "https://voz.vn/";
   var response;
   late WebScraper webScraper;
   late dom.Document doc;
-  late dom.Document doc2;
+  //late dom.Document doc2;
   List<String> myData = [];
   RxList myHomePage = [].obs;
 
   @override
   onInit() async {
     super.onInit();
-    response = await http.get(Uri.parse("https://voz.vn/"));
+    response = await http.get(Uri.parse(_url));
     doc = parser.parse(response.body);
     theme();
   }
 
+  navigateToThread(String theme, String link){
+    Get.to(()=> ThreadUI(), binding: ThreadBinding(), arguments: [theme,_url+link]);
+  }
 
   theme() {
     doc.getElementsByClassName("block-container").forEach((element) {
