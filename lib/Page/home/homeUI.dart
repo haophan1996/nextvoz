@@ -15,6 +15,7 @@ class HomePageUI extends GetView<HomeController> {
             () => controller.myHomePage.length == 0
                 ? CupertinoActivityIndicator()
                 : ListView.builder(
+                    physics: BouncingScrollPhysics(),
                     shrinkWrap: false,
                     itemCount: controller.myHomePage.length,
                     itemBuilder: (BuildContext context, int index) {
@@ -41,7 +42,7 @@ class HomePageUI extends GetView<HomeController> {
                                     alignment: Alignment.centerLeft,
                                     padding: EdgeInsets.only(left: 5)),
                                 onPressed: () {
-                                  controller.navigateToThread(controller.myHomePage.elementAt(index)["theme"],controller.myHomePage.elementAt(index)["link"]);
+                                  controller.navigateToThread(controller.myHomePage.elementAt(index)["title"],controller.myHomePage.elementAt(index)["link"]);
                                 },
                                 child: Text(controller.myHomePage
                                     .elementAt(index)["title"]),

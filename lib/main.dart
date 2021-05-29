@@ -1,11 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'Page/colorTitle.dart';
 import 'Page/home/homeUI.dart';
 import 'Page/home/homeController.dart';
 
 void main() {
   Get.lazyPut<HomeController>(() => HomeController());
+  Get.put<MyColorController>(MyColorController());
   runApp(MyPage());
 }
 

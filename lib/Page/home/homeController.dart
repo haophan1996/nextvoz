@@ -6,12 +6,12 @@ import 'package:http/http.dart' as http;
 import 'package:html/dom.dart' as dom;
 import 'package:html/parser.dart' as parser;
 
-
 class HomeController extends GetxController {
-  final String _url = "https://voz.vn/";
+  final String _url = "https://voz.vn";
   var response;
   late WebScraper webScraper;
   late dom.Document doc;
+
   //late dom.Document doc2;
   List<String> myData = [];
   RxList myHomePage = [].obs;
@@ -24,8 +24,10 @@ class HomeController extends GetxController {
     theme();
   }
 
-  navigateToThread(String theme, String link){
-    Get.to(()=> ThreadUI(), binding: ThreadBinding(), arguments: [theme,_url+link]);
+  navigateToThread(String title, String link) {
+    print(link);
+    Get.to(() => ThreadUI(),
+        binding: ThreadBinding(), arguments: [title, _url + link]);
   }
 
   theme() {

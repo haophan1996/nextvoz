@@ -21,6 +21,7 @@ environment:
   sdk: ">=2.12.0 <3.0.0"
 
 dependencies:
+  scrollable_positioned_list: ^0.2.0-nullsafety.0
   web_scraper: ^0.1.4
   grouped_list: ^4.0.0
   get: ^4.1.4
