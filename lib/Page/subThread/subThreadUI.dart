@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:get/get.dart';
 import 'package:vozforums/Page/subThread/subThreadController.dart';
-import '../colorTitle.dart';
+import '../utilities.dart';
 
 class ThreadUI extends GetView<ThreadController> {
   @override
@@ -35,7 +35,8 @@ class ThreadUI extends GetView<ThreadController> {
                           return InkWell(
                             enableFeedback: true,
                             onTap: () {
-                              controller.navigateToThread(controller.myThreadList.elementAt(index)['title'], controller.myThreadList.elementAt(index)['linkThread']);
+                              controller.navigateToThread(
+                                  controller.myThreadList.elementAt(index)['title'], controller.myThreadList.elementAt(index)['linkThread']);
                             },
                             child: Container(
                               //color: Colors.white,
@@ -51,9 +52,9 @@ class ThreadUI extends GetView<ThreadController> {
                                         style: TextStyle(
                                             fontSize: 14,
                                             fontWeight: FontWeight.bold,
-                                            color: MyColorController.i.mapInvertColor[
-                                                MyColorController.i.getColorInvert(controller.myThreadList.elementAt(index)['themeTitle'])],
-                                            backgroundColor: MyColorController.i.mapColor[controller.myThreadList.elementAt(index)['themeTitle']]),
+                                            color: UtilitiesController.i.mapInvertColor[
+                                                UtilitiesController.i.getColorInvert(controller.myThreadList.elementAt(index)['themeTitle'])],
+                                            backgroundColor: UtilitiesController.i.mapColor[controller.myThreadList.elementAt(index)['themeTitle']]),
                                       ),
                                       TextSpan(
                                         text: controller.myThreadList.elementAt(index)["title"],
@@ -98,27 +99,26 @@ class ThreadUI extends GetView<ThreadController> {
                             padding: EdgeInsets.only(right: 5),
                             child: InkWell(
                               onTap: () {
-                                Get.defaultDialog(
-                                    content: CircularProgressIndicator(),
-                                    barrierDismissible: false,
-                                    title: "Loading...");
+                                Get.defaultDialog(content: CircularProgressIndicator(), barrierDismissible: false, title: "Loading...");
                                 if (int.parse(controller.pages[index]) != controller.currentPage.value) {
                                   controller.setPageOnClick(controller.pages[index]);
                                 }
                               },
-                              child: Obx(()=> Container(
-                                 padding: EdgeInsets.only(right: 2,left: 2),
-                                decoration: BoxDecoration(border: Border.all(width: 1), shape: BoxShape.rectangle),
-                                alignment: Alignment.center,
-                                child: Text(
-                                  controller.pages[index],
-                                  style: TextStyle(
-                                      fontSize: 18,
-                                      color: int.parse(controller.pages[index]) == controller.currentPage.value ? Colors.red : Colors.black
-                                    //controller.currentPage.value-1 == index ? Colors.red : Colors.black
+                              child: Obx(
+                                () => Container(
+                                  padding: EdgeInsets.only(right: 2, left: 2),
+                                  decoration: BoxDecoration(border: Border.all(width: 1), shape: BoxShape.rectangle),
+                                  alignment: Alignment.center,
+                                  child: Text(
+                                    controller.pages[index],
+                                    style: TextStyle(
+                                        fontSize: 18,
+                                        color: int.parse(controller.pages[index]) == controller.currentPage.value ? Colors.red : Colors.black
+                                        //controller.currentPage.value-1 == index ? Colors.red : Colors.black
+                                        ),
                                   ),
                                 ),
-                              ),),
+                              ),
                             ));
                       },
                     ),
