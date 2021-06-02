@@ -1,6 +1,5 @@
 import 'package:vozforums/Page/subThread/subThreadBinding.dart';
 import 'package:vozforums/Page/subThread/subThreadUI.dart';
-import 'package:web_scraper/web_scraper.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:html/dom.dart' as dom;
@@ -9,7 +8,6 @@ import 'package:html/parser.dart' as parser;
 class HomeController extends GetxController {
   final String _url = "https://voz.vn";
   var response;
-  late WebScraper webScraper;
   late dom.Document doc;
 
   //late dom.Document doc2;
@@ -27,7 +25,7 @@ class HomeController extends GetxController {
   navigateToThread(String title, String link) {
     print(link);
     Get.to(() => ThreadUI(),
-        binding: ThreadBinding(), arguments: [title, _url + link]);
+        binding: ThreadBinding(), arguments: [title, _url + link], popGesture: true, transition: Transition.cupertino);
   }
 
   theme() {

@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'Page/utilities.dart';
 import 'Page/home/homeUI.dart';
 import 'Page/home/homeController.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 void main() {
   Get.lazyPut<HomeController>(() => HomeController());
@@ -11,13 +12,15 @@ void main() {
   runApp(MyPage());
 }
 
-
-class MyPage extends StatelessWidget{
+class MyPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
+      enableLog: true,
+      defaultTransition: Transition.fade,
+      opaqueRoute: Get.isOpaqueRouteDefault,
+      popGesture: Get.isPopGestureEnable,
       home: HomePageUI(),
     );
   }
-
 }
