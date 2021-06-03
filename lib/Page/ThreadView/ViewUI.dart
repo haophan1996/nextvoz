@@ -8,20 +8,16 @@ import 'package:html/dom.dart' as dom;
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:expandable/expandable.dart';
 import 'package:vozforums/Page/pageLoadNext.dart';
+import '../../GlobalController.dart';
 import '../pageNavigation.dart';
-import '../utilities.dart';
 
 class ViewUI extends GetView<ViewController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        iconTheme: IconThemeData(color: Colors.black),
-        elevation: 0,
-        backgroundColor: Colors.white,
         title: Text(
-          controller.theme,
-          style: TextStyle(color: Colors.black),
+          controller.subHeader,
         ),
       ),
       body: Stack(
@@ -31,8 +27,8 @@ class ViewUI extends GetView<ViewController> {
             height: MediaQuery.of(context).size.height,
             child: postContent(context),
           ),
-          Obx(() => PageHelp().pageNavigation(context, controller.itemScrollController, controller.itemPositionsListener, controller.pages,
-              controller.currentPage.value, (index) => controller.setPageOnClick(index)))
+          Obx(() => PageHelp().pageNavigation(context, controller.itemScrollController, controller.currentPage.value, controller.totalPage.value,
+              (index) => controller.setPageOnClick(index)))
         ],
       ),
     );
@@ -46,7 +42,7 @@ class ViewUI extends GetView<ViewController> {
             enablePullDown: false,
             enablePullUp: true,
             controller: controller.refreshController,
-            onLoading: (){
+            onLoading: () {
               controller.setPageOnClick((controller.currentPage.value + 1).toString());
             },
             child: ListView.builder(
@@ -60,12 +56,13 @@ class ViewUI extends GetView<ViewController> {
                   padding: EdgeInsets.only(top: 2),
                   child: Container(
                     decoration: BoxDecoration(
-                        color: Colors.white, borderRadius: BorderRadius.only(bottomLeft: Radius.circular(8), bottomRight: Radius.circular(8))),
+                        color: Theme.of(context).backgroundColor,
+                        borderRadius: BorderRadius.only(bottomLeft: Radius.circular(8), bottomRight: Radius.circular(8))),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Container(
-                            color: Color(0xffE2E3E5),
+                            color: Theme.of(context).secondaryHeaderColor,
                             child: Stack(
                               children: [
                                 Row(
@@ -91,10 +88,10 @@ class ViewUI extends GetView<ViewController> {
                                         text: TextSpan(children: <TextSpan>[
                                           TextSpan(
                                               text: controller.htmlData.elementAt(index)['userName'] + "\n",
-                                              style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 16)),
+                                              style: TextStyle(color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold, fontSize: 16)),
                                           TextSpan(
                                               text: controller.htmlData.elementAt(index)['userTitle'],
-                                              style: TextStyle(color: Colors.black, fontSize: 13)),
+                                              style: TextStyle(color: Theme.of(context).primaryColor, fontSize: 13)),
                                         ]),
                                       ),
                                     ),
@@ -107,10 +104,10 @@ class ViewUI extends GetView<ViewController> {
                                     child: Column(
                                       crossAxisAlignment: CrossAxisAlignment.end,
                                       children: <Widget>[
-                                        Text(controller.htmlData.elementAt(index)['userPostDate']),
-                                        Text(
-                                          "#" + controller.htmlData.elementAt(index)['orderPost'],
-                                        ),
+                                        Text(controller.htmlData.elementAt(index)['userPostDate'],
+                                            style: TextStyle(color: Theme.of(context).primaryColor, fontSize: 13)),
+                                        Text(controller.htmlData.elementAt(index)['orderPost'],
+                                            style: TextStyle(color: Theme.of(context).primaryColor, fontSize: 13)),
                                       ],
                                     ),
                                   ),
@@ -119,21 +116,22 @@ class ViewUI extends GetView<ViewController> {
                             )),
                         Html(
                           data: controller.htmlData.elementAt(index)['postContent'],
-                          style: {
-                            'table': Style(backgroundColor: Colors.grey.shade200),
-                            "body": Style(
-                              fontSize: FontSize(17.0),
-                            ),
-                          },
                           customRender: {
                             "img": (RenderContext context, Widget child) {
                               if (context.tree.element!.attributes['src']!.contains("/styles/next/xenforo")) {
-                                return Image.asset(UtilitiesController.i.getEmoji(context.tree.element!.attributes['src'].toString()));
+                                return Image.asset(GlobalController.i.getEmoji(context.tree.element!.attributes['src'].toString()));
                               }
                             },
-                            "blockquote": (context, child) {
+                            "blockquote": (renderContext, child) {
+                              renderContext.tree.children.forEach((element) {
+                                element.style = Style(
+                                  display: Display.INLINE,
+                                );
+                              });
                               return ExpandableNotifier(
                                 child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.max,
                                   children: <Widget>[
                                     Expandable(
                                       expanded: ExpandableButton(
@@ -141,26 +139,26 @@ class ViewUI extends GetView<ViewController> {
                                           padding: EdgeInsets.all(10),
                                           child: Text(
                                             "Quote: " +
-                                                context.tree.element!
+                                                renderContext.tree.element!
                                                     .getElementsByClassName("bbCodeBlock-title")
                                                     .map((e) => e.getElementsByTagName("a")[0].innerHtml)
                                                     .toString(),
                                             style: TextStyle(fontWeight: FontWeight.bold),
                                           ),
                                           decoration: BoxDecoration(
-                                            color: Colors.grey.shade400,
+                                            color: Theme.of(context).secondaryHeaderColor,
                                             borderRadius: BorderRadius.all(Radius.circular(5)),
                                           ),
                                         ),
                                       ),
                                       collapsed: ExpandableButton(
                                         child: Container(
-                                          decoration: BoxDecoration(
-                                            color: Color(0xffE7E8E9),
-                                            borderRadius: BorderRadius.all(Radius.circular(5)),
-                                          ),
-                                          child: child,
-                                        ),
+                                            width: double.infinity,
+                                            decoration: BoxDecoration(
+                                              color: Theme.of(context).cardColor,
+                                              borderRadius: BorderRadius.all(Radius.circular(5)),
+                                            ),
+                                            child: child),
                                       ),
                                     ),
                                   ],
@@ -184,8 +182,17 @@ class ViewUI extends GetView<ViewController> {
                               // );
                             }
                           },
+                          style: {
+                            "table": Style(backgroundColor: Colors.grey.shade200),
+                            "body": Style(
+                              fontSize: FontSize(17.0),
+                            ),
+                            "blockquote": Style(color: Theme.of(context).accentColor, width: double.infinity)
+                              ..margin = EdgeInsets.only(left: 5.0, right: 5.0, bottom: 10.0)
+                              ..display = Display.BLOCK,
+                          },
                           onLinkTap: (String? url, RenderContext context, Map<String, String> attributes, dom.Element? element) {
-                            controller.write(controller.htmlData.elementAt(4)['postContent']);
+                            controller.write(controller.htmlData.elementAt(2)['postContent']);
                             if (url?.isNotEmpty == true && url!.contains("/goto/post") && url != "no") {
                               //print("https://voz.vn" + url);
                             } //else
@@ -193,23 +200,31 @@ class ViewUI extends GetView<ViewController> {
                           },
                           customImageRenders: {
                             networkSourceMatcher(): (context, attributes, element) {
-                              return GestureDetector(
-                                onTap: () {
-                                  Get.defaultDialog(
-                                    content: Expanded(
+                              if (attributes['src'].toString().contains("twemoji.maxcdn.com")){
+                                return Text(attributes['alt'].toString(), style: TextStyle(fontSize: 25),);
+                               // return Text(attributes['src'].toString(), style: TextStyle(fontSize: 30, color: Colors.red),);
+                              } else {
+                                return GestureDetector(
+                                  onTap: () {
+                                    Get.defaultDialog(
+                                      content: Expanded(
                                         child: CachedNetworkImage(
-                                      imageUrl: attributes['src'].toString(),
-                                      placeholder: (context, url) => CircularProgressIndicator(),
-                                      errorWidget: (context, url, error) => Icon(Icons.error),
-                                    )),
-                                  );
-                                },
-                                child: CachedNetworkImage(
-                                  imageUrl: attributes['src'].toString(),
-                                  placeholder: (context, url) => CircularProgressIndicator(),
-                                  errorWidget: (context, url, error) => Icon(Icons.error),
-                                ),
-                              );
+                                          imageUrl: attributes['src'].toString(),
+                                          placeholder: (context, url) => CircularProgressIndicator(),
+                                          errorWidget: (context, url, error) => Icon(Icons.error),
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                  child: CachedNetworkImage(
+                                    imageUrl: attributes['src'].toString(),
+                                    placeholder: (context, url) => CircularProgressIndicator(),
+                                    errorWidget: (context, url, error) => Icon(Icons.error),
+                                  ),
+                                );
+                              }
+
+
                             },
                           },
                           //tagsList: Html.tags..remove("value"),

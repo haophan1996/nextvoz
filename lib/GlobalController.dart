@@ -1,8 +1,45 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
+import 'package:html/dom.dart' as dom;
+import 'package:html/parser.dart' as parser;
 
-class UtilitiesController extends GetxController {
-  static UtilitiesController get i => Get.find();
+class GlobalController extends GetxController{
+  static GlobalController get i => Get.find();
+  var response;
+  late dom.Document doc;
+
+  Future<dom.Document> getBody(String url) async {
+    response = await http.get(Uri.parse(url));
+    return parser.parse(response.body);
+  }
+
+
+  final Map<String, Color> mapInvertColor = {
+    "black": Colors.black,
+    "white": Colors.white,
+  };
+
+  getEmoji(String s){
+    return "assets/"+s.replaceAll(RegExp(r"\S*smilies\S"), "").replaceAll(RegExp(r'\?[^]*'), "");
+  }
+
+  getColor(String typeT) {
+    return mapColor[typeT];
+  }
+
+  getColorInvert(String typeT) {
+    if (typeT == "kiến thức" ||
+        typeT == "đánh giá" ||
+        typeT == "HN" ||
+        typeT == "SG" ||
+        typeT == "download" ||
+        typeT == "TQ") {
+      return "white";
+    } else
+      return "black";
+  }
 
   final Map<String, Color> mapColor = {
     "báo lỗi": Color(0xffCE0000),
@@ -20,10 +57,6 @@ class UtilitiesController extends GetxController {
     "ĐN": Color(0xff2F5BDE),
     "HN": Color(0xff006C00),
     "TQ": Color(0xff767676),
-  };
-  final Map<String, Color> mapInvertColor = {
-    "black": Colors.black,
-    "white": Colors.white,
   };
 
   final Map<String, String> mapEmojiVoz = {
@@ -108,24 +141,4 @@ class UtilitiesController extends GetxController {
     "popopo/waaaht.png" : "",
     "popopo/what.png" : "",
   };
-
-  getEmoji(String s){
-    return "assets/"+s.replaceAll(RegExp(r"\S*smilies\S"), "").replaceAll(RegExp(r'\?[^]*'), "");
-  }
-
-  getColor(String typeT) {
-    return mapColor[typeT];
-  }
-
-  getColorInvert(String typeT) {
-    if (typeT == "kiến thức" ||
-        typeT == "đánh giá" ||
-        typeT == "HN" ||
-        typeT == "SG" ||
-        typeT == "download" ||
-        typeT == "TQ") {
-      return "white";
-    } else
-      return "black";
-  }
 }

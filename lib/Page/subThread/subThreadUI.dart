@@ -4,31 +4,21 @@ import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:vozforums/Page/pageLoadNext.dart';
-import 'package:vozforums/Page/utilities.dart';
 import 'package:vozforums/Page/pageNavigation.dart';
 import 'package:vozforums/Page/subThread/subThreadController.dart';
-import 'package:swipeable_page_route/swipeable_page_route.dart';
+
+import '../../GlobalController.dart';
 
 class ThreadUI extends GetView<ThreadController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: MorphingAppBar(
+      backgroundColor: Theme.of(context).backgroundColor,
+      appBar: AppBar(
         title: Text(
           controller.theme,
-          style: TextStyle(color: Colors.black),
         ),
       ),
-      // appBar: AppBar(
-      //   iconTheme: IconThemeData(color: Colors.black),
-      //   elevation: 0.0,
-      //   backgroundColor: Colors.transparent,
-      //   title: Text(
-      //     controller.theme,
-      //     style: TextStyle(color: Colors.black),
-      //   ),
-      // ),
       body: Stack(
         children: <Widget>[
           Align(
@@ -73,14 +63,14 @@ class ThreadUI extends GetView<ThreadController> {
                                                 style: TextStyle(
                                                     fontSize: 14,
                                                     fontWeight: FontWeight.bold,
-                                                    color: UtilitiesController.i.mapInvertColor[
-                                                        UtilitiesController.i.getColorInvert(controller.myThreadList.elementAt(index)['themeTitle'])],
+                                                    color: GlobalController.i.mapInvertColor[
+                                                        GlobalController.i.getColorInvert(controller.myThreadList.elementAt(index)['themeTitle'])],
                                                     backgroundColor:
-                                                        UtilitiesController.i.mapColor[controller.myThreadList.elementAt(index)['themeTitle']]),
+                                                        GlobalController.i.mapColor[controller.myThreadList.elementAt(index)['themeTitle']]),
                                               ),
                                               TextSpan(
                                                 text: controller.myThreadList.elementAt(index)["title"],
-                                                style: TextStyle(color: Colors.black, fontSize: 15, fontWeight: FontWeight.bold),
+                                                style: TextStyle(color: Theme.of(context).primaryColor, fontSize: 15, fontWeight: FontWeight.bold),
                                               )
                                             ]),
                                           ),
@@ -103,8 +93,8 @@ class ThreadUI extends GetView<ThreadController> {
               ),
             ),
           ),
-          Obx(() => PageHelp().pageNavigation(context, controller.itemScrollController, controller.itemPositionsListener, controller.pages,
-              controller.currentPage.value, (index) => controller.setPageOnClick(index)))
+          Obx(() => PageHelp().pageNavigation(context, controller.itemScrollController, controller.currentPage.value, controller.totalPage.value,
+              (index) => controller.setPageOnClick(index)))
         ],
       ),
     );

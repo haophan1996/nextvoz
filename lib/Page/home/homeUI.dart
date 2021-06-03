@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:swipeable_page_route/swipeable_page_route.dart';
 import 'package:vozforums/Page/home/homeController.dart';
 
 class HomePageUI extends GetView<HomeController> {
@@ -9,10 +8,10 @@ class HomePageUI extends GetView<HomeController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: MorphingAppBar(
+      backgroundColor: Theme.of(context).backgroundColor,
+      appBar: AppBar(
         title: Text(
-          "Voz.vn",
-          style: TextStyle(color: Colors.black),
+          "theNEXTvoz",
         ),
       ),
       body: Center(
@@ -28,31 +27,26 @@ class HomePageUI extends GetView<HomeController> {
                     itemBuilder: (BuildContext context, int index) {
                       return Column(
                         children: [
-                          index == 0
-                              ? theme(controller.myHomePage
-                                  .elementAt(index)["theme"])
-                              : Container(),
+                          index == 0 ? theme(controller.myHomePage.elementAt(index)["header"]) : Container(),
                           (index != 0)
-                              ? (controller.myHomePage
-                                          .elementAt(index - 1)["theme"] !=
-                                      controller.myHomePage
-                                          .elementAt(index)["theme"]
-                                  ? theme(controller.myHomePage
-                                      .elementAt(index)["theme"])
+                              ? (controller.myHomePage.elementAt(index - 1)["header"] != controller.myHomePage.elementAt(index)["header"]
+                                  ? theme(controller.myHomePage.elementAt(index)["header"])
                                   : Container())
                               : Container(),
                           Card(
+                            color: Theme.of(context).cardColor,
                             child: Container(
                               width: double.infinity,
                               child: TextButton(
-                                style: TextButton.styleFrom(
-                                    alignment: Alignment.centerLeft,
-                                    padding: EdgeInsets.only(left: 5)),
+                                style: TextButton.styleFrom(alignment: Alignment.centerLeft, padding: EdgeInsets.only(left: 5)),
                                 onPressed: () {
-                                  controller.navigateToThread(controller.myHomePage.elementAt(index)["title"],controller.myHomePage.elementAt(index)["link"]);
+                                  controller.navigateToThread(
+                                      controller.myHomePage.elementAt(index)["subHeader"], controller.myHomePage.elementAt(index)["linkSubHeader"]);
                                 },
-                                child: Text(controller.myHomePage
-                                    .elementAt(index)["title"]),
+                                child: Text(
+                                  controller.myHomePage.elementAt(index)["subHeader"],
+                                  style: TextStyle(color: Theme.of(context).primaryColor),
+                                ),
                               ),
                             ),
                           ),
