@@ -11,7 +11,8 @@ Widget refreshIndicatorConfiguration(Widget widget) {
         loadingIcon: CupertinoActivityIndicator(),
         idleText: "Pull Up To Next Page",
         canLoadingText: "Release To Load",
-        height: 75,
+        // height: 75, android
+        height: 105,
         outerBuilder: (child) {
           return Container(
             child: Align(

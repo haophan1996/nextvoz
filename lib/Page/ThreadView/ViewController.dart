@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -7,6 +8,7 @@ import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:vozforums/GlobalController.dart';
 import 'dart:io';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
+import 'package:youtube_plyr_iframe/youtube_plyr_iframe.dart';
 
 class ViewController extends GetxController {
   final String _url = "https://voz.vn";
@@ -31,13 +33,13 @@ class ViewController extends GetxController {
   RxInt totalPage = 0.obs;
   final int loadItems = 50;
 
-
   @override
   Future<void> onInit() async {
     // TODO: implement onInit
     super.onInit();
     subHeader = Get.arguments[0];
-    await loadUserPost(fullUrl = _url + Get.arguments[1]);
+    //await loadUserPost(fullUrl = _url + Get.arguments[1]);
+    await loadUserPost("https://voz.vn/t/chia-se-phim-tai-lieu-tren-youtube-hay-nhung-nguon-khac.262384/");
   }
 
   loadUserPost(String url) async {
@@ -108,17 +110,16 @@ class ViewController extends GetxController {
 
   setPageOnClick(String toPage) async {
     if (int.parse(toPage) > totalPage.value) {
-      Get.defaultDialog(
-          title: "Alert",
-          content: Text("No More Page"),
-          confirm: TextButton(
-              onPressed: () {
-                Get.back();
-              },
-              child: Text(
-                "Touch anywhere to dismiss",
-                style: TextStyle(fontSize: 13, color: Colors.black),
-              )));
+      if (Get.isSnackbarOpen == false) {
+        HapticFeedback.heavyImpact();
+        Get.snackbar(
+          "Alert",
+          "No More Page",
+          icon: Icon(Icons.error),
+          animationDuration: Duration(milliseconds: 500),
+        );
+      }
+
       refreshController.loadComplete();
     } else {
       await loadUserPost(fullUrl + _pageLink + toPage);

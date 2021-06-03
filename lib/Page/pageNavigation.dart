@@ -6,15 +6,14 @@ import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 Widget pageNavigation(BuildContext context, ItemScrollController scrollController, int currentPage, int totalPage, Function(String item) onCall) {
   return Align(
     alignment: Alignment.bottomCenter,
-    child: Padding(
-      padding: EdgeInsets.all(7),
-      child: Container(
+    child: Container(
+        padding: EdgeInsets.only(top: 5),
         decoration: BoxDecoration(color: Theme.of(context).cardColor, borderRadius: BorderRadius.all(Radius.circular(6))),
-        height: MediaQuery.of(context).size.height * 0.05,
+        height: MediaQuery.of(context).size.height * 0.07,
         width: double.infinity,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Container(
               height: 30,
@@ -57,6 +56,5 @@ Widget pageNavigation(BuildContext context, ItemScrollController scrollControlle
           ],
         ),
       ),
-    ),
   );
 }

@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -10,6 +12,7 @@ import 'package:vozforums/Page/pageLoadNext.dart';
 import '../../GlobalController.dart';
 import '../pageNavigation.dart';
 import '../reuseWidget.dart';
+import 'package:youtube_plyr_iframe/youtube_plyr_iframe.dart';
 
 class ViewUI extends GetView<ViewController> {
   @override
@@ -172,7 +175,27 @@ class ViewUI extends GetView<ViewController> {
                             "iframe": (RenderContext context, Widget child) {
                               print(context.tree.attributes['src'].toString());
                               print("To do: iframe ViewUI");
-                              return Container();
+                              controller.getYoutubeID(context.tree.attributes['src'].toString());
+                              return Text("ascsacas");
+                              // return YoutubePlayerControllerProvider( // Provides controller to all the widget below it.
+                              //   controller: YoutubePlayerController(
+                              //     initialVideoId: controller.getYoutubeID(context.tree.attributes['src'].toString()),
+                              //     params: YoutubePlayerParams(
+                              //
+                              //     )
+                              //   ),
+                              //   child: YoutubePlayerIFrame(
+                              //     gestureRecognizers: [Factory(() => VerticalDragGestureRecognizer())
+                              //       ].toSet(),
+                              //     aspectRatio: 16 / 9,
+                              //   ),
+                              // );
+                              // return Container(
+                              //   width: double.infinity,
+                              //   child: CachedNetworkImage(
+                              //     imageUrl: "https://img.youtube.com/vi/${controller.getYoutubeID(context.tree.attributes['src'].toString())}/0.jpg",
+                              //   ),
+                              // );
                               // return Image.network(
                               //   "https://img.youtube.com/vi/$s/0.jpg",
                               // );
@@ -196,18 +219,24 @@ class ViewUI extends GetView<ViewController> {
                           },
                           customImageRenders: {
                             networkSourceMatcher(): (context, attributes, element) {
-                              if (attributes['src'].toString().contains("twemoji.maxcdn.com")){
-                                return Text(attributes['alt'].toString(), style: TextStyle(fontSize: 25),);
-                               // return Text(attributes['src'].toString(), style: TextStyle(fontSize: 30, color: Colors.red),);
+                              if (attributes['src'].toString().contains("twemoji.maxcdn.com")) {
+                                return Text(
+                                  attributes['alt'].toString(),
+                                  style: TextStyle(fontSize: 25),
+                                );
+                                // return Text(attributes['src'].toString(), style: TextStyle(fontSize: 30, color: Colors.red),);
                               } else {
                                 return GestureDetector(
                                   onTap: () {
                                     Get.defaultDialog(
                                       content: Expanded(
-                                        child: CachedNetworkImage(
-                                          imageUrl: attributes['src'].toString(),
-                                          placeholder: (context, url) => CircularProgressIndicator(),
-                                          errorWidget: (context, url, error) => Icon(Icons.error),
+                                        child: Container(
+                                          width: double.infinity,
+                                          child: CachedNetworkImage(
+                                            imageUrl: attributes['src'].toString(),
+                                            placeholder: (context, url) => CircularProgressIndicator(),
+                                            errorWidget: (context, url, error) => Icon(Icons.error),
+                                          ),
                                         ),
                                       ),
                                     );
@@ -219,8 +248,6 @@ class ViewUI extends GetView<ViewController> {
                                   ),
                                 );
                               }
-
-
                             },
                           },
                           //tagsList: Html.tags..remove("value"),

@@ -54,7 +54,7 @@ class GlobalController extends GetxController {
             bytes.addAll(newBytes);
             final downloadedLength= bytes.length;
             
-             print("${downloadedLength}  763233   ${contentLength}");
+             print("${downloadedLength}    ${contentLength}");
           },
           onDone: () async {
             print("${utf8.decode(bytes).length}  length");
