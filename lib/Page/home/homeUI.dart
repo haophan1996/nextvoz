@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:vozforums/Page/home/homeController.dart';
+import 'package:vozforums/Page/reuseWidget.dart';
 
 class HomePageUI extends GetView<HomeController> {
   // This widget is the root of your application.
@@ -9,11 +10,7 @@ class HomePageUI extends GetView<HomeController> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).backgroundColor,
-      appBar: AppBar(
-        title: Text(
-          "theNEXTvoz",
-        ),
-      ),
+      appBar: preferredSize("theNEXTvoz", 50),
       body: Center(
         child: Padding(
           padding: EdgeInsets.only(top: 0),

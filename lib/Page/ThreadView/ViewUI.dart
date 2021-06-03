@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_html/shims/dart_ui_real.dart';
 import 'package:get/get.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:vozforums/Page/ThreadView/ViewController.dart';
@@ -10,16 +9,13 @@ import 'package:expandable/expandable.dart';
 import 'package:vozforums/Page/pageLoadNext.dart';
 import '../../GlobalController.dart';
 import '../pageNavigation.dart';
+import '../reuseWidget.dart';
 
 class ViewUI extends GetView<ViewController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          controller.subHeader,
-        ),
-      ),
+      appBar: preferredSize(controller.subHeader, 50),
       body: Stack(
         children: <Widget>[
           Container(
@@ -27,7 +23,7 @@ class ViewUI extends GetView<ViewController> {
             height: MediaQuery.of(context).size.height,
             child: postContent(context),
           ),
-          Obx(() => PageHelp().pageNavigation(context, controller.itemScrollController, controller.currentPage.value, controller.totalPage.value,
+          Obx(() => pageNavigation(context, controller.itemScrollController, controller.currentPage.value, controller.totalPage.value,
               (index) => controller.setPageOnClick(index)))
         ],
       ),
@@ -36,7 +32,7 @@ class ViewUI extends GetView<ViewController> {
 
   postContent(BuildContext context) {
     return Obx(
-      () => PageLoad().refreshIndicatorConfiguration(
+      () => refreshIndicatorConfiguration(
         Scrollbar(
           child: SmartRefresher(
             enablePullDown: false,

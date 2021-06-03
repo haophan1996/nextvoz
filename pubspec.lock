@@ -15,13 +15,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.6.1"
-  black_hole_flutter:
-    dependency: transitive
-    description:
-      name: black_hole_flutter
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.3.2"
   boolean_selector:
     dependency: transitive
     description:
@@ -233,13 +226,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.6.3"
-  list_diff:
-    dependency: transitive
-    description:
-      name: list_diff
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "2.0.0"
   matcher:
     dependency: transitive
     description:
@@ -441,27 +427,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.1.0"
-  supercharged:
-    dependency: transitive
-    description:
-      name: supercharged
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "2.0.0"
-  supercharged_dart:
-    dependency: transitive
-    description:
-      name: supercharged_dart
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "2.0.0"
-  swipeable_page_route:
-    dependency: "direct main"
-    description:
-      name: swipeable_page_route
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.2.1"
   synchronized:
     dependency: transitive
     description:
@@ -610,7 +575,7 @@ packages:
     source: hosted
     version: "0.1.0"
   webview_flutter:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: webview_flutter
       url: "https://pub.dartlang.org"

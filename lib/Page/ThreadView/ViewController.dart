@@ -31,6 +31,7 @@ class ViewController extends GetxController {
   RxInt totalPage = 0.obs;
   final int loadItems = 50;
 
+
   @override
   Future<void> onInit() async {
     // TODO: implement onInit

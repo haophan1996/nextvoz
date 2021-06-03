@@ -6,19 +6,15 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:vozforums/Page/pageLoadNext.dart';
 import 'package:vozforums/Page/pageNavigation.dart';
 import 'package:vozforums/Page/subThread/subThreadController.dart';
-
 import '../../GlobalController.dart';
+import '../reuseWidget.dart';
 
 class ThreadUI extends GetView<ThreadController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).backgroundColor,
-      appBar: AppBar(
-        title: Text(
-          controller.theme,
-        ),
-      ),
+      appBar: preferredSize(controller.theme, 50),
       body: Stack(
         children: <Widget>[
           Align(
@@ -27,7 +23,7 @@ class ThreadUI extends GetView<ThreadController> {
               child: Obx(
                 () => controller.myThreadList.length == 0
                     ? CupertinoActivityIndicator()
-                    : PageLoad().refreshIndicatorConfiguration(
+                    : refreshIndicatorConfiguration(
                         Scrollbar(
                           child: SmartRefresher(
                             enablePullDown: false,
@@ -45,12 +41,10 @@ class ThreadUI extends GetView<ThreadController> {
                                   return InkWell(
                                     enableFeedback: true,
                                     onTap: () {
-                                      // controller.itemScrollController.scrollTo(index: 30, duration: Duration(seconds: 2), alignment: 0.735);
                                       controller.navigateToThread(
                                           controller.myThreadList.elementAt(index)['title'], controller.myThreadList.elementAt(index)['linkThread']);
                                     },
                                     child: Container(
-                                      //color: Colors.white,
                                       width: double.infinity,
                                       padding: EdgeInsets.all(5),
                                       child: Column(
@@ -93,7 +87,7 @@ class ThreadUI extends GetView<ThreadController> {
               ),
             ),
           ),
-          Obx(() => PageHelp().pageNavigation(context, controller.itemScrollController, controller.currentPage.value, controller.totalPage.value,
+          Obx(() => pageNavigation(context, controller.itemScrollController, controller.currentPage.value, controller.totalPage.value,
               (index) => controller.setPageOnClick(index)))
         ],
       ),
