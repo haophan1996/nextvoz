@@ -43,7 +43,7 @@ class ThreadController extends GetxController {
 
   setPageOnClick(String toPage) async {
     await loadSubHeader(_url + _pageLink + toPage);
-    itemScrollController.scrollTo(index: int.parse(toPage) + 1, duration: Duration(microseconds: 500), alignment: 0.735);
+    itemScrollController.scrollTo(index: int.parse(toPage) + 1, duration: Duration(microseconds: 500), alignment: GlobalController.i.pageNaviAlign);
     listViewScrollController.jumpTo(-10.0);
   }
 
@@ -72,7 +72,7 @@ class ThreadController extends GetxController {
             title = _title.map((e) => e.getElementsByTagName("a")[0].innerHtml).first;
             linkThread = _title.map((e) => e.getElementsByTagName("a")[0].attributes['href']).first!;
           } else {
-            title = " " + _title.map((e) => e.getElementsByTagName("a")[1].innerHtml).first;
+            title = "   " + _title.map((e) => e.getElementsByTagName("a")[1].innerHtml).first;
             themeTitle = _title.map((e) => e.getElementsByTagName("span")[0].innerHtml).first;
             linkThread = _title.map((e) => e.getElementsByTagName("a")[1].attributes['href']).first!;
           }
@@ -82,7 +82,7 @@ class ThreadController extends GetxController {
             "authorLink": authorLink,
             "authorName": authorName,
             "linkThread": linkThread,
-            "replies": replies,
+            "replies": "Replies " +replies,
             "date": date,
           });
         });

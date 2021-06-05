@@ -10,15 +10,18 @@ class Themes {
     secondaryHeaderColor: Color(0xFFE5E3E3),
     accentColor: Colors.black,  // In block quote
     cardColor: Colors.grey.shade400,
+    dividerColor: Color(0xffcfd4cf),
     appBarTheme: AppBarTheme(
       iconTheme: IconThemeData(
         color: Colors.black
       ),
+      centerTitle: false,
+      titleSpacing: -2,
       brightness: Brightness.light,
       color: Colors.grey.shade100,
-      elevation: 0,
+      //elevation: 3,
       backwardsCompatibility: false,
-      titleTextStyle: TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold),
+      titleTextStyle: TextStyle(color: Colors.black, fontSize: 15, fontWeight: FontWeight.bold,),
       systemOverlayStyle: SystemUiOverlayStyle(statusBarColor: Colors.grey.shade100, statusBarIconBrightness: Brightness.dark),
     ),
   );
@@ -29,6 +32,7 @@ class Themes {
     secondaryHeaderColor: Color(0xFF424242),
     accentColor: Colors.white54,  // In block quote
     cardColor: Colors.grey.shade900,
+    dividerColor: Color(0xff282727),
     appBarTheme: AppBarTheme(
       iconTheme: IconThemeData(
           color: Colors.white

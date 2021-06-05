@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:vozforums/GlobalController.dart';
 import 'package:vozforums/Page/home/homeController.dart';
 import 'package:vozforums/Page/reuseWidget.dart';
 
@@ -10,7 +11,7 @@ class HomePageUI extends GetView<HomeController> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).backgroundColor,
-      appBar: preferredSize("theNEXTvoz", 50),
+      appBar: preferredSize("   theNEXTvoz", GlobalController.i.heightAppbar),
       body: Center(
         child: Padding(
           padding: EdgeInsets.only(top: 0),
@@ -24,28 +25,22 @@ class HomePageUI extends GetView<HomeController> {
                     itemBuilder: (BuildContext context, int index) {
                       return Column(
                         children: [
-                          index == 0 ? theme(controller.myHomePage.elementAt(index)["header"]) : Container(),
                           (index != 0)
                               ? (controller.myHomePage.elementAt(index - 1)["header"] != controller.myHomePage.elementAt(index)["header"]
                                   ? theme(controller.myHomePage.elementAt(index)["header"])
                                   : Container())
-                              : Container(),
-                          Card(
-                            color: Theme.of(context).cardColor,
-                            child: Container(
-                              width: double.infinity,
-                              child: TextButton(
-                                style: TextButton.styleFrom(alignment: Alignment.centerLeft, padding: EdgeInsets.only(left: 5)),
-                                onPressed: () {
-                                  controller.navigateToThread(
-                                      controller.myHomePage.elementAt(index)["subHeader"], controller.myHomePage.elementAt(index)["linkSubHeader"]);
-                                },
-                                child: Text(
-                                  controller.myHomePage.elementAt(index)["subHeader"],
-                                  style: TextStyle(color: Theme.of(context).primaryColor),
-                                ),
-                              ),
-                            ),
+                              : theme(controller.myHomePage.elementAt(index)["header"]),
+                          InkWell(
+                            focusColor: Colors.red,
+                            hoverColor: Colors.red,
+                            highlightColor: Colors.red,
+                            splashColor: Colors.red,
+                            splashFactory: InkRipple.splashFactory,
+                            onTap: () {
+                                      controller.navigateToThread(
+                                          controller.myHomePage.elementAt(index)["subHeader"], controller.myHomePage.elementAt(index)["linkSubHeader"]);
+                            },
+                            child: blockItem(context, index, "", controller.myHomePage.elementAt(index)["subHeader"], "header21", "header22", "header3"),
                           ),
                         ],
                       );

@@ -7,54 +7,58 @@ Widget pageNavigation(BuildContext context, ItemScrollController scrollControlle
   return Align(
     alignment: Alignment.bottomCenter,
     child: Container(
-        padding: EdgeInsets.only(top: 5),
-        decoration: BoxDecoration(color: Theme.of(context).cardColor, borderRadius: BorderRadius.all(Radius.circular(6))),
-        height: MediaQuery.of(context).size.height * 0.07,
-        width: double.infinity,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Container(
-              height: 30,
-              width: MediaQuery.of(context).size.width * 0.52,
-              child: ScrollablePositionedList.builder(
-                itemScrollController: scrollController,
-                physics: BouncingScrollPhysics(),
-                scrollDirection: Axis.horizontal,
-                itemCount: totalPage,
-                itemBuilder: (context, index) {
-                  return Padding(
-                    padding: EdgeInsets.only(right: index == totalPage - 1 ? 100 : 5, left: index == 0 ? 100 : 0),
-                    child: InkWell(
-                      onTap: () {
-                        if (index + 1 != currentPage) {
-                          Get.defaultDialog(content: CircularProgressIndicator(), barrierDismissible: false, title: "Loading...");
-                          onCall((index + 1).toString());
-                        }
-                      },
-                      child: Container(
-                        padding: EdgeInsets.only(right: 2, left: 2),
-                        constraints: BoxConstraints(minWidth: 26, minHeight: 30),
-                        decoration: BoxDecoration(
-                            border: Border.all(width: 1, color: Colors.lightBlueAccent),
-                            shape: BoxShape.rectangle,
-                            borderRadius: BorderRadius.all(Radius.circular(5))),
-                        alignment: Alignment.center,
-                        child: Text(
-                          (index + 1).toString(),
-                          style: TextStyle(fontSize: 18, color: (index + 1) == currentPage ? Colors.pink : Theme.of(context).primaryColor
-                              //controller.currentPage.value-1 == index ? Colors.red : Colors.black
-                              ),
-                        ),
+      padding: EdgeInsets.only(top: 5),
+      decoration: BoxDecoration(color: Theme.of(context).cardColor, borderRadius: BorderRadius.all(Radius.circular(6))),
+      height: MediaQuery.of(context).size.height * 0.07,
+      width: double.infinity,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Container(
+            height: 36,
+            width: MediaQuery.of(context).size.width * 0.52,
+            child: ScrollablePositionedList.builder(
+              itemScrollController: scrollController,
+              physics: BouncingScrollPhysics(),
+              scrollDirection: Axis.horizontal,
+              itemCount: totalPage,
+              itemBuilder: (context, index) {
+                return Padding(
+                  padding: EdgeInsets.only(right: index == totalPage - 1 ? 100 : 5, left: index == 0 ? 100 : 0),
+                  child: InkWell(
+                    onTap: () {
+                      if (index + 1 != currentPage) {
+                        Get.defaultDialog(content: CircularProgressIndicator(), barrierDismissible: false, title: "Loading...");
+                        onCall((index + 1).toString());
+                      }
+                    },
+                    child: Container(
+                      padding: EdgeInsets.only(right: 2, left: 2),
+                      constraints: BoxConstraints(minWidth: 33, minHeight: 35),
+                      decoration: BoxDecoration(
+                          color: (index + 1) == currentPage ? Theme.of(context).primaryColor : Colors.transparent,
+                          border: Border.all(width: 2, color: (index + 1) == currentPage ? Colors.red : Colors.greenAccent),
+                          shape: BoxShape.rectangle,
+                          borderRadius: BorderRadius.all(Radius.circular(5))),
+                      alignment: Alignment.center,
+                      child: Text(
+                        (index + 1).toString(),
+                        style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: (index + 1) == currentPage ? Colors.pink : Theme.of(context).primaryColor
+                            //controller.currentPage.value-1 == index ? Colors.red : Colors.black
+                            ),
                       ),
                     ),
-                  );
-                },
-              ),
+                  ),
+                );
+              },
             ),
-          ],
-        ),
+          ),
+        ],
       ),
+    ),
   );
 }

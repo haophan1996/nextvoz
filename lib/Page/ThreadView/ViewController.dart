@@ -1,16 +1,20 @@
+import 'package:extended_image/extended_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/src/scheduler/ticker.dart';
 import 'package:get/get.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:photo_view/photo_view.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:vozforums/GlobalController.dart';
 import 'dart:io';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
-import 'package:youtube_plyr_iframe/youtube_plyr_iframe.dart';
+import 'package:url_launcher/url_launcher.dart';
 
-class ViewController extends GetxController {
+
+class ViewController extends GetxController{
   final String _url = "https://voz.vn";
   final String _pageLink = "page-";
   late String fullUrl;
@@ -26,20 +30,31 @@ class ViewController extends GetxController {
   late var _user;
   int lengthHtmlDataList = 0;
 
+
   final RefreshController refreshController = RefreshController(initialRefresh: false);
   final ScrollController listViewScrollController = ScrollController();
   final ItemScrollController itemScrollController = ItemScrollController();
   RxInt currentPage = 0.obs;
   RxInt totalPage = 0.obs;
   final int loadItems = 50;
-
   @override
   Future<void> onInit() async {
     // TODO: implement onInit
     super.onInit();
     subHeader = Get.arguments[0];
-    //await loadUserPost(fullUrl = _url + Get.arguments[1]);
-    await loadUserPost("https://voz.vn/t/chia-se-phim-tai-lieu-tren-youtube-hay-nhung-nguon-khac.262384/");
+    await loadUserPost(fullUrl = _url + Get.arguments[1]);
+    //await loadUserPost("https://voz.vn/t/tu-van-cau-hinh-pc-duoi-15tr-choi-game-fps-de-nang-cap.316215/"); 
+  }
+
+  @override
+  onClose(){
+    super.onClose();
+    refreshController.dispose();
+    listViewScrollController.dispose();
+    currentPage.close();
+    totalPage.close();
+    clearMemoryImageCache();
+
   }
 
   loadUserPost(String url) async {
@@ -115,15 +130,15 @@ class ViewController extends GetxController {
         Get.snackbar(
           "Alert",
           "No More Page",
-          icon: Icon(Icons.error),
-          animationDuration: Duration(milliseconds: 500),
+          icon: Icon(Icons.error, color: Colors.red,),
+          animationDuration: Duration(milliseconds: 400),
+          dismissDirection: SnackDismissDirection.HORIZONTAL
         );
       }
-
       refreshController.loadComplete();
     } else {
       await loadUserPost(fullUrl + _pageLink + toPage);
-      itemScrollController.scrollTo(index: int.parse(toPage) + 1, duration: Duration(microseconds: 500), alignment: 0.735);
+      itemScrollController.scrollTo(index: int.parse(toPage) + 1, duration: Duration(microseconds: 500), alignment: GlobalController.i.pageNaviAlign);
       listViewScrollController.jumpTo(-10.0);
     }
   }
@@ -135,4 +150,18 @@ class ViewController extends GetxController {
     print('${directory.path}/my_file.txt');
     print(File('${directory.path}/my_file.txt').toString());
   }
+
+  saveImage(String url) async{
+    final Directory? directory = Directory("storage/emulated/0/Pictures/vozNext");
+    await directory!.create();
+    final File file = File((await getCachedImageFilePath(url)).toString());
+    await file.copy(directory.path + "/${file.path.split("/").last}.jpg");
+
+    print(await file.copy(directory.path + "/${file.path.split("/").last}.jpg"));
+  }
+
+  getImage(String url) async {
+    return await getCachedImageFile(url);
+  }
+
 }

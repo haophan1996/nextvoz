@@ -12,8 +12,8 @@ class GlobalController extends GetxController {
   var response;
   late dom.Document doc;
   var contentLength;
-  //Rx
-
+  double pageNaviAlign = 0.784;
+  double heightAppbar = 45;
 
   Future<dom.Document> getBody(String url) async {
     // final StreamedResponse _response = await Client().send(Request('GET', Uri.parse(url)));
@@ -85,7 +85,7 @@ class GlobalController extends GetxController {
   }
 
   getColorInvert(String typeT) {
-    if (typeT == "kiến thức" || typeT == "đánh giá" || typeT == "HN" || typeT == "SG" || typeT == "download" || typeT == "TQ") {
+    if (typeT == "kiến thức" || typeT == "đánh giá"|| typeT == "khoe" || typeT == "HN" || typeT == "SG" || typeT == "download" || typeT == "TQ") {
       return "white";
     } else
       return "black";
@@ -98,7 +98,7 @@ class GlobalController extends GetxController {
     "đánh giá": Color(0xffCE0000),
     "góp ý": Color(0xff006C00),
     "kiến thức": Color(0xff2F5BDE),
-    "khoe ": Color(0xff006C00),
+    "khoe": Color(0xff006C00),
     "tin tức": Color(0xffFFD4B8),
     "thảo luận": Color(0xffCCDCF1),
     "thắc mắc": Color(0xffEBBB00),

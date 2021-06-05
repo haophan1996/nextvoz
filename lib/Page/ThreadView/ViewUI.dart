@@ -1,24 +1,23 @@
-import 'package:flutter/foundation.dart';
-import 'package:flutter/gestures.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
-import 'package:vozforums/Page/ThreadView/ViewController.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:html/dom.dart' as dom;
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:expandable/expandable.dart';
 import 'package:vozforums/Page/pageLoadNext.dart';
-import '../../GlobalController.dart';
-import '../pageNavigation.dart';
-import '../reuseWidget.dart';
-import 'package:youtube_plyr_iframe/youtube_plyr_iframe.dart';
+import 'package:vozforums/GlobalController.dart';
+import 'package:vozforums/Page/pageNavigation.dart';
+import 'package:vozforums/Page/reuseWidget.dart';
+import 'package:vozforums/Page/ThreadView/ViewController.dart';
+import 'package:extended_image/extended_image.dart';
+import 'package:photo_view/photo_view.dart';
 
 class ViewUI extends GetView<ViewController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: preferredSize(controller.subHeader, 50),
+      appBar: preferredSize(controller.subHeader, GlobalController.i.heightAppbar),
       body: Stack(
         children: <Widget>[
           Container(
@@ -75,9 +74,12 @@ class ViewUI extends GetView<ViewController> {
                                         decoration: BoxDecoration(
                                           shape: BoxShape.circle,
                                           image: DecorationImage(
-                                              image: controller.htmlData.elementAt(index)["userAvatar"] == "no"
-                                                  ? Image.asset("assets/NoAvata.png").image
-                                                  : CachedNetworkImageProvider(controller.htmlData.elementAt(index)["userAvatar"])),
+                                            image: controller.htmlData.elementAt(index)["userAvatar"] == "no"
+                                                ? Image.asset("assets/NoAvata.png").image
+                                                : ExtendedNetworkImageProvider(controller.htmlData.elementAt(index)["userAvatar"], cache: true),
+                                          ),
+
+                                          //CachedNetworkImageProvider(controller.htmlData.elementAt(index)["userAvatar"])),
                                         ),
                                       ),
                                     ),
@@ -166,8 +168,8 @@ class ViewUI extends GetView<ViewController> {
                             },
                             "table": (context, child) {
                               return SingleChildScrollView(
-                                scrollDirection: Axis.horizontal,
-                                padding: EdgeInsets.all(10),
+                                scrollDirection: (context.tree.element!.getElementsByTagName("tr").length > 2) ? Axis.horizontal : Axis.vertical,
+                                padding: EdgeInsets.all(2),
                                 physics: BouncingScrollPhysics(),
                                 child: (context.tree as TableLayoutElement).toWidget(context),
                               );
@@ -177,32 +179,10 @@ class ViewUI extends GetView<ViewController> {
                               print("To do: iframe ViewUI");
                               controller.getYoutubeID(context.tree.attributes['src'].toString());
                               return Text("ascsacas");
-                              // return YoutubePlayerControllerProvider( // Provides controller to all the widget below it.
-                              //   controller: YoutubePlayerController(
-                              //     initialVideoId: controller.getYoutubeID(context.tree.attributes['src'].toString()),
-                              //     params: YoutubePlayerParams(
-                              //
-                              //     )
-                              //   ),
-                              //   child: YoutubePlayerIFrame(
-                              //     gestureRecognizers: [Factory(() => VerticalDragGestureRecognizer())
-                              //       ].toSet(),
-                              //     aspectRatio: 16 / 9,
-                              //   ),
-                              // );
-                              // return Container(
-                              //   width: double.infinity,
-                              //   child: CachedNetworkImage(
-                              //     imageUrl: "https://img.youtube.com/vi/${controller.getYoutubeID(context.tree.attributes['src'].toString())}/0.jpg",
-                              //   ),
-                              // );
-                              // return Image.network(
-                              //   "https://img.youtube.com/vi/$s/0.jpg",
-                              // );
                             }
                           },
                           style: {
-                            "table": Style(backgroundColor: Colors.grey.shade200),
+                            "table": Style(backgroundColor: Theme.of(context).cardColor),
                             "body": Style(
                               fontSize: FontSize(17.0),
                             ),
@@ -211,44 +191,46 @@ class ViewUI extends GetView<ViewController> {
                               ..display = Display.BLOCK,
                           },
                           onLinkTap: (String? url, RenderContext context, Map<String, String> attributes, dom.Element? element) {
-                            controller.write(controller.htmlData.elementAt(2)['postContent']);
                             if (url?.isNotEmpty == true && url!.contains("/goto/post") && url != "no") {
                               //print("https://voz.vn" + url);
                             } //else
                             //print(url);
                           },
                           customImageRenders: {
-                            networkSourceMatcher(): (context, attributes, element) {
+                            networkSourceMatcher(): (renderContext, attributes, element) {
                               if (attributes['src'].toString().contains("twemoji.maxcdn.com")) {
                                 return Text(
                                   attributes['alt'].toString(),
                                   style: TextStyle(fontSize: 25),
                                 );
-                                // return Text(attributes['src'].toString(), style: TextStyle(fontSize: 30, color: Colors.red),);
                               } else {
-                                return GestureDetector(
-                                  onTap: () {
-                                    Get.defaultDialog(
-                                      content: Expanded(
-                                        child: Container(
-                                          width: double.infinity,
-                                          child: CachedNetworkImage(
-                                            imageUrl: attributes['src'].toString(),
-                                            placeholder: (context, url) => CircularProgressIndicator(),
-                                            errorWidget: (context, url, error) => Icon(Icons.error),
-                                          ),
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                  child: CachedNetworkImage(
-                                    imageUrl: attributes['src'].toString(),
-                                    placeholder: (context, url) => CircularProgressIndicator(),
-                                    errorWidget: (context, url, error) => Icon(Icons.error),
-                                  ),
+                                return ExtendedImage.network(
+                                  attributes['src'].toString(),
+                                  fit: BoxFit.contain,
+                                  cache: true,
+                                  clearMemoryCacheWhenDispose: true,
                                 );
                               }
                             },
+                          },
+                          onImageTap: (String? url, RenderContext renderContext, Map<String, String> attributes, dom.Element? element) async {
+                            Get.dialog(
+                              Dismissible(
+                                direction: DismissDirection.vertical,
+                                onDismissed: (v) {
+                                  if (Get.isDialogOpen == true) {
+                                    Get.back(canPop: true);
+                                  }
+                                },
+                                key: const Key("value"),
+                                child: PhotoView(
+                                  imageProvider: Image.file(await controller.getImage(url!)).image,
+                                ),
+                              ),
+                              useSafeArea: true,
+                              useRootNavigator: true,
+                              transitionDuration: Duration(milliseconds: 2),
+                            );
                           },
                           //tagsList: Html.tags..remove("value"),
                         ),

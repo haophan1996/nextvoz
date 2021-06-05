@@ -14,7 +14,7 @@ class ThreadUI extends GetView<ThreadController> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).backgroundColor,
-      appBar: preferredSize(controller.theme, 50),
+      appBar: preferredSize(controller.theme, GlobalController.i.heightAppbar),
       body: Stack(
         children: <Widget>[
           Align(
@@ -39,46 +39,23 @@ class ThreadUI extends GetView<ThreadController> {
                                 itemCount: controller.myThreadList.length,
                                 itemBuilder: (BuildContext context, int index) {
                                   return InkWell(
-                                    enableFeedback: true,
+                                      focusColor: Colors.red,
+                                      hoverColor: Colors.red,
+                                      highlightColor: Colors.red,
+                                      splashColor: Colors.red,
+                                      splashFactory: InkRipple.splashFactory,
                                     onTap: () {
                                       controller.navigateToThread(
                                           controller.myThreadList.elementAt(index)['title'], controller.myThreadList.elementAt(index)['linkThread']);
                                     },
-                                    child: Container(
-                                      width: double.infinity,
-                                      padding: EdgeInsets.all(5),
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: <Widget>[
-                                          RichText(
-                                            text: TextSpan(children: <TextSpan>[
-                                              TextSpan(
-                                                text: controller.myThreadList.elementAt(index)["themeTitle"],
-                                                style: TextStyle(
-                                                    fontSize: 14,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: GlobalController.i.mapInvertColor[
-                                                        GlobalController.i.getColorInvert(controller.myThreadList.elementAt(index)['themeTitle'])],
-                                                    backgroundColor:
-                                                        GlobalController.i.mapColor[controller.myThreadList.elementAt(index)['themeTitle']]),
-                                              ),
-                                              TextSpan(
-                                                text: controller.myThreadList.elementAt(index)["title"],
-                                                style: TextStyle(color: Theme.of(context).primaryColor, fontSize: 15, fontWeight: FontWeight.bold),
-                                              )
-                                            ]),
-                                          ),
-                                          Text(
-                                            "Replies ${controller.myThreadList.elementAt(index)['replies']} \u2022 ${controller.myThreadList.elementAt(index)['date']}",
-                                            style: TextStyle(color: Colors.grey, fontSize: 12),
-                                          ),
-                                          Text(
-                                            controller.myThreadList.elementAt(index)['authorName'],
-                                            style: TextStyle(color: Colors.orange),
-                                          )
-                                        ],
-                                      ),
-                                    ),
+                                    child: blockItem(
+                                        context,
+                                        index,
+                                        controller.myThreadList.elementAt(index)['themeTitle'],
+                                        controller.myThreadList.elementAt(index)['title'],
+                                        controller.myThreadList.elementAt(index)['replies'],
+                                        controller.myThreadList.elementAt(index)['date'],
+                                        controller.myThreadList.elementAt(index)['authorName'],)
                                   );
                                 }),
                           ),
