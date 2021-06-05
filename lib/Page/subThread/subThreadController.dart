@@ -38,7 +38,7 @@ class ThreadController extends GetxController {
   }
 
   navigateToThread(String title, String link) {
-    Get.to(() => ViewUI(), binding: ViewBinding(), arguments: [title, link], popGesture: true, transition: Transition.cupertino);
+    Get.to(() => ViewUI(), binding: ViewBinding(), arguments: [title, link], popGesture: true, transition: Transition.cupertino, duration: Duration(milliseconds: 20));
   }
 
   setPageOnClick(String toPage) async {

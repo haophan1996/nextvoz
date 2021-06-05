@@ -15,7 +15,6 @@ class MyPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      //enableLog: true,
       initialBinding: HomeBinding(),
       debugShowCheckedModeBanner: false,
       //defaultTransition: Transition.fade,
