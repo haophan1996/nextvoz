@@ -2,8 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:get/get.dart';
 import 'package:vozforums/GlobalController.dart';
-import 'package:vozforums/Page/ThreadView/ViewBinding.dart';
-import 'package:vozforums/Page/ThreadView/ViewUI.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class ThreadController extends GetxController {
@@ -11,9 +9,9 @@ class ThreadController extends GetxController {
   late String theme;
   late String crawlPage;
   var response;
-  final RefreshController refreshController = RefreshController(initialRefresh: false);
-  final ScrollController listViewScrollController = ScrollController();
-  final ItemScrollController itemScrollController = ItemScrollController();
+  late RefreshController refreshController = RefreshController(initialRefresh: false);
+  late ScrollController listViewScrollController = ScrollController();
+  late ItemScrollController itemScrollController = ItemScrollController();
   final String _pageLink = "page-";
   RxList myThreadList = [].obs;
   RxInt currentPage = 0.obs;
@@ -38,7 +36,7 @@ class ThreadController extends GetxController {
   }
 
   navigateToThread(String title, String link) {
-    Get.to(() => ViewUI(), binding: ViewBinding(), arguments: [title, link], popGesture: true, transition: Transition.cupertino, duration: Duration(milliseconds: 20));
+    Get.toNamed("/ViewPage", arguments: [title, link]);
   }
 
   setPageOnClick(String toPage) async {
@@ -82,7 +80,7 @@ class ThreadController extends GetxController {
             "authorLink": authorLink,
             "authorName": authorName,
             "linkThread": linkThread,
-            "replies": "Replies " +replies,
+            "replies": "Replies " + replies,
             "date": date,
           });
         });

@@ -32,7 +32,8 @@ class HomeController extends GetxController {
 
 
   navigateToThread(String title, String link) {
-    Get.to(() => ThreadUI(), binding: ThreadBinding(), arguments: [title, _url + link], popGesture: true, transition: Transition.cupertino);
+    Get.toNamed("/ThreadPage",arguments: [title, _url + link]);
+    //Get.to(() => ThreadUI(), binding: ThreadBinding(), arguments: [title, _url + link], popGesture: true, transition: Transition.cupertino);
   }
 
 }

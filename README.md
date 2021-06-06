@@ -2,6 +2,11 @@
 
 A new Flutter project.
 
+Best user experiment: Go to */flutter/packages/flutter/lib/src/cupertino/route.dart
+        and edit const int _kMaxPageBackAnimationTime = 300
+        this will fix ignore touch every time user swipe back on iOS platform
+         
+
 ## Getting Started
 
 This project is a starting point for a Flutter application.
