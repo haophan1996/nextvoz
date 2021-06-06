@@ -1,8 +1,8 @@
 # vozforums
 
-A new Flutter project.
+vozForums application, able to view user post, post, quote create thread and login.
 
-Best user experiment: Go to */flutter/packages/flutter/lib/src/cupertino/route.dart
+Best user experience: Go to */flutter/packages/flutter/lib/src/cupertino/route.dart
         and edit const int _kMaxPageBackAnimationTime = 300
         this will fix ignore touch every time user swipe back on iOS platform
          
