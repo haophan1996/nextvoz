@@ -19,8 +19,12 @@ Widget blockItem(BuildContext context, int index, String header11, String header
   return Padding(
     padding: EdgeInsets.only(top: 1),
     child: Ink(
-      color: Theme.of(context).dividerColor,
       width: double.infinity,
+      decoration: BoxDecoration(
+        border: Border(
+          bottom: BorderSide(width: 0.5, color: Theme.of(context).primaryColor),
+        ),
+      ),
       padding: EdgeInsets.only(left: 10, top: 4, bottom: 5),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -56,4 +60,13 @@ Widget blockItem(BuildContext context, int index, String header11, String header
 }
 
 
-
+Widget percentBar(){
+  return LinearProgressIndicator(
+      minHeight: 5,
+      value: GlobalController.i.percentDownload.value,
+      valueColor: AlwaysStoppedAnimation<Color> (Color(0xFF0CF301)),
+      backgroundColor: Colors.white,
+      semanticsValue: "ascsacsacsac",
+      semanticsLabel: "asacascsac",
+  );
+}

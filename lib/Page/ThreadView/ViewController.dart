@@ -2,21 +2,15 @@ import 'package:extended_image/extended_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/src/scheduler/ticker.dart';
 import 'package:get/get.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:photo_view/photo_view.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:vozforums/GlobalController.dart';
 import 'dart:io';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
-import 'package:url_launcher/url_launcher.dart';
 
-
-class ViewController extends GetxController{
-  final String _url = "https://voz.vn";
-  final String _pageLink = "page-";
+class ViewController extends GetxController {
   late String fullUrl;
   var subHeader;
   List htmlData = [].obs;
@@ -30,31 +24,30 @@ class ViewController extends GetxController{
   late var _user;
   int lengthHtmlDataList = 0;
 
-
   final RefreshController refreshController = RefreshController(initialRefresh: false);
   final ScrollController listViewScrollController = ScrollController();
   final ItemScrollController itemScrollController = ItemScrollController();
   RxInt currentPage = 0.obs;
   RxInt totalPage = 0.obs;
   final int loadItems = 50;
+
   @override
   Future<void> onInit() async {
     // TODO: implement onInit
     super.onInit();
     subHeader = Get.arguments[0];
-    await loadUserPost(fullUrl = _url + Get.arguments[1]);
-    //await loadUserPost("https://voz.vn/t/tu-van-cau-hinh-pc-duoi-15tr-choi-game-fps-de-nang-cap.316215/"); 
+    await loadUserPost(fullUrl = GlobalController.i.url + Get.arguments[1]);
   }
 
   @override
-  onClose(){
+  onClose() {
     super.onClose();
     refreshController.dispose();
     listViewScrollController.dispose();
     currentPage.close();
     totalPage.close();
     clearMemoryImageCache();
-
+    GlobalController.i.percentDownload.value = -1.0; //
   }
 
   loadUserPost(String url) async {
@@ -101,7 +94,7 @@ class ViewController extends GetxController{
             "userName": _userName,
             "userLink": _userLink,
             "userTitle": _userTitle,
-            "userAvatar": (_userAvatar == "no" || _userAvatar.contains("https://")) ? _userAvatar : _url + _userAvatar,
+            "userAvatar": (_userAvatar == "no" || _userAvatar.contains("https://")) ? _userAvatar : GlobalController.i.url + _userAvatar,
             "orderPost": _orderPost,
           });
         });
@@ -109,6 +102,8 @@ class ViewController extends GetxController{
       if (Get.isDialogOpen == true || refreshController.isLoading) {
         if (Get.isDialogOpen == true) Get.back();
         htmlData.removeRange(0, lengthHtmlDataList);
+        itemScrollController.scrollTo(index: currentPage.value + 1, duration: Duration(milliseconds: 500),curve: Curves.slowMiddle, alignment: GlobalController.i.pageNaviAlign);
+        listViewScrollController.jumpTo(-10.0);
       }
       refreshController.loadComplete();
     });
@@ -125,21 +120,10 @@ class ViewController extends GetxController{
 
   setPageOnClick(String toPage) async {
     if (int.parse(toPage) > totalPage.value) {
-      if (Get.isSnackbarOpen == false) {
-        HapticFeedback.heavyImpact();
-        Get.snackbar(
-          "Alert",
-          "No More Page",
-          icon: Icon(Icons.error, color: Colors.red,),
-          animationDuration: Duration(milliseconds: 400),
-          dismissDirection: SnackDismissDirection.HORIZONTAL
-        );
-      }
+      HapticFeedback.heavyImpact();
       refreshController.loadComplete();
     } else {
-      await loadUserPost(fullUrl + _pageLink + toPage);
-      itemScrollController.scrollTo(index: int.parse(toPage) + 1, duration: Duration(microseconds: 500), alignment: GlobalController.i.pageNaviAlign);
-      listViewScrollController.jumpTo(-10.0);
+      await loadUserPost(fullUrl + GlobalController.i.pageLink + toPage);
     }
   }
 
@@ -151,7 +135,7 @@ class ViewController extends GetxController{
     print(File('${directory.path}/my_file.txt').toString());
   }
 
-  saveImage(String url) async{
+  saveImage(String url) async {
     final Directory? directory = Directory("storage/emulated/0/Pictures/vozNext");
     await directory!.create();
     final File file = File((await getCachedImageFilePath(url)).toString());
@@ -163,5 +147,4 @@ class ViewController extends GetxController{
   getImage(String url) async {
     return await getCachedImageFile(url);
   }
-
 }

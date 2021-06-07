@@ -6,69 +6,26 @@ import 'package:http/http.dart' as http;
 import 'package:html/dom.dart' as dom;
 import 'package:html/parser.dart' as parser;
 import 'package:http/http.dart';
+import 'package:dio/dio.dart';
 
 class GlobalController extends GetxController {
   static GlobalController get i => Get.find();
-  var response;
   late dom.Document doc;
   var contentLength;
+  final String url = "https://voz.vn";
+  final String pageLink = "page-";
   double pageNaviAlign = 0.784;
   double heightAppbar = 45;
+  var dio = Dio();
+  RxDouble percentDownload = 0.0.obs;
 
   Future<dom.Document> getBody(String url) async {
-    // final StreamedResponse _response = await Client().send(Request('GET', Uri.parse(url)));
-    // _response.stream.listen(
-    //       (List<int> newBytes) async {
-    //     bytes.addAll(newBytes);
-    //     final downloadedLength = bytes.length;
-    //     //print(downloadedLength);
-    //   },
-    //   onDone: () async {
-    //     print("${utf8.decode(bytes).length}  length");
-    //     response = utf8.decode(bytes);
-    //     print("0");
-    //   },
-    //   onError: (e) {
-    //     print(e);
-    //   },
-    //   cancelOnError: true,
-    // );
-
-    //await sac(url);
-
-    // response = await http.get(Uri.parse(url));
-    // return parser.parse(response.body);
-
-    return parser.parse(await sac(url));
-  }
-
-  Future<String> sac(String url) async {
-    List<int> bytes = [];
-    double _progress = 0;
-    int contentLength = 0;
-    final StreamedResponse _response = await Client().send(Request('GET', Uri.parse(url)));
-    contentLength = _response.contentLength!;
-    await _response.stream
-        .listen(
-          (List<int> newBytes) async {
-            bytes.addAll(newBytes);
-            final downloadedLength= bytes.length;
-            
-             print("${downloadedLength}    ${contentLength}");
-          },
-          onDone: () async {
-            print("${utf8.decode(bytes).length}  length");
-            response = utf8.decode(bytes);
-            print("0");
-          },
-          onError: (e) {
-            print(e);
-          },
-          cancelOnError: true,
-        )
-        .asFuture();
-
-    return utf8.decode(bytes);
+    final response = await dio.get(url,onReceiveProgress: (actual, total) {
+      percentDownload.value = (actual.bitLength - 4) / total.bitLength;
+    }).whenComplete(() {
+      percentDownload.value = -1.0;
+    });
+    return parser.parse(response.toString());
   }
 
   final Map<String, Color> mapInvertColor = {
@@ -85,7 +42,7 @@ class GlobalController extends GetxController {
   }
 
   getColorInvert(String typeT) {
-    if (typeT == "kiến thức" || typeT == "đánh giá"|| typeT == "khoe" || typeT == "HN" || typeT == "SG" || typeT == "download" || typeT == "TQ") {
+    if (typeT == "kiến thức" || typeT == "đánh giá" || typeT == "khoe" || typeT == "HN" || typeT == "SG" || typeT == "download" || typeT == "TQ") {
       return "white";
     } else
       return "black";

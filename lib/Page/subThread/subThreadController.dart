@@ -7,12 +7,9 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 class ThreadController extends GetxController {
   late String _url;
   late String theme;
-  late String crawlPage;
-  var response;
   late RefreshController refreshController = RefreshController(initialRefresh: false);
   late ScrollController listViewScrollController = ScrollController();
   late ItemScrollController itemScrollController = ItemScrollController();
-  final String _pageLink = "page-";
   RxList myThreadList = [].obs;
   RxInt currentPage = 0.obs;
   RxInt totalPage = 0.obs;
@@ -33,16 +30,26 @@ class ThreadController extends GetxController {
     theme = Get.arguments[0];
     _url = Get.arguments[1];
     await loadSubHeader(_url);
+
+
   }
 
   navigateToThread(String title, String link) {
     Get.toNamed("/ViewPage", arguments: [title, link]);
   }
 
+  @override
+  dispose() {
+    super.dispose();
+    refreshController.dispose();
+    listViewScrollController.dispose();
+    myThreadList.close();
+    currentPage.close();
+    totalPage.close();
+  }
+
   setPageOnClick(String toPage) async {
-    await loadSubHeader(_url + _pageLink + toPage);
-    itemScrollController.scrollTo(index: int.parse(toPage) + 1, duration: Duration(microseconds: 500), alignment: GlobalController.i.pageNaviAlign);
-    listViewScrollController.jumpTo(-10.0);
+    await loadSubHeader(_url + GlobalController.i.pageLink + toPage);
   }
 
   loadSubHeader(String url) async {
@@ -54,25 +61,50 @@ class ThreadController extends GetxController {
           currentPage.value = 1;
           totalPage.value = 1;
         } else {
-          var naviPage = element.getElementsByClassName("pageNavSimple-el pageNavSimple-el--current").first.innerHtml.trim();
+          var naviPage = element
+              .getElementsByClassName("pageNavSimple-el pageNavSimple-el--current")
+              .first
+              .innerHtml
+              .trim();
           currentPage.value = int.parse(naviPage.replaceAll(RegExp(r'[^0-9]\S*'), ""));
           totalPage.value = int.parse(naviPage.replaceAll(RegExp(r'\S*[^0-9]'), ""));
         }
-
         //Detail SubHeader
         element.getElementsByClassName("structItem structItem--thread").forEach((element) async {
           _title = element.getElementsByClassName("structItem-title");
-          authorLink = element.getElementsByClassName("structItem-parts").map((e) => e.getElementsByTagName("a")[0].attributes['href']).first;
+          authorLink = element
+              .getElementsByClassName("structItem-parts")
+              .map((e) => e.getElementsByTagName("a")[0].attributes['href'])
+              .first;
           authorName = element.attributes["data-author"];
-          replies = element.getElementsByClassName("pairs pairs--justified").map((e) => e.getElementsByTagName("dd")[0].innerHtml).first;
-          date = element.getElementsByClassName("structItem-latestDate u-dt").map((e) => e.innerHtml).first;
-          if (_title.map((e) => e.getElementsByTagName("a").length).toString() == "(1)") {
-            title = _title.map((e) => e.getElementsByTagName("a")[0].innerHtml).first;
-            linkThread = _title.map((e) => e.getElementsByTagName("a")[0].attributes['href']).first!;
+          replies = element
+              .getElementsByClassName("pairs pairs--justified")
+              .map((e) => e.getElementsByTagName("dd")[0].innerHtml)
+              .first;
+          date = element
+              .getElementsByClassName("structItem-latestDate u-dt")
+              .map((e) => e.innerHtml)
+              .first;
+          if (_title.map((e) =>
+          e
+              .getElementsByTagName("a")
+              .length).toString() == "(1)") {
+            title = _title
+                .map((e) => e.getElementsByTagName("a")[0].innerHtml)
+                .first;
+            linkThread = _title
+                .map((e) => e.getElementsByTagName("a")[0].attributes['href'])
+                .first!;
           } else {
-            title = "   " + _title.map((e) => e.getElementsByTagName("a")[1].innerHtml).first;
-            themeTitle = _title.map((e) => e.getElementsByTagName("span")[0].innerHtml).first;
-            linkThread = _title.map((e) => e.getElementsByTagName("a")[1].attributes['href']).first!;
+            title = "   " + _title
+                .map((e) => e.getElementsByTagName("a")[1].innerHtml)
+                .first;
+            themeTitle = _title
+                .map((e) => e.getElementsByTagName("span")[0].innerHtml)
+                .first;
+            linkThread = _title
+                .map((e) => e.getElementsByTagName("a")[1].attributes['href'])
+                .first!;
           }
           myThreadList.add({
             "title": title,
@@ -88,8 +120,13 @@ class ThreadController extends GetxController {
       if (Get.isDialogOpen == true || refreshController.isLoading) {
         if (Get.isDialogOpen == true) Get.back();
         myThreadList.removeRange(0, lengthHtmlDataList);
+        itemScrollController.scrollTo(index: currentPage.value + 1, duration: Duration(milliseconds: 500),curve: Curves.slowMiddle,alignment: GlobalController.i.pageNaviAlign);
+        listViewScrollController.jumpTo(-10.0);
       }
+
       refreshController.loadComplete();
+
     });
+
   }
 }

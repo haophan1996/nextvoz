@@ -10,54 +10,51 @@ class HomePageUI extends GetView<HomeController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).backgroundColor,
-      appBar: preferredSize("   theNEXTvoz", GlobalController.i.heightAppbar),
-      body: Center(
-        child: Padding(
-          padding: EdgeInsets.only(top: 0),
-          child: Obx(
-            () => controller.myHomePage.length == 0
-                ? CupertinoActivityIndicator()
-                : ListView.builder(
-                    physics: BouncingScrollPhysics(),
-                    shrinkWrap: false,
-                    itemCount: controller.myHomePage.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      return Column(
-                        children: [
-                          (index != 0)
-                              ? (controller.myHomePage.elementAt(index - 1)["header"] != controller.myHomePage.elementAt(index)["header"]
-                                  ? theme(controller.myHomePage.elementAt(index)["header"])
-                                  : Container())
-                              : theme(controller.myHomePage.elementAt(index)["header"]),
-                          InkWell(
-                            focusColor: Colors.red,
-                            hoverColor: Colors.red,
-                            highlightColor: Colors.red,
-                            splashColor: Colors.red,
-                            splashFactory: InkRipple.splashFactory,
-                            onTap: () {
-                                      controller.navigateToThread(
-                                          controller.myHomePage.elementAt(index)["subHeader"], controller.myHomePage.elementAt(index)["linkSubHeader"]);
-                            },
-                            child: blockItem(context, index, "", controller.myHomePage.elementAt(index)["subHeader"], "header21", "header22", "header3"),
-                          ),
-                        ],
-                      );
-                    },
-                  ),
-          ),
-        ),
-      ),
-    );
+        backgroundColor: Theme.of(context).backgroundColor,
+        appBar: preferredSize("   theNEXTvoz", GlobalController.i.heightAppbar),
+        body: Obx(
+          () => controller.myHomePage.length == 0
+              ? percentBar()
+              : ListView.builder(
+                  physics: BouncingScrollPhysics(),
+                  shrinkWrap: false,
+                  itemCount: controller.myHomePage.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return Column(
+                      children: [
+                        (index != 0)
+                            ? (controller.myHomePage.elementAt(index - 1)["header"] != controller.myHomePage.elementAt(index)["header"]
+                                ? theme(controller.myHomePage.elementAt(index)["header"], context)
+                                : Container())
+                            : theme(controller.myHomePage.elementAt(index)["header"], context),
+                        InkWell(
+                          focusColor: Colors.red,
+                          hoverColor: Colors.red,
+                          highlightColor: Colors.red,
+                          splashColor: Colors.red,
+                          splashFactory: InkRipple.splashFactory,
+                          onTap: ()=> controller.navigateToThread(
+                    controller.myHomePage.elementAt(index)["subHeader"], controller.myHomePage.elementAt(index)["linkSubHeader"]),
+                    child:
+                              blockItem(context, index, "", controller.myHomePage.elementAt(index)["subHeader"], "header21", "header22", "header3"),
+                        ),
+                      ],
+                    );
+                  },
+                ),
+        ));
   }
 }
 
-theme(String theme) {
+theme(String theme, BuildContext context) {
   return Container(
-    child: Padding(
-      padding: EdgeInsets.only(top: 5, bottom: 5),
-      child: Text(theme),
+    color: Theme.of(context).hintColor,
+    child: ListTile(
+      title: Text(
+        theme,
+        style: TextStyle(color: Colors.white, fontWeight: FontWeight.w900),
+      ),
     ),
   );
+  ;
 }

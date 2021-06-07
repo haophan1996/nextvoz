@@ -17,55 +17,51 @@ class ThreadUI extends GetView<ThreadController> {
       appBar: preferredSize(controller.theme, GlobalController.i.heightAppbar),
       body: Stack(
         children: <Widget>[
-          Align(
-            alignment: Alignment.center,
-            child: Container(
-              child: Obx(
-                () => controller.myThreadList.length == 0
-                    ? CupertinoActivityIndicator()
-                    : refreshIndicatorConfiguration(
-                        Scrollbar(
-                          child: SmartRefresher(
-                            enablePullDown: false,
-                            enablePullUp: true,
-                            onLoading: () {
-                              controller.setPageOnClick((controller.currentPage.value + 1).toString());
-                            },
-                            controller: controller.refreshController,
-                            child: ListView.builder(
-                                physics: BouncingScrollPhysics(),
-                                controller: controller.listViewScrollController,
-                                cacheExtent: 500,
-                                itemCount: controller.myThreadList.length,
-                                itemBuilder: (BuildContext context, int index) {
-                                  return InkWell(
-                                      focusColor: Colors.red,
-                                      hoverColor: Colors.red,
-                                      highlightColor: Colors.red,
-                                      splashColor: Colors.red,
-                                      splashFactory: InkRipple.splashFactory,
-                                    onTap: () {
-                                      controller.navigateToThread(
-                                          controller.myThreadList.elementAt(index)['title'], controller.myThreadList.elementAt(index)['linkThread']);
-                                    },
-                                    child: blockItem(
-                                        context,
-                                        index,
-                                        controller.myThreadList.elementAt(index)['themeTitle'],
-                                        controller.myThreadList.elementAt(index)['title'],
-                                        controller.myThreadList.elementAt(index)['replies'],
-                                        controller.myThreadList.elementAt(index)['date'],
-                                        controller.myThreadList.elementAt(index)['authorName'],)
-                                  );
-                                }),
-                          ),
+          Obx(
+            () => refreshIndicatorConfiguration(
+              Scrollbar(
+                child: SmartRefresher(
+                  enablePullDown: false,
+                  enablePullUp: true,
+                  onLoading: () {
+                    controller.setPageOnClick((controller.currentPage.value + 1).toString());
+                  },
+                  controller: controller.refreshController,
+                  child: ListView.builder(
+                    physics: BouncingScrollPhysics(),
+                    controller: controller.listViewScrollController,
+                    cacheExtent: 500,
+                    itemCount: controller.myThreadList.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return InkWell(
+                        focusColor: Colors.red,
+                        hoverColor: Colors.red,
+                        highlightColor: Colors.red,
+                        splashColor: Colors.red,
+                        splashFactory: InkRipple.splashFactory,
+                        onTap: () {
+                          controller.navigateToThread(
+                              controller.myThreadList.elementAt(index)['title'], controller.myThreadList.elementAt(index)['linkThread']);
+                        },
+                        child: blockItem(
+                          context,
+                          index,
+                          controller.myThreadList.elementAt(index)['themeTitle'],
+                          controller.myThreadList.elementAt(index)['title'],
+                          controller.myThreadList.elementAt(index)['replies'],
+                          controller.myThreadList.elementAt(index)['date'],
+                          controller.myThreadList.elementAt(index)['authorName'],
                         ),
-                      ),
+                      );
+                    },
+                  ),
+                ),
               ),
             ),
           ),
           Obx(() => pageNavigation(context, controller.itemScrollController, controller.currentPage.value, controller.totalPage.value,
-              (index) => controller.setPageOnClick(index)))
+              (index) => controller.setPageOnClick(index))),
+          Obx(() => GlobalController.i.percentDownload.value == -1.0 ? Container() : percentBar()),
         ],
       ),
     );

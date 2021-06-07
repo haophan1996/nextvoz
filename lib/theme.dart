@@ -10,7 +10,7 @@ class Themes {
     secondaryHeaderColor: Color(0xFFE5E3E3),
     accentColor: Colors.black,  // In block quote
     cardColor: Colors.grey.shade400,
-    dividerColor: Color(0xffcfd4cf),
+    hintColor: Color(0xff5c7099),
     appBarTheme: AppBarTheme(
       iconTheme: IconThemeData(
         color: Colors.black
@@ -32,7 +32,7 @@ class Themes {
     secondaryHeaderColor: Color(0xFF424242),
     accentColor: Colors.white54,  // In block quote
     cardColor: Colors.grey.shade900,
-    dividerColor: Color(0xff282727),
+    hintColor: Color(0xff223447),
     appBarTheme: AppBarTheme(
       iconTheme: IconThemeData(
           color: Colors.white

@@ -26,7 +26,8 @@ class ViewUI extends GetView<ViewController> {
             child: postContent(context),
           ),
           Obx(() => pageNavigation(context, controller.itemScrollController, controller.currentPage.value, controller.totalPage.value,
-              (index) => controller.setPageOnClick(index)))
+              (index) => controller.setPageOnClick(index))),
+          Obx(() => GlobalController.i.percentDownload.value == -1.0 ? Container() : percentBar()),
         ],
       ),
     );

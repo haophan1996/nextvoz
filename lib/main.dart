@@ -11,6 +11,7 @@ import 'GlobalController.dart';
 import 'Page/home/homeUI.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   Get.put<GlobalController>(GlobalController());
   runApp(MyPage());
 }
