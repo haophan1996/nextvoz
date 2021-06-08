@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_html/shims/dart_ui_real.dart';
 
 class Themes {
   final lightTheme = ThemeData.light().copyWith(

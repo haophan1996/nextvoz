@@ -1,11 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:vozforums/Page/ThreadView/ViewBinding.dart';
-import 'package:vozforums/Page/ThreadView/ViewUI.dart';
+import 'package:vozforums/Page/View/ViewBinding.dart';
+import 'package:vozforums/Page/View/ViewUI.dart';
 import 'package:vozforums/Page/home/homeBinding.dart';
-import 'package:vozforums/Page/subThread/subThreadBinding.dart';
-import 'package:vozforums/Page/subThread/subThreadUI.dart';
+import 'package:vozforums/Page/Thread/subThreadBinding.dart';
+import 'package:vozforums/Page/Thread/subThreadUI.dart';
 import 'package:vozforums/theme.dart';
 import 'GlobalController.dart';
 import 'Page/home/homeUI.dart';
@@ -20,6 +20,7 @@ class MyPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
+      navigatorKey: Get.key,
       debugShowCheckedModeBanner: false,
       defaultTransition: Transition.cupertino,
       transitionDuration: Duration(milliseconds: 200),

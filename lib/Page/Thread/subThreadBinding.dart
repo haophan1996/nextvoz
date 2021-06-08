@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:vozforums/Page/subThread/subThreadController.dart';
+import 'package:vozforums/Page/Thread/subThreadController.dart';
 
 class ThreadBinding extends Bindings{
   @override

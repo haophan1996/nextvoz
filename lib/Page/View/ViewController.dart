@@ -33,11 +33,16 @@ class ViewController extends GetxController {
 
   @override
   Future<void> onInit() async {
-    // TODO: implement onInit
     super.onInit();
     subHeader = Get.arguments[0];
-    //await loadUserPost(fullUrl = GlobalController.i.url + Get.arguments[1]);
-    await loadUserPost("https://voz.vn/t/review-cat-amidan-o-benh-vien-dai-hoc-y-duoc-tphcm.316645/");
+    await loadUserPost(fullUrl = GlobalController.i.url + Get.arguments[1]);
+  // await loadUserPost("https://voz.vn/t/viet-kieu-ai-cung-giau-khoa-pug-gap-toan-ti-phu-usd-my.319331/");
+  }
+
+  @override
+  onReady(){
+    super.onReady();
+    GlobalController.i.percentDownload.value = 0.01;
   }
 
   @override
@@ -120,6 +125,7 @@ class ViewController extends GetxController {
   }
 
   setPageOnClick(String toPage) async {
+    GlobalController.i.percentDownload.value = 0.01;
     if (int.parse(toPage) > totalPage.value) {
       HapticFeedback.heavyImpact();
       refreshController.loadComplete();

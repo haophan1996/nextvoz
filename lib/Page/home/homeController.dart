@@ -10,6 +10,7 @@ class HomeController extends GetxController {
   @override
   onInit() async {
     super.onInit();
+    GlobalController.i.percentDownload.value = 0.01;
     theme();
   }
 
@@ -30,6 +31,8 @@ class HomeController extends GetxController {
 
 
   navigateToThread(String title, String link) {
-    Get.toNamed("/ThreadPage", arguments: [title, GlobalController.i.url + link]);
+    Future.delayed(Duration(milliseconds: 200), (){
+      Get.toNamed("/ThreadPage", arguments: [title, GlobalController.i.url + link]);
+    });
   }
 }

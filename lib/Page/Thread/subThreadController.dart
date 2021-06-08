@@ -30,12 +30,18 @@ class ThreadController extends GetxController {
     theme = Get.arguments[0];
     _url = Get.arguments[1];
     await loadSubHeader(_url);
+  }
 
-
+  @override
+  onReady(){
+    super.onReady();
+    GlobalController.i.percentDownload.value = 0.01;
   }
 
   navigateToThread(String title, String link) {
-    Get.toNamed("/ViewPage", arguments: [title, link]);
+    Future.delayed(Duration(milliseconds: 100), (){
+      Get.toNamed("/ViewPage", arguments: [title, link]);
+    });
   }
 
   @override
@@ -49,6 +55,7 @@ class ThreadController extends GetxController {
   }
 
   setPageOnClick(String toPage) async {
+    GlobalController.i.percentDownload.value = 0.01;
     await loadSubHeader(_url + GlobalController.i.pageLink + toPage);
   }
 

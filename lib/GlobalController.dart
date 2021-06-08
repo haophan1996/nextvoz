@@ -22,6 +22,7 @@ class GlobalController extends GetxController {
     }).whenComplete(() {
       percentDownload.value = -1.0;
     });
+
     return parser.parse(response.toString());
   }
 

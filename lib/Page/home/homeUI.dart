@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:vozforums/GlobalController.dart';
+import 'package:vozforums/Page/NavigationDrawer/NaviDrawerUI.dart';
 import 'package:vozforums/Page/home/homeController.dart';
 import 'package:vozforums/Page/reuseWidget.dart';
 
@@ -10,38 +11,39 @@ class HomePageUI extends GetView<HomeController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        endDrawer: NaviDrawerUI(),
         backgroundColor: Theme.of(context).backgroundColor,
         appBar: preferredSize("   theNEXTvoz", GlobalController.i.heightAppbar),
         body: Obx(
-          () => controller.myHomePage.length == 0
+              () => controller.myHomePage.length == 0
               ? percentBar()
               : ListView.builder(
-                  physics: BouncingScrollPhysics(),
-                  shrinkWrap: false,
-                  itemCount: controller.myHomePage.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return Column(
-                      children: [
-                        (index != 0)
-                            ? (controller.myHomePage.elementAt(index - 1)["header"] != controller.myHomePage.elementAt(index)["header"]
-                                ? theme(controller.myHomePage.elementAt(index)["header"], context)
-                                : Container())
-                            : theme(controller.myHomePage.elementAt(index)["header"], context),
-                        InkWell(
-                          focusColor: Colors.red,
-                          hoverColor: Colors.red,
-                          highlightColor: Colors.red,
-                          splashColor: Colors.red,
-                          splashFactory: InkRipple.splashFactory,
-                          onTap: ()=> controller.navigateToThread(
-                    controller.myHomePage.elementAt(index)["subHeader"], controller.myHomePage.elementAt(index)["linkSubHeader"]),
+            physics: BouncingScrollPhysics(),
+            shrinkWrap: false,
+            itemCount: controller.myHomePage.length,
+            itemBuilder: (BuildContext context, int index) {
+              return Column(
+                children: [
+                  (index != 0)
+                      ? (controller.myHomePage.elementAt(index - 1)["header"] != controller.myHomePage.elementAt(index)["header"]
+                      ? theme(controller.myHomePage.elementAt(index)["header"], context)
+                      : Container())
+                      : theme(controller.myHomePage.elementAt(index)["header"], context),
+                  InkWell(
+                    focusColor: Colors.red,
+                    hoverColor: Colors.red,
+                    highlightColor: Colors.red,
+                    splashColor: Colors.red,
+                    splashFactory: InkRipple.splashFactory,
+                    onTap: ()=> controller.navigateToThread(
+                        controller.myHomePage.elementAt(index)["subHeader"], controller.myHomePage.elementAt(index)["linkSubHeader"]),
                     child:
-                              blockItem(context, index, "", controller.myHomePage.elementAt(index)["subHeader"], "header21", "header22", "header3"),
-                        ),
-                      ],
-                    );
-                  },
-                ),
+                    blockItem(context, index, "", controller.myHomePage.elementAt(index)["subHeader"], "header21", "header22", "header3"),
+                  ),
+                ],
+              );
+            },
+          ),
         ));
   }
 }

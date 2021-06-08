@@ -5,11 +5,12 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:expandable/expandable.dart';
+import 'package:vozforums/Page/NavigationDrawer/NaviDrawerUI.dart';
 import 'package:vozforums/Page/pageLoadNext.dart';
 import 'package:vozforums/GlobalController.dart';
 import 'package:vozforums/Page/pageNavigation.dart';
 import 'package:vozforums/Page/reuseWidget.dart';
-import 'package:vozforums/Page/ThreadView/ViewController.dart';
+import 'package:vozforums/Page/View/ViewController.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:photo_view/photo_view.dart';
 
@@ -17,6 +18,7 @@ class ViewUI extends GetView<ViewController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      endDrawer: NaviDrawerUI(),
       appBar: preferredSize(controller.subHeader, GlobalController.i.heightAppbar),
       body: Stack(
         children: <Widget>[
@@ -32,7 +34,6 @@ class ViewUI extends GetView<ViewController> {
       ),
     );
   }
-
 
   postContent(BuildContext context) {
     return refreshIndicatorConfiguration(
@@ -120,22 +121,24 @@ class ViewUI extends GetView<ViewController> {
                         )),
                     Html(
                       data: controller.htmlData.elementAt(index)['postContent'],
+                      shrinkWrap: true,
                       customRender: {
-                        "img": (RenderContext context, Widget child) {
-                          if (context.tree.element!.attributes['src']!.contains("/styles/next/xenforo")) {
-                            child:
-                            Image.asset(GlobalController.i.getEmoji(context.tree.element!.attributes['src'].toString()));
-                          } else {
-                            child:
-                            Expanded(
-                              child: ExtendedImage.network(
-                                context.tree.element!.attributes['src'].toString(),
-                                cache: true,
-                                clearMemoryCacheIfFailed: true,
-                                enableLoadState: false,
-                              ),
-                            );
+                        "img": (renderContext, child) {
+                          if (renderContext.tree.element!.attributes['src']!.contains("/styles/next/xenforo")) {
+                            return Image.asset(GlobalController.i.getEmoji(renderContext.tree.element!.attributes['src'].toString()));
+                          } else if(renderContext.tree.element!.attributes['src']!.contains("twemoji.maxcdn.com")){
+                            return Text(renderContext.tree.element!.attributes['alt']!,style: TextStyle(fontSize: 25),);
                           }
+                          else if (renderContext.tree.element!.attributes['data-url']!.contains(".gif") == false) {
+                            return ExtendedImage.network(
+                              renderContext.tree.element!.attributes['src'].toString(),
+                              cache: true,
+                              constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width-30),
+                              clearMemoryCacheIfFailed: true,
+                              enableLoadState: false,
+                            );
+                          } else  return Text("data");
+
                         },
                         "blockquote": (renderContext, child) {
                           renderContext.tree.children.forEach((element) {
@@ -168,7 +171,7 @@ class ViewUI extends GetView<ViewController> {
                                   ),
                                   collapsed: ExpandableButton(
                                     child: Container(
-                                        width: double.infinity,
+                                        width: MediaQuery.of(context).size.width,
                                         decoration: BoxDecoration(
                                           color: Theme.of(context).cardColor,
                                           borderRadius: BorderRadius.all(Radius.circular(5)),
@@ -239,5 +242,4 @@ class ViewUI extends GetView<ViewController> {
       ),
     );
   }
-
 }
