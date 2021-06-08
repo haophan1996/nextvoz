@@ -36,7 +36,8 @@ class ViewController extends GetxController {
     // TODO: implement onInit
     super.onInit();
     subHeader = Get.arguments[0];
-    await loadUserPost(fullUrl = GlobalController.i.url + Get.arguments[1]);
+    //await loadUserPost(fullUrl = GlobalController.i.url + Get.arguments[1]);
+    await loadUserPost("https://voz.vn/t/review-cat-amidan-o-benh-vien-dai-hoc-y-duoc-tphcm.316645/");
   }
 
   @override
@@ -50,7 +51,7 @@ class ViewController extends GetxController {
     GlobalController.i.percentDownload.value = -1.0; //
   }
 
-  loadUserPost(String url) async {
+  Future<void> loadUserPost(String url) async {
     await GlobalController.i.getBody(url).then((value) async {
       lengthHtmlDataList = htmlData.length;
       value.getElementsByClassName("block block--messages").forEach((element) {

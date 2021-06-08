@@ -1,25 +1,22 @@
-import 'dart:convert';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:http/http.dart' as http;
 import 'package:html/dom.dart' as dom;
 import 'package:html/parser.dart' as parser;
-import 'package:http/http.dart';
 import 'package:dio/dio.dart';
 
 class GlobalController extends GetxController {
   static GlobalController get i => Get.find();
   late dom.Document doc;
   var contentLength;
-  final String url = "https://voz.vn";
+   final String url = "https://voz.vn";
   final String pageLink = "page-";
   double pageNaviAlign = 0.784;
   double heightAppbar = 45;
   var dio = Dio();
   RxDouble percentDownload = 0.0.obs;
 
-  Future<dom.Document> getBody(String url) async {
+   getBody(String url) async {
     final response = await dio.get(url,onReceiveProgress: (actual, total) {
       percentDownload.value = (actual.bitLength - 4) / total.bitLength;
     }).whenComplete(() {

@@ -24,27 +24,3 @@ Widget refreshIndicatorConfiguration(Widget widget) {
       ),
       child: widget);
 }
-
-// class PageLoad {
-//
-//   Widget refreshIndicatorConfiguration(Widget widget) {
-//     return RefreshConfiguration(
-//         footerTriggerDistance: -80,
-//         footerBuilder: () => ClassicFooter(
-//           loadingText: "Loading",
-//           loadingIcon: CupertinoActivityIndicator(),
-//           idleText: "Pull Up To Next Page",
-//           canLoadingText: "Release To Load",
-//           height: 75,
-//           outerBuilder: (child) {
-//             return Container(
-//               child: Align(
-//                 alignment: Alignment.topCenter,
-//                 child: child,
-//               ),
-//             );
-//           },
-//         ),
-//         child: widget);
-//   }
-// }
