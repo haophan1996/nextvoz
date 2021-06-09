@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:vozforums/Page/NavigationDrawer/NaviDrawerController.dart';
 import 'package:vozforums/Page/NavigationDrawer/NaviDrawerUI.dart';
 import 'package:vozforums/Page/pageLoadNext.dart';
 import 'package:vozforums/Page/pageNavigation.dart';
@@ -17,11 +18,11 @@ class ThreadUI extends GetView<ThreadController> {
       endDrawerEnableOpenDragGesture: true,
       drawerEdgeDragWidth: MediaQuery.of(context).size.width * 0.2,
       backgroundColor: Theme.of(context).backgroundColor,
-      appBar: preferredSize(controller.theme, GlobalController.i.heightAppbar),
+      appBar: preferredSize(context, controller.theme),
       body: Stack(
         children: <Widget>[
           Obx(
-                () => refreshIndicatorConfiguration(
+            () => refreshIndicatorConfiguration(
               Scrollbar(
                 child: SmartRefresher(
                   enablePullDown: false,
@@ -62,8 +63,16 @@ class ThreadUI extends GetView<ThreadController> {
               ),
             ),
           ),
-          Obx(() => pageNavigation(context, controller.itemScrollController, controller.currentPage.value, controller.totalPage.value,
-                  (index) => controller.setPageOnClick(index))),
+          Obx(
+            () => pageNavigation(
+                context,
+                controller.itemScrollController,
+                controller.currentPage.value,
+                controller.totalPage.value,
+                (index) => controller.setPageOnClick(index),
+                () => {controller.setPageOnClick(controller.totalPage.toString())},
+                () => controller.setPageOnClick("1")),
+          ),
           Obx(() => GlobalController.i.percentDownload.value == -1.0 ? Container() : percentBar()),
         ],
       ),

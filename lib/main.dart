@@ -8,11 +8,13 @@ import 'package:vozforums/Page/Thread/subThreadBinding.dart';
 import 'package:vozforums/Page/Thread/subThreadUI.dart';
 import 'package:vozforums/theme.dart';
 import 'GlobalController.dart';
+import 'Page/NavigationDrawer/NaviDrawerController.dart';
 import 'Page/home/homeUI.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   Get.put<GlobalController>(GlobalController());
+  Get.put<NaviDrawerController>(NaviDrawerController(), permanent: true);
   runApp(MyPage());
 }
 
@@ -20,7 +22,6 @@ class MyPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      navigatorKey: Get.key,
       debugShowCheckedModeBanner: false,
       defaultTransition: Transition.cupertino,
       transitionDuration: Duration(milliseconds: 200),

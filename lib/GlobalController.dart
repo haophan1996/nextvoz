@@ -12,7 +12,6 @@ class GlobalController extends GetxController {
    final String url = "https://voz.vn";
   final String pageLink = "page-";
   double pageNaviAlign = 0.784;
-  double heightAppbar = 45;
   var dio = Dio();
   RxDouble percentDownload = 0.0.obs;
 

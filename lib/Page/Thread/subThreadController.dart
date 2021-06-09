@@ -30,6 +30,7 @@ class ThreadController extends GetxController {
     theme = Get.arguments[0];
     _url = Get.arguments[1];
     await loadSubHeader(_url);
+
   }
 
   @override

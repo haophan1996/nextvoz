@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:vozforums/GlobalController.dart';
+import 'package:vozforums/Page/NavigationDrawer/NaviDrawerController.dart';
 import 'package:vozforums/Page/NavigationDrawer/NaviDrawerUI.dart';
 import 'package:vozforums/Page/home/homeController.dart';
 import 'package:vozforums/Page/reuseWidget.dart';
@@ -13,7 +14,7 @@ class HomePageUI extends GetView<HomeController> {
     return Scaffold(
         endDrawer: NaviDrawerUI(),
         backgroundColor: Theme.of(context).backgroundColor,
-        appBar: preferredSize("   theNEXTvoz", GlobalController.i.heightAppbar),
+        appBar: preferredSize(context,"theNEXTvoz"),
         body: Obx(
               () => controller.myHomePage.length == 0
               ? percentBar()
@@ -38,7 +39,7 @@ class HomePageUI extends GetView<HomeController> {
                     onTap: ()=> controller.navigateToThread(
                         controller.myHomePage.elementAt(index)["subHeader"], controller.myHomePage.elementAt(index)["linkSubHeader"]),
                     child:
-                    blockItem(context, index, "", controller.myHomePage.elementAt(index)["subHeader"], "header21", "header22", "header3"),
+                    blockItem(context, index, "", controller.myHomePage.elementAt(index)["subHeader"], controller.myHomePage.elementAt(index)["threads"], controller.myHomePage.elementAt(index)["messages"], controller.myHomePage.elementAt(index)["title"]),
                   ),
                 ],
               );
@@ -58,5 +59,4 @@ theme(String theme, BuildContext context) {
       ),
     ),
   );
-  ;
 }
