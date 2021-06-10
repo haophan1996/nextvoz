@@ -1,26 +1,47 @@
+import 'dart:io';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:html/parser.dart' as parser;
+import 'package:cookie_jar/cookie_jar.dart';
+import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:dio/dio.dart';
 
 class GlobalController extends GetxController {
   static GlobalController get i => Get.find();
   late dom.Document doc;
   var contentLength;
-   final String url = "https://voz.vn";
+  final String url = "https://voz.vn";
   final String pageLink = "page-";
-  double pageNaviAlign = 0.784;
-  var dio = Dio();
+  final pageNaviAlign = 0.72;
   RxDouble percentDownload = 0.0.obs;
+  var dio = Dio();
+  var cookieJar = CookieJar();
+  late var response;
 
-   getBody(String url) async {
-    final response = await dio.get(url,onReceiveProgress: (actual, total) {
-      percentDownload.value = (actual.bitLength - 4) / total.bitLength;
-    }).whenComplete(() {
-      percentDownload.value = -1.0;
-    });
+  getBody(String url) async {
+    try{
+      dio.interceptors.add(CookieManager(cookieJar));
+      response = await dio.get(url,onReceiveProgress: (actual, total) {
+        percentDownload.value = (actual.bitLength - 4) / total.bitLength;
+      }).whenComplete(() {
+        percentDownload.value = -1.0;
+      }).catchError((err){
+        if (CancelToken.isCancel(err)) {
+          print('Request canceled! '+ err.message);
+        }else{
+          print("Heysacsa");
+          // handle error.
+        }
+      });
+    }catch (err){
+      print(err);
+    }
+
+    // print(await cookieJar.loadForRequest(Uri.parse(url)));
+    // print(response.requestOptions.cancelToken);
+
 
     return parser.parse(response.toString());
   }

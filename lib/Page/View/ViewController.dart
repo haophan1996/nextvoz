@@ -13,7 +13,7 @@ import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 class ViewController extends GetxController {
   late String fullUrl;
   var subHeader;
-  List htmlData = [].obs;
+  RxList htmlData = [].obs;
   var _postContent;
   var _userPostDate;
   var _userName;
@@ -36,7 +36,7 @@ class ViewController extends GetxController {
     super.onInit();
     subHeader = Get.arguments[0];
     await loadUserPost(fullUrl = GlobalController.i.url + Get.arguments[1]);
-  // await loadUserPost("https://voz.vn/t/viet-kieu-ai-cung-giau-khoa-pug-gap-toan-ti-phu-usd-my.319331/");
+    //await loadUserPost("https://voz.vn/t/toi-khong-hieu-noi-cac-ong-mua-nha-lam-gi-vay.320703/");
   }
 
   @override
@@ -52,6 +52,7 @@ class ViewController extends GetxController {
     listViewScrollController.dispose();
     currentPage.close();
     totalPage.close();
+    htmlData.close();
     clearMemoryImageCache();
     GlobalController.i.percentDownload.value = -1.0; //
   }

@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
-import 'package:vozforums/Page/NavigationDrawer/NaviDrawerController.dart';
 import 'package:vozforums/Page/NavigationDrawer/NaviDrawerUI.dart';
 import 'package:vozforums/Page/pageLoadNext.dart';
 import 'package:vozforums/Page/pageNavigation.dart';
@@ -37,17 +36,7 @@ class ThreadUI extends GetView<ThreadController> {
                     cacheExtent: 500,
                     itemCount: controller.myThreadList.length,
                     itemBuilder: (BuildContext context, int index) {
-                      return InkWell(
-                        focusColor: Colors.red,
-                        hoverColor: Colors.red,
-                        highlightColor: Colors.red,
-                        splashColor: Colors.red,
-                        splashFactory: InkRipple.splashFactory,
-                        onTap: () {
-                          controller.navigateToThread(
-                              controller.myThreadList.elementAt(index)['title'], controller.myThreadList.elementAt(index)['linkThread']);
-                        },
-                        child: blockItem(
+                      return blockItem(
                           context,
                           index,
                           controller.myThreadList.elementAt(index)['themeTitle'],
@@ -55,8 +44,8 @@ class ThreadUI extends GetView<ThreadController> {
                           controller.myThreadList.elementAt(index)['replies'],
                           controller.myThreadList.elementAt(index)['date'],
                           controller.myThreadList.elementAt(index)['authorName'],
-                        ),
-                      );
+                          () => controller.navigateToThread(
+                              controller.myThreadList.elementAt(index)['title'], controller.myThreadList.elementAt(index)['linkThread']));
                     },
                   ),
                 ),

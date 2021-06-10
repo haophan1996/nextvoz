@@ -10,6 +10,7 @@ class ThreadController extends GetxController {
   late RefreshController refreshController = RefreshController(initialRefresh: false);
   late ScrollController listViewScrollController = ScrollController();
   late ItemScrollController itemScrollController = ItemScrollController();
+
   RxList myThreadList = [].obs;
   RxInt currentPage = 0.obs;
   RxInt totalPage = 0.obs;
@@ -30,7 +31,6 @@ class ThreadController extends GetxController {
     theme = Get.arguments[0];
     _url = Get.arguments[1];
     await loadSubHeader(_url);
-
   }
 
   @override
@@ -46,8 +46,8 @@ class ThreadController extends GetxController {
   }
 
   @override
-  dispose() {
-    super.dispose();
+  onClose() async {
+    super.onClose();
     refreshController.dispose();
     listViewScrollController.dispose();
     myThreadList.close();
@@ -128,7 +128,7 @@ class ThreadController extends GetxController {
       if (Get.isDialogOpen == true || refreshController.isLoading) {
         if (Get.isDialogOpen == true) Get.back();
         myThreadList.removeRange(0, lengthHtmlDataList);
-        itemScrollController.scrollTo(index: currentPage.value + 1, duration: Duration(milliseconds: 500),curve: Curves.slowMiddle,alignment: GlobalController.i.pageNaviAlign);
+        itemScrollController.scrollTo(index: currentPage.value + 1, duration: Duration(seconds: 2),curve: Curves.easeInOutCubic,alignment: GlobalController.i.pageNaviAlign);
         listViewScrollController.jumpTo(-10.0);
       }
 

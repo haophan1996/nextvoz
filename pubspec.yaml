@@ -35,9 +35,10 @@ dependencies:
   #Utilities
   get: ^4.1.4
   dio: ^4.0.0
+  dio_cookie_manager: ^2.0.0
   flutter_html: ^2.1.0
   path_provider: ^2.0.2
-  flutter_email_sender: ^5.0.0
+  cookie_jar: ^3.0.1
 
   flutter:
     sdk: flutter

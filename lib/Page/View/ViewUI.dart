@@ -5,7 +5,6 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:expandable/expandable.dart';
-import 'package:vozforums/Page/NavigationDrawer/NaviDrawerController.dart';
 import 'package:vozforums/Page/NavigationDrawer/NaviDrawerUI.dart';
 import 'package:vozforums/Page/pageLoadNext.dart';
 import 'package:vozforums/GlobalController.dart';
@@ -171,11 +170,14 @@ class ViewUI extends GetView<ViewController> {
                                       child: Container(
                                         padding: EdgeInsets.all(10),
                                         child: Text(
-                                          "Quote: " +
-                                              renderContext.tree.element!
-                                                  .getElementsByClassName("bbCodeBlock-title")
-                                                  .map((e) => e.getElementsByTagName("a")[0].innerHtml)
-                                                  .toString(),
+                                          "Quote [CLick to expand]: " +
+                                              (renderContext.tree.element!.getElementsByClassName("bbCodeBlock-title").length > 0
+                                                  ? renderContext.tree.element!
+                                                      .getElementsByClassName("bbCodeBlock-title")[0]
+                                                      .getElementsByTagName("a")[0]
+                                                      .innerHtml
+                                                      .toString()
+                                                  : ""),
                                           style: TextStyle(fontWeight: FontWeight.bold),
                                         ),
                                         width: double.infinity,
@@ -218,6 +220,7 @@ class ViewUI extends GetView<ViewController> {
                           }
                         },
                         style: {
+                          "code": Style(color: Colors.blue),
                           "table": Style(backgroundColor: Theme.of(context).cardColor),
                           "body": Style(
                             fontSize: FontSize(17.0),

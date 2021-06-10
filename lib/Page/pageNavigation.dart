@@ -2,19 +2,16 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
-import 'package:flutter_email_sender/flutter_email_sender.dart';
-
-
 
 Widget pageNavigation(BuildContext context, ItemScrollController scrollController, int currentPage, int totalPage, Function(String item) onCall,
     Function lastPage, Function firstPage) {
   return Align(
     alignment: Alignment.bottomCenter,
-    child: Container(
-      decoration: BoxDecoration(color: Theme.of(context).cardColor, borderRadius: BorderRadius.all(Radius.circular(6))),
-      height: MediaQuery.of(context).size.height * 0.07,
-      width: double.infinity,
-      child: Row(
+    child: Card(
+      margin: EdgeInsets.only(bottom: 0),
+      color: Theme.of(context).cardColor.withOpacity(0.8),//Colors.black.withOpacity(0.8),//Theme.of(context).cardColor,
+      elevation: 20,
+      child: SizedBox(height: MediaQuery.of(context).size.height * 0.07,child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
@@ -31,7 +28,6 @@ Widget pageNavigation(BuildContext context, ItemScrollController scrollControlle
                 //   isHTML: false,
                 // );
                 // await FlutterEmailSender.send(email);
-
               },
               icon: Icon(
                 Icons.more_vert_rounded,
@@ -106,7 +102,7 @@ Widget pageNavigation(BuildContext context, ItemScrollController scrollControlle
             ),
           )
         ],
-      ),
+      ),),
     ),
   );
 }
