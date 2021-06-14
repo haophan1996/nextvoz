@@ -101,17 +101,14 @@ Widget pageNavigation(BuildContext context, ItemScrollController scrollControlle
                       lastPage();
                     }),
                 Spacer(),
-                Padding(
-                  padding: EdgeInsets.only(right: 10),
-                  child: IconButton(
-                    splashColor: Colors.green,
-                    icon: Icon(
-                      Icons.message_outlined,
-                    ),
-                    onPressed: () {},
-                    iconSize: 25,
+                IconButton(
+                  splashColor: Colors.green,
+                  icon: Icon(
+                    Icons.message_outlined,
                   ),
-                )
+                  onPressed: () {},
+                  iconSize: 25,
+                ),
               ],
             ),
           )),

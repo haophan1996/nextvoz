@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:vozforums/Page/View/ViewBinding.dart';
 import 'package:vozforums/Page/View/ViewUI.dart';
 import 'package:vozforums/Page/home/homeBinding.dart';
@@ -11,10 +12,11 @@ import 'GlobalController.dart';
 import 'Page/NavigationDrawer/NaviDrawerController.dart';
 import 'Page/home/homeUI.dart';
 
-void main() {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   Get.put<GlobalController>(GlobalController());
   Get.put<NaviDrawerController>(NaviDrawerController(), permanent: true);
+  await GetStorage.init();
   runApp(MyPage());
 }
 

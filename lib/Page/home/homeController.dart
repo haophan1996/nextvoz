@@ -10,11 +10,27 @@ class HomeController extends GetxController {
   onInit() async {
     super.onInit();
     GlobalController.i.percentDownload.value = 0.01;
-    loading();
+    await setDataUser();
+    await loading();
+  }
+
+  setDataUser() async {
+    if (GlobalController.i.userStorage.read('userLoggedIn') != null ||
+        GlobalController.i.userStorage.read('userLoggedIn') == true ||
+        GlobalController.i.userStorage.read('xf_user') != null ||
+        GlobalController.i.userStorage.read('xf_session') != null) {
+      print("logged");
+      GlobalController.i.isLogged = await GlobalController.i.userStorage.read('userLoggedIn');
+      GlobalController.i.xfUser = await GlobalController.i.userStorage.read('xf_user');
+      GlobalController.i.xfSession = await GlobalController.i.userStorage.read('xf_session');
+    }
   }
 
   loading() async {
-    await GlobalController.i.getBody(GlobalController.i.url).then((doc) async {
+    await GlobalController.i.getBody(GlobalController.i.url, true).then((doc) async {
+      //Set token
+      GlobalController.i.dataCsrf = doc.getElementsByTagName('html')[0].attributes['data-csrf'];
+
       doc.getElementsByClassName("block block--category block--category").forEach((value) {
         value.getElementsByClassName("node-body").forEach((element) {
           myHomePage.add({
@@ -33,6 +49,9 @@ class HomeController extends GetxController {
         });
       });
     });
+
+    print(GlobalController.i.dataCsrf);
+    print(GlobalController.i.xfCsrf);
   }
 
   navigateToThread(String title, String link) {

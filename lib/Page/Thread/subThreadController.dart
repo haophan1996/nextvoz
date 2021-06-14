@@ -61,7 +61,7 @@ class ThreadController extends GetxController {
   }
 
   loadSubHeader(String url) async {
-    await GlobalController.i.getBody(url).then((value) async {
+    await GlobalController.i.getBody(url, false).then((value) async {
       lengthHtmlDataList = myThreadList.length;
       value.getElementsByClassName("p-body-content").forEach((element) async {
         lastP = element.getElementsByClassName("pageNavSimple");

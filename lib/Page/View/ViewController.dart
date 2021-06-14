@@ -58,7 +58,7 @@ class ViewController extends GetxController {
   }
 
   Future<void> loadUserPost(String url) async {
-    await GlobalController.i.getBody(url).then((value) async {
+    await GlobalController.i.getBody(url, false).then((value) async {
       lengthHtmlDataList = htmlData.length;
       value.getElementsByClassName("block block--messages").forEach((element) {
         var lastP = element.getElementsByClassName("pageNavSimple");
