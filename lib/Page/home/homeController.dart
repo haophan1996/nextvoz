@@ -15,14 +15,12 @@ class HomeController extends GetxController {
     await loading();
   }
 
-
-
   loading() async {
     await GlobalController.i.getBody(GlobalController.i.url, true).then((doc) async {
       //Set token
       GlobalController.i.dataCsrf = doc.getElementsByTagName('html')[0].attributes['data-csrf'];
-      GlobalController.i.isLogged.value = doc.getElementsByTagName('html')[0].attributes['data-logged-in'] == 'true' ?  true : false;
-      if (doc.getElementsByTagName('html')[0].attributes['data-logged-in'] == 'true'){
+      GlobalController.i.isLogged.value = doc.getElementsByTagName('html')[0].attributes['data-logged-in'] == 'true' ? true : false;
+      if (doc.getElementsByTagName('html')[0].attributes['data-logged-in'] == 'true') {
         NaviDrawerController.i.getUserProfile();
       }
 
@@ -46,7 +44,7 @@ class HomeController extends GetxController {
     });
   }
 
-  navigateToThread(String title, String link) {
+  navigateToThread(String title, String link) async {
     Future.delayed(Duration(milliseconds: 200), () {
       Get.toNamed("/ThreadPage", arguments: [title, GlobalController.i.url + link]);
     });

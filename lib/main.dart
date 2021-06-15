@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:vozforums/Page/UserProfile/UserProfileBinding.dart';
+import 'package:vozforums/Page/UserProfile/UserProfileUI.dart';
 import 'package:vozforums/Page/View/ViewBinding.dart';
 import 'package:vozforums/Page/View/ViewUI.dart';
 import 'package:vozforums/Page/home/homeBinding.dart';
@@ -34,6 +36,7 @@ class MyPage extends StatelessWidget {
         GetPage(name: "/HomePage", page: ()=> HomePageUI(), popGesture: true, binding: HomeBinding(), maintainState: false),
         GetPage(name: "/ThreadPage", page: ()=> ThreadUI(), popGesture: true, binding: ThreadBinding(), maintainState: false),
         GetPage(name: "/ViewPage", page: ()=> ViewUI(), popGesture: true, binding: ViewBinding(), maintainState: false),
+        GetPage(name: "/UserProfile", page: ()=> UserProfileUI(), popGesture: true, binding: UserProfileBinding(), maintainState: false),
       ],
     );
   }

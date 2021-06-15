@@ -31,6 +31,7 @@ dependencies:
   url_launcher: ^6.0.6
   expandable: ^5.0.1
   scrollable_positioned_list: ^0.2.0-nullsafety.0
+  animated_text_kit: ^4.2.1
 
   #Utilities
   get: ^4.1.4

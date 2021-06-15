@@ -1,7 +1,9 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_state_manager/src/simple/get_view.dart';
 import 'package:vozforums/GlobalController.dart';
 import 'package:vozforums/Page/NavigationDrawer/NaviDrawerController.dart';
+import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:get/get.dart';
 
@@ -79,12 +81,15 @@ Widget login(BuildContext context) {
   return ListTile(
     title: Text("Login"),
     onTap: () {
+      NaviDrawerController.i.statusLogin.value = '';
+      NaviDrawerController.i.textEditingControllerPassword.text = '';
+      NaviDrawerController.i.textEditingControllerLogin.text = '';
       Get.bottomSheet(
         Container(
           height: MediaQuery.of(context).size.height,
           width: double.infinity,
           decoration: BoxDecoration(
-            color: Theme.of(context).backgroundColor,
+            color: Theme.of(context).backgroundColor.withOpacity(0.8),
             border: Border.all(color: Colors.grey),
             borderRadius: BorderRadius.all(
               Radius.circular(6),
@@ -134,6 +139,29 @@ Widget login(BuildContext context) {
               TextButton(
                   child: Text("Login"),
                   onPressed: () async {
+                    Get.defaultDialog(
+                        barrierDismissible: false,
+                        radius: 6,
+                        backgroundColor: Theme.of(context).hintColor.withOpacity(0.8),
+                        content: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            CupertinoActivityIndicator(),
+                            SizedBox(height: 20,),
+                            DefaultTextStyle(
+                                style: TextStyle(color: Theme.of(context).primaryColor),
+                                child: AnimatedTextKit(
+                                  repeatForever: true,
+                                  isRepeatingAnimation: true,
+                                  animatedTexts: [
+                                    WavyAnimatedText('Hang tight'),
+                                    WavyAnimatedText('I\'m processing your request')
+                                  ],
+                                ),
+                            ),
+                          ],
+                        ),
+                        title: 'Login');
                     await NaviDrawerController.i.loginFunction();
                   })
             ],

@@ -8,7 +8,6 @@ import 'package:html/dom.dart' as dom;
 import 'package:html/parser.dart' as parser;
 import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
-import 'package:vozforums/Page/NavigationDrawer/NaviDrawerController.dart';
 
 class GlobalController extends GetxController {
   static GlobalController get i => Get.find();
@@ -21,17 +20,19 @@ class GlobalController extends GetxController {
   var dio = Dio();
   var xfCsrf;
   var dataCsrf;
+  var xfCsrfPost;
+  var dataCsrfPost;
   RxBool isLogged = false.obs;
   String xfUser = '';
   String xfSession = '';
   String dateExpire = '';
 
   Future<dom.Document> getBody(String url, bool isHomePage) async {
-    //dio.options.headers['cookie'] = 'xf_user=${xfUser.toString()}; xf_session=${xfSession.toString()}';
     final response = await dio.get(url, onReceiveProgress: (actual, total) {
       percentDownload.value = (actual.bitLength - 4) / total.bitLength;
     }).whenComplete(() async {
       percentDownload.value = -1.0;
+
     }).catchError((err) {
       if (CancelToken.isCancel(err)) {
         print('Request canceled! ' + err.message);
@@ -40,33 +41,10 @@ class GlobalController extends GetxController {
       }
     });
 
+    xfCsrfPost = cookXfCsrf(response.headers['set-cookie'].toString());
     if (isHomePage == true) xfCsrf = cookXfCsrf(response.headers['set-cookie'].toString());
 
     return parser.parse(response.toString());
-  }
-
-  login(String login, String pass, String token, String cookie, String userAgent) async {
-    Get.dialog(CupertinoActivityIndicator());
-    var headerss = {
-      'content-type': 'application/json; charset=UTF-8',
-      'host': 'vozloginapinode.herokuapp.com',
-    };
-    var map = {"login": login, "password": pass, "remember": "1", "_xfToken": token, "userAgent": userAgent, "cookie": cookie};
-
-    final response = await http.post(Uri.parse("https://vozloginapinode.herokuapp.com/api/vozlogin"), headers: headerss, body: jsonEncode(map));
-
-    if (response.statusCode != 200) {
-      return "none";
-    } else {
-      return jsonDecode(response.body);
-    }
-  }
-
-  uploadStatus() async {
-    print(NaviDrawerController.i.linkUser);
-    // await http.post(Uri.parse(uri))
-    //
-    //
   }
 
 
