@@ -38,7 +38,6 @@ class ViewUI extends GetView<ViewController> {
               () => controller.setPageOnClick("1"),
             ),
           ),
-          Obx(() => GlobalController.i.percentDownload.value == -1.0 ? Container() : percentBar()),
         ],
       ),
     );

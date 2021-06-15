@@ -9,6 +9,7 @@ import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:vozforums/GlobalController.dart';
 import 'dart:io';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
+import 'package:html/dom.dart' as dom;
 
 class ViewController extends GetxController {
   late String fullUrl;
@@ -30,17 +31,20 @@ class ViewController extends GetxController {
   RxInt currentPage = 0.obs;
   RxInt totalPage = 0.obs;
   final int loadItems = 50;
+  late dom.Document res;
 
   @override
   Future<void> onInit() async {
     super.onInit();
     subHeader = Get.arguments[0];
     await loadUserPost(fullUrl = GlobalController.i.url + Get.arguments[1]);
-    //await loadUserPost("https://voz.vn/t/toi-khong-hieu-noi-cac-ong-mua-nha-lam-gi-vay.320703/");
+    if (fullUrl.contains("/unread") == true) {
+      fullUrl = fullUrl.split("unread")[0];
+    }
   }
 
   @override
-  onReady(){
+  onReady() {
     super.onReady();
     GlobalController.i.percentDownload.value = 0.01;
   }
@@ -57,65 +61,6 @@ class ViewController extends GetxController {
     GlobalController.i.percentDownload.value = -1.0; //
   }
 
-  Future<void> loadUserPost(String url) async {
-    await GlobalController.i.getBody(url, false).then((value) async {
-      lengthHtmlDataList = htmlData.length;
-      value.getElementsByClassName("block block--messages").forEach((element) {
-        var lastP = element.getElementsByClassName("pageNavSimple");
-        if (lastP.length == 0) {
-          currentPage.value = 1;
-          totalPage.value = 1;
-        } else {
-          var naviPage = element.getElementsByClassName("pageNavSimple-el pageNavSimple-el--current").first.innerHtml.trim();
-          currentPage.value = int.parse(naviPage.replaceAll(RegExp(r'[^0-9]\S*'), ""));
-          totalPage.value = int.parse(naviPage.replaceAll(RegExp(r'\S*[^0-9]'), ""));
-        }
-
-        //Get post
-        element.getElementsByClassName("message message--post js-post js-inlineModContainer").forEach((element) {
-          _postContent = element.getElementsByClassName("message-body js-selectToQuote").map((e) => e.outerHtml).first;
-          _userPostDate = element.getElementsByClassName("u-concealed").map((e) => e.getElementsByTagName("time")[0].innerHtml).first;
-          _user = element.getElementsByClassName("message-cell message-cell--user");
-          _userLink = _user.map((e) => e.getElementsByTagName("a")[1].attributes['href']).first!;
-          _userTitle = _user.map((e) => e.getElementsByClassName("userTitle message-userTitle")[0].innerHtml).first;
-          if (_user.map((e) => e.getElementsByTagName("img").length).toString() == "(1)") {
-            _userAvatar = _user.map((e) => e.getElementsByTagName("img")[0].attributes['src']).first!;
-          } else {
-            _userAvatar = "no";
-          }
-
-          _userName = _user.map((e) => e.getElementsByTagName("a")[1].innerHtml).first;
-          if (_userName.contains("span")) {
-            _userName = _user.map((e) => e.getElementsByTagName("span")[0].innerHtml).first;
-          }
-
-          _orderPost = element
-              .getElementsByClassName("message-attribution-opposite message-attribution-opposite--list")
-              .map((e) => e.getElementsByTagName("a")[1].innerHtml)
-              .first
-              .trim();
-
-          htmlData.add({
-            "postContent": _removeTag(_postContent),
-            "userPostDate": _userPostDate,
-            "userName": _userName,
-            "userLink": _userLink,
-            "userTitle": _userTitle,
-            "userAvatar": (_userAvatar == "no" || _userAvatar.contains("https://")) ? _userAvatar : GlobalController.i.url + _userAvatar,
-            "orderPost": _orderPost,
-          });
-        });
-      });
-      if (Get.isDialogOpen == true || refreshController.isLoading) {
-        if (Get.isDialogOpen == true) Get.back();
-        htmlData.removeRange(0, lengthHtmlDataList);
-        itemScrollController.scrollTo(index: currentPage.value + 1, duration: Duration(milliseconds: 500),curve: Curves.slowMiddle, alignment: GlobalController.i.pageNaviAlign);
-        listViewScrollController.jumpTo(-10.0);
-      }
-      refreshController.loadComplete();
-    });
-  }
-
   getYoutubeID(String s) {
     return YoutubePlayer.convertUrlToId(s);
   }
@@ -126,13 +71,17 @@ class ViewController extends GetxController {
   }
 
   setPageOnClick(String toPage) async {
-    GlobalController.i.percentDownload.value = 0.01;
     if (int.parse(toPage) > totalPage.value) {
       HapticFeedback.heavyImpact();
       refreshController.loadComplete();
     } else {
+      GlobalController.i.percentDownload.value = 0.01;
       await loadUserPost(fullUrl + GlobalController.i.pageLink + toPage);
     }
+  }
+
+  getImage(String url) async {
+    return await getCachedImageFile(url);
   }
 
   write(String text) async {
@@ -147,12 +96,105 @@ class ViewController extends GetxController {
     final Directory? directory = Directory("storage/emulated/0/Pictures/vozNext");
     await directory!.create();
     final File file = File((await getCachedImageFilePath(url)).toString());
-    await file.copy(directory.path + "/${file.path.split("/").last}.jpg");
-
-    print(await file.copy(directory.path + "/${file.path.split("/").last}.jpg"));
+    await file.copy(directory.path + "/${file.path
+        .split("/")
+        .last}.jpg");
+    print(await file.copy(directory.path + "/${file.path
+        .split("/")
+        .last}.jpg"));
   }
 
-  getImage(String url) async {
-    return await getCachedImageFile(url);
+  Future<void> loadUserPost(String url) async {
+    await GlobalController.i.getBody(url, false).then((value) async {
+      lengthHtmlDataList = htmlData.length;
+      value.getElementsByClassName("block block--messages").forEach((element) {
+        var lastP = element.getElementsByClassName("pageNavSimple");
+        if (lastP.length == 0) {
+          currentPage.value = 1;
+          totalPage.value = 1;
+        } else {
+          var naviPage = element
+              .getElementsByClassName("pageNavSimple-el pageNavSimple-el--current")
+              .first
+              .innerHtml
+              .trim();
+          currentPage.value = int.parse(naviPage.replaceAll(RegExp(r'[^0-9]\S*'), ""));
+          totalPage.value = int.parse(naviPage.replaceAll(RegExp(r'\S*[^0-9]'), ""));
+        }
+
+        //Get post
+        element.getElementsByClassName("message message--post js-post js-inlineModContainer").forEach((element) {
+          _postContent = element
+              .getElementsByClassName("message-body js-selectToQuote")
+              .map((e) => e.outerHtml)
+              .first;
+          _userPostDate = element
+              .getElementsByClassName("u-concealed")
+              .map((e) => e.getElementsByTagName("time")[0].innerHtml)
+              .first;
+          _user = element.getElementsByClassName("message-cell message-cell--user");
+          _userLink = _user
+              .map((e) => e.getElementsByTagName("a")[1].attributes['href'])
+              .first!;
+          _userTitle = _user
+              .map((e) => e.getElementsByClassName("userTitle message-userTitle")[0].innerHtml)
+              .first;
+          if (_user.map((e) =>
+          e
+              .getElementsByTagName("img")
+              .length).toString() == "(1)") {
+            _userAvatar = _user
+                .map((e) => e.getElementsByTagName("img")[0].attributes['src'])
+                .first!;
+          } else {
+            _userAvatar = "no";
+          }
+
+          _userName = _user
+              .map((e) => e.getElementsByTagName("a")[1].innerHtml)
+              .first;
+          if (_userName.contains("span")) {
+            _userName = _user
+                .map((e) => e.getElementsByTagName("span")[0].innerHtml)
+                .first;
+          }
+
+          _orderPost = element
+              .getElementsByClassName("message-attribution-opposite message-attribution-opposite--list")
+              .map((e) => e.getElementsByTagName("a")[GlobalController.i.isLogged.value == true ? 2 : 1].innerHtml)
+              .first
+              .trim();
+
+          htmlData.add({
+            "postContent": _removeTag(_postContent),
+            "userPostDate": _userPostDate,
+            "userName": _userName,
+            "userLink": _userLink,
+            "userTitle": _userTitle,
+            "userAvatar": (_userAvatar == "no" || _userAvatar.contains("https://")) ? _userAvatar : GlobalController.i.url + _userAvatar,
+            "orderPost": _orderPost,
+          });
+        });
+      });
+
+      if (Get.isDialogOpen == true || refreshController.isLoading) {
+        if (Get.isDialogOpen == true) Get.back();
+        htmlData.removeRange(0, lengthHtmlDataList);
+        listViewScrollController.jumpTo(-10.0);
+      }
+      refreshController.loadComplete();
+    });
+    await Future.delayed(Duration(milliseconds: 50), (){
+      scrolltoFunc();
+    });
+  }
+
+
+  scrolltoFunc(){ 
+    itemScrollController.scrollTo(
+        index: currentPage.value + 1,
+        duration: Duration(milliseconds: 500),
+        curve: Curves.slowMiddle,
+        alignment: GlobalController.i.pageNaviAlign);
   }
 }

@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
 import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +8,7 @@ import 'package:html/dom.dart' as dom;
 import 'package:html/parser.dart' as parser;
 import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
+import 'package:vozforums/Page/NavigationDrawer/NaviDrawerController.dart';
 
 class GlobalController extends GetxController {
   static GlobalController get i => Get.find();
@@ -21,25 +21,13 @@ class GlobalController extends GetxController {
   var dio = Dio();
   var xfCsrf;
   var dataCsrf;
-  bool isLogged = false;
+  RxBool isLogged = false.obs;
   String xfUser = '';
   String xfSession = '';
   String dateExpire = '';
 
-  @override
-  onInit() async {
-    super.onInit();
-  }
-
-  @override
-  Future<void> onReady() async {
-    super.onReady();
-  }
-
-
-  getBody(String url, bool isHomePage) async {
-    dio.options.headers['cookie'] = 'xf_user=${xfUser.toString()}; xf_session=${xfSession.toString()}';
-    print(dio.options.headers);
+  Future<dom.Document> getBody(String url, bool isHomePage) async {
+    //dio.options.headers['cookie'] = 'xf_user=${xfUser.toString()}; xf_session=${xfSession.toString()}';
     final response = await dio.get(url, onReceiveProgress: (actual, total) {
       percentDownload.value = (actual.bitLength - 4) / total.bitLength;
     }).whenComplete(() async {
@@ -51,19 +39,10 @@ class GlobalController extends GetxController {
         print("Heysacsa");
       }
     });
-    write(response.toString());
 
     if (isHomePage == true) xfCsrf = cookXfCsrf(response.headers['set-cookie'].toString());
 
     return parser.parse(response.toString());
-  }
-
-  write(String text) async {
-    final Directory directory = await getApplicationDocumentsDirectory();
-    final File file = File('${directory.path}/my_file.txt');
-    await file.writeAsString(text);
-    print('${directory.path}/my_file.txt');
-    print(File('${directory.path}/my_file.txt').toString());
   }
 
   login(String login, String pass, String token, String cookie, String userAgent) async {
@@ -72,19 +51,32 @@ class GlobalController extends GetxController {
       'content-type': 'application/json; charset=UTF-8',
       'host': 'vozloginapinode.herokuapp.com',
     };
-
     var map = {"login": login, "password": pass, "remember": "1", "_xfToken": token, "userAgent": userAgent, "cookie": cookie};
 
     final response = await http.post(Uri.parse("https://vozloginapinode.herokuapp.com/api/vozlogin"), headers: headerss, body: jsonEncode(map));
 
-    await Future.delayed(Duration(milliseconds: 5000), () async {
-      Get.back();
-    });
-
     if (response.statusCode != 200) {
       return "none";
-    } else
+    } else {
       return jsonDecode(response.body);
+    }
+  }
+
+  uploadStatus() async {
+    print(NaviDrawerController.i.linkUser);
+    // await http.post(Uri.parse(uri))
+    //
+    //
+  }
+
+
+  setDataUser() async {
+    if (userStorage.read('userLoggedIn') != null && userStorage.read('xf_user') != null && userStorage.read('xf_session') != null) {
+      isLogged.value = await userStorage.read('userLoggedIn');
+      xfUser = await userStorage.read('xf_user');
+      xfSession = await userStorage.read('xf_session');
+      dio.options.headers['cookie'] = 'xf_user=${xfUser.toString()}; xf_session=${xfSession.toString()}';
+    }
   }
 
   String cookXfCsrf(String string) {

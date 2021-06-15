@@ -62,7 +62,6 @@ class ThreadUI extends GetView<ThreadController> {
                 () => {controller.setPageOnClick(controller.totalPage.toString())},
                 () => controller.setPageOnClick("1")),
           ),
-          Obx(() => GlobalController.i.percentDownload.value == -1.0 ? Container() : percentBar()),
         ],
       ),
     );

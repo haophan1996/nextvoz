@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:vozforums/GlobalController.dart';
+import 'package:vozforums/Page/NavigationDrawer/NaviDrawerController.dart';
 
 class HomeController extends GetxController {
   late String header;
@@ -10,26 +11,20 @@ class HomeController extends GetxController {
   onInit() async {
     super.onInit();
     GlobalController.i.percentDownload.value = 0.01;
-    await setDataUser();
+    await GlobalController.i.setDataUser();
     await loading();
   }
 
-  setDataUser() async {
-    if (GlobalController.i.userStorage.read('userLoggedIn') != null ||
-        GlobalController.i.userStorage.read('userLoggedIn') == true ||
-        GlobalController.i.userStorage.read('xf_user') != null ||
-        GlobalController.i.userStorage.read('xf_session') != null) {
-      print("logged");
-      GlobalController.i.isLogged = await GlobalController.i.userStorage.read('userLoggedIn');
-      GlobalController.i.xfUser = await GlobalController.i.userStorage.read('xf_user');
-      GlobalController.i.xfSession = await GlobalController.i.userStorage.read('xf_session');
-    }
-  }
+
 
   loading() async {
     await GlobalController.i.getBody(GlobalController.i.url, true).then((doc) async {
       //Set token
       GlobalController.i.dataCsrf = doc.getElementsByTagName('html')[0].attributes['data-csrf'];
+      GlobalController.i.isLogged.value = doc.getElementsByTagName('html')[0].attributes['data-logged-in'] == 'true' ?  true : false;
+      if (doc.getElementsByTagName('html')[0].attributes['data-logged-in'] == 'true'){
+        NaviDrawerController.i.getUserProfile();
+      }
 
       doc.getElementsByClassName("block block--category block--category").forEach((value) {
         value.getElementsByClassName("node-body").forEach((element) {
@@ -49,9 +44,6 @@ class HomeController extends GetxController {
         });
       });
     });
-
-    print(GlobalController.i.dataCsrf);
-    print(GlobalController.i.xfCsrf);
   }
 
   navigateToThread(String title, String link) {

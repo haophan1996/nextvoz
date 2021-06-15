@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:vozforums/GlobalController.dart';
 import 'package:vozforums/Page/NavigationDrawer/NaviDrawerController.dart';
 
@@ -9,7 +10,11 @@ PreferredSize preferredSize(BuildContext context, String title) {
     preferredSize: Size.fromHeight(NaviDrawerController.i.heightAppbar),
     child: /* Obx(()=>*/ AppBar(
       automaticallyImplyLeading: false,
-      title: Text(title, maxLines: 2, overflow: TextOverflow.ellipsis,),
+      title: Text(
+        title,
+        maxLines: 2,
+        overflow: TextOverflow.ellipsis,
+      ),
       leading: (ModalRoute.of(context)?.canPop ?? false) ? BackButton() : null,
       actions: <Widget>[
         IconButton(
@@ -17,11 +22,17 @@ PreferredSize preferredSize(BuildContext context, String title) {
             Icons.notifications,
             color: Colors.white,
           ),
-          onPressed: () {
-
-          },
+          onPressed: () {},
         ),
       ],
+      bottom: PreferredSize(
+        child: Obx(()=> LinearProgressIndicator(
+          value: GlobalController.i.percentDownload.value,
+          valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF0CF301)),
+          backgroundColor: Theme.of(context).backgroundColor,
+        )),
+        preferredSize: Size.fromHeight(4.0),
+      ),
     ),
   );
 }
@@ -29,7 +40,8 @@ PreferredSize preferredSize(BuildContext context, String title) {
 /// * [header11] - [header12] black/white color depends on Dark/light mode.
 /// * [header21] - [header22] grey color default.
 /// * [header3] orange color default.
-Widget blockItem(BuildContext context, int index, String header11, String header12, String header21, String header22, String header3, Function onTap) {
+Widget blockItem(
+    BuildContext context, int index, String header11, String header12, String header21, String header22, String header3, Function onTap) {
   return Padding(
     padding: EdgeInsets.only(top: 1, left: 8),
     child: InkWell(
@@ -38,7 +50,7 @@ Widget blockItem(BuildContext context, int index, String header11, String header
       highlightColor: Colors.red,
       splashColor: Colors.red,
       splashFactory: InkRipple.splashFactory,
-      onTap: ()=> onTap(),
+      onTap: () => onTap(),
       child: Ink(
         width: double.infinity,
         decoration: BoxDecoration(
@@ -79,7 +91,6 @@ Widget blockItem(BuildContext context, int index, String header11, String header
                     style: TextStyle(color: Color(0xFFFD6E00)),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-
                   )
                 ],
               ),
@@ -97,16 +108,3 @@ Widget blockItem(BuildContext context, int index, String header11, String header
   );
 }
 
-
-
-
-Widget percentBar() {
-  return LinearProgressIndicator(
-    minHeight: 5,
-    value: GlobalController.i.percentDownload.value,
-    valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF0CF301)),
-    backgroundColor: Colors.white,
-    semanticsValue: "ascsacsacsac",
-    semanticsLabel: "asacascsac",
-  );
-}
