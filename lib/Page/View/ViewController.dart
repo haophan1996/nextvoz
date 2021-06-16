@@ -37,16 +37,15 @@ class ViewController extends GetxController {
   Future<void> onInit() async {
     super.onInit();
     subHeader = Get.arguments[0];
+  }
+
+  @override
+  Future<void> onReady() async {
+    super.onReady();
     await loadUserPost(fullUrl = GlobalController.i.url + Get.arguments[1]);
     if (fullUrl.contains("/unread") == true) {
       fullUrl = fullUrl.split("unread")[0];
     }
-  }
-
-  @override
-  onReady() {
-    super.onReady();
-    GlobalController.i.percentDownload.value = 0.01;
   }
 
   @override
@@ -58,7 +57,7 @@ class ViewController extends GetxController {
     totalPage.close();
     htmlData.close();
     clearMemoryImageCache();
-    GlobalController.i.percentDownload.value = -1.0; //
+    GlobalController.i.percentDownload = -1.0; //
   }
 
   getYoutubeID(String s) {
@@ -75,7 +74,7 @@ class ViewController extends GetxController {
       HapticFeedback.heavyImpact();
       refreshController.loadComplete();
     } else {
-      GlobalController.i.percentDownload.value = 0.01;
+      GlobalController.i.percentDownload = 0.01;
       await loadUserPost(fullUrl + GlobalController.i.pageLink + toPage);
     }
   }

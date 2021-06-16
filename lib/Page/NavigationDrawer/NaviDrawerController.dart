@@ -14,12 +14,13 @@ class NaviDrawerController extends GetxController {
   RxString titleUser = ''.obs;
   RxString avatarUser = ''.obs;
   RxString linkUser = ''.obs;
-  RxString statusLogin = ''.obs;
+  String statusLogin = '';
 
   Future<void> loginFunction() async {
 
     if (textEditingControllerLogin.text.length < 6 || textEditingControllerPassword.text.length <6){
-      statusLogin.value = 'Login or Password maybe too short ?';
+      statusLogin = 'Login or Password maybe too short ?';
+      update();
       Get.back();
       return;
     }
@@ -31,10 +32,12 @@ class NaviDrawerController extends GetxController {
       await Future.delayed(Duration(milliseconds: 3000), () async {
         Get.back();
       });
-      statusLogin.value = "Incorrect ID/Password or server busy\nIf this continue happens, please restart app and try again";
+      statusLogin = "Incorrect ID/Password or server busy\nIf this continue happens, please restart app and try again";
+      update();
     } else {
-      statusLogin.value = "Success";
-      statusLogin.value = '';
+      statusLogin = "Success";
+      update();
+      statusLogin = '';
       await GlobalController.i.userStorage.remove('userLoggedIn');
       await GlobalController.i.userStorage.remove('xf_user');
       await GlobalController.i.userStorage.remove('xf_session');
@@ -67,7 +70,13 @@ class NaviDrawerController extends GetxController {
           avatarUser.value = value.documentElement!.getElementsByClassName('avatarWrapper')[0].getElementsByTagName('img')[0].attributes['src'].toString();
         }
       });
+    }).then((value) async {
+      await GlobalController.i.userStorage.write("linkUser", linkUser.value);
+      await GlobalController.i.userStorage.write("nameUser", nameUser.value);
+      await GlobalController.i.userStorage.write("titleUser", titleUser.value);
+      await GlobalController.i.userStorage.write("avatarUser", avatarUser.value);
     });
+
   }
 
   login(String login, String pass, String token, String cookie, String userAgent) async {

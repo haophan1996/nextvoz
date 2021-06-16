@@ -8,10 +8,12 @@ class HomeController extends GetxController {
   RxList myHomePage = [].obs;
 
   @override
-  onInit() async {
+  Future<void> onInit() async {
     super.onInit();
-    GlobalController.i.percentDownload.value = 0.01;
     await GlobalController.i.setDataUser();
+  }
+
+  Future<void> onReady() async {
     await loading();
   }
 
@@ -19,10 +21,14 @@ class HomeController extends GetxController {
     await GlobalController.i.getBody(GlobalController.i.url, true).then((doc) async {
       //Set token
       GlobalController.i.dataCsrf = doc.getElementsByTagName('html')[0].attributes['data-csrf'];
-      GlobalController.i.isLogged.value = doc.getElementsByTagName('html')[0].attributes['data-logged-in'] == 'true' ? true : false;
       if (doc.getElementsByTagName('html')[0].attributes['data-logged-in'] == 'true') {
-        NaviDrawerController.i.getUserProfile();
-      }
+        GlobalController.i.isLogged.value = true;
+        NaviDrawerController.i.titleUser.value = GlobalController.i.userStorage.read('titleUser');
+        NaviDrawerController.i.linkUser.value = GlobalController.i.userStorage.read('linkUser');
+        NaviDrawerController.i.avatarUser.value = GlobalController.i.userStorage.read('avatarUser');
+        NaviDrawerController.i.nameUser.value = GlobalController.i.userStorage.read('nameUser');
+      } else
+        GlobalController.i.isLogged.value = false;
 
       doc.getElementsByClassName("block block--category block--category").forEach((value) {
         value.getElementsByClassName("node-body").forEach((element) {

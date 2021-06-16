@@ -30,13 +30,12 @@ class ThreadController extends GetxController {
     super.onInit();
     theme = Get.arguments[0];
     _url = Get.arguments[1];
-    await loadSubHeader(_url);
   }
 
   @override
-  onReady(){
+  Future<void> onReady() async {
     super.onReady();
-    GlobalController.i.percentDownload.value = 0.01;
+    await loadSubHeader(_url);
   }
 
   navigateToThread(String title, String link) {
@@ -56,7 +55,6 @@ class ThreadController extends GetxController {
   }
 
   setPageOnClick(String toPage) async {
-    GlobalController.i.percentDownload.value = 0.01;
     await loadSubHeader(_url + GlobalController.i.pageLink + toPage);
   }
 

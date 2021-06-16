@@ -16,7 +16,7 @@ class GlobalController extends GetxController {
   final String pageLink = "page-";
   final pageNaviAlign = 0.72;
   final userStorage = GetStorage();
-  RxDouble percentDownload = 0.0.obs;
+  double percentDownload = 0.0;
   var dio = Dio();
   var xfCsrf;
   var dataCsrf;
@@ -28,11 +28,14 @@ class GlobalController extends GetxController {
   String dateExpire = '';
 
   Future<dom.Document> getBody(String url, bool isHomePage) async {
+    percentDownload = 0.1;
+    update();
     final response = await dio.get(url, onReceiveProgress: (actual, total) {
-      percentDownload.value = (actual.bitLength - 4) / total.bitLength;
+      percentDownload = (actual.bitLength - 4) / total.bitLength;
+      update();
     }).whenComplete(() async {
-      percentDownload.value = -1.0;
-
+      percentDownload = -1.0;
+      update();
     }).catchError((err) {
       if (CancelToken.isCancel(err)) {
         print('Request canceled! ' + err.message);
@@ -46,7 +49,6 @@ class GlobalController extends GetxController {
 
     return parser.parse(response.toString());
   }
-
 
   setDataUser() async {
     if (userStorage.read('userLoggedIn') != null && userStorage.read('xf_user') != null && userStorage.read('xf_session') != null) {

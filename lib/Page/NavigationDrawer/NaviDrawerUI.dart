@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get_state_manager/src/simple/get_view.dart';
 import 'package:vozforums/GlobalController.dart';
 import 'package:vozforums/Page/NavigationDrawer/NaviDrawerController.dart';
-import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:get/get.dart';
+import 'package:vozforums/Page/reuseWidget.dart';
 
 class NaviDrawerUI extends GetView<NaviDrawerController> {
   @override
@@ -22,7 +22,7 @@ class NaviDrawerUI extends GetView<NaviDrawerController> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                           Padding(
-                            padding: EdgeInsets.only(top: 5),
+                            padding: EdgeInsets.only(top: 5, left: 15),
                             child: Container(
                               width: 52,
                               height: 52,
@@ -42,7 +42,7 @@ class NaviDrawerUI extends GetView<NaviDrawerController> {
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsets.only(top: 10, left: 10),
+                            padding: EdgeInsets.only(top: 10, left: 15),
                             child: RichText(
                               text: TextSpan(children: <TextSpan>[
                                 TextSpan(
@@ -51,6 +51,21 @@ class NaviDrawerUI extends GetView<NaviDrawerController> {
                                 TextSpan(text: controller.titleUser.value, style: TextStyle(color: Theme.of(context).primaryColor, fontSize: 13)),
                               ]),
                             ),
+                          ),
+                          Spacer(),
+                          IconButton(
+                            onPressed: () async {
+                              Get.defaultDialog(
+                                  barrierDismissible: false,
+                                  radius: 6,
+                                  backgroundColor: Theme.of(context).hintColor.withOpacity(0.8),
+                                  content: popUpWaiting(context, 'Hang tight', 'I\'m refreshing'),
+                                  title: 'Login');
+                              await controller.getUserProfile();
+                              Get.back();
+                            },
+                            icon: Icon(Icons.refresh),
+                            alignment: Alignment.bottomCenter,
                           ),
                         ],
                       ),
@@ -81,7 +96,7 @@ Widget login(BuildContext context) {
   return ListTile(
     title: Text("Login"),
     onTap: () {
-      NaviDrawerController.i.statusLogin.value = '';
+      NaviDrawerController.i.statusLogin = '';
       NaviDrawerController.i.textEditingControllerPassword.text = '';
       NaviDrawerController.i.textEditingControllerLogin.text = '';
       Get.bottomSheet(
@@ -133,8 +148,10 @@ Widget login(BuildContext context) {
                   ),
                 ),
               ),
-              Obx(
-                () => Text(NaviDrawerController.i.statusLogin.value, style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
+              GetBuilder<NaviDrawerController>(
+                  builder: (controller){
+                    return Text(controller.statusLogin, style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold));
+                  }
               ),
               TextButton(
                   child: Text("Login"),
@@ -143,24 +160,7 @@ Widget login(BuildContext context) {
                         barrierDismissible: false,
                         radius: 6,
                         backgroundColor: Theme.of(context).hintColor.withOpacity(0.8),
-                        content: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            CupertinoActivityIndicator(),
-                            SizedBox(height: 20,),
-                            DefaultTextStyle(
-                                style: TextStyle(color: Theme.of(context).primaryColor),
-                                child: AnimatedTextKit(
-                                  repeatForever: true,
-                                  isRepeatingAnimation: true,
-                                  animatedTexts: [
-                                    WavyAnimatedText('Hang tight'),
-                                    WavyAnimatedText('I\'m processing your request')
-                                  ],
-                                ),
-                            ),
-                          ],
-                        ),
+                        content: popUpWaiting(context, 'Hang tight', 'I\'m processing your request'),
                         title: 'Login');
                     await NaviDrawerController.i.loginFunction();
                   })

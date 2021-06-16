@@ -1,3 +1,4 @@
+import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -26,11 +27,22 @@ PreferredSize preferredSize(BuildContext context, String title) {
         ),
       ],
       bottom: PreferredSize(
-        child: Obx(()=> LinearProgressIndicator(
-          value: GlobalController.i.percentDownload.value,
-          valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF0CF301)),
-          backgroundColor: Theme.of(context).backgroundColor,
-        )),
+        child: GetBuilder<GlobalController>(
+          builder: (controller){
+            return LinearProgressIndicator(
+              value: controller.percentDownload,
+              valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF0CF301)),
+              backgroundColor: Theme.of(context).backgroundColor,
+            );
+          },
+        ),
+        // child: Obx(
+        //   () => LinearProgressIndicator(
+        //     value: GlobalController.i.percentDownload.value,
+        //     valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF0CF301)),
+        //     backgroundColor: Theme.of(context).backgroundColor,
+        //   ),
+        // ),
         preferredSize: Size.fromHeight(4.0),
       ),
     ),
@@ -108,3 +120,22 @@ Widget blockItem(
   );
 }
 
+Widget popUpWaiting(BuildContext context, String one, String two) {
+  return Column(
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: <Widget>[
+      CupertinoActivityIndicator(),
+      SizedBox(
+        height: 20,
+      ),
+      DefaultTextStyle(
+        style: TextStyle(color: Theme.of(context).primaryColor),
+        child: AnimatedTextKit(
+          repeatForever: true,
+          isRepeatingAnimation: true,
+          animatedTexts: [WavyAnimatedText(one), WavyAnimatedText(two)],
+        ),
+      ),
+    ],
+  );
+}
