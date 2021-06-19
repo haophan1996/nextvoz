@@ -91,7 +91,7 @@ class ThreadController extends GetxController {
         if (Get.isDialogOpen == true) Get.back();
         myThreadList.removeRange(0, lengthHtmlDataList);
         itemScrollController.scrollTo(
-            index: currentPage + 1, duration: Duration(seconds: 2), curve: Curves.easeInOutCubic, alignment: GlobalController.i.pageNaviAlign);
+            index: currentPage + 1, duration: Duration(milliseconds: 100), curve: Curves.easeInOutCubic, alignment: GlobalController.i.pageNaviAlign);
         listViewScrollController.jumpTo(-10.0);
       }
       refreshController.loadComplete();

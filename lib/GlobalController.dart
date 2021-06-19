@@ -6,6 +6,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:html/parser.dart' as parser;
 import 'package:dio/dio.dart';
+import 'package:vozforums/Page/NavigationDrawer/NaviDrawerController.dart';
 
 class GlobalController extends GetxController {
   static GlobalController get i => Get.find();
@@ -50,6 +51,10 @@ class GlobalController extends GetxController {
   }
 
   setDataUser() async {
+    if (userStorage.read('shortcut') != null){
+      NaviDrawerController.i.shortcuts.clear();
+      NaviDrawerController.i.shortcuts = await userStorage.read('shortcut');
+    }
     if (userStorage.read('userLoggedIn') != null && userStorage.read('xf_user') != null && userStorage.read('xf_session') != null) {
       isLogged.value = await userStorage.read('userLoggedIn');
       xfUser = await userStorage.read('xf_user');

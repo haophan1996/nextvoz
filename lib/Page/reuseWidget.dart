@@ -53,7 +53,7 @@ PreferredSize preferredSize(BuildContext context, String title) {
 /// * [header21] - [header22] grey color default.
 /// * [header3] orange color default.
 Widget blockItem(
-    BuildContext context, int index, String header11, String header12, String header21, String header22, String header3, Function onTap) {
+    BuildContext context, int index, String header11, String header12, String header21, String header22, String header3, Function onTap, Function onLongPress) {
   return Padding(
     padding: EdgeInsets.only(top: 1, left: 8),
     child: InkWell(
@@ -63,6 +63,7 @@ Widget blockItem(
       splashColor: Colors.red,
       splashFactory: InkRipple.splashFactory,
       onTap: () => onTap(),
+      onLongPress: ()=> onLongPress(),
       child: Ink(
         width: double.infinity,
         decoration: BoxDecoration(
@@ -138,6 +139,15 @@ Widget popUpWaiting(BuildContext context, String one, String two) {
       ),
     ],
   );
+}
+
+setDialog(BuildContext context, String textF, String textS){
+  return Get.defaultDialog(
+      barrierDismissible: false,
+      radius: 6,
+      backgroundColor: Theme.of(context).hintColor.withOpacity(0.8),
+      content: popUpWaiting(context, textF, textS),
+      title: 'Message');
 }
 
 Widget builFlagsdPreviewIcon(String path, String text) => Padding(

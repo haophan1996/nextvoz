@@ -16,7 +16,7 @@ class HomePageUI extends GetView<HomeController> {
       backgroundColor: Theme.of(context).backgroundColor,
       appBar: preferredSize(context, "theNEXTvoz"),
       body: GetBuilder<HomeController>(
-        builder: (controller){
+        builder: (controller) {
           return ListView.builder(
             physics: BouncingScrollPhysics(),
             shrinkWrap: false,
@@ -26,20 +26,20 @@ class HomePageUI extends GetView<HomeController> {
                 children: [
                   (index != 0)
                       ? (controller.myHomePage.elementAt(index - 1)["header"] != controller.myHomePage.elementAt(index)["header"]
-                      ? theme(controller.myHomePage.elementAt(index)["header"], context)
-                      : SizedBox.shrink())
+                          ? theme(controller.myHomePage.elementAt(index)["header"], context)
+                          : SizedBox.shrink())
                       : theme(controller.myHomePage.elementAt(index)["header"], context),
                   blockItem(
-                    context,
-                    index,
-                    "",
-                    controller.myHomePage.elementAt(index)["subHeader"],
-                    controller.myHomePage.elementAt(index)["threads"],
-                    controller.myHomePage.elementAt(index)["messages"],
-                    controller.myHomePage.elementAt(index)["title"],
-                        () => controller.navigateToThread(
-                        controller.myHomePage.elementAt(index)["subHeader"], controller.myHomePage.elementAt(index)["linkSubHeader"]),
-                  )
+                      context,
+                      index,
+                      "",
+                      controller.myHomePage.elementAt(index)["subHeader"],
+                      controller.myHomePage.elementAt(index)["threads"],
+                      controller.myHomePage.elementAt(index)["messages"],
+                      controller.myHomePage.elementAt(index)["title"],
+                      () => controller.navigateToThread(
+                          controller.myHomePage.elementAt(index)["subHeader"], controller.myHomePage.elementAt(index)["linkSubHeader"]),
+                      () {})
                 ],
               );
             },

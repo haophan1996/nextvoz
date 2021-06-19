@@ -15,6 +15,7 @@ class NaviDrawerController extends GetxController {
   RxString avatarUser = ''.obs;
   RxString linkUser = ''.obs;
   String statusLogin = '';
+  List shortcuts = [];
 
   Future<void> loginFunction() async {
 
@@ -106,5 +107,12 @@ class NaviDrawerController extends GetxController {
     await GlobalController.i.userStorage.remove("xf_user");
     await GlobalController.i.userStorage.remove("xf_session");
     await GlobalController.i.userStorage.remove("date_expire");
+  }
+
+  navigateToThread(String title, String link) {
+    Future.delayed(Duration(milliseconds: 100), () async {
+      Get.back();
+      Get.toNamed("/ViewPage", arguments: [title, link]);
+    });
   }
 }

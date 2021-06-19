@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:vozforums/GlobalController.dart';
 import 'dart:io';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
@@ -70,6 +71,14 @@ class ViewController extends GetxController {
 
   getYoutubeID(String s) {
     return YoutubePlayer.convertUrlToId(s);
+  }
+
+  launchURL(String url) async {
+    if (await canLaunch(url)) {
+      await launch(url, forceSafariVC: true, forceWebView: false, enableJavaScript: true);
+    } else {
+      throw 'Could not launch $url';
+    }
   }
 
   _removeTag(String content) {
@@ -156,7 +165,10 @@ class ViewController extends GetxController {
             "orderPost": _orderPost,
             "commentName": _commentName,
             "commentImage": _commentImg,
-            "postID": element.getElementsByClassName('actionBar-action actionBar-action--mq u-jsOnly js-multiQuote')[0].attributes['data-message-id'].toString(),
+            "postID": element
+                .getElementsByClassName('actionBar-action actionBar-action--mq u-jsOnly js-multiQuote')[0]
+                .attributes['data-message-id']
+                .toString(),
             'commentByMe': _commentByMe
           });
           _commentByMe = 0;
@@ -198,7 +210,7 @@ class ViewController extends GetxController {
 
   scrollToFunc() {
     itemScrollController.scrollTo(
-        index: currentPage.value + 1, duration: Duration(milliseconds: 500), curve: Curves.slowMiddle, alignment: GlobalController.i.pageNaviAlign);
+        index: currentPage.value + 1, duration: Duration(milliseconds: 100), curve: Curves.slowMiddle, alignment: GlobalController.i.pageNaviAlign);
   }
 
   final flagsReactions = [
@@ -216,23 +228,17 @@ class ViewController extends GetxController {
     ),
   ];
 
-  reactionPost(String idPost, int idReact, BuildContext context) async{
-    Get.defaultDialog(
-        barrierDismissible: false,
-        radius: 6,
-        backgroundColor: Theme.of(context).hintColor.withOpacity(0.8),
-        content: popUpWaiting(context, 'Hang tight', 'I\'m posting your react'),
-        title: 'Reaction');
+  reactionPost(String idPost, int idReact, BuildContext context) async {
+    setDialog(context, 'Hang tight', 'I\'m posting your react');
+
     var headers = {
       'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
       'host': 'voz.vn',
-      'cookie' : '${GlobalController.i.xfCsrfPost}; xf_user=${GlobalController.i.xfUser};',
+      'cookie': '${GlobalController.i.xfCsrfPost}; xf_user=${GlobalController.i.xfUser};',
     };
-    var body = {
-      '_xfWithData' : '1',
-      '_xfToken' : '${GlobalController.i.dataCsrfPost}',
-      '_xfResponseType' : 'json'
-    };
-    await http.post(Uri.parse('https://voz.vn/p/$idPost/react?reaction_id=$idReact?reaction_id=$idReact'),headers: headers, body: body).then((value) => Get.back());
+    var body = {'_xfWithData': '1', '_xfToken': '${GlobalController.i.dataCsrfPost}', '_xfResponseType': 'json'};
+    await http
+        .post(Uri.parse('https://voz.vn/p/$idPost/react?reaction_id=$idReact?reaction_id=$idReact'), headers: headers, body: body)
+        .then((value) => Get.back());
   }
 }

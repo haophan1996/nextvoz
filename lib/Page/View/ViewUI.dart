@@ -6,6 +6,7 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:expandable/expandable.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:vozforums/Page/NavigationDrawer/NaviDrawerUI.dart';
 import 'package:vozforums/Page/pageLoadNext.dart';
 import 'package:vozforums/GlobalController.dart';
@@ -155,13 +156,8 @@ class ViewUI extends GetView<ViewController> {
                                   clearMemoryCacheIfFailed: true,
                                 ),
                               );
-                              // return ExtendedImage.network(
-                              //   renderContext.tree.element!.attributes['src'].toString(),
-                              //   cache: true,
-                              //   clearMemoryCacheIfFailed: true,
-                              // );
                             } else
-                              return Text("data");
+                              return Image.network(renderContext.tree.element!.attributes['src'].toString());
                           },
                           "blockquote": (renderContext, child) {
                             renderContext.tree.children.forEach((element) {
@@ -222,10 +218,10 @@ class ViewUI extends GetView<ViewController> {
                             );
                           },
                           "iframe": (RenderContext context, Widget child) {
-                            print(context.tree.attributes['src'].toString());
-                            print("To do: iframe ViewUI");
-                            controller.getYoutubeID(context.tree.attributes['src'].toString());
-                            return Text("ascsacas");
+                            // print(context.tree.attributes['src'].toString());
+                            // print("To do: iframe ViewUI");
+                            // controller.getYoutubeID(context.tree.attributes['src'].toString());
+                            // return Text("ascsacas");
                           }
                         },
                         style: {
@@ -239,10 +235,11 @@ class ViewUI extends GetView<ViewController> {
                             ..margin = EdgeInsets.only(left: 5.0, right: 5.0, bottom: 10.0)
                             ..display = Display.BLOCK,
                         },
-                        onLinkTap: (String? url, RenderContext context, Map<String, String> attributes, dom.Element? element) {
-                          if (url?.isNotEmpty == true && url!.contains("/goto/post") && url != "no") {
-                            //print("https://voz.vn" + url);
-                          }
+                        onLinkTap: (String? url, RenderContext context, Map<String, String> attributes, dom.Element? element) async {
+                          print(url);
+                          controller.launchURL(url!);
+                          // if (url?.isNotEmpty == true && url!.contains("/goto/post") && url != "no") {
+                          // }
                         },
                         onImageTap: (String? url, RenderContext renderContext, Map<String, String> attributes, dom.Element? element) async {
                           print("tap");
@@ -274,7 +271,8 @@ class ViewUI extends GetView<ViewController> {
                                     width: 22, height: 22)
                                 : Container(),
                             controller.htmlData.elementAt(index)['commentImage'].toString().length > 1 &&
-                                    controller.htmlData.elementAt(index)['commentImage'].toString() != 'no'
+                                    controller.htmlData.elementAt(index)['commentImage'].toString() != 'no' &&
+                                    controller.htmlData.elementAt(index)['commentByMe'] == 0
                                 ? Image.asset('assets/reaction/' + controller.htmlData.elementAt(index)['commentImage'][1] + '.png',
                                     width: 22, height: 22)
                                 : Container(),

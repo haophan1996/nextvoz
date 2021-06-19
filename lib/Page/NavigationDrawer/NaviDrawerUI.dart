@@ -15,23 +15,47 @@ class NaviDrawerUI extends GetView<NaviDrawerController> {
       child: ListView(
         children: [
           Obx(
-            () => GlobalController.i.isLogged.value == false
-                ? login(context)
-                : logged(context),
+            () => GlobalController.i.isLogged.value == false ? login(context) : logged(context),
           ),
-          ListTile(
-            title: Text("Home"),
-            onTap: () {
-              print(Get.currentRoute);
-            },
-          )
+          GetBuilder<NaviDrawerController>(builder: (controller) {
+            return controller.shortcuts.length == 0
+                ? Container()
+                : ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: controller.shortcuts.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return ListTile(
+                          title: Text(
+                            controller.shortcuts.elementAt(index)['title'],
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          onTap: (){
+                            controller.navigateToThread(
+                                controller.shortcuts.elementAt(index)['title'], controller.shortcuts.elementAt(index)['link']);
+                          },
+                          onLongPress: () async {
+                            controller.shortcuts.removeAt(index);
+                            controller.update();
+                            await GlobalController.i.userStorage.remove('shortcut');
+                            await GlobalController.i.userStorage.write('shortcut', controller.shortcuts);
+                          },
+                      );
+                    });
+          })
+          // ListTile(
+          //   title: Text("Home"),
+          //   onTap: () {
+          //     print(Get.currentRoute);
+          //   },
+          // )
         ],
       ),
     );
   }
 }
 
-Widget logged(BuildContext context){
+Widget logged(BuildContext context) {
   return Column(
     children: <Widget>[
       Row(
@@ -48,10 +72,10 @@ Widget logged(BuildContext context){
                 image: DecorationImage(
                   image: NaviDrawerController.i.avatarUser.value == "no"
                       ? Image.asset(
-                    "assets/NoAvata.png",
-                    height: 48,
-                    width: 48,
-                  ).image
+                          "assets/NoAvata.png",
+                          height: 48,
+                          width: 48,
+                        ).image
                       : ExtendedNetworkImageProvider(GlobalController.i.url + NaviDrawerController.i.avatarUser.value, cache: true),
                 ),
               ),
@@ -72,12 +96,7 @@ Widget logged(BuildContext context){
           Spacer(),
           IconButton(
             onPressed: () async {
-              Get.defaultDialog(
-                  barrierDismissible: false,
-                  radius: 6,
-                  backgroundColor: Theme.of(context).hintColor.withOpacity(0.8),
-                  content: popUpWaiting(context, 'Hang tight', 'I\'m refreshing'),
-                  title: 'Login');
+              setDialog(context, 'Hang tight', 'I\'m refreshing');
               await NaviDrawerController.i.getUserProfile();
               Get.back();
             },
@@ -154,11 +173,9 @@ Widget login(BuildContext context) {
                   ),
                 ),
               ),
-              GetBuilder<NaviDrawerController>(
-                  builder: (controller){
-                    return Text(controller.statusLogin, style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold));
-                  }
-              ),
+              GetBuilder<NaviDrawerController>(builder: (controller) {
+                return Text(controller.statusLogin, style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold));
+              }),
               TextButton(
                   child: Text("Login"),
                   onPressed: () async {

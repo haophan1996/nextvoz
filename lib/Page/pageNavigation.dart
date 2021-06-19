@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
+import 'package:vozforums/Page/reuseWidget.dart';
 
 Widget pageNavigation(BuildContext context, ItemScrollController scrollController, int currentPage, int totalPage, Function(String item) onCall,
     Function lastPage, Function firstPage) {
@@ -46,7 +47,7 @@ Widget pageNavigation(BuildContext context, ItemScrollController scrollControlle
                   iconSize: 30,
                   icon: Icon(Icons.arrow_back_ios_rounded),
                   onPressed: () {
-                    Get.defaultDialog(content: CircularProgressIndicator(), barrierDismissible: false, title: "Loading...");
+                    setDialog(context, 'Hang tight', "Loading...");
                     firstPage();
                   },
                 ),
@@ -64,7 +65,7 @@ Widget pageNavigation(BuildContext context, ItemScrollController scrollControlle
                         child: InkWell(
                           onTap: () {
                             if (index + 1 != currentPage) {
-                              Get.defaultDialog(content: CircularProgressIndicator(), barrierDismissible: false, title: "Loading...");
+                              setDialog(context, 'Hang tight', "Loading...");
                               onCall((index + 1).toString());
                             }
                           },
@@ -97,7 +98,7 @@ Widget pageNavigation(BuildContext context, ItemScrollController scrollControlle
                     iconSize: 30,
                     icon: Icon(Icons.arrow_forward_ios_rounded),
                     onPressed: () {
-                      Get.defaultDialog(content: CircularProgressIndicator(), barrierDismissible: false, title: "Loading...");
+                      setDialog(context, 'Hang tight', "Loading...");
                       lastPage();
                     }),
                 Spacer(),
