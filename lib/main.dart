@@ -35,8 +35,8 @@ class MyPage extends StatelessWidget {
       getPages: [
         GetPage(name: "/HomePage", page: ()=> HomePageUI(), popGesture: true, binding: HomeBinding(), maintainState: false),
         GetPage(name: "/ThreadPage", page: ()=> ThreadUI(), popGesture: true, binding: ThreadBinding(), maintainState: false),
-        GetPage(name: "/ViewPage", page: ()=> ViewUI(), popGesture: true, binding: ViewBinding(), maintainState: false),
-        GetPage(name: "/UserProfile", page: ()=> UserProfileUI(), popGesture: true, binding: UserProfileBinding(), maintainState: false),
+        GetPage(name: "/ViewPage", page: ()=> ViewUI(), transition: Transition.rightToLeft,transitionDuration: Duration(milliseconds: 200),popGesture: true, binding: ViewBinding(), maintainState: false),
+        GetPage(name: "/UserProfile", page: ()=> UserProfileUI(),popGesture: true, binding: UserProfileBinding(), maintainState: false),
       ],
     );
   }

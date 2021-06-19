@@ -167,6 +167,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.3.3"
+  flutter_reaction_button:
+    dependency: "direct main"
+    description:
+      name: flutter_reaction_button
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.8"
   flutter_svg:
     dependency: transitive
     description:

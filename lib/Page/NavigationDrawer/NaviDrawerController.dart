@@ -25,8 +25,8 @@ class NaviDrawerController extends GetxController {
       return;
     }
 
-    final getMyData = await login(textEditingControllerLogin.text, textEditingControllerPassword.text, GlobalController.i.dataCsrf,
-        GlobalController.i.xfCsrf, textEditingControllerLogin.text);
+    final getMyData = await login(textEditingControllerLogin.text, textEditingControllerPassword.text, GlobalController.i.dataCsrfLogin,
+        GlobalController.i.xfCsrfLogin, textEditingControllerLogin.text);
 
     if (getMyData == 'none') {
       await Future.delayed(Duration(milliseconds: 3000), () async {

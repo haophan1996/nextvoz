@@ -6,7 +6,6 @@ import 'package:vozforums/Page/NavigationDrawer/NaviDrawerUI.dart';
 import 'package:vozforums/Page/pageLoadNext.dart';
 import 'package:vozforums/Page/pageNavigation.dart';
 import 'package:vozforums/Page/Thread/subThreadController.dart';
-import '../../GlobalController.dart';
 import '../reuseWidget.dart';
 
 class ThreadUI extends GetView<ThreadController> {
@@ -20,14 +19,14 @@ class ThreadUI extends GetView<ThreadController> {
       appBar: preferredSize(context, controller.theme),
       body: Stack(
         children: <Widget>[
-          Obx(
-            () => refreshIndicatorConfiguration(
+          GetBuilder<ThreadController>(builder: (controller) {
+            return refreshIndicatorConfiguration(
               Scrollbar(
                 child: SmartRefresher(
                   enablePullDown: false,
                   enablePullUp: true,
                   onLoading: () {
-                    controller.setPageOnClick((controller.currentPage.value + 1).toString());
+                    controller.setPageOnClick((controller.currentPage + 1).toString());
                   },
                   controller: controller.refreshController,
                   child: ListView.builder(
@@ -50,18 +49,18 @@ class ThreadUI extends GetView<ThreadController> {
                   ),
                 ),
               ),
-            ),
-          ),
-          Obx(
-            () => pageNavigation(
+            );
+          }),
+          GetBuilder<ThreadController>(builder: (controller) {
+            return pageNavigation(
                 context,
                 controller.itemScrollController,
-                controller.currentPage.value,
-                controller.totalPage.value,
+                controller.currentPage,
+                controller.totalPage,
                 (index) => controller.setPageOnClick(index),
                 () => {controller.setPageOnClick(controller.totalPage.toString())},
-                () => controller.setPageOnClick("1")),
-          ),
+                () => controller.setPageOnClick("1"));
+          })
         ],
       ),
     );

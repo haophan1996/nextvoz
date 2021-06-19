@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_reaction_button/flutter_reaction_button.dart';
 import 'package:get/get.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:flutter_html/flutter_html.dart';
@@ -134,7 +135,6 @@ class ViewUI extends GetView<ViewController> {
                       ),
                       Html(
                         data: controller.htmlData.elementAt(index)['postContent'],
-                        shrinkWrap: true,
                         customRender: {
                           "img": (renderContext, child) {
                             if (renderContext.tree.element!.attributes['src']!.contains("/styles/next/xenforo")) {
@@ -145,11 +145,21 @@ class ViewUI extends GetView<ViewController> {
                                 style: TextStyle(fontSize: 25),
                               );
                             } else if (renderContext.tree.element!.attributes['data-url']!.contains(".gif") == false) {
-                              return ExtendedImage.network(
-                                renderContext.tree.element!.attributes['src'].toString(),
-                                cache: true,
-                                clearMemoryCacheIfFailed: true,
+                              return InkWell(
+                                onTap: () {
+                                  print('hey tap image');
+                                },
+                                child: ExtendedImage.network(
+                                  renderContext.tree.element!.attributes['src'].toString(),
+                                  cache: true,
+                                  clearMemoryCacheIfFailed: true,
+                                ),
                               );
+                              // return ExtendedImage.network(
+                              //   renderContext.tree.element!.attributes['src'].toString(),
+                              //   cache: true,
+                              //   clearMemoryCacheIfFailed: true,
+                              // );
                             } else
                               return Text("data");
                           },
@@ -223,7 +233,7 @@ class ViewUI extends GetView<ViewController> {
                           "table": Style(backgroundColor: Theme.of(context).cardColor),
                           "body": Style(
                             fontSize: FontSize(17.0),
-                          ),
+                          )..margin = EdgeInsets.only(bottom: 0),
                           "span": Style(color: Theme.of(context).primaryColor),
                           "blockquote": Style(width: double.infinity)
                             ..margin = EdgeInsets.only(left: 5.0, right: 5.0, bottom: 10.0)
@@ -235,6 +245,7 @@ class ViewUI extends GetView<ViewController> {
                           }
                         },
                         onImageTap: (String? url, RenderContext renderContext, Map<String, String> attributes, dom.Element? element) async {
+                          print("tap");
                           Get.dialog(
                             Dismissible(
                               direction: DismissDirection.vertical,
@@ -253,8 +264,47 @@ class ViewUI extends GetView<ViewController> {
                             transitionDuration: Duration(milliseconds: 2),
                           );
                         },
-                        //tagsList: Html.tags..remove("value"),
                       ),
+                      Padding(
+                        padding: EdgeInsets.only(left: 5),
+                        child: Row(
+                          children: [
+                            controller.htmlData.elementAt(index)['commentImage'].toString() != 'no'
+                                ? Image.asset('assets/reaction/' + controller.htmlData.elementAt(index)['commentImage'][0] + '.png',
+                                    width: 22, height: 22)
+                                : Container(),
+                            controller.htmlData.elementAt(index)['commentImage'].toString().length > 1 &&
+                                    controller.htmlData.elementAt(index)['commentImage'].toString() != 'no'
+                                ? Image.asset('assets/reaction/' + controller.htmlData.elementAt(index)['commentImage'][1] + '.png',
+                                    width: 22, height: 22)
+                                : Container(),
+                            Expanded(
+                                child: Text(controller.htmlData.elementAt(index)['commentName'],
+                                    style: TextStyle(color: Colors.blue), overflow: TextOverflow.ellipsis, maxLines: 1)),
+                            FlutterReactionButton(
+                              onReactionChanged: (reaction, i) {
+                                if (controller.htmlData.elementAt(index)['commentByMe'] != i) {
+                                  if (i == 0) {
+                                    controller.reactionPost(
+                                        controller.htmlData.elementAt(index)['postID'], controller.htmlData.elementAt(index)['commentByMe'], context);
+                                    controller.htmlData.elementAt(index)['commentByMe'] = -1;
+                                  } else {
+                                    controller.reactionPost(controller.htmlData.elementAt(index)['postID'], i, context);
+                                    controller.htmlData.elementAt(index)['commentByMe'] = i;
+                                  }
+                                }
+                              },
+                              reactions: controller.flagsReactions,
+                              initialReaction: controller.htmlData.elementAt(index)['commentByMe'] == -1
+                                  ? controller.flagsReactions[0]
+                                  : controller.flagsReactions[controller.htmlData.elementAt(index)['commentByMe']],
+                              boxRadius: 10,
+                              boxAlignment: AlignmentDirectional.bottomEnd,
+                            ),
+                            TextButton(onPressed: () {}, child: Text('Reply'))
+                          ],
+                        ),
+                      )
                     ],
                   ),
                 ),

@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -7,7 +6,6 @@ import 'package:get_storage/get_storage.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:html/parser.dart' as parser;
 import 'package:dio/dio.dart';
-import 'package:http/http.dart' as http;
 
 class GlobalController extends GetxController {
   static GlobalController get i => Get.find();
@@ -18,8 +16,9 @@ class GlobalController extends GetxController {
   final userStorage = GetStorage();
   double percentDownload = 0.0;
   var dio = Dio();
-  var xfCsrf;
-  var dataCsrf;
+  var xfCsrfLogin;
+  var dataCsrfLogin;
+
   var xfCsrfPost;
   var dataCsrfPost;
   RxBool isLogged = false.obs;
@@ -45,7 +44,7 @@ class GlobalController extends GetxController {
     });
 
     xfCsrfPost = cookXfCsrf(response.headers['set-cookie'].toString());
-    if (isHomePage == true) xfCsrf = cookXfCsrf(response.headers['set-cookie'].toString());
+    if (isHomePage == true) xfCsrfLogin = cookXfCsrf(response.headers['set-cookie'].toString());
 
     return parser.parse(response.toString());
   }

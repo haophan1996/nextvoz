@@ -139,3 +139,27 @@ Widget popUpWaiting(BuildContext context, String one, String two) {
     ],
   );
 }
+
+Widget builFlagsdPreviewIcon(String path, String text) => Padding(
+  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+  child: Column(
+    children: [
+      Text(
+        text,
+        style: TextStyle(
+          fontSize: 10,
+          fontWeight: FontWeight.w300,
+          color: Colors.blue,
+        ),
+      ),
+      const SizedBox(height: 7.5),
+      Image.asset(path, height: 30),
+    ],
+  ),
+);
+
+Widget buildIcon(String path) => Image.asset(
+  path,
+  height: 30,
+  width: 30,
+);

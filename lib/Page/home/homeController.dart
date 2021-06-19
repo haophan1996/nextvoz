@@ -5,7 +5,7 @@ import 'package:vozforums/Page/NavigationDrawer/NaviDrawerController.dart';
 class HomeController extends GetxController {
   late String header;
   late String label;
-  RxList myHomePage = [].obs;
+  List myHomePage = [];
 
   @override
   Future<void> onInit() async {
@@ -20,7 +20,7 @@ class HomeController extends GetxController {
   loading() async {
     await GlobalController.i.getBody(GlobalController.i.url, true).then((doc) async {
       //Set token
-      GlobalController.i.dataCsrf = doc.getElementsByTagName('html')[0].attributes['data-csrf'];
+      GlobalController.i.dataCsrfLogin = doc.getElementsByTagName('html')[0].attributes['data-csrf'];
       if (doc.getElementsByTagName('html')[0].attributes['data-logged-in'] == 'true') {
         GlobalController.i.isLogged.value = true;
         NaviDrawerController.i.titleUser.value = GlobalController.i.userStorage.read('titleUser');
@@ -47,7 +47,7 @@ class HomeController extends GetxController {
           });
         });
       });
-    });
+    }).then((value) => {update()});
   }
 
   navigateToThread(String title, String link) async {

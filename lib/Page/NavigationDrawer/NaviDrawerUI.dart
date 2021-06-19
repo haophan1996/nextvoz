@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_state_manager/src/simple/get_view.dart';
 import 'package:vozforums/GlobalController.dart';
@@ -16,69 +17,7 @@ class NaviDrawerUI extends GetView<NaviDrawerController> {
           Obx(
             () => GlobalController.i.isLogged.value == false
                 ? login(context)
-                : Column(
-                    children: <Widget>[
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Padding(
-                            padding: EdgeInsets.only(top: 5, left: 15),
-                            child: Container(
-                              width: 52,
-                              height: 52,
-                              decoration: BoxDecoration(
-                                border: Border.all(width: 0.5, color: Colors.black),
-                                shape: BoxShape.circle,
-                                image: DecorationImage(
-                                  image: controller.avatarUser.value == "no"
-                                      ? Image.asset(
-                                          "assets/NoAvata.png",
-                                          height: 48,
-                                          width: 48,
-                                        ).image
-                                      : ExtendedNetworkImageProvider(GlobalController.i.url + controller.avatarUser.value, cache: true),
-                                ),
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(top: 10, left: 15),
-                            child: RichText(
-                              text: TextSpan(children: <TextSpan>[
-                                TextSpan(
-                                    text: controller.nameUser.value + "\n",
-                                    style: TextStyle(color: Color(0xFFFD6E00), fontWeight: FontWeight.bold, fontSize: 16)),
-                                TextSpan(text: controller.titleUser.value, style: TextStyle(color: Theme.of(context).primaryColor, fontSize: 13)),
-                              ]),
-                            ),
-                          ),
-                          Spacer(),
-                          IconButton(
-                            onPressed: () async {
-                              Get.defaultDialog(
-                                  barrierDismissible: false,
-                                  radius: 6,
-                                  backgroundColor: Theme.of(context).hintColor.withOpacity(0.8),
-                                  content: popUpWaiting(context, 'Hang tight', 'I\'m refreshing'),
-                                  title: 'Login');
-                              await controller.getUserProfile();
-                              Get.back();
-                            },
-                            icon: Icon(Icons.refresh),
-                            alignment: Alignment.bottomCenter,
-                          ),
-                        ],
-                      ),
-                      TextButton(
-                          onPressed: () async {
-                            await controller.logout();
-                          },
-                          child: Text('Logout')),
-                      Divider(
-                        color: Theme.of(context).primaryColor,
-                      )
-                    ],
-                  ),
+                : logged(context),
           ),
           ListTile(
             title: Text("Home"),
@@ -90,6 +29,73 @@ class NaviDrawerUI extends GetView<NaviDrawerController> {
       ),
     );
   }
+}
+
+Widget logged(BuildContext context){
+  return Column(
+    children: <Widget>[
+      Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Padding(
+            padding: EdgeInsets.only(top: 5, left: 15),
+            child: Container(
+              width: 52,
+              height: 52,
+              decoration: BoxDecoration(
+                border: Border.all(width: 0.5, color: Colors.black),
+                shape: BoxShape.circle,
+                image: DecorationImage(
+                  image: NaviDrawerController.i.avatarUser.value == "no"
+                      ? Image.asset(
+                    "assets/NoAvata.png",
+                    height: 48,
+                    width: 48,
+                  ).image
+                      : ExtendedNetworkImageProvider(GlobalController.i.url + NaviDrawerController.i.avatarUser.value, cache: true),
+                ),
+              ),
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.only(top: 10, left: 15),
+            child: RichText(
+              text: TextSpan(children: <TextSpan>[
+                TextSpan(
+                    recognizer: TapGestureRecognizer()..onTap = () => Get.toNamed("/UserProfile"),
+                    text: NaviDrawerController.i.nameUser.value + "\n",
+                    style: TextStyle(color: Color(0xFFFD6E00), fontWeight: FontWeight.bold, fontSize: 16)),
+                TextSpan(text: NaviDrawerController.i.titleUser.value, style: TextStyle(color: Theme.of(context).primaryColor, fontSize: 13)),
+              ]),
+            ),
+          ),
+          Spacer(),
+          IconButton(
+            onPressed: () async {
+              Get.defaultDialog(
+                  barrierDismissible: false,
+                  radius: 6,
+                  backgroundColor: Theme.of(context).hintColor.withOpacity(0.8),
+                  content: popUpWaiting(context, 'Hang tight', 'I\'m refreshing'),
+                  title: 'Login');
+              await NaviDrawerController.i.getUserProfile();
+              Get.back();
+            },
+            icon: Icon(Icons.refresh),
+            alignment: Alignment.bottomCenter,
+          ),
+        ],
+      ),
+      TextButton(
+          onPressed: () async {
+            await NaviDrawerController.i.logout();
+          },
+          child: Text('Logout')),
+      Divider(
+        color: Theme.of(context).primaryColor,
+      )
+    ],
+  );
 }
 
 Widget login(BuildContext context) {
