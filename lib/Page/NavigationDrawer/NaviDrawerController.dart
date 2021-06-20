@@ -1,8 +1,11 @@
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_reaction_button/flutter_reaction_button.dart';
 import 'package:get/get.dart';
 import '../../GlobalController.dart';
 import 'package:http/http.dart' as http;
+
+import '../reuseWidget.dart';
 
 class NaviDrawerController extends GetxController {
   static NaviDrawerController get i => Get.find();
@@ -114,5 +117,10 @@ class NaviDrawerController extends GetxController {
       Get.back();
       Get.toNamed("/ViewPage", arguments: [title, link]);
     });
+  }
+
+  navigateToSetting(){
+    Get.back();
+    Get.toNamed('/Settings');
   }
 }

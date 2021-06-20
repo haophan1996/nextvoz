@@ -28,7 +28,7 @@ PreferredSize preferredSize(BuildContext context, String title) {
       ],
       bottom: PreferredSize(
         child: GetBuilder<GlobalController>(
-          builder: (controller){
+          builder: (controller) {
             return LinearProgressIndicator(
               value: controller.percentDownload,
               valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF0CF301)),
@@ -52,8 +52,8 @@ PreferredSize preferredSize(BuildContext context, String title) {
 /// * [header11] - [header12] black/white color depends on Dark/light mode.
 /// * [header21] - [header22] grey color default.
 /// * [header3] orange color default.
-Widget blockItem(
-    BuildContext context, int index, String header11, String header12, String header21, String header22, String header3, Function onTap, Function onLongPress) {
+Widget blockItem(BuildContext context, int index, String header11, String header12, String header21, String header22, String header3, Function onTap,
+    Function onLongPress) {
   return Padding(
     padding: EdgeInsets.only(top: 1, left: 8),
     child: InkWell(
@@ -63,7 +63,7 @@ Widget blockItem(
       splashColor: Colors.red,
       splashFactory: InkRipple.splashFactory,
       onTap: () => onTap(),
-      onLongPress: ()=> onLongPress(),
+      onLongPress: () => onLongPress(),
       child: Ink(
         width: double.infinity,
         decoration: BoxDecoration(
@@ -121,6 +121,21 @@ Widget blockItem(
   );
 }
 
+Widget settings(BuildContext context){
+  return TextButton.icon(
+    onPressed: ()=> NaviDrawerController.i.navigateToSetting(),
+    icon: Icon(Icons.settings),
+    label: Text(
+      'Settings',
+      style: TextStyle(color: Theme.of(context).primaryColor),
+    ),
+  );
+}
+
+Widget textDrawer(Color color, double fontSize, String text, FontWeight fontWeight) {
+  return Text(text, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(color: color,fontWeight: fontWeight,fontSize: fontSize));
+}
+
 Widget popUpWaiting(BuildContext context, String one, String two) {
   return Column(
     mainAxisAlignment: MainAxisAlignment.center,
@@ -141,7 +156,7 @@ Widget popUpWaiting(BuildContext context, String one, String two) {
   );
 }
 
-setDialog(BuildContext context, String textF, String textS){
+setDialog(BuildContext context, String textF, String textS) {
   return Get.defaultDialog(
       barrierDismissible: false,
       radius: 6,
@@ -151,25 +166,25 @@ setDialog(BuildContext context, String textF, String textS){
 }
 
 Widget builFlagsdPreviewIcon(String path, String text) => Padding(
-  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-  child: Column(
-    children: [
-      Text(
-        text,
-        style: TextStyle(
-          fontSize: 10,
-          fontWeight: FontWeight.w300,
-          color: Colors.blue,
-        ),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      child: Column(
+        children: [
+          Text(
+            text,
+            style: TextStyle(
+              fontSize: 10,
+              fontWeight: FontWeight.w300,
+              color: Colors.blue,
+            ),
+          ),
+          const SizedBox(height: 7.5),
+          Image.asset(path, height: 30),
+        ],
       ),
-      const SizedBox(height: 7.5),
-      Image.asset(path, height: 30),
-    ],
-  ),
-);
+    );
 
 Widget buildIcon(String path) => Image.asset(
-  path,
-  height: 25,
-  width: 25,
-);
+      path,
+      height: 25,
+      width: 25,
+    );
