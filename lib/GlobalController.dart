@@ -1,8 +1,10 @@
+import 'dart:convert';
 import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:http/http.dart' as http;
 import 'package:html/dom.dart' as dom;
 import 'package:html/parser.dart' as parser;
 import 'package:dio/dio.dart';
@@ -48,6 +50,11 @@ class GlobalController extends GetxController {
     if (isHomePage == true) xfCsrfLogin = cookXfCsrf(response.headers['set-cookie'].toString());
 
     return parser.parse(response.toString());
+  }
+
+  Future<dom.Document> getHttpPost(Map<String, String> header, Map<String, String> body, String link) async{
+    final response = await http.post(Uri.parse(link), headers: header, body: body);
+    return parser.parse(jsonDecode(response.body)['reactionList']['content']);
   }
 
   setDataUser() async {

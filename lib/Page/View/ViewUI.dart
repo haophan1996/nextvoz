@@ -6,7 +6,6 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:expandable/expandable.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:vozforums/Page/NavigationDrawer/NaviDrawerUI.dart';
 import 'package:vozforums/Page/pageLoadNext.dart';
 import 'package:vozforums/GlobalController.dart';
@@ -271,8 +270,7 @@ class ViewUI extends GetView<ViewController> {
                                     width: 22, height: 22)
                                 : Container(),
                             controller.htmlData.elementAt(index)['commentImage'].toString().length > 1 &&
-                                    controller.htmlData.elementAt(index)['commentImage'].toString() != 'no' &&
-                                    controller.htmlData.elementAt(index)['commentByMe'] == 0
+                                    controller.htmlData.elementAt(index)['commentImage'].toString() != 'no'
                                 ? Image.asset('assets/reaction/' + controller.htmlData.elementAt(index)['commentImage'][1] + '.png',
                                     width: 22, height: 22)
                                 : Container(),
@@ -281,14 +279,19 @@ class ViewUI extends GetView<ViewController> {
                                     style: TextStyle(color: Colors.blue), overflow: TextOverflow.ellipsis, maxLines: 1)),
                             FlutterReactionButton(
                               onReactionChanged: (reaction, i) {
-                                if (controller.htmlData.elementAt(index)['commentByMe'] != i) {
-                                  if (i == 0) {
-                                    controller.reactionPost(
-                                        controller.htmlData.elementAt(index)['postID'], controller.htmlData.elementAt(index)['commentByMe'], context);
-                                    controller.htmlData.elementAt(index)['commentByMe'] = -1;
-                                  } else {
-                                    controller.reactionPost(controller.htmlData.elementAt(index)['postID'], i, context);
-                                    controller.htmlData.elementAt(index)['commentByMe'] = i;
+                                if (GlobalController.i.isLogged.value == false) {
+                                  Get.snackbar('Error', 'You must loggin to react', snackPosition: SnackPosition.BOTTOM, isDismissible: true);
+                                  controller.htmlData.refresh();
+                                } else {
+                                  if (controller.htmlData.elementAt(index)['commentByMe'] != i) {
+                                    if (i == 0) {
+                                      controller.reactionPost(index, controller.htmlData.elementAt(index)['postID'],
+                                          controller.htmlData.elementAt(index)['commentByMe'], context);
+                                      controller.htmlData.elementAt(index)['commentByMe'] = -1;
+                                    } else {
+                                      controller.reactionPost(index, controller.htmlData.elementAt(index)['postID'], i, context);
+                                      controller.htmlData.elementAt(index)['commentByMe'] = i;
+                                    }
                                   }
                                 }
                               },

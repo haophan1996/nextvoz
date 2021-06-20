@@ -48,7 +48,7 @@ class ThreadUI extends GetView<ThreadController> {
                           () => controller.navigateToThread(
                               controller.myThreadList.elementAt(index)['title'], controller.myThreadList.elementAt(index)['linkThread']),
                           () {
-                            NaviDrawerController.i.shortcuts.add({
+                            NaviDrawerController.i.shortcuts.insert(0, {
                               'title' : controller.myThreadList.elementAt(index)['title'],
                               'link' : controller.myThreadList.elementAt(index)['linkThread']
                             });

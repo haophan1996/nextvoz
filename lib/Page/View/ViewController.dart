@@ -12,7 +12,6 @@ import 'package:vozforums/GlobalController.dart';
 import 'dart:io';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 import 'package:html/dom.dart' as dom;
-import 'package:http/http.dart' as http;
 import '../reuseWidget.dart';
 
 class ViewController extends GetxController {
@@ -30,6 +29,8 @@ class ViewController extends GetxController {
   var _commentName;
   var _commentImg = '';
   var _commentByMe = 0;
+  var dataCsrfPost;
+  var xfCsrfPost;
   late var _user;
   int lengthHtmlDataList = 0;
 
@@ -99,7 +100,8 @@ class ViewController extends GetxController {
   Future<void> loadUserPost(String url) async {
     await GlobalController.i.getBody(url, false).then((value) async {
       lengthHtmlDataList = htmlData.length;
-      GlobalController.i.dataCsrfPost = value.getElementsByTagName('html')[0].attributes['data-csrf'];
+      dataCsrfPost = value.getElementsByTagName('html')[0].attributes['data-csrf'];
+      xfCsrfPost = GlobalController.i.xfCsrfPost;
       value.getElementsByClassName("block block--messages").forEach((element) {
         var lastP = element.getElementsByClassName("pageNavSimple");
         if (lastP.length == 0) {
@@ -165,10 +167,7 @@ class ViewController extends GetxController {
             "orderPost": _orderPost,
             "commentName": _commentName,
             "commentImage": _commentImg,
-            "postID": element
-                .getElementsByClassName('actionBar-action actionBar-action--mq u-jsOnly js-multiQuote')[0]
-                .attributes['data-message-id']
-                .toString(),
+            "postID": element.attributes['id']!.split('t-')[1],
             'commentByMe': _commentByMe
           });
           _commentByMe = 0;
@@ -228,17 +227,24 @@ class ViewController extends GetxController {
     ),
   ];
 
-  reactionPost(String idPost, int idReact, BuildContext context) async {
+  reactionPost(int index, String idPost, int idReact, BuildContext context) async {
     setDialog(context, 'Hang tight', 'I\'m posting your react');
-
     var headers = {
       'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
       'host': 'voz.vn',
-      'cookie': '${GlobalController.i.xfCsrfPost}; xf_user=${GlobalController.i.xfUser};',
+      'cookie': '$xfCsrfPost; xf_user=${GlobalController.i.xfUser};',
     };
-    var body = {'_xfWithData': '1', '_xfToken': '${GlobalController.i.dataCsrfPost}', '_xfResponseType': 'json'};
-    await http
-        .post(Uri.parse('https://voz.vn/p/$idPost/react?reaction_id=$idReact?reaction_id=$idReact'), headers: headers, body: body)
-        .then((value) => Get.back());
+    var body = {'_xfWithData': '1', '_xfToken': '$dataCsrfPost', '_xfResponseType': 'json'};
+    await GlobalController.i.getHttpPost(headers, body, 'https://voz.vn/p/$idPost/react?reaction_id=$idReact?reaction_id=$idReact').then((value) {
+      _commentImg = '';
+      value.getElementsByClassName('reaction reaction--small reaction').forEach((element) {
+        _commentImg += element.attributes['data-reaction-id'].toString();
+      });
+      htmlData.elementAt(index)['commentName'] =
+          value.documentElement!.getElementsByClassName('reactionsBar-link')[0].innerHtml.replaceAll(RegExp(r"<[^>]*>"), '');
+      htmlData.elementAt(index)['commentImage'] = _commentImg;
+      htmlData.refresh();
+      Get.back();
+    });
   }
 }

@@ -12,44 +12,40 @@ class NaviDrawerUI extends GetView<NaviDrawerController> {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      child: ListView(
-        children: [
-          Obx(
-            () => GlobalController.i.isLogged.value == false ? login(context) : logged(context),
-          ),
-          GetBuilder<NaviDrawerController>(builder: (controller) {
-            return controller.shortcuts.length == 0
-                ? Container()
-                : ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: controller.shortcuts.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      return ListTile(
-                          title: Text(
-                            controller.shortcuts.elementAt(index)['title'],
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          onTap: (){
-                            controller.navigateToThread(
-                                controller.shortcuts.elementAt(index)['title'], controller.shortcuts.elementAt(index)['link']);
-                          },
-                          onLongPress: () async {
-                            controller.shortcuts.removeAt(index);
-                            controller.update();
-                            await GlobalController.i.userStorage.remove('shortcut');
-                            await GlobalController.i.userStorage.write('shortcut', controller.shortcuts);
-                          },
-                      );
-                    });
-          })
-          // ListTile(
-          //   title: Text("Home"),
-          //   onTap: () {
-          //     print(Get.currentRoute);
-          //   },
-          // )
-        ],
+      child: SafeArea(
+        child: Column(
+          children: [
+            Obx(
+                  () => GlobalController.i.isLogged.value == false ? login(context) : logged(context),
+            ),
+            Expanded(child: GetBuilder<NaviDrawerController>(builder: (controller) {
+              return controller.shortcuts.length == 0
+                  ? Container()
+                  : ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: controller.shortcuts.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return ListTile(
+                      title: Text(
+                        controller.shortcuts.elementAt(index)['title'],
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      onTap: (){
+                        controller.navigateToThread(
+                            controller.shortcuts.elementAt(index)['title'], controller.shortcuts.elementAt(index)['link']);
+                      },
+                      onLongPress: () async {
+                        controller.shortcuts.removeAt(index);
+                        controller.update();
+                        await GlobalController.i.userStorage.remove('shortcut');
+                        await GlobalController.i.userStorage.write('shortcut', controller.shortcuts);
+                      },
+                    );
+                  });
+            }))
+          ],
+        ),
       ),
     );
   }
@@ -72,10 +68,10 @@ Widget logged(BuildContext context) {
                 image: DecorationImage(
                   image: NaviDrawerController.i.avatarUser.value == "no"
                       ? Image.asset(
-                          "assets/NoAvata.png",
-                          height: 48,
-                          width: 48,
-                        ).image
+                    "assets/NoAvata.png",
+                    height: 48,
+                    width: 48,
+                  ).image
                       : ExtendedNetworkImageProvider(GlobalController.i.url + NaviDrawerController.i.avatarUser.value, cache: true),
                 ),
               ),

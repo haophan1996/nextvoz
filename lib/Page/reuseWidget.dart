@@ -170,6 +170,6 @@ Widget builFlagsdPreviewIcon(String path, String text) => Padding(
 
 Widget buildIcon(String path) => Image.asset(
   path,
-  height: 30,
-  width: 30,
+  height: 25,
+  width: 25,
 );
