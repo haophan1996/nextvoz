@@ -3,24 +3,28 @@ import 'package:get/get.dart';
 import 'package:vozforums/GlobalController.dart';
 import '../reuseWidget.dart';
 
-class SettingsController extends GetxController{
-  late int lang;
-
-  @override
-  Future<void> onInit() async{
-    // TODO: implement onInit
-    super.onInit();
-
-    if (GlobalController.i.userStorage.read('lang')==null){
-      await GlobalController.i.userStorage.write('lang', 0);
-      lang = 0;
-    } else {
-      lang = GlobalController.i.userStorage.read('lang');
-    }
+class SettingsController extends GetxController {
+  RxDouble fontSizeView = 15.0.obs;
+  getLang(){
+    return GlobalController.i.userStorage.read('lang');
   }
 
+  @override
+  void onInit() {
+    // TODO: implement onInit
+    super.onInit();
+    fontSizeView.value = GlobalController.i.userStorage.read('fontSizeView');
+  }
 
-  setLang(int i) async{
+  @override
+  onClose() async {
+    super.onClose();
+    await GlobalController.i.userStorage.write('fontSizeView', fontSizeView.value);
+
+  }
+
+  setLang(int i) async {
+    Get.updateLocale(GlobalController.i.langList.elementAt(i));
     await GlobalController.i.userStorage.write('lang', i);
   }
 
@@ -35,5 +39,3 @@ class SettingsController extends GetxController{
     ),
   ];
 }
-
-

@@ -21,7 +21,9 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   Get.put<GlobalController>(GlobalController());
   Get.put<NaviDrawerController>(NaviDrawerController(), permanent: true);
-  await GetStorage.init();
+  await GetStorage.init().then((value) async {
+    await GlobalController.i.checkUserSetting();
+  });
   runApp(MyPage());
 }
 
@@ -33,16 +35,30 @@ class MyPage extends StatelessWidget {
       defaultTransition: Transition.cupertino,
       transitionDuration: Duration(milliseconds: 200),
       translations: Language(),
-      locale: Get.deviceLocale,
+      locale: GlobalController.i.langList.elementAt(GlobalController.i.userStorage.read('lang')),
       theme: Themes().lightTheme,
       darkTheme: Themes().darkTheme,
       initialRoute: "/HomePage",
       getPages: [
-        GetPage(name: "/HomePage", page: ()=> HomePageUI(), popGesture: true, binding: HomeBinding(), maintainState: false),
-        GetPage(name: "/ThreadPage", page: ()=> ThreadUI(), popGesture: true, binding: ThreadBinding(), maintainState: false),
-        GetPage(name: "/ViewPage", page: ()=> ViewUI(), transition: Transition.rightToLeft,transitionDuration: Duration(milliseconds: 200),popGesture: true, binding: ViewBinding(), maintainState: false),
-        GetPage(name: "/UserProfile", page: ()=> UserProfileUI(),popGesture: true, binding: UserProfileBinding(), maintainState: false),
-        GetPage(name: "/Settings", page: ()=> SettingsUI(),popGesture: true, binding: SettingsBinding(), transition: Transition.rightToLeft,transitionDuration: Duration(milliseconds: 200),maintainState: false),
+        GetPage(name: "/HomePage", page: () => HomePageUI(), popGesture: true, binding: HomeBinding(), maintainState: false),
+        GetPage(name: "/ThreadPage", page: () => ThreadUI(), popGesture: true, binding: ThreadBinding(), maintainState: false),
+        GetPage(
+            name: "/ViewPage",
+            page: () => ViewUI(),
+            transition: Transition.rightToLeft,
+            transitionDuration: Duration(milliseconds: 200),
+            popGesture: true,
+            binding: ViewBinding(),
+            maintainState: false),
+        GetPage(name: "/UserProfile", page: () => UserProfileUI(), popGesture: true, binding: UserProfileBinding(), maintainState: false),
+        GetPage(
+            name: "/Settings",
+            page: () => SettingsUI(),
+            popGesture: true,
+            binding: SettingsBinding(),
+            transition: Transition.rightToLeft,
+            transitionDuration: Duration(milliseconds: 200),
+            maintainState: false),
       ],
     );
   }

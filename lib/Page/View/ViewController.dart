@@ -228,7 +228,7 @@ class ViewController extends GetxController {
   ];
 
   reactionPost(int index, String idPost, int idReact, BuildContext context) async {
-    setDialog(context, 'Hang tight', 'I\'m posting your react');
+    setDialog(context, 'popMess'.tr, 'popMess5'.tr);
     var headers = {
       'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
       'host': 'voz.vn',

@@ -21,7 +21,6 @@ class GlobalController extends GetxController {
   var dio = Dio();
   var xfCsrfLogin;
   var dataCsrfLogin;
-
   var xfCsrfPost;
   var dataCsrfPost;
   RxBool isLogged = false.obs;
@@ -94,6 +93,20 @@ class GlobalController extends GetxController {
       return "white";
     } else
       return "black";
+  }
+
+  final langList = {
+    Locale('en', 'US'),
+    Locale('vi', 'VN')
+  };
+
+  checkUserSetting() async {
+    if (userStorage.read('lang')==null){
+      await userStorage.write('lang', 0);
+    }
+    if (userStorage.read('fontSizeView') == null){
+      userStorage.write('fontSizeView', 17.0);
+    }
   }
 
   final Map<String, Color> mapColor = {

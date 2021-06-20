@@ -1,16 +1,17 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:get/get.dart';
 
 
 Widget refreshIndicatorConfiguration(Widget widget) {
   return RefreshConfiguration(
       footerTriggerDistance: -80,
       footerBuilder: () => ClassicFooter(
-        loadingText: "Loading",
+        loadingText: 'loading'.tr,
         loadingIcon: CupertinoActivityIndicator(),
-        idleText: "Pull Up To Next Page",
-        canLoadingText: "Release To Load",
+        idleText: 'pullUp'.tr,
+        canLoadingText: 'pullRes'.tr,
         // height: 75, android
         height: 105,
         outerBuilder: (child) {

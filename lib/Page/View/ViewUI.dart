@@ -68,71 +68,75 @@ class ViewUI extends GetView<ViewController> {
                 child: Container(
                   decoration: BoxDecoration(
                       color: Theme.of(context).backgroundColor,
-                      borderRadius: BorderRadius.only(bottomLeft: Radius.circular(8), bottomRight: Radius.circular(8))),
+                      border: Border(
+                        bottom: BorderSide(width: 1, color: Theme.of(context).primaryColor),
+                      ),
+                      //borderRadius: BorderRadius.only(bottomLeft: Radius.circular(8), bottomRight: Radius.circular(8))
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Stack(
-                        children: [
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Padding(
-                                padding: EdgeInsets.only(top: 5, left: 5),
-                                child: Container(
-                                  width: 48,
-                                  height: 48,
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    image: DecorationImage(
-                                      image: controller.htmlData.elementAt(index)["userAvatar"] == "no"
-                                          ? Image.asset(
-                                              "assets/NoAvata.png",
-                                              height: 48,
-                                              width: 48,
-                                            ).image
-                                          : ExtendedNetworkImageProvider(controller.htmlData.elementAt(index)["userAvatar"], cache: true),
+                      Padding(padding: EdgeInsets.only(bottom: 5),
+                      child: Card(
+                        elevation: 5,
+                        color: Theme.of(context).canvasColor,
+                        child: Stack(
+                          children: [
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Padding(
+                                  padding: EdgeInsets.only(top: 5, left: 5, bottom: 5),
+                                  child: Container(
+                                    width: 48,
+                                    height: 48,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      image: DecorationImage(
+                                        image: controller.htmlData.elementAt(index)["userAvatar"] == "no"
+                                            ? Image.asset(
+                                          "assets/NoAvata.png",
+                                          height: 48,
+                                          width: 48,
+                                        ).image
+                                            : ExtendedNetworkImageProvider(controller.htmlData.elementAt(index)["userAvatar"], cache: true),
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.only(top: 10, left: 10),
-                                child: RichText(
-                                  text: TextSpan(children: <TextSpan>[
-                                    TextSpan(
-                                        text: controller.htmlData.elementAt(index)['userName'] + "\n",
-                                        style: TextStyle(color: Color(0xFFFD6E00), fontWeight: FontWeight.bold, fontSize: 16)),
-                                    TextSpan(
-                                        text: controller.htmlData.elementAt(index)['userTitle'],
+                                Padding(
+                                  padding: EdgeInsets.only(top: 10, left: 10),
+                                  child: RichText(
+                                    text: TextSpan(children: <TextSpan>[
+                                      TextSpan(
+                                          text: controller.htmlData.elementAt(index)['userName'] + "\n",
+                                          style: TextStyle(color: Color(0xFFFD6E00), fontWeight: FontWeight.bold, fontSize: 16)),
+                                      TextSpan(
+                                          text: controller.htmlData.elementAt(index)['userTitle'],
+                                          style: TextStyle(color: Theme.of(context).primaryColor, fontSize: 13)),
+                                    ]),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(top: 10, right: 10),
+                              child: Align(
+                                alignment: Alignment.centerRight,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: <Widget>[
+                                    Text(controller.htmlData.elementAt(index)['userPostDate'],
                                         style: TextStyle(color: Theme.of(context).primaryColor, fontSize: 13)),
-                                  ]),
+                                    Text(controller.htmlData.elementAt(index)['orderPost'],
+                                        style: TextStyle(color: Theme.of(context).primaryColor, fontSize: 13)),
+                                  ],
                                 ),
                               ),
-                            ],
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(top: 10, right: 10),
-                            child: Align(
-                              alignment: Alignment.centerRight,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: <Widget>[
-                                  Text(controller.htmlData.elementAt(index)['userPostDate'],
-                                      style: TextStyle(color: Theme.of(context).primaryColor, fontSize: 13)),
-                                  Text(controller.htmlData.elementAt(index)['orderPost'],
-                                      style: TextStyle(color: Theme.of(context).primaryColor, fontSize: 13)),
-                                ],
-                              ),
                             ),
-                          ),
-                        ],
-                      ),
-                      Divider(
-                        color: Theme.of(context).dividerColor,
-                        indent: 10,
-                        thickness: 1,
-                      ),
+                          ],
+                        ),
+                      ),),
                       Html(
                         data: controller.htmlData.elementAt(index)['postContent'],
                         customRender: {
@@ -174,7 +178,7 @@ class ViewUI extends GetView<ViewController> {
                                       child: Container(
                                         padding: EdgeInsets.all(10),
                                         child: Text(
-                                          "Quote [CLick to expand]: " +
+                                          'blockQuote'.tr +
                                               (renderContext.tree.element!.getElementsByClassName("bbCodeBlock-title").length > 0
                                                   ? renderContext.tree.element!
                                                       .getElementsByClassName("bbCodeBlock-title")[0]
@@ -226,8 +230,10 @@ class ViewUI extends GetView<ViewController> {
                         style: {
                           "code": Style(color: Colors.blue),
                           "table": Style(backgroundColor: Theme.of(context).cardColor),
+                          "i": Style(color: Colors.red)..margin = EdgeInsets.zero,
+                          "img": Style(color: Colors.red)..margin = EdgeInsets.zero,
                           "body": Style(
-                            fontSize: FontSize(17.0),
+                            fontSize: FontSize(GlobalController.i.userStorage.read('fontSizeView')),
                           )..margin = EdgeInsets.only(bottom: 0),
                           "span": Style(color: Theme.of(context).primaryColor),
                           "blockquote": Style(width: double.infinity)
@@ -280,14 +286,14 @@ class ViewUI extends GetView<ViewController> {
                             FlutterReactionButton(
                               onReactionChanged: (reaction, i) {
                                 if (GlobalController.i.isLogged.value == false) {
-                                  Get.snackbar('Error', 'You must loggin to react', snackPosition: SnackPosition.BOTTOM, isDismissible: true);
+                                  Get.snackbar('error'.tr, 'popMess4'.tr, snackPosition: SnackPosition.BOTTOM, isDismissible: true);
                                   controller.htmlData.refresh();
                                 } else {
                                   if (controller.htmlData.elementAt(index)['commentByMe'] != i) {
                                     if (i == 0) {
                                       controller.reactionPost(index, controller.htmlData.elementAt(index)['postID'],
                                           controller.htmlData.elementAt(index)['commentByMe'], context);
-                                      controller.htmlData.elementAt(index)['commentByMe'] = -1;
+                                      controller.htmlData.elementAt(index)['commentByMe'] = 0;
                                     } else {
                                       controller.reactionPost(index, controller.htmlData.elementAt(index)['postID'], i, context);
                                       controller.htmlData.elementAt(index)['commentByMe'] = i;
@@ -302,7 +308,7 @@ class ViewUI extends GetView<ViewController> {
                               boxRadius: 10,
                               boxAlignment: AlignmentDirectional.bottomEnd,
                             ),
-                            TextButton(onPressed: () {}, child: Text('Reply'))
+                            TextButton(onPressed: () {}, child: Text('rep'.tr))
                           ],
                         ),
                       )

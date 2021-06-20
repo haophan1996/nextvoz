@@ -1,14 +1,11 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_reaction_button/flutter_reaction_button.dart';
 import 'package:get/get_state_manager/src/simple/get_view.dart';
 import 'package:vozforums/GlobalController.dart';
 import 'package:vozforums/Page/NavigationDrawer/NaviDrawerController.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:get/get.dart';
 import 'package:vozforums/Page/reuseWidget.dart';
-import 'package:vozforums/theme.dart';
 
 class NaviDrawerUI extends GetView<NaviDrawerController> {
   @override
@@ -94,7 +91,7 @@ Widget logged(BuildContext context) {
           ), //Title and name user
           IconButton(
             onPressed: () async {
-              setDialog(context, 'Hang tight', 'I\'m refreshing');
+              setDialog(context, 'popMess'.tr, 'popMess3'.tr);
               await NaviDrawerController.i.getUserProfile();
               Get.back();
             },
@@ -102,20 +99,14 @@ Widget logged(BuildContext context) {
             alignment: Alignment.bottomCenter,
           ), //Refresh user data
           TextButton(
-              onPressed: () async {
-                await NaviDrawerController.i.logout();
-              },
-              child: Text('Logout')), //Loggout
+            onPressed: () async {
+              await NaviDrawerController.i.logout();
+            },
+            child: Text('logout'.tr),
+          ), //Loggout
         ],
       ),
       settings(context),
-      // FlutterReactionButton(
-      //   onReactionChanged: (reaction, i) { },
-      //   reactions: NaviDrawerController.i.flagsReactions,
-      //   initialReaction: NaviDrawerController.i.flagsReactions[0],
-      //   boxRadius: 10,
-      //   boxAlignment: AlignmentDirectional.bottomEnd,
-      // ),
     ],
   );
 }
@@ -124,7 +115,7 @@ Widget login(BuildContext context) {
   return Column(
     children: [
       ListTile(
-        title: Text("Login"),
+        title: Text('login'.tr),
         onTap: () {
           NaviDrawerController.i.statusLogin = '';
           NaviDrawerController.i.textEditingControllerPassword.text = '';
@@ -143,7 +134,7 @@ Widget login(BuildContext context) {
               child: Column(
                 children: [
                   Text(
-                    "Log in your account",
+                    'loginMess'.tr,
                     style: TextStyle(color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold),
                   ),
                   Padding(
@@ -154,7 +145,7 @@ Widget login(BuildContext context) {
                       style: TextStyle(fontSize: 18, color: Theme.of(context).primaryColor),
                       obscureText: false,
                       decoration: InputDecoration(
-                        labelText: "Login",
+                        labelText: 'loginAccount'.tr,
                         border: OutlineInputBorder(
                           borderSide: BorderSide(color: Color(0xffCED0D2), width: 1),
                           borderRadius: BorderRadius.all(Radius.circular(6)),
@@ -170,7 +161,7 @@ Widget login(BuildContext context) {
                       style: TextStyle(fontSize: 18, color: Theme.of(context).primaryColor),
                       obscureText: true,
                       decoration: InputDecoration(
-                        labelText: "Password",
+                        labelText: 'loginPassword'.tr,
                         border: OutlineInputBorder(
                           borderSide: BorderSide(color: Color(0xffCED0D2), width: 1),
                           borderRadius: BorderRadius.all(Radius.circular(6)),
@@ -182,14 +173,14 @@ Widget login(BuildContext context) {
                     return Text(controller.statusLogin, style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold));
                   }),
                   TextButton(
-                      child: Text("Login"),
+                      child: Text('login'.tr),
                       onPressed: () async {
                         Get.defaultDialog(
                             barrierDismissible: false,
                             radius: 6,
                             backgroundColor: Theme.of(context).hintColor.withOpacity(0.8),
-                            content: popUpWaiting(context, 'Hang tight', 'I\'m processing your request'),
-                            title: 'Login');
+                            content: popUpWaiting(context, 'popMess'.tr, 'popMess2'.tr),
+                            title: 'status'.tr);
                         await NaviDrawerController.i.loginFunction();
                       })
                 ],

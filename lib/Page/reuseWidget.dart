@@ -126,7 +126,7 @@ Widget settings(BuildContext context){
     onPressed: ()=> NaviDrawerController.i.navigateToSetting(),
     icon: Icon(Icons.settings),
     label: Text(
-      'Settings',
+      'setPage'.tr,
       style: TextStyle(color: Theme.of(context).primaryColor),
     ),
   );

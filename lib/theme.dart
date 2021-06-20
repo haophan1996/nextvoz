@@ -5,7 +5,8 @@ import 'package:flutter/services.dart';
 class Themes {
   final lightTheme = ThemeData.light().copyWith(
     primaryColor: Colors.black, // Title
-    backgroundColor: Color(0xFFE2DEDE),//Colors.grey.shade100,
+    backgroundColor: Colors.white,//Color(0xFFE2DEDE),//Colors.grey.shade100,
+    canvasColor: Color(0xFFEEE3E3),
     cardColor: Colors.grey.shade400,
     hintColor: Color(0xff5c7099),
     dividerColor: Colors.grey,
@@ -16,10 +17,10 @@ class Themes {
       centerTitle: true,
       titleSpacing: -2,
       brightness: Brightness.light,
-      color: Color(0xFFE2DEDE),
+      color: Colors.white,
       backwardsCompatibility: false,
       titleTextStyle: TextStyle(color: Colors.black, fontSize: 16),
-      systemOverlayStyle: SystemUiOverlayStyle(statusBarColor: Color(0xFFE2DEDE), statusBarIconBrightness: Brightness.dark),
+      systemOverlayStyle: SystemUiOverlayStyle(statusBarColor: Colors.white, statusBarIconBrightness: Brightness.dark),
     ),
   );
 
@@ -27,6 +28,7 @@ class Themes {
     primaryColor: Colors.grey.shade300, // Title
     backgroundColor: Colors.black,
     cardColor: Colors.grey.shade900,
+    canvasColor: Color(0xFF343030),
     hintColor: Color(0xff223447),
     dividerColor: Colors.grey,
     appBarTheme: AppBarTheme(
