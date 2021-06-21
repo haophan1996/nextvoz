@@ -78,9 +78,9 @@ Widget pageNavigation(BuildContext context, ItemScrollController scrollControlle
                                 shape: BoxShape.rectangle,
                                 borderRadius: BorderRadius.all(Radius.circular(5))),
                             alignment: Alignment.center,
-                            child: Text(
+                            child: text(
                               (index + 1).toString(),
-                              style: TextStyle(
+                              TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
                                   color: (index + 1) == currentPage ? Colors.pink : Theme.of(context).primaryColor

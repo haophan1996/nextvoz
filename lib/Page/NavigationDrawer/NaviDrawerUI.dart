@@ -102,7 +102,7 @@ Widget logged(BuildContext context) {
             onPressed: () async {
               await NaviDrawerController.i.logout();
             },
-            child: Text('logout'.tr),
+            child: text('logout'.tr, TextStyle()),
           ), //Loggout
         ],
       ),
@@ -115,7 +115,7 @@ Widget login(BuildContext context) {
   return Column(
     children: [
       ListTile(
-        title: Text('login'.tr),
+        title: text('login'.tr, TextStyle()),
         onTap: () {
           NaviDrawerController.i.statusLogin = '';
           NaviDrawerController.i.textEditingControllerPassword.text = '';
@@ -133,9 +133,9 @@ Widget login(BuildContext context) {
               ),
               child: Column(
                 children: [
-                  Text(
+                  text(
                     'loginMess'.tr,
-                    style: TextStyle(color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold),
+                    TextStyle(color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold),
                   ),
                   Padding(
                     padding: EdgeInsets.fromLTRB(15, 15, 15, 5),
@@ -170,10 +170,10 @@ Widget login(BuildContext context) {
                     ),
                   ),
                   GetBuilder<NaviDrawerController>(builder: (controller) {
-                    return Text(controller.statusLogin, style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold));
+                    return text(controller.statusLogin, TextStyle(color: Colors.red, fontWeight: FontWeight.bold));
                   }),
                   TextButton(
-                      child: Text('login'.tr),
+                      child: text('login'.tr, TextStyle()),
                       onPressed: () async {
                         Get.defaultDialog(
                             barrierDismissible: false,

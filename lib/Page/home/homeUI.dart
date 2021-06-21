@@ -31,6 +31,8 @@ class HomePageUI extends GetView<HomeController> {
                       : theme(controller.myHomePage.elementAt(index)["header"], context),
                   blockItem(
                       context,
+                      FontWeight.bold,
+                      FontWeight.bold,
                       index,
                       "",
                       controller.myHomePage.elementAt(index)["subHeader"],
@@ -54,9 +56,9 @@ theme(String theme, BuildContext context) {
   return Container(
     color: Theme.of(context).hintColor,
     child: ListTile(
-      title: Text(
+      title: text(
         theme,
-        style: TextStyle(color: Colors.white, fontWeight: FontWeight.w900),
+        TextStyle(color: Colors.white, fontWeight: FontWeight.w900),
       ),
     ),
   );

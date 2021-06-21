@@ -158,6 +158,7 @@ class ViewController extends GetxController {
           }
 
           htmlData.add({
+            'newPost' : element.getElementsByClassName('message-newIndicator').isNotEmpty == false ? false : true,
             "postContent": _removeTag(_postContent),
             "userPostDate": _userPostDate,
             "userName": _userName,
@@ -214,16 +215,16 @@ class ViewController extends GetxController {
 
   final flagsReactions = [
     Reaction(
-      previewIcon: builFlagsdPreviewIcon('assets/reaction/0.png', 'UnReact'),
-      icon: buildIcon('assets/reaction/0.png'),
+      previewIcon: builFlagsdPreviewIcon('assets/reaction/0.png', 'unReact'.tr),
+      icon: buildIcon('assets/reaction/reactQ.png', 'react'.tr),
     ),
     Reaction(
-      previewIcon: builFlagsdPreviewIcon('assets/reaction/1.png', 'Sweet'),
-      icon: buildIcon('assets/reaction/1.png'),
+      previewIcon: builFlagsdPreviewIcon('assets/reaction/1.png', 'sweet'.tr),
+      icon: buildIcon('assets/reaction/1.png', 'sweeted'.tr),
     ),
     Reaction(
-      previewIcon: builFlagsdPreviewIcon('assets/reaction/2.png', 'Brick'),
-      icon: buildIcon('assets/reaction/2.png'),
+      previewIcon: builFlagsdPreviewIcon('assets/reaction/2.png', 'brick'.tr),
+      icon: buildIcon('assets/reaction/2.png', 'bricked'.tr),
     ),
   ];
 

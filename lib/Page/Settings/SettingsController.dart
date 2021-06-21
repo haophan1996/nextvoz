@@ -31,11 +31,11 @@ class SettingsController extends GetxController {
   final flagsReactions = [
     Reaction(
       previewIcon: builFlagsdPreviewIcon('assets/languages/en.png', 'English'),
-      icon: buildIcon('assets/languages/en.png'),
+      icon: buildIcon('assets/languages/en.png', 'English'),
     ),
     Reaction(
       previewIcon: builFlagsdPreviewIcon('assets/languages/vn.png', 'Tiếng Việt'),
-      icon: buildIcon('assets/languages/vn.png'),
+      icon: buildIcon('assets/languages/vn.png', 'Tiếng Việt'),
     ),
   ];
 }

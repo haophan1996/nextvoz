@@ -52,8 +52,8 @@ PreferredSize preferredSize(BuildContext context, String title) {
 /// * [header11] - [header12] black/white color depends on Dark/light mode.
 /// * [header21] - [header22] grey color default.
 /// * [header3] orange color default.
-Widget blockItem(BuildContext context, int index, String header11, String header12, String header21, String header22, String header3, Function onTap,
-    Function onLongPress) {
+Widget blockItem(BuildContext context, FontWeight themeTitleWeight, FontWeight titleWeight, int index, String header11, String header12,
+    String header21, String header22, String header3, Function onTap, Function onLongPress) {
   return Padding(
     padding: EdgeInsets.only(top: 1, left: 8),
     child: InkWell(
@@ -85,19 +85,19 @@ Widget blockItem(BuildContext context, int index, String header11, String header
                         text: header11,
                         style: TextStyle(
                             fontSize: 14,
-                            fontWeight: FontWeight.bold,
+                            fontWeight: themeTitleWeight,
                             color: GlobalController.i.mapInvertColor[GlobalController.i.getColorInvert(header11)],
                             backgroundColor: GlobalController.i.mapColor[header11]),
                       ),
                       TextSpan(
                         text: header12,
-                        style: TextStyle(color: Theme.of(context).primaryColor, fontSize: 15, fontWeight: FontWeight.bold),
+                        style: TextStyle(color: Theme.of(context).primaryColor, fontSize: 15, fontWeight: titleWeight),
                       )
                     ]),
                   ),
-                  Text(
+                  text(
                     "$header21 \u2022 $header22",
-                    style: TextStyle(color: Colors.grey, fontSize: 12),
+                    TextStyle(color: Colors.grey, fontSize: 12),
                   ),
                   Text(
                     header3,
@@ -121,19 +121,19 @@ Widget blockItem(BuildContext context, int index, String header11, String header
   );
 }
 
-Widget settings(BuildContext context){
+Widget settings(BuildContext context) {
   return TextButton.icon(
-    onPressed: ()=> NaviDrawerController.i.navigateToSetting(),
+    onPressed: () => NaviDrawerController.i.navigateToSetting(),
     icon: Icon(Icons.settings),
-    label: Text(
+    label: text(
       'setPage'.tr,
-      style: TextStyle(color: Theme.of(context).primaryColor),
+      TextStyle(color: Theme.of(context).primaryColor),
     ),
   );
 }
 
 Widget textDrawer(Color color, double fontSize, String text, FontWeight fontWeight) {
-  return Text(text, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(color: color,fontWeight: fontWeight,fontSize: fontSize));
+  return Text(text, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(color: color, fontWeight: fontWeight, fontSize: fontSize));
 }
 
 Widget popUpWaiting(BuildContext context, String one, String two) {
@@ -165,13 +165,13 @@ setDialog(BuildContext context, String textF, String textS) {
       title: 'Message');
 }
 
-Widget builFlagsdPreviewIcon(String path, String text) => Padding(
+Widget builFlagsdPreviewIcon(String path, String tex) => Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       child: Column(
         children: [
-          Text(
-            text,
-            style: TextStyle(
+          text(
+            tex,
+            TextStyle(
               fontSize: 10,
               fontWeight: FontWeight.w300,
               color: Colors.blue,
@@ -183,8 +183,36 @@ Widget builFlagsdPreviewIcon(String path, String text) => Padding(
       ),
     );
 
-Widget buildIcon(String path) => Image.asset(
+Widget buildIcon(String path, String text) => Row(
+  children: [
+    Image.asset(
       path,
       height: 25,
       width: 25,
-    );
+    ),
+    Text(' ' + text)
+  ],
+);
+
+Widget text(String text, TextStyle style) {
+  return Text(
+    text,
+    style: style,
+  );
+}
+
+Widget rowNew(String pathImage, Widget text) {
+  return Row(
+    mainAxisAlignment: MainAxisAlignment.end,
+    children: [
+      Padding(
+        padding: EdgeInsets.only(right: 5),
+        child: Image.asset(
+          pathImage,
+          width: 10,
+        ),
+      ),
+      text,
+    ],
+  );
+}

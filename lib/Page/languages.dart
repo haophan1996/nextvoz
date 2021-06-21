@@ -28,6 +28,12 @@ class Language extends Translations{
       'error'   : 'Error',
       'fontSizeViewMess' : 'If you are in pageView, you must refresh page to get effect change',
       'fontSizeView' : 'Font size  :   ',
+      'unReact' : 'UnReact',
+      'react' : 'React ?',
+      'sweet' : 'Sweet',
+      'brick' : 'Brick',
+      'sweeted' : 'Sweet',
+      'bricked' : 'Brick'
 
     },
     'vi_VN' : {
@@ -53,6 +59,12 @@ class Language extends Translations{
       'error'   : 'Thông Báo Lỗi',
       'fontSizeViewMess' : 'Nếu bạn đang ở trong mục Post, bạn phải refresh trang để thấy hiệu ứng thay đổi',
       'fontSizeView' : 'Kích Cỡ Chữ:',
+      'unReact' : 'Bỏ React',
+      'react' : 'Ưng ?',
+      'sweet' : 'Ưng',
+      'brick' : 'Gạch',
+      'sweeted' : 'Đả Ưng',
+      'bricked' : 'Đả Gạch'
     }
   };
 

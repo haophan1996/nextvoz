@@ -76,10 +76,11 @@ class ThreadController extends GetxController {
             themeTitle = _title.map((e) => e.getElementsByTagName("span")[0].innerHtml).first;
             linkThread = _title.map((e) => e.getElementsByTagName("a")[1].attributes['href']).first!;
           }
-          myThreadList.add({
+           myThreadList.add({
             "title": title,
             "themeTitle": themeTitle,
-            "authorLink": element.getElementsByClassName("structItem-parts").map((e) => e.getElementsByTagName("a")[0].attributes['href']).first,
+            'isRead' : linkThread.contains('/unread') ? true : false,
+            //"authorLink": element.getElementsByClassName("structItem-parts").map((e) => e.getElementsByTagName("a")[0].attributes['href']).first,
             "authorName": element.attributes["data-author"],
             "linkThread": linkThread,
             "replies": "Replies " + element.getElementsByClassName("pairs pairs--justified").map((e) => e.getElementsByTagName("dd")[0].innerHtml).first,

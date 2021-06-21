@@ -18,9 +18,9 @@ class SettingsUI extends GetView<SettingsController> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(
+                text(
                   'lang'.tr,
-                  style: TextStyle(fontSize: 20),
+                  TextStyle(fontSize: 20),
                 ),
                 Spacer(),
                 FlutterReactionButton(
@@ -36,21 +36,21 @@ class SettingsUI extends GetView<SettingsController> {
             ),
             Row(
               children: [
-                Text(
+                text(
                   'fontSizeView'.tr,
-                  style: TextStyle(fontSize: 20),
+                  TextStyle(fontSize: 20),
                 ),
-                Obx(
-                  () => Expanded(child: Slider(
-                      divisions: 25,
-                      label: controller.fontSizeView.string,
-                      value: controller.fontSizeView.value,
-                      max: 40.0,
-                      min: 15.0,
-                      onChanged: (value) {
-                        controller.fontSizeView.value = value;
-                      }),)
-                )
+                Obx(() => Expanded(
+                      child: Slider(
+                          divisions: 25,
+                          label: controller.fontSizeView.string,
+                          value: controller.fontSizeView.value,
+                          max: 40.0,
+                          min: 15.0,
+                          onChanged: (value) {
+                            controller.fontSizeView.value = value;
+                          }),
+                    ))
               ],
             ),
             Text(
