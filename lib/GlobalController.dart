@@ -27,6 +27,16 @@ class GlobalController extends GetxController {
   String xfUser = '';
   String xfSession = '';
   String dateExpire = '';
+  String alertNotification = '0';
+
+  @override
+  onInit() async {
+    super.onInit();
+
+    isLogged.stream.listen((event) {
+      if (event == false) alertNotification = '0';
+    });
+  }
 
   Future<dom.Document> getBody(String url, bool isHomePage) async {
     percentDownload = 0.1;
@@ -51,13 +61,13 @@ class GlobalController extends GetxController {
     return parser.parse(response.toString());
   }
 
-  Future<dom.Document> getHttpPost(Map<String, String> header, Map<String, String> body, String link) async{
+  Future<dom.Document> getHttpPost(Map<String, String> header, Map<String, String> body, String link) async {
     final response = await http.post(Uri.parse(link), headers: header, body: body);
     return parser.parse(jsonDecode(response.body)['reactionList']['content']);
   }
 
   setDataUser() async {
-    if (userStorage.read('shortcut') != null){
+    if (userStorage.read('shortcut') != null) {
       NaviDrawerController.i.shortcuts.clear();
       NaviDrawerController.i.shortcuts = await userStorage.read('shortcut');
     }
@@ -95,16 +105,13 @@ class GlobalController extends GetxController {
       return "black";
   }
 
-  final langList = {
-    Locale('en', 'US'),
-    Locale('vi', 'VN')
-  };
+  final langList = {Locale('en', 'US'), Locale('vi', 'VN')};
 
   checkUserSetting() async {
-    if (userStorage.read('lang')==null){
+    if (userStorage.read('lang') == null) {
       await userStorage.write('lang', 0);
     }
-    if (userStorage.read('fontSizeView') == null){
+    if (userStorage.read('fontSizeView') == null) {
       userStorage.write('fontSizeView', 17.0);
     }
   }
@@ -128,84 +135,84 @@ class GlobalController extends GetxController {
   };
 
   final Map<String, String> mapEmojiVoz = {
-    "popo/smile.png": 'assets/popo/biggrin.png',
-    "popo/wink.png": "2",
-    "popo/frown.png": "3",
-    "popo/mad.png": "4",
-    "popo/confused.png": "5",
-    "popo/cool.png": "6",
-    "popo/tongue.png": "7",
-    "popo/biggrin.png": "8",
-    "popo/eek.png": "",
-    "popo/redface.png": "",
-    "popo/rolleyes.png": "",
-    "popo/O_o.png": "",
-    "popo/cautious.png": "",
-    "popo/speechless.png": "10",
-    "popo/cry.png": "",
-    "popo/inlove.png": "",
-    "popo/laugh.png": "",
-    "popo/roflmao.png": "",
-    "popo/sick.png": "",
-    "popo/sleep.png": "",
-    "popo/sneaky.png": "",
-    "popo/unsure.png": "",
-    "popo/whistling.png": "",
-    "popo/giggle.png": "",
-    "popo/devilish.png": "",
-    "popopo/adore.png": "",
-    "popopo/after_boom.png": "",
-    "popopo/ah.png": "",
-    "popopo/amazed.png": "",
-    "popopo/angry.png": "",
-    "popopo/bad_smelly.png": "",
-    "popopo/baffle.png": "",
-    "popopo/beat_brick.png": "",
-    "popopo/beat_plaster.png": "",
-    "popopo/beat_shot.png": "",
-    "popopo/beated.png": "",
-    "popopo/beauty.png": "",
-    "popopo/big_smile.png": "",
-    "popopo/boss.png": "",
-    "popopo/burn_joss_stick.png": "",
-    "popopo/byebye.png": "",
-    "popopo/canny.png": "",
-    "popopo/choler.png": "",
-    "popopo/cold.png": "",
-    "popopo/confident.png": "",
-    "popopo/confuse.png": "",
-    "popopo/cool.png": "",
-    "popopo/cry.png": "",
-    "popopo/doubt.png": "",
-    "popopo/dribble.png": "",
-    "popopo/embarrassed.png": "",
-    "popopo/extreme_sexy_girl.png": "",
-    "popopo/feel_good.png": "",
-    "popopo/go.png": "",
-    "popopo/haha.png": "",
-    "popopo/hell_boy.png": "",
-    "popopo/hungry.png": "",
-    "popopo/look_down.png": "",
-    "popopo/matrix.png": "",
-    "popopo/misdoubt.png": "",
-    "popopo/nosebleed.png": "",
-    "popopo/oh.png": "",
-    "popopo/ops.png": "",
-    "popopo/pudency.png": "",
-    "popopo/rap.png": "",
-    "popopo/sad.png": "",
-    "popopo/sexy_girl.png": "",
-    "popopo/shame.png": "",
-    "popopo/smile.png": "",
-    "popopo/spiderman.png": "",
-    "popopo/still_dreaming.png": "",
-    "popopo/sure.png": "",
-    "popopo/surrender.png": "",
-    "popopo/sweat.png": "",
-    "popopo/sweet_kiss.png": "",
-    "popopo/tire.png": "",
-    "popopo/too_sad.png": "",
-    "popopo/waaaht.png": "",
-    "popopo/what.png": "",
+    "popo/smile.png": ':)',
+    "popo/wink.png": ";)",
+    "popo/frown.png": ":(",
+    "popo/mad.png": ":mad:",
+    "popo/confused.png": ":confused:",
+    "popo/cool.png": "8-)",
+    "popo/tongue.png": ":p",
+    "popo/biggrin.png": ":D",
+    "popo/eek.png": ":eek:",
+    "popo/redface.png": ":oops:",
+    "popo/rolleyes.png": ":rolleyes:",
+    "popo/O_o.png": "o_O",
+    "popo/cautious.png": ":cautious:",
+    "popo/speechless.png": ":censored:",
+    "popo/cry.png": "=((",
+    "popo/inlove.png": ":love:",
+    "popo/laugh.png": ":LOL:",
+    "popo/roflmao.png": ":ROFLMAO:",
+    "popo/sick.png": ":sick:",
+    "popo/sleep.png": ":sleep:",
+    "popo/sneaky.png": ":sneaky:",
+    "popo/unsure.png": ":unsure:",
+    "popo/whistling.png": ":whistle:",
+    "popo/giggle.png": ":giggle:",
+    "popo/devilish.png": ":devilish:",
+    "popopo/adore.png": ":adore:",
+    "popopo/after_boom.png": ":after_boom:",
+    "popopo/ah.png": ":ah:",
+    "popopo/amazed.png": ":amazed:",
+    "popopo/angry.png": ":angry:",
+    "popopo/bad_smelly.png": ":bad_smelly:",
+    "popopo/baffle.png": ":baffle:",
+    "popopo/beat_brick.png": ":beat_brick:",
+    "popopo/beat_plaster.png": ":beat_plaster:",
+    "popopo/beat_shot.png": ":beat_shot:",
+    "popopo/beated.png": ":beated:",
+    "popopo/beauty.png": ":beauty:",
+    "popopo/big_smile.png": ":big_smile:",
+    "popopo/boss.png": ":boss:",
+    "popopo/burn_joss_stick.png": ":burn_joss_stick:",
+    "popopo/byebye.png": ":byebye:",
+    "popopo/canny.png": ":canny:",
+    "popopo/choler.png": ":choler:",
+    "popopo/cold.png": ":cold:",
+    "popopo/confident.png": ":confident:",
+    "popopo/confuse.png": ":confuse:",
+    "popopo/cool.png": ":cool:",
+    "popopo/cry.png": ":cry:",
+    "popopo/doubt.png": ":doubt:",
+    "popopo/dribble.png": ":dribble:",
+    "popopo/embarrassed.png": ":embarrassed:",
+    "popopo/extreme_sexy_girl.png": ":extreme_sexy_girl:",
+    "popopo/feel_good.png": ":feel_good:",
+    "popopo/go.png": ":go:",
+    "popopo/haha.png": ":haha:",
+    "popopo/hell_boy.png": ":hell_boy:",
+    "popopo/hungry.png": ":hungry:",
+    "popopo/look_down.png": ":look_down:",
+    "popopo/matrix.png": ":matrix:",
+    "popopo/misdoubt.png": ":misdoubt:",
+    "popopo/nosebleed.png": ":nosebleed:",
+    "popopo/oh.png": ":oh:",
+    "popopo/ops.png": ":ops:",
+    "popopo/pudency.png": ":pudency:",
+    "popopo/rap.png": ":rap:",
+    "popopo/sad.png": "sad:",
+    "popopo/sexy_girl.png": ":sexy_girl:",
+    "popopo/shame.png": ":shame:",
+    "popopo/smile.png": ":smile:",
+    "popopo/spiderman.png": ":spiderman:",
+    "popopo/still_dreaming.png": ":still_dreaming:",
+    "popopo/sure.png": ":sure:",
+    "popopo/surrender.png": ":surrender:",
+    "popopo/sweat.png": ":sweat:",
+    "popopo/sweet_kiss.png": ":sweet_kiss:",
+    "popopo/tire.png": ":tire:",
+    "popopo/too_sad.png": ":too_sad:",
+    "popopo/waaaht.png": ":waaaht:",
+    "popopo/what.png": ":what:",
   };
 }

@@ -9,6 +9,7 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vozforums/GlobalController.dart';
+import 'package:vozforums/Page/NavigationDrawer/NaviDrawerController.dart';
 import 'dart:io';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 import 'package:html/dom.dart' as dom;
@@ -102,6 +103,18 @@ class ViewController extends GetxController {
       lengthHtmlDataList = htmlData.length;
       dataCsrfPost = value.getElementsByTagName('html')[0].attributes['data-csrf'];
       xfCsrfPost = GlobalController.i.xfCsrfPost;
+      if (value.getElementsByTagName('html')[0].attributes['data-logged-in'] == 'true') {
+        GlobalController.i.isLogged.value = true;
+        NaviDrawerController.i.titleUser.value = GlobalController.i.userStorage.read('titleUser');
+        NaviDrawerController.i.linkUser.value = GlobalController.i.userStorage.read('linkUser');
+        NaviDrawerController.i.avatarUser.value = GlobalController.i.userStorage.read('avatarUser');
+        NaviDrawerController.i.nameUser.value = GlobalController.i.userStorage.read('nameUser');
+        GlobalController.i.alertNotification = value.getElementsByClassName('badgeContainer--highlighted')[0].attributes['data-badge'].toString();
+        GlobalController.i.update();
+      } else
+        GlobalController.i.isLogged.value = false;
+
+
       value.getElementsByClassName("block block--messages").forEach((element) {
         var lastP = element.getElementsByClassName("pageNavSimple");
         if (lastP.length == 0) {

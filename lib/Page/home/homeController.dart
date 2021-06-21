@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:vozforums/GlobalController.dart';
 import 'package:vozforums/Page/NavigationDrawer/NaviDrawerController.dart';
@@ -27,6 +28,8 @@ class HomeController extends GetxController {
         NaviDrawerController.i.linkUser.value = GlobalController.i.userStorage.read('linkUser');
         NaviDrawerController.i.avatarUser.value = GlobalController.i.userStorage.read('avatarUser');
         NaviDrawerController.i.nameUser.value = GlobalController.i.userStorage.read('nameUser');
+        GlobalController.i.alertNotification = doc.getElementsByClassName('badgeContainer--highlighted')[0].attributes['data-badge'].toString();
+        GlobalController.i.update();
       } else
         GlobalController.i.isLogged.value = false;
 

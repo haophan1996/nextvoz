@@ -18,13 +18,27 @@ PreferredSize preferredSize(BuildContext context, String title) {
       ),
       leading: (ModalRoute.of(context)?.canPop ?? false) ? BackButton() : null,
       actions: <Widget>[
-        IconButton(
-          icon: Icon(
-            Icons.notifications,
-            color: Colors.white,
-          ),
-          onPressed: () {},
-        ),
+        Stack(
+          children: [
+            IconButton(
+              icon: Icon(
+                Icons.notifications,
+              ),
+              onPressed: () {},
+            ),
+             GetBuilder<GlobalController>(builder: (controller){
+               return Positioned(
+                 right: 0,
+                 top: 3,
+                 child: Container(
+                   width: 30,
+                   decoration: BoxDecoration(shape: BoxShape.circle, color: controller.alertNotification == '0' ? Colors.transparent : Colors.red),
+                   child: Center(child: Text(controller.alertNotification == '0' ? '' : controller.alertNotification),),
+                 ),
+               );
+             })
+          ],
+        )
       ],
       bottom: PreferredSize(
         child: GetBuilder<GlobalController>(
@@ -36,13 +50,6 @@ PreferredSize preferredSize(BuildContext context, String title) {
             );
           },
         ),
-        // child: Obx(
-        //   () => LinearProgressIndicator(
-        //     value: GlobalController.i.percentDownload.value,
-        //     valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF0CF301)),
-        //     backgroundColor: Theme.of(context).backgroundColor,
-        //   ),
-        // ),
         preferredSize: Size.fromHeight(4.0),
       ),
     ),
@@ -184,15 +191,15 @@ Widget builFlagsdPreviewIcon(String path, String tex) => Padding(
     );
 
 Widget buildIcon(String path, String text) => Row(
-  children: [
-    Image.asset(
-      path,
-      height: 25,
-      width: 25,
-    ),
-    Text(' ' + text)
-  ],
-);
+      children: [
+        Image.asset(
+          path,
+          height: 25,
+          width: 25,
+        ),
+        Text(' ' + text)
+      ],
+    );
 
 Widget text(String text, TextStyle style) {
   return Text(

@@ -27,23 +27,19 @@ class ViewUI extends GetView<ViewController> {
         children: <Widget>[
           Container(
             width: double.infinity,
-            height: MediaQuery
-                .of(context)
-                .size
-                .height,
+            height: MediaQuery.of(context).size.height,
             child: Obx(() => postContent(context)),
           ),
           Obx(
-                () =>
-                pageNavigation(
-                  context,
-                  controller.itemScrollController,
-                  controller.currentPage.value,
-                  controller.totalPage.value,
-                      (index) => controller.setPageOnClick(index),
-                      () => controller.setPageOnClick(controller.totalPage.toString()),
-                      () => controller.setPageOnClick("1"),
-                ),
+            () => pageNavigation(
+              context,
+              controller.itemScrollController,
+              controller.currentPage.value,
+              controller.totalPage.value,
+              (index) => controller.setPageOnClick(index),
+              () => controller.setPageOnClick(controller.totalPage.toString()),
+              () => controller.setPageOnClick("1"),
+            ),
           ),
         ],
       ),
@@ -70,9 +66,7 @@ class ViewUI extends GetView<ViewController> {
             itemCount: controller.htmlData.length,
             itemBuilder: (context, index) {
               return Container(
-                color: Theme
-                    .of(context)
-                    .backgroundColor,
+                color: Theme.of(context).backgroundColor,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
@@ -80,9 +74,7 @@ class ViewUI extends GetView<ViewController> {
                       padding: EdgeInsets.only(bottom: 5),
                       child: Card(
                         elevation: 5,
-                        color: Theme
-                            .of(context)
-                            .canvasColor,
+                        color: Theme.of(context).canvasColor,
                         child: Stack(
                           children: [
                             Row(
@@ -97,13 +89,11 @@ class ViewUI extends GetView<ViewController> {
                                       shape: BoxShape.circle,
                                       image: DecorationImage(
                                         image: controller.htmlData.elementAt(index)["userAvatar"] == "no"
-                                            ? Image
-                                            .asset(
-                                          "assets/NoAvata.png",
-                                          height: 48,
-                                          width: 48,
-                                        )
-                                            .image
+                                            ? Image.asset(
+                                                "assets/NoAvata.png",
+                                                height: 48,
+                                                width: 48,
+                                              ).image
                                             : ExtendedNetworkImageProvider(controller.htmlData.elementAt(index)["userAvatar"], cache: true),
                                       ),
                                     ),
@@ -118,9 +108,7 @@ class ViewUI extends GetView<ViewController> {
                                           style: TextStyle(color: Color(0xFFFD6E00), fontWeight: FontWeight.bold, fontSize: 16)),
                                       TextSpan(
                                           text: controller.htmlData.elementAt(index)['userTitle'],
-                                          style: TextStyle(color: Theme
-                                              .of(context)
-                                              .primaryColor, fontSize: 13)),
+                                          style: TextStyle(color: Theme.of(context).primaryColor, fontSize: 13)),
                                     ]),
                                   ),
                                 ),
@@ -134,20 +122,14 @@ class ViewUI extends GetView<ViewController> {
                                   crossAxisAlignment: CrossAxisAlignment.end,
                                   children: <Widget>[
                                     text(controller.htmlData.elementAt(index)['userPostDate'],
-                                        TextStyle(color: Theme
-                                            .of(context)
-                                            .primaryColor, fontSize: 13)),
+                                        TextStyle(color: Theme.of(context).primaryColor, fontSize: 13)),
                                     controller.htmlData.elementAt(index)['newPost'] == false
                                         ? text(controller.htmlData.elementAt(index)['orderPost'],
-                                        TextStyle(color: Theme
-                                            .of(context)
-                                            .primaryColor, fontSize: 13))
+                                            TextStyle(color: Theme.of(context).primaryColor, fontSize: 13))
                                         : rowNew(
-                                        'assets/newPost.png',
-                                        text(controller.htmlData.elementAt(index)['orderPost'],
-                                            TextStyle(color: Theme
-                                                .of(context)
-                                                .primaryColor, fontSize: 13)))
+                                            'assets/newPost.png',
+                                            text(controller.htmlData.elementAt(index)['orderPost'],
+                                                TextStyle(color: Theme.of(context).primaryColor, fontSize: 13)))
                                   ],
                                 ),
                               ),
@@ -200,17 +182,15 @@ class ViewUI extends GetView<ViewController> {
                                           'blockQuote'.tr +
                                               (renderContext.tree.element!.getElementsByClassName("bbCodeBlock-title").length > 0
                                                   ? renderContext.tree.element!
-                                                  .getElementsByClassName("bbCodeBlock-title")[0]
-                                                  .getElementsByTagName("a")[0]
-                                                  .innerHtml
-                                                  .toString()
+                                                      .getElementsByClassName("bbCodeBlock-title")[0]
+                                                      .getElementsByTagName("a")[0]
+                                                      .innerHtml
+                                                      .toString()
                                                   : ""),
                                           TextStyle(fontWeight: FontWeight.bold)),
                                       width: double.infinity,
                                       decoration: BoxDecoration(
-                                        color: Theme
-                                            .of(context)
-                                            .secondaryHeaderColor,
+                                        color: Theme.of(context).secondaryHeaderColor,
                                         borderRadius: BorderRadius.all(Radius.circular(5)),
                                       ),
                                     ),
@@ -220,9 +200,7 @@ class ViewUI extends GetView<ViewController> {
                                         constraints: BoxConstraints(minHeight: 30),
                                         width: double.infinity,
                                         decoration: BoxDecoration(
-                                          color: Theme
-                                              .of(context)
-                                              .cardColor,
+                                          color: Theme.of(context).cardColor,
                                           borderRadius: BorderRadius.all(Radius.circular(5)),
                                         ),
                                         child: Center(
@@ -251,10 +229,8 @@ class ViewUI extends GetView<ViewController> {
                             height: height,
                             child: WebView(
                               javascriptMode: JavascriptMode.unrestricted,
-                              initialUrl: attrs['src'] ,
+                              initialUrl: attrs['src'],
                               navigationDelegate: (NavigationRequest request) async {
-                                //no need to load any url besides the embedded youtube url when displaying embedded youtube, so prevent url loading
-                                //on other iframe content allow all url loading
                                 if (attrs['src'] != null && attrs['src']!.contains("youtube.com/embed")) {
                                   if (!request.url.contains("youtube.com/embed")) {
                                     return NavigationDecision.prevent;
@@ -269,25 +245,13 @@ class ViewUI extends GetView<ViewController> {
                           );
                         }
                       },
-
                       style: {
                         "code": Style(color: Colors.blue),
-                        "table": Style(backgroundColor: Theme
-                            .of(context)
-                            .cardColor),
-                        "i": Style(
-                            fontSize: FontSize.medium,
-                            padding: EdgeInsets.zero,
-                            whiteSpace: WhiteSpace.PRE,
-                            lineHeight: LineHeight.percent(0),
-                            height: 0),
+                        "table": Style(backgroundColor: Theme.of(context).cardColor),
                         "body": Style(
                           fontSize: FontSize(GlobalController.i.userStorage.read('fontSizeView')),
-                        )
-                          ..margin = EdgeInsets.only(bottom: 0, left: 4, right: 3),
-                        "span": Style(color: Theme
-                            .of(context)
-                            .primaryColor),
+                        )..margin = EdgeInsets.only(bottom: 0, left: 4, right: 3),
+                        "span": Style(color: Theme.of(context).primaryColor),
                         "blockquote": Style(width: double.infinity)
                           ..margin = EdgeInsets.only(left: 5.0, right: 5.0, bottom: 10.0)
                           ..display = Display.BLOCK,
@@ -310,9 +274,7 @@ class ViewUI extends GetView<ViewController> {
                             },
                             key: const Key("value"),
                             child: PhotoView(
-                              imageProvider: Image
-                                  .file(await controller.getImage(url!))
-                                  .image,
+                              imageProvider: Image.file(await controller.getImage(url!)).image,
                             ),
                           ),
                           useSafeArea: true,
@@ -327,14 +289,12 @@ class ViewUI extends GetView<ViewController> {
                         children: [
                           controller.htmlData.elementAt(index)['commentImage'].toString() != 'no'
                               ? Image.asset('assets/reaction/' + controller.htmlData.elementAt(index)['commentImage'][0] + '.png',
-                              width: 22, height: 22)
+                                  width: 22, height: 22)
                               : Container(),
-                          controller.htmlData.elementAt(index)['commentImage']
-                              .toString()
-                              .length > 1 &&
-                              controller.htmlData.elementAt(index)['commentImage'].toString() != 'no'
+                          controller.htmlData.elementAt(index)['commentImage'].toString().length > 1 &&
+                                  controller.htmlData.elementAt(index)['commentImage'].toString() != 'no'
                               ? Image.asset('assets/reaction/' + controller.htmlData.elementAt(index)['commentImage'][1] + '.png',
-                              width: 22, height: 22)
+                                  width: 22, height: 22)
                               : Container(),
                           Expanded(
                               child: Text(controller.htmlData.elementAt(index)['commentName'],

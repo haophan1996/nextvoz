@@ -1,11 +1,8 @@
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_reaction_button/flutter_reaction_button.dart';
 import 'package:get/get.dart';
 import '../../GlobalController.dart';
 import 'package:http/http.dart' as http;
-
-import '../reuseWidget.dart';
 
 class NaviDrawerController extends GetxController {
   static NaviDrawerController get i => Get.find();
@@ -63,6 +60,8 @@ class NaviDrawerController extends GetxController {
 
   getUserProfile() async{
     await GlobalController.i.getBody(GlobalController.i.url, false).then((res) async {
+      GlobalController.i.alertNotification = res.getElementsByClassName('badgeContainer--highlighted')[0].attributes['data-badge'].toString();
+      GlobalController.i.update();
       String linkProfile = res.getElementsByTagName('form')[1].attributes['action']!.split('/post')[0];
       linkUser.value = linkProfile;
        await GlobalController.i.getBody(GlobalController.i.url+linkProfile, false).then((value) {

@@ -4,6 +4,7 @@ import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:get/get.dart';
 import 'package:vozforums/GlobalController.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:vozforums/Page/NavigationDrawer/NaviDrawerController.dart';
 
 class ThreadController extends GetxController {
   late String _url;
@@ -55,6 +56,17 @@ class ThreadController extends GetxController {
   loadSubHeader(String url) async {
     await GlobalController.i.getBody(url, false).then((value) async {
       lengthHtmlDataList = myThreadList.length;
+      if (value.getElementsByTagName('html')[0].attributes['data-logged-in'] == 'true') {
+        GlobalController.i.isLogged.value = true;
+        NaviDrawerController.i.titleUser.value = GlobalController.i.userStorage.read('titleUser');
+        NaviDrawerController.i.linkUser.value = GlobalController.i.userStorage.read('linkUser');
+        NaviDrawerController.i.avatarUser.value = GlobalController.i.userStorage.read('avatarUser');
+        NaviDrawerController.i.nameUser.value = GlobalController.i.userStorage.read('nameUser');
+        GlobalController.i.alertNotification = value.getElementsByClassName('badgeContainer--highlighted')[0].attributes['data-badge'].toString();
+        GlobalController.i.update();
+      } else
+        GlobalController.i.isLogged.value = false;
+
       value.getElementsByClassName("p-body-content").forEach((element) async {
         lastP = element.getElementsByClassName("pageNavSimple");
         if (lastP.length == 0) {
