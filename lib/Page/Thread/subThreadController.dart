@@ -62,7 +62,7 @@ class ThreadController extends GetxController {
         NaviDrawerController.i.linkUser.value = GlobalController.i.userStorage.read('linkUser');
         NaviDrawerController.i.avatarUser.value = GlobalController.i.userStorage.read('avatarUser');
         NaviDrawerController.i.nameUser.value = GlobalController.i.userStorage.read('nameUser');
-        GlobalController.i.alertNotification = value.getElementsByClassName('badgeContainer--highlighted')[0].attributes['data-badge'].toString();
+        GlobalController.i.alertNotification = value.getElementsByClassName('badgeContainer--highlighted').length > 0 ? value.getElementsByClassName('badgeContainer--highlighted')[0].attributes['data-badge'].toString() : '0';
         GlobalController.i.update();
       } else
         GlobalController.i.isLogged.value = false;

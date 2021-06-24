@@ -10,52 +10,34 @@ import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vozforums/GlobalController.dart';
 import 'package:vozforums/Page/NavigationDrawer/NaviDrawerController.dart';
+import 'package:vozforums/Page/reuseWidget.dart';
 import 'dart:io';
-import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 import 'package:html/dom.dart' as dom;
-import '../reuseWidget.dart';
 
 class ViewController extends GetxController {
-  late String fullUrl;
-  var subHeader;
-  late String subLink;
   RxList htmlData = [].obs;
-  var _postContent;
-  var _userPostDate;
-  var _userName;
-  var _userAvatar;
-  var _userTitle;
-  var _userLink;
-  var _orderPost;
-  var _commentName;
-  var _commentImg = '';
-  var _commentByMe = 0;
-  var dataCsrfPost;
-  var xfCsrfPost;
-  late var _user;
+  RxInt currentPage = 0.obs, totalPage = 0.obs;
+  Map<String, dynamic> data = {};
   int lengthHtmlDataList = 0;
-
+  late var _user;
+  late dom.Document res;
   final RefreshController refreshController = RefreshController(initialRefresh: false);
   final ScrollController listViewScrollController = ScrollController();
   final ItemScrollController itemScrollController = ItemScrollController();
-  RxInt currentPage = 0.obs;
-  RxInt totalPage = 0.obs;
-  final int loadItems = 50;
-  late dom.Document res;
 
   @override
   Future<void> onInit() async {
     super.onInit();
-    subHeader = Get.arguments[0];
+    data['subHeader'] = Get.arguments[0];
   }
 
   @override
   Future<void> onReady() async {
     super.onReady();
-    subLink = Get.arguments[1];
-    await loadUserPost(fullUrl = GlobalController.i.url + subLink);
-    if (fullUrl.contains("/unread") == true) {
-      fullUrl = fullUrl.split("unread")[0];
+    data['subLink'] = Get.arguments[1];
+    await loadUserPost(data['fullUrl'] = GlobalController.i.url + data['subLink']);
+    if (data['fullUrl'].contains("/unread") == true) {
+      data['fullUrl'] = data['fullUrl'].split("unread")[0];
     }
   }
 
@@ -71,9 +53,6 @@ class ViewController extends GetxController {
     GlobalController.i.percentDownload = -1.0;
   }
 
-  getYoutubeID(String s) {
-    return YoutubePlayer.convertUrlToId(s);
-  }
 
   launchURL(String url) async {
     if (await canLaunch(url)) {
@@ -94,26 +73,26 @@ class ViewController extends GetxController {
       refreshController.loadComplete();
     } else {
       GlobalController.i.percentDownload = 0.01;
-      await loadUserPost(fullUrl + GlobalController.i.pageLink + toPage);
+      await loadUserPost(data['fullUrl'] + GlobalController.i.pageLink + toPage);
     }
   }
 
   Future<void> loadUserPost(String url) async {
+    data['_commentImg'] = '';
     await GlobalController.i.getBody(url, false).then((value) async {
       lengthHtmlDataList = htmlData.length;
-      dataCsrfPost = value.getElementsByTagName('html')[0].attributes['data-csrf'];
-      xfCsrfPost = GlobalController.i.xfCsrfPost;
+      data['dataCsrfPost'] = value.getElementsByTagName('html')[0].attributes['data-csrf'];
+      data['xfCsrfPost'] = GlobalController.i.xfCsrfPost;
       if (value.getElementsByTagName('html')[0].attributes['data-logged-in'] == 'true') {
         GlobalController.i.isLogged.value = true;
         NaviDrawerController.i.titleUser.value = GlobalController.i.userStorage.read('titleUser');
         NaviDrawerController.i.linkUser.value = GlobalController.i.userStorage.read('linkUser');
         NaviDrawerController.i.avatarUser.value = GlobalController.i.userStorage.read('avatarUser');
         NaviDrawerController.i.nameUser.value = GlobalController.i.userStorage.read('nameUser');
-        GlobalController.i.alertNotification = value.getElementsByClassName('badgeContainer--highlighted')[0].attributes['data-badge'].toString();
+        GlobalController.i.alertNotification = value.getElementsByClassName('badgeContainer--highlighted').length > 0 ? value.getElementsByClassName('badgeContainer--highlighted')[0].attributes['data-badge'].toString() : '0';
         GlobalController.i.update();
       } else
         GlobalController.i.isLogged.value = false;
-
 
       value.getElementsByClassName("block block--messages").forEach((element) {
         var lastP = element.getElementsByClassName("pageNavSimple");
@@ -128,64 +107,69 @@ class ViewController extends GetxController {
 
         //Get post
         element.getElementsByClassName("message message--post js-post js-inlineModContainer").forEach((element) {
-          _postContent = element.getElementsByClassName("message-body js-selectToQuote").map((e) => e.outerHtml).first;
-          _userPostDate = element.getElementsByClassName("u-concealed").map((e) => e.getElementsByTagName("time")[0].innerHtml).first;
+          data['_postContent'] = element.getElementsByClassName("message-body js-selectToQuote").map((e) => e.outerHtml).first;
+          data['_userPostDate'] = element.getElementsByClassName("u-concealed").map((e) => e.getElementsByTagName("time")[0].innerHtml).first;
+
           _user = element.getElementsByClassName("message-cell message-cell--user");
-          _userLink = _user.map((e) => e.getElementsByTagName("a")[1].attributes['href']).first!;
-          _userTitle = _user.map((e) => e.getElementsByClassName("userTitle message-userTitle")[0].innerHtml).first;
+          data['_userLink'] = _user.map((e) => e.getElementsByTagName("a")[1].attributes['href']).first!;
+          data['_userTitle'] = _user.map((e) => e.getElementsByClassName("userTitle message-userTitle")[0].innerHtml).first;
           if (_user.map((e) => e.getElementsByTagName("img").length).toString() == "(1)") {
-            _userAvatar = _user.map((e) => e.getElementsByTagName("img")[0].attributes['src']).first!;
+            data['_userAvatar'] = _user.map((e) => e.getElementsByTagName("img")[0].attributes['src']).first!;
           } else {
-            _userAvatar = "no";
-          }
-          _userName = _user.map((e) => e.getElementsByTagName("a")[1].innerHtml).first;
-          if (_userName.contains("span")) {
-            _userName = _user.map((e) => e.getElementsByTagName("span")[0].innerHtml).first;
+            data['_userAvatar'] = "no";
           }
 
-          _orderPost = element
+          data['_userName'] = _user.map((e) => e.getElementsByTagName("a")[1].innerHtml).first;
+          if (data['_userName'].contains("span")) {
+            data['_userName'] = _user.map((e) => e.getElementsByTagName("span")[0].innerHtml).first;
+          }
+
+          data['_orderPost'] = element
               .getElementsByClassName("message-attribution-opposite message-attribution-opposite--list")
               .map((e) => e.getElementsByTagName("a")[GlobalController.i.isLogged.value == true ? 2 : 1].innerHtml)
               .first
               .trim();
 
           if (element.getElementsByClassName('reactionsBar-link').length > 0) {
-            _commentName = element.getElementsByClassName('reactionsBar-link')[0].innerHtml.replaceAll(RegExp(r"<[^>]*>"), '');
+            data['_commentName'] = element.getElementsByClassName('reactionsBar-link')[0].innerHtml.replaceAll(RegExp(r"<[^>]*>"), '');
 
             if (element.getElementsByClassName('has-reaction').length > 0) {
               if (element.getElementsByClassName('has-reaction')[0].getElementsByTagName('img')[0].attributes['title'] == 'Ưng') {
-                _commentByMe = 1;
+                data['_commentByMe'] = '1';
               } else
-                _commentByMe = 2;
+                data['_commentByMe'] = '2';
             } else
-              _commentByMe = 0;
+              data['_commentByMe'] = '0';
 
             element.getElementsByClassName('reactionSummary').forEach((element) {
               element.getElementsByClassName('reaction reaction--small').forEach((element) {
-                _commentImg += element.attributes['data-reaction-id'].toString();
+                data['_commentImg'] += element.attributes['data-reaction-id'].toString();
               });
             });
           } else {
-            _commentImg = 'no';
-            _commentName = '';
+            data['_commentImg'] = 'no';
+            data['_commentName'] = '';
+            data['_commentByMe'] = '0';
           }
 
           htmlData.add({
-            'newPost' : element.getElementsByClassName('message-newIndicator').isNotEmpty == false ? false : true,
-            "postContent": _removeTag(_postContent),
-            "userPostDate": _userPostDate,
-            "userName": _userName,
-            "userLink": _userLink,
-            "userTitle": _userTitle,
-            "userAvatar": (_userAvatar == "no" || _userAvatar.contains("https://")) ? _userAvatar : GlobalController.i.url + _userAvatar,
-            "orderPost": _orderPost,
-            "commentName": _commentName,
-            "commentImage": _commentImg,
+            'newPost': element.getElementsByClassName('message-newIndicator').isNotEmpty == false ? false : true,
+            "postContent": _removeTag(data['_postContent']),
+            "userPostDate": data['_userPostDate'],
+            "userName": data['_userName'],
+            "userLink": data['_userLink'],
+            "userTitle": data['_userTitle'],
+            "userAvatar": (data['_userAvatar'] == "no" || data['_userAvatar'].contains("https://"))
+                ? data['_userAvatar']
+                : GlobalController.i.url + data['_userAvatar'],
+            "orderPost": data['_orderPost'],
+            "commentName": data['_commentName'],
+            "commentImage": data['_commentImg'],
             "postID": element.attributes['id']!.split('t-')[1],
-            'commentByMe': _commentByMe
+            'commentByMe': int.parse(data['_commentByMe'])
           });
-          _commentByMe = 0;
-          _commentImg = '';
+
+          data['_commentImg'] = '';
         });
       });
 
@@ -246,17 +230,17 @@ class ViewController extends GetxController {
     var headers = {
       'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
       'host': 'voz.vn',
-      'cookie': '$xfCsrfPost; xf_user=${GlobalController.i.xfUser};',
+      'cookie': '${data['xfCsrfPost']}; xf_user=${GlobalController.i.xfUser};',
     };
-    var body = {'_xfWithData': '1', '_xfToken': '$dataCsrfPost', '_xfResponseType': 'json'};
+    var body = {'_xfWithData': '1', '_xfToken': '${data['dataCsrfPost']}', '_xfResponseType': 'json'};
     await GlobalController.i.getHttpPost(headers, body, 'https://voz.vn/p/$idPost/react?reaction_id=$idReact?reaction_id=$idReact').then((value) {
-      _commentImg = '';
+      data['_commentImg'] = '';
       value.getElementsByClassName('reaction reaction--small reaction').forEach((element) {
-        _commentImg += element.attributes['data-reaction-id'].toString();
+        data['_commentImg'] += element.attributes['data-reaction-id'].toString();
       });
       htmlData.elementAt(index)['commentName'] =
           value.documentElement!.getElementsByClassName('reactionsBar-link')[0].innerHtml.replaceAll(RegExp(r"<[^>]*>"), '');
-      htmlData.elementAt(index)['commentImage'] = _commentImg;
+      htmlData.elementAt(index)['commentImage'] = data['_commentImg'];
       htmlData.refresh();
       Get.back();
     });

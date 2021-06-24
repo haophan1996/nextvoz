@@ -10,6 +10,7 @@ class Themes {
     cardColor: Colors.grey.shade400,
     hintColor: Color(0xff5c7099),
     dividerColor: Colors.grey,
+    secondaryHeaderColor: Colors.grey.shade700,
     appBarTheme: AppBarTheme(
       iconTheme: IconThemeData(
         color: Colors.black
@@ -31,6 +32,7 @@ class Themes {
     canvasColor: Color(0xFF343030),
     hintColor: Color(0xff223447),
     dividerColor: Colors.grey,
+    secondaryHeaderColor: Colors.white70,
     appBarTheme: AppBarTheme(
       iconTheme: IconThemeData(
           color: Colors.white

@@ -60,7 +60,7 @@ class NaviDrawerController extends GetxController {
 
   getUserProfile() async{
     await GlobalController.i.getBody(GlobalController.i.url, false).then((res) async {
-      GlobalController.i.alertNotification = res.getElementsByClassName('badgeContainer--highlighted')[0].attributes['data-badge'].toString();
+      GlobalController.i.alertNotification = res.getElementsByClassName('badgeContainer--highlighted').length > 0 ? res.getElementsByClassName('badgeContainer--highlighted')[0].attributes['data-badge'].toString() : '0';
       GlobalController.i.update();
       String linkProfile = res.getElementsByTagName('form')[1].attributes['action']!.split('/post')[0];
       linkUser.value = linkProfile;

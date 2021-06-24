@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:vozforums/GlobalController.dart';
 import 'package:vozforums/Page/NavigationDrawer/NaviDrawerController.dart';
@@ -21,6 +20,7 @@ class HomeController extends GetxController {
   loading() async {
     await GlobalController.i.getBody(GlobalController.i.url, true).then((doc) async {
       //Set token
+
       GlobalController.i.dataCsrfLogin = doc.getElementsByTagName('html')[0].attributes['data-csrf'];
       if (doc.getElementsByTagName('html')[0].attributes['data-logged-in'] == 'true') {
         GlobalController.i.isLogged.value = true;
@@ -28,7 +28,7 @@ class HomeController extends GetxController {
         NaviDrawerController.i.linkUser.value = GlobalController.i.userStorage.read('linkUser');
         NaviDrawerController.i.avatarUser.value = GlobalController.i.userStorage.read('avatarUser');
         NaviDrawerController.i.nameUser.value = GlobalController.i.userStorage.read('nameUser');
-        GlobalController.i.alertNotification = doc.getElementsByClassName('badgeContainer--highlighted')[0].attributes['data-badge'].toString();
+        GlobalController.i.alertNotification = doc.getElementsByClassName('badgeContainer--highlighted').length > 0 ? doc.getElementsByClassName('badgeContainer--highlighted')[0].attributes['data-badge'].toString() : '0';
         GlobalController.i.update();
       } else
         GlobalController.i.isLogged.value = false;

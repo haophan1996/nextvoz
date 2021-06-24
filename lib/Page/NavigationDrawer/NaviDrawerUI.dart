@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get_state_manager/src/simple/get_view.dart';
 import 'package:vozforums/GlobalController.dart';
 import 'package:vozforums/Page/NavigationDrawer/NaviDrawerController.dart';
+import 'package:vozforums/Page/reuseWidget.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:get/get.dart';
-import 'package:vozforums/Page/reuseWidget.dart';
 
 class NaviDrawerUI extends GetView<NaviDrawerController> {
   @override
@@ -74,7 +74,7 @@ Widget logged(BuildContext context) {
                           height: 48,
                           width: 48,
                         ).image
-                      : ExtendedNetworkImageProvider(GlobalController.i.url + NaviDrawerController.i.avatarUser.value, cache: true),
+                      : ExtendedNetworkImageProvider((GlobalController.i.url + NaviDrawerController.i.avatarUser.value), cache: true),
                 ),
               ),
             ),

@@ -22,7 +22,7 @@ class ViewUI extends GetView<ViewController> {
   Widget build(BuildContext context) {
     return Scaffold(
       endDrawer: NaviDrawerUI(),
-      appBar: preferredSize(context, controller.subHeader),
+      appBar: preferredSize(context, controller. data['subHeader']),
       body: Stack(
         children: <Widget>[
           Container(

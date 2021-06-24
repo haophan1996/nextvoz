@@ -13,26 +13,17 @@ import 'package:vozforums/Page/NavigationDrawer/NaviDrawerController.dart';
 class GlobalController extends GetxController {
   static GlobalController get i => Get.find();
   late dom.Document doc;
-  final String url = "https://voz.vn";
-  final String pageLink = "page-";
-  final pageNaviAlign = 0.72;
-  final userStorage = GetStorage();
+  final String url = "https://voz.vn", pageLink = "page-";
+  final pageNaviAlign = 0.72, userStorage = GetStorage();
   double percentDownload = 0.0;
-  var dio = Dio();
-  var xfCsrfLogin;
-  var dataCsrfLogin;
-  var xfCsrfPost;
-  var dataCsrfPost;
+  var dio = Dio(), xfCsrfLogin, dataCsrfLogin, xfCsrfPost, dataCsrfPost;
   RxBool isLogged = false.obs;
-  String xfUser = '';
-  String xfSession = '';
-  String dateExpire = '';
-  String alertNotification = '0';
+  List alertList = [];
+  String xfSession = '', dateExpire = '', alertNotification = '0', xfUser = '';
 
   @override
   onInit() async {
     super.onInit();
-
     isLogged.stream.listen((event) {
       if (event == false) alertNotification = '0';
     });
@@ -54,11 +45,40 @@ class GlobalController extends GetxController {
         print("Heysacsa");
       }
     });
-
     xfCsrfPost = cookXfCsrf(response.headers['set-cookie'].toString());
     if (isHomePage == true) xfCsrfLogin = cookXfCsrf(response.headers['set-cookie'].toString());
 
     return parser.parse(response.toString());
+  }
+
+  getAlert() {
+    String username, threadName, time, status, link, key;
+    if (isLogged.value == true) {
+      getBody(url + '/account/alerts?page=1', false).then((value) {
+        value.getElementsByClassName('alert js-alert block-row block-row--separated').forEach((element) {
+          time = element.getElementsByTagName('time')[0].innerHtml;
+          status = element.getElementsByClassName('contentRow-main contentRow-main--close')[0].text.replaceAll(time, '').trim();
+          link = element.getElementsByClassName('fauxBlockLink-blockLink')[0].attributes['href'].toString();
+          if (element.getElementsByClassName('username ').length > 0) {
+            username = element.getElementsByClassName('username ')[0].innerHtml.trim();
+            key = status.contains('the thread') ? 'the thread' : 'a thread called';
+            threadName = status.split('.')[0].trim().split(key)[1];
+            status = status.split('.')[0].trim().split(key)[0].replaceAll(username, '')+key;
+          } else{
+            username = '';
+            threadName = '';
+          }
+          alertList.add({
+            'username': username,
+            'status': status,
+            'threadName': threadName,
+            'link': link,
+            'time': time,
+          });
+        });
+        update();
+      });
+    }
   }
 
   Future<dom.Document> getHttpPost(Map<String, String> header, Map<String, String> body, String link) async {
@@ -80,29 +100,7 @@ class GlobalController extends GetxController {
   }
 
   String cookXfCsrf(String string) {
-    string = string.split('[')[1];
-    string = string.split(';')[0];
-    return string;
-  }
-
-  final Map<String, Color> mapInvertColor = {
-    "black": Colors.black,
-    "white": Colors.white,
-  };
-
-  getEmoji(String s) {
-    return "assets/" + s.replaceAll(RegExp(r"\S*smilies\S"), "").replaceAll(RegExp(r'\?[^]*'), "");
-  }
-
-  getColor(String typeT) {
-    return mapColor[typeT];
-  }
-
-  getColorInvert(String typeT) {
-    if (typeT == "kiến thức" || typeT == "đánh giá" || typeT == "khoe" || typeT == "HN" || typeT == "SG" || typeT == "download" || typeT == "TQ") {
-      return "white";
-    } else
-      return "black";
+    return string.split('[')[1].split(';')[0];
   }
 
   final langList = {Locale('en', 'US'), Locale('vi', 'VN')};
@@ -114,6 +112,22 @@ class GlobalController extends GetxController {
     if (userStorage.read('fontSizeView') == null) {
       userStorage.write('fontSizeView', 17.0);
     }
+  }
+
+  final Map<String, Color> mapInvertColor = {
+    "black": Colors.black,
+    "white": Colors.white,
+  };
+
+  getEmoji(String s) {
+    return "assets/" + s.replaceAll(RegExp(r"\S*smilies\S"), "").replaceAll(RegExp(r'\?[^]*'), "");
+  }
+
+  getColorInvert(String typeT) {
+    if (typeT == "kiến thức" || typeT == "đánh giá" || typeT == "khoe" || typeT == "HN" || typeT == "SG" || typeT == "download" || typeT == "TQ") {
+      return "white";
+    } else
+      return "black";
   }
 
   final Map<String, Color> mapColor = {

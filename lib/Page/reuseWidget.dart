@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:vozforums/GlobalController.dart';
 import 'package:vozforums/Page/NavigationDrawer/NaviDrawerController.dart';
+import 'package:vozforums/pop.dart';
+import 'package:vozforums/theme.dart';
 
 ///  * Global appbar
 PreferredSize preferredSize(BuildContext context, String title) {
@@ -20,23 +22,42 @@ PreferredSize preferredSize(BuildContext context, String title) {
       actions: <Widget>[
         Stack(
           children: [
-            IconButton(
-              icon: Icon(
-                Icons.notifications,
+            Hero(
+              flightShuttleBuilder: (
+                BuildContext flightContext,
+                Animation<double> animation,
+                HeroFlightDirection flightDirection,
+                BuildContext fromHeroContext,
+                BuildContext toHeroContext,
+              ) {
+                return Center(child: Container(
+                  width: MediaQuery.of(context).size.width * 0.8,
+                  height: MediaQuery.of(context).size.height * 0.8,
+                  color: Theme.of(context).backgroundColor,
+                ),);
+              },
+              tag: 'noti',
+              child: TextButton(
+                child: Text('a'),
+                onPressed: () async {
+                  await GlobalController.i.getAlert();
+                  Get.to(() => Popup(), fullscreenDialog: true, opaque: false);
+                },
               ),
-              onPressed: () {},
             ),
-             GetBuilder<GlobalController>(builder: (controller){
-               return Positioned(
-                 right: 0,
-                 top: 3,
-                 child: Container(
-                   width: 30,
-                   decoration: BoxDecoration(shape: BoxShape.circle, color: controller.alertNotification == '0' ? Colors.transparent : Colors.red),
-                   child: Center(child: Text(controller.alertNotification == '0' ? '' : controller.alertNotification),),
-                 ),
-               );
-             })
+            GetBuilder<GlobalController>(builder: (controller) {
+              return Positioned(
+                right: 0,
+                top: 3,
+                child: Container(
+                  width: 30,
+                  decoration: BoxDecoration(shape: BoxShape.circle, color: controller.alertNotification == '0' ? Colors.transparent : Colors.red),
+                  child: Center(
+                    child: Text(controller.alertNotification == '0' ? '' : controller.alertNotification),
+                  ),
+                ),
+              );
+            })
           ],
         )
       ],
