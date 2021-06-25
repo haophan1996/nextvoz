@@ -29,24 +29,27 @@ class Popup extends GetView<GlobalController> {
                   itemBuilder: (BuildContext context, int index) {
                     return Container(
                       decoration: BoxDecoration(
-                        border: Border(
-                          bottom: BorderSide(width: 0.5, color: Theme.of(context).primaryColor),
-                        )
-                      ),
+                          border: Border(
+                        bottom: BorderSide(width: 0.5, color: Theme.of(context).primaryColor),
+                      )),
                       child: CupertinoButton(
                         child: RichText(
                           text: TextSpan(
                             children: <TextSpan>[
                               TextSpan(text: controller.alertList.elementAt(index)['username'], style: TextStyle(color: Colors.blue)),
                               TextSpan(
-                                text: controller.alertList.elementAt(index)['status'], style: TextStyle(color: Theme.of(context).primaryColor)
-                              ),
-                              TextSpan(text: controller.alertList.elementAt(index)['threadName']+'\n', style: TextStyle(color: Colors.blue)),
-                              TextSpan(text: controller.alertList.elementAt(index)['time'], style: TextStyle(color: Theme.of(context).secondaryHeaderColor))
+                                  text: controller.alertList.elementAt(index)['status'], style: TextStyle(color: Theme.of(context).primaryColor)),
+                              TextSpan(text: controller.alertList.elementAt(index)['threadName'] + '\n', style: TextStyle(color: Colors.blue)),
+                              TextSpan(
+                                  text: controller.alertList.elementAt(index)['time'],
+                                  style: TextStyle(color: Theme.of(context).secondaryHeaderColor))
                             ],
                           ),
                         ),
-                        onPressed: () {},
+                        onPressed: () {
+                          showModalBottomSheet(
+                              backgroundColor: Colors.transparent, isScrollControlled: true, context: context, builder: (builder) => sheetPage());
+                        },
                       ),
                     );
                   },
@@ -59,3 +62,37 @@ class Popup extends GetView<GlobalController> {
     );
   }
 }
+
+Widget sheetPage() => DraggableScrollableSheet(
+    initialChildSize: 0.7,
+    maxChildSize: 0.9,
+    minChildSize: 0.7,
+    builder: (_, controller) => Container(
+          color: Colors.white,
+          child: ListView(
+            physics: BouncingScrollPhysics(),
+            controller: controller,
+            children: [
+              Text(
+                'sackjslcnasjcsdjcnsdncnjsdnjcsdjnvdnsvndfvifdnvndfinviufdvuifdvuindfiuvndfjvnjdfnvjkdfnjkvnjfksnjk',
+                style: TextStyle(color: Colors.blue),
+              ),
+              Text(
+                'sackjslcnasjcsdjcnsdncnjsdnjcsdjnvdnsvndfvifdnvndfinviufdvuifdvuindfiuvndfjvnjdfnvjkdfnjkvnjfksnjk',
+                style: TextStyle(color: Colors.blue),
+              ),
+              Text(
+                'sackjslcnasjcsdjcnsdncnjsdnjcsdjnvdnsvndfvifdnvndfinviufdvuifdvuindfiuvndfjvnjdfnvjkdfnjkvnjfksnjk',
+                style: TextStyle(color: Colors.blue),
+              ),
+              Text(
+                'sackjslcnasjcsdjcnsdncnjsdnjcsdjnvdnsvndfvifdnvndfinviufdvuifdvuindfiuvndfjvnjdfnvjkdfnjkvnjfksnjk',
+                style: TextStyle(color: Colors.blue),
+              ),
+              Text(
+                'sackjslcnasjcsdjcnsdncnjsdnjcsdjnvdnsvndfvifdnvndfinviufdvuifdvuindfiuvndfjvnjdfnvjkdfnjkvnjfksnjk',
+                style: TextStyle(color: Colors.blue),
+              ),
+            ],
+          ),
+        ));

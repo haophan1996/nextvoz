@@ -213,7 +213,7 @@ class ViewController extends GetxController {
   final flagsReactions = [
     Reaction(
       previewIcon: builFlagsdPreviewIcon('assets/reaction/0.png', 'unReact'.tr),
-      icon: buildIcon('assets/reaction/reactQ.png', 'react'.tr),
+      icon: buildIcon('assets/reaction/nil.png', 'react'.tr),
     ),
     Reaction(
       previewIcon: builFlagsdPreviewIcon('assets/reaction/1.png', 'sweet'.tr),
@@ -234,13 +234,21 @@ class ViewController extends GetxController {
     };
     var body = {'_xfWithData': '1', '_xfToken': '${data['dataCsrfPost']}', '_xfResponseType': 'json'};
     await GlobalController.i.getHttpPost(headers, body, 'https://voz.vn/p/$idPost/react?reaction_id=$idReact?reaction_id=$idReact').then((value) {
-      data['_commentImg'] = '';
-      value.getElementsByClassName('reaction reaction--small reaction').forEach((element) {
-        data['_commentImg'] += element.attributes['data-reaction-id'].toString();
-      });
-      htmlData.elementAt(index)['commentName'] =
-          value.documentElement!.getElementsByClassName('reactionsBar-link')[0].innerHtml.replaceAll(RegExp(r"<[^>]*>"), '');
-      htmlData.elementAt(index)['commentImage'] = data['_commentImg'];
+
+      if (value.documentElement!.getElementsByClassName('reactionsBar-link').length > 0){
+        data['_commentImg'] = '';
+        value.getElementsByClassName('reaction reaction--small reaction').forEach((element) {
+          data['_commentImg'] += element.attributes['data-reaction-id'].toString();
+        });
+
+        htmlData.elementAt(index)['commentName'] =
+            value.documentElement!.getElementsByClassName('reactionsBar-link')[0].innerHtml.replaceAll(RegExp(r"<[^>]*>"), '');
+        htmlData.elementAt(index)['commentImage'] = data['_commentImg'];
+
+      }else {
+        htmlData.elementAt(index)['commentName'] = '';
+        htmlData.elementAt(index)['commentImage'] = 'no';
+      }
       htmlData.refresh();
       Get.back();
     });

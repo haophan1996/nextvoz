@@ -26,8 +26,8 @@ class HomePageUI extends GetView<HomeController> {
                 children: [
                   (index != 0)
                       ? (controller.myHomePage.elementAt(index - 1)["header"] != controller.myHomePage.elementAt(index)["header"]
-                          ? theme(controller.myHomePage.elementAt(index)["header"], context)
-                          : SizedBox.shrink())
+                      ? theme(controller.myHomePage.elementAt(index)["header"], context)
+                      : SizedBox.shrink())
                       : theme(controller.myHomePage.elementAt(index)["header"], context),
                   blockItem(
                       context,
@@ -39,9 +39,9 @@ class HomePageUI extends GetView<HomeController> {
                       controller.myHomePage.elementAt(index)["threads"],
                       controller.myHomePage.elementAt(index)["messages"],
                       controller.myHomePage.elementAt(index)["title"],
-                      () => controller.navigateToThread(
+                          () => controller.navigateToThread(
                           controller.myHomePage.elementAt(index)["subHeader"], controller.myHomePage.elementAt(index)["linkSubHeader"]),
-                      () {})
+                          () {})
                 ],
               );
             },

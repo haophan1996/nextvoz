@@ -40,7 +40,7 @@ PreferredSize preferredSize(BuildContext context, String title) {
               child: TextButton(
                 child: Text('a'),
                 onPressed: () async {
-                  await GlobalController.i.getAlert();
+                  if (GlobalController.i.alertList.isEmpty) await GlobalController.i.getAlert();
                   Get.to(() => Popup(), fullscreenDialog: true, opaque: false);
                 },
               ),
@@ -215,8 +215,8 @@ Widget buildIcon(String path, String text) => Row(
       children: [
         Image.asset(
           path,
-          height: 25,
-          width: 25,
+          //height: 25,
+          //width: 25,
         ),
         Text(' ' + text)
       ],
