@@ -30,20 +30,21 @@ PreferredSize preferredSize(BuildContext context, String title) {
                 BuildContext fromHeroContext,
                 BuildContext toHeroContext,
               ) {
-                return Center(child: Container(
-                  width: MediaQuery.of(context).size.width * 0.8,
-                  height: MediaQuery.of(context).size.height * 0.8,
-                  color: Theme.of(context).backgroundColor,
-                ),);
+                return Center(
+                  child: Container(
+                    width: MediaQuery.of(context).size.width * 0.8,
+                    height: MediaQuery.of(context).size.height * 0.8,
+                    color: Theme.of(context).backgroundColor,
+                  ),
+                );
               },
               tag: 'noti',
-              child: TextButton(
-                child: Text('a'),
-                onPressed: () async {
-                  if (GlobalController.i.alertList.isEmpty) await GlobalController.i.getAlert();
-                  Get.to(() => Popup(), fullscreenDialog: true, opaque: false);
-                },
-              ),
+              child: IconButton(
+                  onPressed: () async {
+                    if (GlobalController.i.alertList.isEmpty) await GlobalController.i.getAlert();
+                    Get.to(() => Popup(), fullscreenDialog: true, opaque: false);
+                  },
+                  icon: Icon(Icons.notifications)),
             ),
             GetBuilder<GlobalController>(builder: (controller) {
               return Positioned(

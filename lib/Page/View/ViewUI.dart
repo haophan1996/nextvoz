@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -17,12 +19,14 @@ import 'package:extended_image/extended_image.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
-class ViewUI extends GetView<ViewController> {
+class ViewUI extends StatelessWidget {
+  final controller = Get.put(ViewController(), tag: Random().nextInt(10000).toString());
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       endDrawer: NaviDrawerUI(),
-      appBar: preferredSize(context, controller. data['subHeader']),
+      appBar: preferredSize(context, controller.data['subHeader']),
       body: Stack(
         children: <Widget>[
           Container(

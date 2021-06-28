@@ -47,8 +47,9 @@ class Popup extends GetView<GlobalController> {
                           ),
                         ),
                         onPressed: () {
-                          showModalBottomSheet(
-                              backgroundColor: Colors.transparent, isScrollControlled: true, context: context, builder: (builder) => sheetPage());
+                          Get.toNamed("/ViewPage", arguments: [controller.alertList.elementAt(index)['threadName'], controller.alertList.elementAt(index)['link']]);
+                          // showModalBottomSheet(
+                          //     backgroundColor: Colors.transparent, isScrollControlled: true, context: context, builder: (builder) => sheetPage());
                         },
                       ),
                     );

@@ -114,7 +114,7 @@ class NaviDrawerController extends GetxController {
   navigateToThread(String title, String link) {
     Future.delayed(Duration(milliseconds: 100), () async {
       Get.back();
-      Get.toNamed("/ViewPage", arguments: [title, link]);
+      Get.toNamed("/ViewPage", arguments: [title, link], preventDuplicates: false);
     });
   }
 

@@ -100,6 +100,7 @@ class ViewController extends GetxController {
           currentPage.value = 1;
           totalPage.value = 1;
         } else {
+          data['fullUrl'] = GlobalController.i.url + element.getElementsByClassName('pageNav-page ')[0].getElementsByTagName('a')[0].attributes['href'].toString();
           var naviPage = element.getElementsByClassName("pageNavSimple-el pageNavSimple-el--current").first.innerHtml.trim();
           currentPage.value = int.parse(naviPage.replaceAll(RegExp(r'[^0-9]\S*'), ""));
           totalPage.value = int.parse(naviPage.replaceAll(RegExp(r'\S*[^0-9]'), ""));
