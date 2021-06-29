@@ -1,6 +1,8 @@
 import 'dart:convert';
+import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
+import 'package:vozforums/Page/View/ViewController.dart';
 import '../../GlobalController.dart';
 import 'package:http/http.dart' as http;
 
@@ -114,7 +116,9 @@ class NaviDrawerController extends GetxController {
   navigateToThread(String title, String link) {
     Future.delayed(Duration(milliseconds: 100), () async {
       Get.back();
-      Get.toNamed("/ViewPage", arguments: [title, link], preventDuplicates: false);
+
+      Get.lazyPut<ViewController>(() => ViewController(), tag: title);
+      Get.toNamed("/ViewPage", arguments: [title, link, title], preventDuplicates: false);
     });
   }
 

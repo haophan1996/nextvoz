@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:vozforums/GlobalController.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:vozforums/Page/NavigationDrawer/NaviDrawerController.dart';
+import 'package:vozforums/Page/View/ViewController.dart';
 
 class ThreadController extends GetxController {
   late String _url;
@@ -38,6 +39,8 @@ class ThreadController extends GetxController {
 
   navigateToThread(String title, String link) {
     Future.delayed(Duration(milliseconds: 100), () {
+      GlobalController.i.tagView.add(title);
+      Get.lazyPut<ViewController>(() => ViewController(), tag: GlobalController.i.tagView.last);
       Get.toNamed("/ViewPage", arguments: [title, link]);
     });
   }

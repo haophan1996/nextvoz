@@ -39,11 +39,13 @@ class ViewController extends GetxController {
     if (data['fullUrl'].contains("/unread") == true) {
       data['fullUrl'] = data['fullUrl'].split("unread")[0];
     }
+    print('ready');
   }
 
   @override
   onClose() {
     super.onClose();
+    GlobalController.i.tagView.removeLast();
     refreshController.dispose();
     listViewScrollController.dispose();
     currentPage.close();
@@ -51,6 +53,7 @@ class ViewController extends GetxController {
     htmlData.close();
     clearMemoryImageCache();
     GlobalController.i.percentDownload = -1.0;
+    print('closedddddd');
   }
 
 
@@ -93,7 +96,6 @@ class ViewController extends GetxController {
         GlobalController.i.update();
       } else
         GlobalController.i.isLogged.value = false;
-
       value.getElementsByClassName("block block--messages").forEach((element) {
         var lastP = element.getElementsByClassName("pageNavSimple");
         if (lastP.length == 0) {
@@ -105,7 +107,6 @@ class ViewController extends GetxController {
           currentPage.value = int.parse(naviPage.replaceAll(RegExp(r'[^0-9]\S*'), ""));
           totalPage.value = int.parse(naviPage.replaceAll(RegExp(r'\S*[^0-9]'), ""));
         }
-
         //Get post
         element.getElementsByClassName("message message--post js-post js-inlineModContainer").forEach((element) {
           data['_postContent'] = element.getElementsByClassName("message-body js-selectToQuote").map((e) => e.outerHtml).first;
@@ -152,7 +153,6 @@ class ViewController extends GetxController {
             data['_commentName'] = '';
             data['_commentByMe'] = '0';
           }
-
           htmlData.add({
             'newPost': element.getElementsByClassName('message-newIndicator').isNotEmpty == false ? false : true,
             "postContent": _removeTag(data['_postContent']),
@@ -169,11 +169,10 @@ class ViewController extends GetxController {
             "postID": element.attributes['id']!.split('t-')[1],
             'commentByMe': int.parse(data['_commentByMe'])
           });
-
           data['_commentImg'] = '';
         });
       });
-
+      update();
       if (Get.isDialogOpen == true || refreshController.isLoading) {
         if (Get.isDialogOpen == true) Get.back();
         htmlData.removeRange(0, lengthHtmlDataList);
@@ -214,15 +213,15 @@ class ViewController extends GetxController {
   final flagsReactions = [
     Reaction(
       previewIcon: builFlagsdPreviewIcon('assets/reaction/0.png', 'unReact'.tr),
-      icon: buildIcon('assets/reaction/nil.png', 'react'.tr),
+      icon: buildIcon('assets/reaction/nil.png', 'react'),
     ),
     Reaction(
       previewIcon: builFlagsdPreviewIcon('assets/reaction/1.png', 'sweet'.tr),
-      icon: buildIcon('assets/reaction/1.png', 'sweeted'.tr),
+      icon: buildIcon('assets/reaction/1.png', 'sweeted'),
     ),
     Reaction(
       previewIcon: builFlagsdPreviewIcon('assets/reaction/2.png', 'brick'.tr),
-      icon: buildIcon('assets/reaction/2.png', 'bricked'.tr),
+      icon: buildIcon('assets/reaction/2.png', 'bricked'),
     ),
   ];
 

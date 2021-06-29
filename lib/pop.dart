@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:vozforums/GlobalController.dart';
 
+import 'Page/View/ViewController.dart';
+
 class Popup extends GetView<GlobalController> {
   @override
   Widget build(BuildContext context) {
@@ -47,6 +49,8 @@ class Popup extends GetView<GlobalController> {
                           ),
                         ),
                         onPressed: () {
+                          GlobalController.i.tagView.add(controller.alertList.elementAt(index)['threadName']);
+                          Get.lazyPut<ViewController>(() => ViewController(), tag: GlobalController.i.tagView.last);
                           Get.toNamed("/ViewPage", arguments: [controller.alertList.elementAt(index)['threadName'], controller.alertList.elementAt(index)['link']]);
                           // showModalBottomSheet(
                           //     backgroundColor: Colors.transparent, isScrollControlled: true, context: context, builder: (builder) => sheetPage());

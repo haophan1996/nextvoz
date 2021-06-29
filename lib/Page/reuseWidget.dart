@@ -1,198 +1,195 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:expandable/expandable.dart';
+import 'package:extended_image/extended_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_reaction_button/flutter_reaction_button.dart';
 import 'package:get/get.dart';
 import 'package:vozforums/GlobalController.dart';
 import 'package:vozforums/Page/NavigationDrawer/NaviDrawerController.dart';
+import 'package:vozforums/Page/View/ViewController.dart';
 import 'package:vozforums/pop.dart';
-import 'package:vozforums/theme.dart';
+import 'package:html/dom.dart' as dom;
+import 'package:webview_flutter/webview_flutter.dart';
 
 ///  * Global appbar
-PreferredSize preferredSize(BuildContext context, String title) {
-  return PreferredSize(
-    preferredSize: Size.fromHeight(NaviDrawerController.i.heightAppbar),
-    child: /* Obx(()=>*/ AppBar(
-      automaticallyImplyLeading: false,
-      title: Text(
-        title,
-        maxLines: 2,
-        overflow: TextOverflow.ellipsis,
-      ),
-      leading: (ModalRoute.of(context)?.canPop ?? false) ? BackButton() : null,
-      actions: <Widget>[
-        Stack(
-          children: [
-            Hero(
-              flightShuttleBuilder: (
-                BuildContext flightContext,
-                Animation<double> animation,
-                HeroFlightDirection flightDirection,
-                BuildContext fromHeroContext,
-                BuildContext toHeroContext,
-              ) {
-                return Center(
+PreferredSize preferredSize(BuildContext context, String title) => PreferredSize(
+      preferredSize: Size.fromHeight(NaviDrawerController.i.heightAppbar),
+      child: /* Obx(()=>*/ AppBar(
+        automaticallyImplyLeading: false,
+        title: Text(
+          title,
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+        ),
+        leading: (ModalRoute.of(context)?.canPop ?? false) ? BackButton() : null,
+        actions: <Widget>[
+          Stack(
+            children: [
+              Hero(
+                flightShuttleBuilder: (
+                  BuildContext flightContext,
+                  Animation<double> animation,
+                  HeroFlightDirection flightDirection,
+                  BuildContext fromHeroContext,
+                  BuildContext toHeroContext,
+                ) {
+                  return Center(
+                    child: Container(
+                      width: MediaQuery.of(context).size.width * 0.8,
+                      height: MediaQuery.of(context).size.height * 0.8,
+                      color: Theme.of(context).backgroundColor,
+                    ),
+                  );
+                },
+                tag: 'noti',
+                child: IconButton(
+                    onPressed: () async {
+                      if (GlobalController.i.alertList.isEmpty) await GlobalController.i.getAlert();
+                      Get.to(() => Popup(), fullscreenDialog: true, opaque: false);
+                      print(GlobalController.i.tagView);
+                    },
+                    icon: Icon(Icons.notifications)),
+              ),
+              GetBuilder<GlobalController>(builder: (controller) {
+                return Positioned(
+                  right: 0,
+                  top: 3,
                   child: Container(
-                    width: MediaQuery.of(context).size.width * 0.8,
-                    height: MediaQuery.of(context).size.height * 0.8,
-                    color: Theme.of(context).backgroundColor,
+                    width: 30,
+                    decoration: BoxDecoration(shape: BoxShape.circle, color: controller.alertNotification == '0' ? Colors.transparent : Colors.red),
+                    child: Center(
+                      child: Text(controller.alertNotification == '0' ? '' : controller.alertNotification),
+                    ),
                   ),
                 );
-              },
-              tag: 'noti',
-              child: IconButton(
-                  onPressed: () async {
-                    if (GlobalController.i.alertList.isEmpty) await GlobalController.i.getAlert();
-                    Get.to(() => Popup(), fullscreenDialog: true, opaque: false);
-                  },
-                  icon: Icon(Icons.notifications)),
-            ),
-            GetBuilder<GlobalController>(builder: (controller) {
-              return Positioned(
-                right: 0,
-                top: 3,
-                child: Container(
-                  width: 30,
-                  decoration: BoxDecoration(shape: BoxShape.circle, color: controller.alertNotification == '0' ? Colors.transparent : Colors.red),
-                  child: Center(
-                    child: Text(controller.alertNotification == '0' ? '' : controller.alertNotification),
-                  ),
-                ),
+              })
+            ],
+          )
+        ],
+        bottom: PreferredSize(
+          child: GetBuilder<GlobalController>(
+            builder: (controller) {
+              return LinearProgressIndicator(
+                value: controller.percentDownload,
+                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF0CF301)),
+                backgroundColor: Theme.of(context).backgroundColor,
               );
-            })
-          ],
-        )
-      ],
-      bottom: PreferredSize(
-        child: GetBuilder<GlobalController>(
-          builder: (controller) {
-            return LinearProgressIndicator(
-              value: controller.percentDownload,
-              valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF0CF301)),
-              backgroundColor: Theme.of(context).backgroundColor,
-            );
-          },
+            },
+          ),
+          preferredSize: Size.fromHeight(4.0),
         ),
-        preferredSize: Size.fromHeight(4.0),
       ),
-    ),
-  );
-}
+    );
 
 /// * [header11] - [header12] black/white color depends on Dark/light mode.
 /// * [header21] - [header22] grey color default.
 /// * [header3] orange color default.
 Widget blockItem(BuildContext context, FontWeight themeTitleWeight, FontWeight titleWeight, int index, String header11, String header12,
-    String header21, String header22, String header3, Function onTap, Function onLongPress) {
-  return Padding(
-    padding: EdgeInsets.only(top: 1, left: 8),
-    child: InkWell(
-      focusColor: Colors.red,
-      hoverColor: Colors.red,
-      highlightColor: Colors.red,
-      splashColor: Colors.red,
-      splashFactory: InkRipple.splashFactory,
-      onTap: () => onTap(),
-      onLongPress: () => onLongPress(),
-      child: Ink(
-        width: double.infinity,
-        decoration: BoxDecoration(
-          border: Border(
-            bottom: BorderSide(width: 0.5, color: Theme.of(context).primaryColor),
+        String header21, String header22, String header3, Function onTap, Function onLongPress) =>
+    Padding(
+      padding: EdgeInsets.only(top: 1, left: 8),
+      child: InkWell(
+        focusColor: Colors.red,
+        hoverColor: Colors.red,
+        highlightColor: Colors.red,
+        splashColor: Colors.red,
+        splashFactory: InkRipple.splashFactory,
+        onTap: () => onTap(),
+        onLongPress: () => onLongPress(),
+        child: Ink(
+          width: double.infinity,
+          decoration: BoxDecoration(
+            border: Border(
+              bottom: BorderSide(width: 0.5, color: Theme.of(context).primaryColor),
+            ),
+          ),
+          padding: EdgeInsets.only(top: 4, bottom: 5),
+          child: Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    RichText(
+                      overflow: TextOverflow.clip,
+                      text: TextSpan(children: <TextSpan>[
+                        TextSpan(
+                          text: header11,
+                          style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: themeTitleWeight,
+                              color: GlobalController.i.mapInvertColor[GlobalController.i.getColorInvert(header11)],
+                              backgroundColor: GlobalController.i.mapColor[header11]),
+                        ),
+                        TextSpan(
+                          text: header12,
+                          style: TextStyle(color: Theme.of(context).primaryColor, fontSize: 15, fontWeight: titleWeight),
+                        )
+                      ]),
+                    ),
+                    text(
+                      "$header21 \u2022 $header22",
+                      TextStyle(color: Colors.grey, fontSize: 12),
+                    ),
+                    Text(
+                      header3,
+                      style: TextStyle(color: Color(0xFFFD6E00)),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    )
+                  ],
+                ),
+                flex: 1,
+              ),
+              Icon(
+                Icons.arrow_forward_ios_outlined,
+                color: Colors.grey,
+                size: 18,
+              )
+            ],
           ),
         ),
-        padding: EdgeInsets.only(top: 4, bottom: 5),
-        child: Row(
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  RichText(
-                    overflow: TextOverflow.clip,
-                    text: TextSpan(children: <TextSpan>[
-                      TextSpan(
-                        text: header11,
-                        style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: themeTitleWeight,
-                            color: GlobalController.i.mapInvertColor[GlobalController.i.getColorInvert(header11)],
-                            backgroundColor: GlobalController.i.mapColor[header11]),
-                      ),
-                      TextSpan(
-                        text: header12,
-                        style: TextStyle(color: Theme.of(context).primaryColor, fontSize: 15, fontWeight: titleWeight),
-                      )
-                    ]),
-                  ),
-                  text(
-                    "$header21 \u2022 $header22",
-                    TextStyle(color: Colors.grey, fontSize: 12),
-                  ),
-                  Text(
-                    header3,
-                    style: TextStyle(color: Color(0xFFFD6E00)),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  )
-                ],
-              ),
-              flex: 1,
-            ),
-            Icon(
-              Icons.arrow_forward_ios_outlined,
-              color: Colors.grey,
-              size: 18,
-            )
-          ],
+      ),
+    );
+
+Widget settings(BuildContext context) => TextButton.icon(
+      onPressed: () => NaviDrawerController.i.navigateToSetting(),
+      icon: Icon(Icons.settings),
+      label: text(
+        'setPage'.tr,
+        TextStyle(color: Theme.of(context).primaryColor),
+      ),
+    );
+
+Widget textDrawer(Color color, double fontSize, String text, FontWeight fontWeight) =>
+    Text(text, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(color: color, fontWeight: fontWeight, fontSize: fontSize));
+
+Widget popUpWaiting(BuildContext context, String one, String two) => Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        CupertinoActivityIndicator(),
+        SizedBox(
+          height: 20,
         ),
-      ),
-    ),
-  );
-}
-
-Widget settings(BuildContext context) {
-  return TextButton.icon(
-    onPressed: () => NaviDrawerController.i.navigateToSetting(),
-    icon: Icon(Icons.settings),
-    label: text(
-      'setPage'.tr,
-      TextStyle(color: Theme.of(context).primaryColor),
-    ),
-  );
-}
-
-Widget textDrawer(Color color, double fontSize, String text, FontWeight fontWeight) {
-  return Text(text, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(color: color, fontWeight: fontWeight, fontSize: fontSize));
-}
-
-Widget popUpWaiting(BuildContext context, String one, String two) {
-  return Column(
-    mainAxisAlignment: MainAxisAlignment.center,
-    children: <Widget>[
-      CupertinoActivityIndicator(),
-      SizedBox(
-        height: 20,
-      ),
-      DefaultTextStyle(
-        style: TextStyle(color: Theme.of(context).primaryColor),
-        child: AnimatedTextKit(
-          repeatForever: true,
-          isRepeatingAnimation: true,
-          animatedTexts: [WavyAnimatedText(one), WavyAnimatedText(two)],
+        DefaultTextStyle(
+          style: TextStyle(color: Theme.of(context).primaryColor),
+          child: AnimatedTextKit(
+            repeatForever: true,
+            isRepeatingAnimation: true,
+            animatedTexts: [WavyAnimatedText(one), WavyAnimatedText(two)],
+          ),
         ),
-      ),
-    ],
-  );
-}
+      ],
+    );
 
-setDialog(BuildContext context, String textF, String textS) {
-  return Get.defaultDialog(
-      barrierDismissible: false,
-      radius: 6,
-      backgroundColor: Theme.of(context).hintColor.withOpacity(0.8),
-      content: popUpWaiting(context, textF, textS),
-      title: 'Message');
-}
+setDialog(BuildContext context, String textF, String textS) => Get.defaultDialog(
+    barrierDismissible: false,
+    radius: 6,
+    backgroundColor: Theme.of(context).hintColor.withOpacity(0.8),
+    content: popUpWaiting(context, textF, textS),
+    title: 'Message');
 
 Widget builFlagsdPreviewIcon(String path, String tex) => Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
@@ -219,29 +216,304 @@ Widget buildIcon(String path, String text) => Row(
           //height: 25,
           //width: 25,
         ),
-        Text(' ' + text)
+        Text(' ' + text.tr)
       ],
     );
 
-Widget text(String text, TextStyle style) {
-  return Text(
-    text,
-    style: style,
-  );
-}
-
-Widget rowNew(String pathImage, Widget text) {
-  return Row(
-    mainAxisAlignment: MainAxisAlignment.end,
-    children: [
-      Padding(
-        padding: EdgeInsets.only(right: 5),
-        child: Image.asset(
-          pathImage,
-          width: 10,
-        ),
-      ),
+Widget text(String text, TextStyle style) => Text(
       text,
-    ],
-  );
-}
+      style: style,
+    );
+
+Widget rowNew(String pathImage, Widget text) => Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        Padding(
+          padding: EdgeInsets.only(right: 5),
+          child: Image.asset(
+            pathImage,
+            width: 10,
+          ),
+        ),
+        text,
+      ],
+    );
+
+Widget viewContent(BuildContext context, int index, dynamic controller) => Container(
+      color: Theme.of(context).backgroundColor,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Padding(
+            padding: EdgeInsets.only(bottom: 5),
+            child: Card(
+              elevation: 5,
+              color: Theme.of(context).canvasColor,
+              child: Stack(
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Padding(
+                        padding: EdgeInsets.only(top: 5, left: 5, bottom: 5),
+                        child: Container(
+                          width: 48,
+                          height: 48,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            image: DecorationImage(
+                              image: controller.htmlData.elementAt(index)["userAvatar"] == "no"
+                                  ? Image.asset(
+                                      "assets/NoAvata.png",
+                                      height: 48,
+                                      width: 48,
+                                    ).image
+                                  : ExtendedNetworkImageProvider(controller.htmlData.elementAt(index)["userAvatar"], cache: true),
+                            ),
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(top: 10, left: 10),
+                        child: RichText(
+                          text: TextSpan(children: <TextSpan>[
+                            TextSpan(
+                                text: controller.htmlData.elementAt(index)['userName'] + "\n",
+                                style: TextStyle(color: Color(0xFFFD6E00), fontWeight: FontWeight.bold, fontSize: 16)),
+                            TextSpan(
+                                text: controller.htmlData.elementAt(index)['userTitle'],
+                                style: TextStyle(color: Theme.of(context).primaryColor, fontSize: 13)),
+                          ]),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(top: 10, right: 10),
+                    child: Align(
+                      alignment: Alignment.centerRight,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: <Widget>[
+                          text(controller.htmlData.elementAt(index)['userPostDate'], TextStyle(color: Theme.of(context).primaryColor, fontSize: 13)),
+                          controller.htmlData.elementAt(index)['newPost'] == false
+                              ? text(
+                                  controller.htmlData.elementAt(index)['orderPost'], TextStyle(color: Theme.of(context).primaryColor, fontSize: 13))
+                              : rowNew(
+                                  'assets/newPost.png',
+                                  text(controller.htmlData.elementAt(index)['orderPost'],
+                                      TextStyle(color: Theme.of(context).primaryColor, fontSize: 13)))
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Html(
+            data: controller.htmlData.elementAt(index)['postContent'],
+            customRender: {
+              "img": (renderContext, child) {
+                if (renderContext.tree.element!.attributes['src']!.contains("/styles/next/xenforo")) {
+                  return Image.asset(GlobalController.i.getEmoji(renderContext.tree.element!.attributes['src'].toString()));
+                } else if (renderContext.tree.element!.attributes['src']!.contains("twemoji.maxcdn.com")) {
+                  return text(
+                    renderContext.tree.element!.attributes['alt']!,
+                    TextStyle(fontSize: 25),
+                  );
+                } else if (renderContext.tree.element!.attributes['alt']!.contains(".gif") == false) {
+                  return InkWell(
+                    onTap: () {
+                      print('hey tap image');
+                      //print(renderContext.tree.element!.attributes['alt'].toString());
+                    },
+                    child: ExtendedImage.network(
+                      renderContext.tree.element!.attributes['src'].toString(),
+                      cache: true,
+                      clearMemoryCacheIfFailed: true,
+                    ),
+                  );
+                } else {
+                  return Image.network(
+                    renderContext.tree.element!.attributes['src'].toString(),
+                    width: double.tryParse(renderContext.tree.element!.attributes['width'].toString()),
+                    gaplessPlayback: false,
+                    filterQuality: FilterQuality.low,
+                  );
+                }
+              },
+              "blockquote": (renderContext, child) {
+                renderContext.tree.children.forEach((element) {
+                  element.style = Style(
+                    display: Display.INLINE,
+                  );
+                });
+                return ExpandableNotifier(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.max,
+                    children: <Widget>[
+                      Expandable(
+                        expanded: ExpandableButton(
+                          child: Container(
+                            padding: EdgeInsets.all(10),
+                            child: text(
+                                'blockQuote'.tr +
+                                    (renderContext.tree.element!.getElementsByClassName("bbCodeBlock-title").length > 0
+                                        ? renderContext.tree.element!
+                                            .getElementsByClassName("bbCodeBlock-title")[0]
+                                            .getElementsByTagName("a")[0]
+                                            .innerHtml
+                                            .toString()
+                                        : ""),
+                                TextStyle(fontWeight: FontWeight.bold)),
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              color: Theme.of(context).secondaryHeaderColor,
+                              borderRadius: BorderRadius.all(Radius.circular(5)),
+                            ),
+                          ),
+                        ),
+                        collapsed: ExpandableButton(
+                          child: Container(
+                              constraints: BoxConstraints(minHeight: 30),
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                color: Theme.of(context).cardColor,
+                                borderRadius: BorderRadius.all(Radius.circular(5)),
+                              ),
+                              child: Center(
+                                child: child,
+                              )),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+              "table": (context, child) {
+                return SingleChildScrollView(
+                  scrollDirection: (context.tree.element!.getElementsByTagName("tr").length > 2) ? Axis.horizontal : Axis.vertical,
+                  padding: EdgeInsets.all(2),
+                  physics: BouncingScrollPhysics(),
+                  child: (context.tree as TableLayoutElement).toWidget(context),
+                );
+              },
+              "iframe": (RenderContext context, Widget child) {
+                final attrs = context.tree.element?.attributes;
+                double? width = double.tryParse(attrs!['width'] ?? "");
+                double? height = double.tryParse(attrs['height'] ?? "");
+                return Container(
+                  width: width,
+                  height: height,
+                  child: WebView(
+                    javascriptMode: JavascriptMode.unrestricted,
+                    initialUrl: attrs['src'],
+                    navigationDelegate: (NavigationRequest request) async {
+                      if (attrs['src'] != null && attrs['src']!.contains("youtube.com/embed")) {
+                        if (!request.url.contains("youtube.com/embed")) {
+                          return NavigationDecision.prevent;
+                        } else {
+                          return NavigationDecision.navigate;
+                        }
+                      } else {
+                        return NavigationDecision.navigate;
+                      }
+                    },
+                  ),
+                );
+              }
+            },
+            style: {
+              "code": Style(color: Colors.blue),
+              "table": Style(backgroundColor: Theme.of(context).cardColor),
+              "body": Style(
+                fontSize: FontSize(GlobalController.i.userStorage.read('fontSizeView')),
+              )..margin = EdgeInsets.only(bottom: 0, left: 4, right: 3),
+              "span": Style(color: Theme.of(context).primaryColor),
+              "blockquote": Style(width: double.infinity)
+                ..margin = EdgeInsets.only(left: 5.0, right: 5.0, bottom: 10.0)
+                ..display = Display.BLOCK,
+            },
+            onLinkTap: (String? url, RenderContext context, Map<String, String> attributes, dom.Element? element) async {
+              print(url);
+              controller.launchURL(url!);
+              // if (url?.isNotEmpty == true && url!.contains("/goto/post") && url != "no") {
+              // }
+            },
+            onImageTap: (String? url, RenderContext renderContext, Map<String, String> attributes, dom.Element? element) async {
+              print("tap");
+              // Get.dialog(
+              //   Dismissible(
+              //     direction: DismissDirection.vertical,
+              //     onDismissed: (v) {
+              //       if (Get.isDialogOpen == true) {
+              //         Get.back(canPop: true);
+              //       }
+              //     },
+              //     key: const Key("value"),
+              //     child: PhotoView(
+              //       imageProvider: Image.file(await controller.getImage(url!)).image,
+              //     ),
+              //   ),
+              //   useSafeArea: true,
+              //   useRootNavigator: true,
+              //   transitionDuration: Duration(milliseconds: 2),
+              // );
+            },
+          ),
+          Padding(
+            padding: EdgeInsets.only(left: 5),
+            child: Row(
+              children: [
+                controller.htmlData.elementAt(index)['commentImage'].toString() != 'no'
+                    ? Image.asset('assets/reaction/' + controller.htmlData.elementAt(index)['commentImage'][0] + '.png', width: 22, height: 22)
+                    : Container(),
+                controller.htmlData.elementAt(index)['commentImage'].toString().length > 1 &&
+                        controller.htmlData.elementAt(index)['commentImage'].toString() != 'no'
+                    ? Image.asset('assets/reaction/' + controller.htmlData.elementAt(index)['commentImage'][1] + '.png', width: 22, height: 22)
+                    : Container(),
+                Expanded(
+                  child: TextButton(
+                    style: ButtonStyle(alignment: Alignment.centerLeft),
+                    onPressed: () {
+                      // Get.to(() => sheetPage(), fullscreenDialog: true, opaque: false);
+                     Get.bottomSheet(Center(child: Text('sac'),), backgroundColor: Theme.of(context).backgroundColor, isScrollControlled: true, ignoreSafeArea: true);
+                    },
+                    child: Text(controller.htmlData.elementAt(index)['commentName'],
+                        style: TextStyle(color: Colors.blue), overflow: TextOverflow.ellipsis, maxLines: 1),
+                  ),
+                ),
+                FlutterReactionButton(
+                  onReactionChanged: (reaction, i) {
+                    if (GlobalController.i.isLogged.value == false) {
+                      Get.snackbar('error'.tr, 'popMess4'.tr, snackPosition: SnackPosition.BOTTOM, isDismissible: true);
+                      controller.htmlData.refresh();
+                    } else {
+                      if (controller.htmlData.elementAt(index)['commentByMe'] != i) {
+                        if (i == 0) {
+                          controller.reactionPost(
+                              index, controller.htmlData.elementAt(index)['postID'], controller.htmlData.elementAt(index)['commentByMe'], context);
+                          controller.htmlData.elementAt(index)['commentByMe'] = 0;
+                        } else {
+                          controller.reactionPost(index, controller.htmlData.elementAt(index)['postID'], i, context);
+                          controller.htmlData.elementAt(index)['commentByMe'] = i;
+                        }
+                      }
+                    }
+                  },
+                  reactions: controller.flagsReactions,
+                  initialReaction: controller.htmlData.elementAt(index)['commentByMe'] == -1
+                      ? controller.flagsReactions[0]
+                      : controller.flagsReactions[controller.htmlData.elementAt(index)['commentByMe']],
+                  boxRadius: 10,
+                  boxAlignment: AlignmentDirectional.bottomEnd,
+                ),
+                TextButton(onPressed: () {}, child: text('rep'.tr, TextStyle()))
+              ],
+            ),
+          )
+        ],
+      ),
+    );

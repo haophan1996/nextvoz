@@ -6,6 +6,7 @@ import 'package:vozforums/Page/Settings/SettingsBinding.dart';
 import 'package:vozforums/Page/Settings/SettingsUI.dart';
 import 'package:vozforums/Page/UserProfile/UserProfileBinding.dart';
 import 'package:vozforums/Page/UserProfile/UserProfileUI.dart';
+import 'package:vozforums/Page/View/ViewBinding.dart';
 import 'package:vozforums/Page/View/ViewUI.dart';
 import 'package:vozforums/Page/home/homeBinding.dart';
 import 'package:vozforums/Page/Thread/subThreadBinding.dart';
@@ -27,6 +28,7 @@ Future<void> main() async {
 }
 
 class MyPage extends StatelessWidget {
+
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
@@ -47,7 +49,7 @@ class MyPage extends StatelessWidget {
             transition: Transition.rightToLeft,
             transitionDuration: Duration(milliseconds: 200),
             popGesture: true,
-            //binding: ViewBinding(),
+            binding: ViewBinding(),
             maintainState: false),
         GetPage(name: "/UserProfile", page: () => UserProfileUI(), popGesture: true, binding: UserProfileBinding(), maintainState: false),
         GetPage(

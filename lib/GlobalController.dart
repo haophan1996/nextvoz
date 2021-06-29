@@ -20,7 +20,7 @@ class GlobalController extends GetxController {
   RxBool isLogged = false.obs;
   List alertList = [];
   String xfSession = '', dateExpire = '', alertNotification = '0', xfUser = '';
-
+  List tagView = [];
   @override
   onInit() async {
     super.onInit();
