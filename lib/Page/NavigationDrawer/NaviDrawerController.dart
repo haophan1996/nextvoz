@@ -116,9 +116,9 @@ class NaviDrawerController extends GetxController {
   navigateToThread(String title, String link) {
     Future.delayed(Duration(milliseconds: 100), () async {
       Get.back();
-
+      GlobalController.i.tagView.add(title);
       Get.lazyPut<ViewController>(() => ViewController(), tag: title);
-      Get.toNamed("/ViewPage", arguments: [title, link, title], preventDuplicates: false);
+      Get.toNamed("/ViewPage", arguments: [title, link], preventDuplicates: false);
     });
   }
 

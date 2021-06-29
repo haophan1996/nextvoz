@@ -49,7 +49,7 @@ class MyPage extends StatelessWidget {
             transition: Transition.rightToLeft,
             transitionDuration: Duration(milliseconds: 200),
             popGesture: true,
-            binding: ViewBinding(),
+            //binding: ViewBinding(),
             maintainState: false),
         GetPage(name: "/UserProfile", page: () => UserProfileUI(), popGesture: true, binding: UserProfileBinding(), maintainState: false),
         GetPage(

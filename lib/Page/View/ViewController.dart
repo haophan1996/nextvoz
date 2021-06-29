@@ -39,7 +39,6 @@ class ViewController extends GetxController {
     if (data['fullUrl'].contains("/unread") == true) {
       data['fullUrl'] = data['fullUrl'].split("unread")[0];
     }
-    print('ready');
   }
 
   @override
@@ -53,7 +52,6 @@ class ViewController extends GetxController {
     htmlData.close();
     clearMemoryImageCache();
     GlobalController.i.percentDownload = -1.0;
-    print('closedddddd');
   }
 
 
@@ -225,6 +223,21 @@ class ViewController extends GetxController {
     ),
   ];
 
+  //https://voz.vn/p/10428349/reactions
+  reactionView(int index) async {
+    await GlobalController.i.getBody(GlobalController.i.url + '/p/' + htmlData.elementAt(index)['postID'] + '/reactions', false).then((value) {
+       value.getElementsByClassName('block-row block-row--separated').forEach((element) {
+         print(element.getElementsByClassName('username ')[0].text);  // name
+         print(element.getElementsByClassName('userTitle')[0].text);  //title
+         print(element.getElementsByClassName('pairs pairs--inline')[0].getElementsByTagName('dd')[0].text); // message
+         print(element.getElementsByClassName('pairs pairs--inline')[1].getElementsByTagName('dd')[0].text); // message
+         print(element.getElementsByClassName('pairs pairs--inline')[2].getElementsByTagName('dd')[0].text); // message
+         print(element.getElementsByClassName('u-dt')[0].text);  // time
+         print(element.getElementsByClassName('reaction-image js-reaction')[0].attributes['alt']);
+       });
+    });
+  }
+
   reactionPost(int index, String idPost, int idReact, BuildContext context) async {
     setDialog(context, 'popMess'.tr, 'popMess5'.tr);
     var headers = {
@@ -249,7 +262,7 @@ class ViewController extends GetxController {
         htmlData.elementAt(index)['commentName'] = '';
         htmlData.elementAt(index)['commentImage'] = 'no';
       }
-      htmlData.refresh();
+      update();
       Get.back();
     });
   }

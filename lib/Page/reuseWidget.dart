@@ -239,7 +239,23 @@ Widget rowNew(String pathImage, Widget text) => Row(
       ],
     );
 
-Widget viewContent(BuildContext context, int index, dynamic controller) => Container(
+Widget listReactionUI(BuildContext context) {
+  return Container(
+    constraints: BoxConstraints.expand(),
+    decoration: BoxDecoration(
+      color: Theme.of(context).backgroundColor,
+      borderRadius: BorderRadius.only(
+        topLeft: Radius.circular(10),
+        topRight: Radius.circular(10),
+      ),
+    ),
+    child: Row(
+      children: [],
+    ),
+  );
+}
+
+Widget viewContent(BuildContext context, int index, ViewController controller) => Container(
       color: Theme.of(context).backgroundColor,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -325,8 +341,54 @@ Widget viewContent(BuildContext context, int index, dynamic controller) => Conta
                 } else if (renderContext.tree.element!.attributes['alt']!.contains(".gif") == false) {
                   return InkWell(
                     onTap: () {
-                      print('hey tap image');
-                      //print(renderContext.tree.element!.attributes['alt'].toString());
+                      Get.bottomSheet(
+                           ExtendedImage.network(
+                              renderContext.tree.element!.attributes['src'].toString(),
+                              cache: true,
+                              clearMemoryCacheIfFailed: true,
+                              mode: ExtendedImageMode.gesture,
+                              onDoubleTap: (_){
+                                Get.back();
+                              },
+                              initGestureConfigHandler: (state) {
+                                return GestureConfig(
+                                  minScale: 0.9,
+                                  animationMinScale: 0.7,
+                                  maxScale: 3.0,
+                                  animationMaxScale: 3.5,
+                                  speed: 1.0,
+                                  inertialSpeed: 100.0,
+                                  initialScale: 1.0,
+                                  inPageView: false,
+                                  initialAlignment: InitialAlignment.center,
+                                );
+                              },
+                            ),
+
+                          isScrollControlled: true,
+                          enableDrag: false);
+                      // Get.to(
+                      //   () => ExtendedImage.network(
+                      //     renderContext.tree.element!.attributes['src'].toString(),
+                      //     cache: true,
+                      //     clearMemoryCacheIfFailed: true,
+                      //     mode: ExtendedImageMode.gesture,
+                      //     initGestureConfigHandler: (state) {
+                      //       return GestureConfig(
+                      //         minScale: 0.9,
+                      //         animationMinScale: 0.7,
+                      //         maxScale: 3.0,
+                      //         animationMaxScale: 3.5,
+                      //         speed: 1.0,
+                      //         inertialSpeed: 100.0,
+                      //         initialScale: 1.0,
+                      //         inPageView: false,
+                      //         initialAlignment: InitialAlignment.center,
+                      //       );
+                      //     },
+                      //   ),
+                      //    popGesture: true
+                      // );
                     },
                     child: ExtendedImage.network(
                       renderContext.tree.element!.attributes['src'].toString(),
@@ -335,11 +397,11 @@ Widget viewContent(BuildContext context, int index, dynamic controller) => Conta
                     ),
                   );
                 } else {
-                  return Image.network(
+                  return ExtendedImage.network(
                     renderContext.tree.element!.attributes['src'].toString(),
-                    width: double.tryParse(renderContext.tree.element!.attributes['width'].toString()),
-                    gaplessPlayback: false,
-                    filterQuality: FilterQuality.low,
+                    imageCacheName: renderContext.tree.element!.attributes['alt']!.split('.gif')[0] + '.jpeg',
+                    cache: true,
+                    clearMemoryCacheIfFailed: true,
                   );
                 }
               },
@@ -442,26 +504,6 @@ Widget viewContent(BuildContext context, int index, dynamic controller) => Conta
               // if (url?.isNotEmpty == true && url!.contains("/goto/post") && url != "no") {
               // }
             },
-            onImageTap: (String? url, RenderContext renderContext, Map<String, String> attributes, dom.Element? element) async {
-              print("tap");
-              // Get.dialog(
-              //   Dismissible(
-              //     direction: DismissDirection.vertical,
-              //     onDismissed: (v) {
-              //       if (Get.isDialogOpen == true) {
-              //         Get.back(canPop: true);
-              //       }
-              //     },
-              //     key: const Key("value"),
-              //     child: PhotoView(
-              //       imageProvider: Image.file(await controller.getImage(url!)).image,
-              //     ),
-              //   ),
-              //   useSafeArea: true,
-              //   useRootNavigator: true,
-              //   transitionDuration: Duration(milliseconds: 2),
-              // );
-            },
           ),
           Padding(
             padding: EdgeInsets.only(left: 5),
@@ -478,8 +520,8 @@ Widget viewContent(BuildContext context, int index, dynamic controller) => Conta
                   child: TextButton(
                     style: ButtonStyle(alignment: Alignment.centerLeft),
                     onPressed: () {
-                      // Get.to(() => sheetPage(), fullscreenDialog: true, opaque: false);
-                     Get.bottomSheet(Center(child: Text('sac'),), backgroundColor: Theme.of(context).backgroundColor, isScrollControlled: true, ignoreSafeArea: true);
+                      //controller.reactionView(index);
+                      Get.bottomSheet(listReactionUI(context), isScrollControlled: false, ignoreSafeArea: true);
                     },
                     child: Text(controller.htmlData.elementAt(index)['commentName'],
                         style: TextStyle(color: Colors.blue), overflow: TextOverflow.ellipsis, maxLines: 1),

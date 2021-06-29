@@ -10,14 +10,13 @@ import 'package:vozforums/Page/reuseWidget.dart';
 import 'package:vozforums/Page/View/ViewController.dart';
 import '../../GlobalController.dart';
 
-class ViewUI extends StatelessWidget with WidgetsBindingObserver {
-  final controller = Get.find<ViewController>(tag: GlobalController.i.tagView.last);
+class ViewUI extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       endDrawer: NaviDrawerUI(),
-      appBar: preferredSize(context, controller.data['subHeader']),
+      appBar: preferredSize(context, Get.find<ViewController>(tag: GlobalController.i.tagView.last).data['subHeader']),
       body: Stack(
         children: <Widget>[
           Container(
@@ -48,7 +47,7 @@ class ViewUI extends StatelessWidget with WidgetsBindingObserver {
     );
   }
 
-  postContent(BuildContext context, ViewController controller) {
+ Widget postContent(BuildContext context, ViewController controller) {
     return refreshIndicatorConfiguration(
       Scrollbar(
         child: SmartRefresher(
