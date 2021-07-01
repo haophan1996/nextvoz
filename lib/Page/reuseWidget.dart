@@ -12,6 +12,7 @@ import 'package:vozforums/Page/View/ViewController.dart';
 import 'package:vozforums/pop.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:webview_flutter/webview_flutter.dart';
+import 'package:pinch_zoom/pinch_zoom.dart';
 
 ///  * Global appbar
 PreferredSize preferredSize(BuildContext context, String title) => PreferredSize(
@@ -48,7 +49,6 @@ PreferredSize preferredSize(BuildContext context, String title) => PreferredSize
                     onPressed: () async {
                       if (GlobalController.i.alertList.isEmpty) await GlobalController.i.getAlert();
                       Get.to(() => Popup(), fullscreenDialog: true, opaque: false);
-                      print(GlobalController.i.tagView);
                     },
                     icon: Icon(Icons.notifications)),
               ),
@@ -213,8 +213,8 @@ Widget buildIcon(String path, String text) => Row(
       children: [
         Image.asset(
           path,
-          //height: 25,
-          //width: 25,
+          height: 17,
+          width: 17,
         ),
         Text(' ' + text.tr)
       ],
@@ -239,19 +239,84 @@ Widget rowNew(String pathImage, Widget text) => Row(
       ],
     );
 
-Widget listReactionUI(BuildContext context) {
-  return Container(
-    constraints: BoxConstraints.expand(),
-    decoration: BoxDecoration(
-      color: Theme.of(context).backgroundColor,
-      borderRadius: BorderRadius.only(
-        topLeft: Radius.circular(10),
-        topRight: Radius.circular(10),
+Widget reactionChild(ViewController controller, int index) {
+  return Row(
+    mainAxisAlignment: MainAxisAlignment.start,
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      SizedBox(
+        width: 50,
+        height: 50,
+        child: Stack(
+          children: [
+            Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                image: DecorationImage(
+                    image: controller.reactionList.elementAt(index)['rAvatar'] == 'no'
+                        ? Image.asset(
+                            "assets/NoAvata.png",
+                          ).image
+                        : ExtendedNetworkImageProvider(GlobalController.i.url + controller.reactionList.elementAt(index)['rAvatar'], cache: true)),
+              ),
+            ),
+            Positioned(
+              right: 0,
+              bottom: 0,
+              child: Container(
+                width: 25,
+                height: 25,
+                decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    image: DecorationImage(image: AssetImage('assets/reaction/${controller.reactionList.elementAt(index)['rReactIcon']}.png'))),
+              ),
+            )
+          ],
+        ),
       ),
-    ),
-    child: Row(
-      children: [],
-    ),
+      Expanded(
+          child: Padding(
+        padding: EdgeInsets.only(left: 5),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              controller.reactionList.elementAt(index)['rName'],
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            Text(controller.reactionList.elementAt(index)['rTitle']),
+            Text(
+                'Mess: ${controller.reactionList.elementAt(index)['rMessage']} • React score: ${controller.reactionList.elementAt(index)['rMessage2']} • Points: ${controller.reactionList.elementAt(index)['rMessage3']}'),
+            Text(controller.reactionList.elementAt(index)['rTime']),
+            Divider()
+          ],
+        ),
+      ))
+    ],
+  );
+}
+
+Widget listReactionUI(BuildContext context, ViewController controller) {
+  return DraggableScrollableSheet(
+    initialChildSize: 1,
+    builder: (_, dragController) => Container(
+        padding: EdgeInsets.only(left: 5, top: 5),
+        decoration: BoxDecoration(
+            color: Theme.of(context).backgroundColor, borderRadius: BorderRadius.only(topLeft: Radius.circular(6), topRight: Radius.circular(6))),
+        child: Obx(() => controller.reactionList.length > 0
+            ? ListView.builder(
+                physics: BouncingScrollPhysics(),
+                controller: dragController,
+                itemCount: controller.reactionList.length,
+                itemBuilder: (context, index) {
+                  return reactionChild(controller, index);
+                })
+            : Center(
+                child: Text('No reaction'),
+              ))),
   );
 }
 
@@ -342,53 +407,30 @@ Widget viewContent(BuildContext context, int index, ViewController controller) =
                   return InkWell(
                     onTap: () {
                       Get.bottomSheet(
-                           ExtendedImage.network(
-                              renderContext.tree.element!.attributes['src'].toString(),
-                              cache: true,
-                              clearMemoryCacheIfFailed: true,
-                              mode: ExtendedImageMode.gesture,
-                              onDoubleTap: (_){
-                                Get.back();
-                              },
-                              initGestureConfigHandler: (state) {
-                                return GestureConfig(
-                                  minScale: 0.9,
-                                  animationMinScale: 0.7,
-                                  maxScale: 3.0,
-                                  animationMaxScale: 3.5,
-                                  speed: 1.0,
-                                  inertialSpeed: 100.0,
-                                  initialScale: 1.0,
-                                  inPageView: false,
-                                  initialAlignment: InitialAlignment.center,
-                                );
-                              },
-                            ),
-
+                          ExtendedImage.network(
+                            renderContext.tree.element!.attributes['src'].toString(),
+                            cache: true,
+                            clearMemoryCacheIfFailed: true,
+                            mode: ExtendedImageMode.gesture,
+                            onDoubleTap: (_) {
+                              Get.back();
+                            },
+                            initGestureConfigHandler: (state) {
+                              return GestureConfig(
+                                minScale: 0.9,
+                                animationMinScale: 0.7,
+                                maxScale: 3.0,
+                                animationMaxScale: 3.5,
+                                speed: 1.0,
+                                inertialSpeed: 100.0,
+                                initialScale: 1.0,
+                                inPageView: false,
+                                initialAlignment: InitialAlignment.center,
+                              );
+                            },
+                          ),
                           isScrollControlled: true,
                           enableDrag: false);
-                      // Get.to(
-                      //   () => ExtendedImage.network(
-                      //     renderContext.tree.element!.attributes['src'].toString(),
-                      //     cache: true,
-                      //     clearMemoryCacheIfFailed: true,
-                      //     mode: ExtendedImageMode.gesture,
-                      //     initGestureConfigHandler: (state) {
-                      //       return GestureConfig(
-                      //         minScale: 0.9,
-                      //         animationMinScale: 0.7,
-                      //         maxScale: 3.0,
-                      //         animationMaxScale: 3.5,
-                      //         speed: 1.0,
-                      //         inertialSpeed: 100.0,
-                      //         initialScale: 1.0,
-                      //         inPageView: false,
-                      //         initialAlignment: InitialAlignment.center,
-                      //       );
-                      //     },
-                      //   ),
-                      //    popGesture: true
-                      // );
                     },
                     child: ExtendedImage.network(
                       renderContext.tree.element!.attributes['src'].toString(),
@@ -510,18 +552,18 @@ Widget viewContent(BuildContext context, int index, ViewController controller) =
             child: Row(
               children: [
                 controller.htmlData.elementAt(index)['commentImage'].toString() != 'no'
-                    ? Image.asset('assets/reaction/' + controller.htmlData.elementAt(index)['commentImage'][0] + '.png', width: 22, height: 22)
+                    ? Image.asset('assets/reaction/' + controller.htmlData.elementAt(index)['commentImage'][0] + '.png', width: 17, height: 17)
                     : Container(),
                 controller.htmlData.elementAt(index)['commentImage'].toString().length > 1 &&
                         controller.htmlData.elementAt(index)['commentImage'].toString() != 'no'
-                    ? Image.asset('assets/reaction/' + controller.htmlData.elementAt(index)['commentImage'][1] + '.png', width: 22, height: 22)
+                    ? Image.asset('assets/reaction/' + controller.htmlData.elementAt(index)['commentImage'][1] + '.png', width: 17, height: 17)
                     : Container(),
                 Expanded(
                   child: TextButton(
                     style: ButtonStyle(alignment: Alignment.centerLeft),
                     onPressed: () {
-                      //controller.reactionView(index);
-                      Get.bottomSheet(listReactionUI(context), isScrollControlled: false, ignoreSafeArea: true);
+                      controller.getDataReactionList(index);
+                      Get.bottomSheet(listReactionUI(context, controller), isScrollControlled: false, ignoreSafeArea: true);
                     },
                     child: Text(controller.htmlData.elementAt(index)['commentName'],
                         style: TextStyle(color: Colors.blue), overflow: TextOverflow.ellipsis, maxLines: 1),
@@ -531,7 +573,6 @@ Widget viewContent(BuildContext context, int index, ViewController controller) =
                   onReactionChanged: (reaction, i) {
                     if (GlobalController.i.isLogged.value == false) {
                       Get.snackbar('error'.tr, 'popMess4'.tr, snackPosition: SnackPosition.BOTTOM, isDismissible: true);
-                      controller.htmlData.refresh();
                     } else {
                       if (controller.htmlData.elementAt(index)['commentByMe'] != i) {
                         if (i == 0) {

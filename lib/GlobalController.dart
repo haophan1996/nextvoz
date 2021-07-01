@@ -60,7 +60,7 @@ class GlobalController extends GetxController {
           status = element.getElementsByClassName('contentRow-main contentRow-main--close')[0].text.replaceAll(time, '').trim();
           link = element.getElementsByClassName('fauxBlockLink-blockLink')[0].attributes['href'].toString();
           if (element.getElementsByClassName('username ').length > 0) {
-            username = element.getElementsByClassName('username ')[0].innerHtml.trim();
+            username = element.getElementsByClassName('username ')[0].text;
             key = status.contains('the thread') ? 'the thread' : 'a thread called';
             threadName = status.split('.')[0].trim().split(key)[1];
             status = status.split('.')[0].trim().split(key)[0].replaceAll(username, '')+key;

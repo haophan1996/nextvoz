@@ -15,7 +15,8 @@ import 'dart:io';
 import 'package:html/dom.dart' as dom;
 
 class ViewController extends GetxController {
-  RxList htmlData = [].obs;
+  List htmlData = [];
+  RxList reactionList = [].obs;
   RxInt currentPage = 0.obs, totalPage = 0.obs;
   Map<String, dynamic> data = {};
   int lengthHtmlDataList = 0;
@@ -49,11 +50,10 @@ class ViewController extends GetxController {
     listViewScrollController.dispose();
     currentPage.close();
     totalPage.close();
-    htmlData.close();
+    reactionList.close();
     clearMemoryImageCache();
     GlobalController.i.percentDownload = -1.0;
   }
-
 
   launchURL(String url) async {
     if (await canLaunch(url)) {
@@ -90,7 +90,9 @@ class ViewController extends GetxController {
         NaviDrawerController.i.linkUser.value = GlobalController.i.userStorage.read('linkUser');
         NaviDrawerController.i.avatarUser.value = GlobalController.i.userStorage.read('avatarUser');
         NaviDrawerController.i.nameUser.value = GlobalController.i.userStorage.read('nameUser');
-        GlobalController.i.alertNotification = value.getElementsByClassName('badgeContainer--highlighted').length > 0 ? value.getElementsByClassName('badgeContainer--highlighted')[0].attributes['data-badge'].toString() : '0';
+        GlobalController.i.alertNotification = value.getElementsByClassName('badgeContainer--highlighted').length > 0
+            ? value.getElementsByClassName('badgeContainer--highlighted')[0].attributes['data-badge'].toString()
+            : '0';
         GlobalController.i.update();
       } else
         GlobalController.i.isLogged.value = false;
@@ -100,7 +102,8 @@ class ViewController extends GetxController {
           currentPage.value = 1;
           totalPage.value = 1;
         } else {
-          data['fullUrl'] = GlobalController.i.url + element.getElementsByClassName('pageNav-page ')[0].getElementsByTagName('a')[0].attributes['href'].toString();
+          data['fullUrl'] =
+              GlobalController.i.url + element.getElementsByClassName('pageNav-page ')[0].getElementsByTagName('a')[0].attributes['href'].toString();
           var naviPage = element.getElementsByClassName("pageNavSimple-el pageNavSimple-el--current").first.innerHtml.trim();
           currentPage.value = int.parse(naviPage.replaceAll(RegExp(r'[^0-9]\S*'), ""));
           totalPage.value = int.parse(naviPage.replaceAll(RegExp(r'\S*[^0-9]'), ""));
@@ -224,17 +227,30 @@ class ViewController extends GetxController {
   ];
 
   //https://voz.vn/p/10428349/reactions
-  reactionView(int index) async {
+  getDataReactionList(int index) async {
+    reactionList.clear();
     await GlobalController.i.getBody(GlobalController.i.url + '/p/' + htmlData.elementAt(index)['postID'] + '/reactions', false).then((value) {
-       value.getElementsByClassName('block-row block-row--separated').forEach((element) {
-         print(element.getElementsByClassName('username ')[0].text);  // name
-         print(element.getElementsByClassName('userTitle')[0].text);  //title
-         print(element.getElementsByClassName('pairs pairs--inline')[0].getElementsByTagName('dd')[0].text); // message
-         print(element.getElementsByClassName('pairs pairs--inline')[1].getElementsByTagName('dd')[0].text); // message
-         print(element.getElementsByClassName('pairs pairs--inline')[2].getElementsByTagName('dd')[0].text); // message
-         print(element.getElementsByClassName('u-dt')[0].text);  // time
-         print(element.getElementsByClassName('reaction-image js-reaction')[0].attributes['alt']);
-       });
+      value.getElementsByClassName('block-row block-row--separated').forEach((element) {
+        data['rName'] = element.getElementsByClassName('username ')[0].text;
+        data['rTitle'] = element.getElementsByClassName('userTitle')[0].text;
+        data['rMessage'] = element.getElementsByClassName('pairs pairs--inline')[0].getElementsByTagName('dd')[0].text;
+        data['rMessage2'] = element.getElementsByClassName('pairs pairs--inline')[1].getElementsByTagName('dd')[0].text;
+        data['rMessage3'] = element.getElementsByClassName('pairs pairs--inline')[2].getElementsByTagName('dd')[0].text;
+        data['rTime'] = element.getElementsByClassName('u-dt')[0].text;
+        data['rReactIcon'] = element.getElementsByClassName('reaction-image js-reaction')[0].attributes['alt'].toString()== 'Ưng' ? '1' : '2';
+        data['avatar'] = element.getElementsByClassName('avatar')[0].getElementsByTagName('img').length > 0 ?
+        element.getElementsByClassName('avatar')[0].getElementsByTagName('img')[0].attributes['src'] : 'no';
+        reactionList.add({
+          'rName' : data['rName'],
+          'rTitle' : data['rTitle'],
+          'rMessage' : data['rMessage'],
+          'rMessage2' : data['rMessage2'],
+          'rMessage3' : data['rMessage3'],
+          'rTime' :  data['rTime'],
+          'rReactIcon' : data['rReactIcon'],
+          'rAvatar' : data['avatar'],
+        });
+      });
     });
   }
 
@@ -247,8 +263,7 @@ class ViewController extends GetxController {
     };
     var body = {'_xfWithData': '1', '_xfToken': '${data['dataCsrfPost']}', '_xfResponseType': 'json'};
     await GlobalController.i.getHttpPost(headers, body, 'https://voz.vn/p/$idPost/react?reaction_id=$idReact?reaction_id=$idReact').then((value) {
-
-      if (value.documentElement!.getElementsByClassName('reactionsBar-link').length > 0){
+      if (value.documentElement!.getElementsByClassName('reactionsBar-link').length > 0) {
         data['_commentImg'] = '';
         value.getElementsByClassName('reaction reaction--small reaction').forEach((element) {
           data['_commentImg'] += element.attributes['data-reaction-id'].toString();
@@ -257,8 +272,7 @@ class ViewController extends GetxController {
         htmlData.elementAt(index)['commentName'] =
             value.documentElement!.getElementsByClassName('reactionsBar-link')[0].innerHtml.replaceAll(RegExp(r"<[^>]*>"), '');
         htmlData.elementAt(index)['commentImage'] = data['_commentImg'];
-
-      }else {
+      } else {
         htmlData.elementAt(index)['commentName'] = '';
         htmlData.elementAt(index)['commentImage'] = 'no';
       }

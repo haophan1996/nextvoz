@@ -330,14 +330,14 @@ packages:
       name: petitparser
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "4.1.0"
-  photo_view:
+    version: "4.2.0"
+  pinch_zoom:
     dependency: "direct main"
     description:
-      name: photo_view
+      name: pinch_zoom
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.11.1"
+    version: "0.1.0"
   platform:
     dependency: transitive
     description:
@@ -454,7 +454,7 @@ packages:
       name: url_launcher
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "6.0.7"
+    version: "6.0.8"
   url_launcher_linux:
     dependency: transitive
     description:
