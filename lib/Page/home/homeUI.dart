@@ -54,11 +54,11 @@ class HomePageUI extends GetView<HomeController> {
 
 theme(String theme, BuildContext context) {
   return Container(
-    color: Theme.of(context).hintColor,
+    color: Theme.of(context).canvasColor,
     child: ListTile(
       title: text(
         theme,
-        TextStyle(color: Colors.white, fontWeight: FontWeight.w900),
+        TextStyle(color: Theme.of(context).primaryColor, fontWeight: FontWeight.w900),
       ),
     ),
   );

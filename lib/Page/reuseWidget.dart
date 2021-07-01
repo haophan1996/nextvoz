@@ -12,7 +12,7 @@ import 'package:vozforums/Page/View/ViewController.dart';
 import 'package:vozforums/pop.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:webview_flutter/webview_flutter.dart';
-import 'package:pinch_zoom/pinch_zoom.dart';
+import 'package:pinch_zoom_image_last/pinch_zoom_image_last.dart';
 
 ///  * Global appbar
 PreferredSize preferredSize(BuildContext context, String title) => PreferredSize(
@@ -187,9 +187,9 @@ Widget popUpWaiting(BuildContext context, String one, String two) => Column(
 setDialog(BuildContext context, String textF, String textS) => Get.defaultDialog(
     barrierDismissible: false,
     radius: 6,
-    backgroundColor: Theme.of(context).hintColor.withOpacity(0.8),
+    backgroundColor: Theme.of(context).canvasColor.withOpacity(0.8),
     content: popUpWaiting(context, textF, textS),
-    title: 'Message');
+    title: 'status'.tr);
 
 Widget builFlagsdPreviewIcon(String path, String tex) => Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
@@ -404,39 +404,19 @@ Widget viewContent(BuildContext context, int index, ViewController controller) =
                     TextStyle(fontSize: 25),
                   );
                 } else if (renderContext.tree.element!.attributes['alt']!.contains(".gif") == false) {
-                  return InkWell(
-                    onTap: () {
-                      Get.bottomSheet(
-                          ExtendedImage.network(
-                            renderContext.tree.element!.attributes['src'].toString(),
-                            cache: true,
-                            clearMemoryCacheIfFailed: true,
-                            mode: ExtendedImageMode.gesture,
-                            onDoubleTap: (_) {
-                              Get.back();
-                            },
-                            initGestureConfigHandler: (state) {
-                              return GestureConfig(
-                                minScale: 0.9,
-                                animationMinScale: 0.7,
-                                maxScale: 3.0,
-                                animationMaxScale: 3.5,
-                                speed: 1.0,
-                                inertialSpeed: 100.0,
-                                initialScale: 1.0,
-                                inPageView: false,
-                                initialAlignment: InitialAlignment.center,
-                              );
-                            },
-                          ),
-                          isScrollControlled: true,
-                          enableDrag: false);
-                    },
-                    child: ExtendedImage.network(
+                  return PinchZoomImage(
+                    image: ExtendedImage.network(
                       renderContext.tree.element!.attributes['src'].toString(),
                       cache: true,
                       clearMemoryCacheIfFailed: true,
                     ),
+                    zoomedBackgroundColor: Color.fromRGBO(240, 240, 240, 1.0),
+                    onZoomStart: () {
+                      print('Zoom started');
+                    },
+                    onZoomEnd: () {
+                      print('Zoom finished');
+                    },
                   );
                 } else {
                   return ExtendedImage.network(

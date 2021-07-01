@@ -31,7 +31,7 @@ dependencies:
   scrollable_positioned_list: ^0.2.0-nullsafety.0
   animated_text_kit: ^4.2.1
   flutter_reaction_button: ^1.0.8
-  pinch_zoom: ^0.1.0
+  pinch_zoom_image_last: ^0.4.1
 
   webview_flutter: ^2.0.8
   get: ^4.1.4

@@ -17,6 +17,7 @@ class ViewUI extends StatelessWidget {
     return Scaffold(
       endDrawer: NaviDrawerUI(),
       appBar: preferredSize(context, Get.find<ViewController>(tag: GlobalController.i.tagView.last).data['subHeader']),
+      backgroundColor: Theme.of(context).backgroundColor,
       body: Stack(
         children: <Widget>[
           Container(

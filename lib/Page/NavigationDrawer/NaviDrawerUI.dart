@@ -175,12 +175,7 @@ Widget login(BuildContext context) {
                   TextButton(
                       child: text('login'.tr, TextStyle()),
                       onPressed: () async {
-                        Get.defaultDialog(
-                            barrierDismissible: false,
-                            radius: 6,
-                            backgroundColor: Theme.of(context).hintColor.withOpacity(0.8),
-                            content: popUpWaiting(context, 'popMess'.tr, 'popMess2'.tr),
-                            title: 'status'.tr);
+                        setDialog(context, 'popMess'.tr, 'popMess2'.tr);
                         await NaviDrawerController.i.loginFunction();
                       })
                 ],

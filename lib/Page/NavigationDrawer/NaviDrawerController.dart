@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:vozforums/Page/View/ViewController.dart';
@@ -22,7 +21,7 @@ class NaviDrawerController extends GetxController {
   Future<void> loginFunction() async {
 
     if (textEditingControllerLogin.text.length < 6 || textEditingControllerPassword.text.length <6){
-      statusLogin = 'Login or Password maybe too short ?';
+      statusLogin = 'statusLoginInvalid'.tr;
       update();
       Get.back();
       return;
@@ -35,10 +34,10 @@ class NaviDrawerController extends GetxController {
       await Future.delayed(Duration(milliseconds: 3000), () async {
         Get.back();
       });
-      statusLogin = "Incorrect ID/Password or server busy\nIf this continue happens, please restart app and try again";
+      statusLogin = 'statusLoginFail'.tr;
       update();
     } else {
-      statusLogin = "Success";
+      statusLogin = 'statusLoginOK'.tr;
       update();
       statusLogin = '';
       await GlobalController.i.userStorage.remove('userLoggedIn');

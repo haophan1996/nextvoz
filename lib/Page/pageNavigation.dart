@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:vozforums/Page/reuseWidget.dart';
 
@@ -19,38 +20,25 @@ Widget pageNavigation(BuildContext context, ItemScrollController scrollControlle
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.only(),
-                  child: IconButton(
-                    splashColor: Colors.green,
-                    onPressed: () async {
-                      // final Email email = Email(
-                      //   body: 'hey app is very perfect',
-                      //   subject: 'Email subject',
-                      //   recipients: ['haophan69@gmail.com'],
-                      //   cc: ['cc@example.com'],
-                      //   bcc: ['bcc@example.com'],
-                      //   isHTML: false,
-                      // );
-                      // await FlutterEmailSender.send(email);
-                    },
-                    icon: Icon(
-                      Icons.more_vert_rounded,
-                    ),
-                    iconSize: 25,
-                  ),
-                ),
-                Spacer(),
                 IconButton(
                   splashColor: Colors.green,
-                  iconSize: 30,
+                  onPressed: () async {
+                  },
+                  icon: Icon(
+                    Icons.more_vert_rounded,
+                  ),
+                  iconSize: 25,
+                ),
+                IconButton(
+                  splashColor: Colors.green,
+                  iconSize: 25,
                   icon: Icon(Icons.arrow_back_ios_rounded),
                   onPressed: () {
-                    setDialog(context, 'Hang tight', "Loading...");
+                    setDialog(context, 'popMess'.tr, 'loading3'.tr);
                     firstPage();
                   },
                 ),
-                Container(
+                Expanded(child: Container(
                   height: 36,
                   width: MediaQuery.of(context).size.width * 0.52,
                   child: ScrollablePositionedList.builder(
@@ -64,7 +52,7 @@ Widget pageNavigation(BuildContext context, ItemScrollController scrollControlle
                         child: InkWell(
                           onTap: () {
                             if (index + 1 != currentPage) {
-                              setDialog(context, 'Hang tight', "Loading...");
+                              setDialog(context, 'popMess'.tr, 'loading3'.tr);
                               onCall((index + 1).toString());
                             }
                           },
@@ -83,24 +71,22 @@ Widget pageNavigation(BuildContext context, ItemScrollController scrollControlle
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
                                   color: (index + 1) == currentPage ? Colors.pink : Theme.of(context).primaryColor
-                                  //controller.currentPage.value-1 == index ? Colors.red : Colors.black
-                                  ),
+                              ),
                             ),
                           ),
                         ),
                       );
                     },
                   ),
-                ),
+                )),
                 IconButton(
                     splashColor: Colors.green,
-                    iconSize: 30,
+                    iconSize: 25,
                     icon: Icon(Icons.arrow_forward_ios_rounded),
                     onPressed: () {
-                      setDialog(context, 'Hang tight', "Loading...");
+                      setDialog(context, 'popMess'.tr, 'loading3'.tr);
                       lastPage();
                     }),
-                Spacer(),
                 IconButton(
                   splashColor: Colors.green,
                   icon: Icon(
@@ -108,7 +94,7 @@ Widget pageNavigation(BuildContext context, ItemScrollController scrollControlle
                   ),
                   onPressed: () {},
                   iconSize: 25,
-                ),
+                )
               ],
             ),
           )),
