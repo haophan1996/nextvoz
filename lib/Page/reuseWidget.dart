@@ -19,7 +19,7 @@ PreferredSize preferredSize(BuildContext context, String title, String prefix) =
       preferredSize: Size.fromHeight(NaviDrawerController.i.heightAppbar),
       child: /* Obx(()=>*/ AppBar(
         automaticallyImplyLeading: false,
-        title: customTitle(context, FontWeight.normal, 2,prefix, title),
+        title: customTitle(context, FontWeight.normal, 2, prefix, title),
         leading: (ModalRoute.of(context)?.canPop ?? false) ? BackButton() : null,
         actions: <Widget>[
           Stack(
@@ -108,7 +108,7 @@ Widget blockItem(BuildContext context, FontWeight themeTitleWeight, FontWeight t
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    customTitle(context, titleWeight, null,header11, header12),
+                    customTitle(context, titleWeight, null, header11, header12),
                     text(
                       "$header21 \u2022 $header22",
                       TextStyle(color: Colors.grey, fontSize: 12),
@@ -134,7 +134,7 @@ Widget blockItem(BuildContext context, FontWeight themeTitleWeight, FontWeight t
       ),
     );
 
-Widget customTitle(BuildContext context, FontWeight titleWeight, int? maxLines,String header11, String header12) {
+Widget customTitle(BuildContext context, FontWeight titleWeight, int? maxLines, String header11, String header12) {
   return RichText(
     maxLines: maxLines,
     overflow: maxLines == 1 || maxLines == 2 ? TextOverflow.ellipsis : TextOverflow.clip,
@@ -199,7 +199,17 @@ setDialog(BuildContext context, String textF, String textS) => Get.defaultDialog
     content: popUpWaiting(context, textF, textS),
     title: 'status'.tr);
 
-Widget builFlagsdPreviewIcon(String path, String tex) => Padding(
+setDialogError(BuildContext context, String text) => Get.defaultDialog(
+      content: Text(text, textAlign: TextAlign.center),
+      textConfirm: 'Ok',
+      title: 'Error',
+      confirmTextColor: Colors.white,
+      onConfirm: () => Get.back(),
+      buttonColor: Colors.red,
+      backgroundColor: Theme.of(context).canvasColor,
+    );
+
+Widget buildFlagsPreviewIcon(String path, String tex) => Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       child: Column(
         children: [
@@ -411,7 +421,7 @@ Widget viewContent(BuildContext context, int index, ViewController controller) =
                     renderContext.tree.element!.attributes['alt']!,
                     TextStyle(fontSize: 25),
                   );
-                } else if (renderContext.tree.element!.attributes['alt']!.contains(".gif") == false) {
+                } else if (renderContext.tree.element!.attributes['alt']?.contains(".gif") == false) {
                   return PinchZoomImage(
                     image: ExtendedImage.network(
                       renderContext.tree.element!.attributes['src'].toString(),
@@ -426,10 +436,11 @@ Widget viewContent(BuildContext context, int index, ViewController controller) =
                       print('Zoom finished');
                     },
                   );
-                } else {
+                }
+                else{
                   return ExtendedImage.network(
                     renderContext.tree.element!.attributes['src'].toString(),
-                    imageCacheName: renderContext.tree.element!.attributes['alt']!.split('.gif')[0] + '.jpeg',
+                    //imageCacheName: renderContext.tree.element!.attributes['alt']!.split('.gif')[0] + '.jpeg',
                     cache: true,
                     clearMemoryCacheIfFailed: true,
                   );
@@ -486,16 +497,15 @@ Widget viewContent(BuildContext context, int index, ViewController controller) =
               },
               "table": (context, child) {
                 if (context.tree.element!.getElementsByTagName("td")[0].innerHtml.length > 1)
-                return SingleChildScrollView(
-                  scrollDirection: (context.tree.element!.getElementsByTagName("tr").length > 1) ||
-                          (context.tree.element!.getElementsByTagName("a")[0].text.length > 25)
-                      ? Axis.horizontal
-                      : Axis.vertical,
-                  //scrollDirection: Axis.horizontal,
-                  padding: EdgeInsets.all(2),
-                  physics: BouncingScrollPhysics(),
-                  child: (context.tree as TableLayoutElement).toWidget(context),
-                );
+                  return SingleChildScrollView(
+                    scrollDirection: (context.tree.element!.getElementsByTagName("tr").length > 1) ||
+                            (context.tree.element!.getElementsByTagName("a")[0].text.length > 25)
+                        ? Axis.horizontal
+                        : Axis.vertical,
+                    padding: EdgeInsets.all(2),
+                    physics: BouncingScrollPhysics(),
+                    child: (context.tree as TableLayoutElement).toWidget(context),
+                  );
               },
               "iframe": (RenderContext context, Widget child) {
                 final attrs = context.tree.element?.attributes;
@@ -569,12 +579,24 @@ Widget viewContent(BuildContext context, int index, ViewController controller) =
                     } else {
                       if (controller.htmlData.elementAt(index)['commentByMe'] != i) {
                         if (i == 0) {
-                          controller.reactionPost(
-                              index, controller.htmlData.elementAt(index)['postID'], controller.htmlData.elementAt(index)['commentByMe'], context);
-                          controller.htmlData.elementAt(index)['commentByMe'] = 0;
+                          controller
+                              .reactionPost(
+                                  index, controller.htmlData.elementAt(index)['postID'], controller.htmlData.elementAt(index)['commentByMe'], context)
+                              .then((value) {
+                            if (value['status'] != 'error') {
+                              controller.htmlData.elementAt(index)['commentByMe'] = 0;
+                            } else {
+                              setDialogError(context, value['mess']);
+                            }
+                          });
                         } else {
-                          controller.reactionPost(index, controller.htmlData.elementAt(index)['postID'], i, context);
-                          controller.htmlData.elementAt(index)['commentByMe'] = i;
+                          controller.reactionPost(index, controller.htmlData.elementAt(index)['postID'], i, context).then((value) {
+                            if (value['status'] != 'error') {
+                              controller.htmlData.elementAt(index)['commentByMe'] = i;
+                            } else {
+                              setDialogError(context, value['mess']);
+                            }
+                          });
                         }
                       }
                     }

@@ -81,9 +81,9 @@ class GlobalController extends GetxController {
     }
   }
 
-  Future<dom.Document> getHttpPost(Map<String, String> header, Map<String, String> body, String link) async {
+  Future getHttpPost(Map<String, String> header, Map<String, String> body, String link) async {
     final response = await http.post(Uri.parse(link), headers: header, body: body);
-    return parser.parse(jsonDecode(response.body)['reactionList']['content']);
+    return jsonDecode(response.body);
   }
 
   setDataUser() async {

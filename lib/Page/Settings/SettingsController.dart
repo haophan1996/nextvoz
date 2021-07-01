@@ -28,22 +28,16 @@ class SettingsController extends GetxController {
     await GlobalController.i.userStorage.write('fontSizeView', fontSizeView.value);
     Get.updateLocale(GlobalController.i.langList.elementAt(langIndex));
     await GlobalController.i.userStorage.write('lang', langIndex);
-    //Get.offAllNamed('/HomePage');
   }
-  
 
-  // setLang(int i) async {
-  //   Get.updateLocale(GlobalController.i.langList.elementAt(i));
-  //   await GlobalController.i.userStorage.write('lang', i); 
-  // }
 
   final flagsReactions = [
     Reaction(
-      previewIcon: builFlagsdPreviewIcon('assets/languages/en.png', 'English'),
+      previewIcon: buildFlagsPreviewIcon('assets/languages/en.png', 'English'),
       icon: buildIcon('assets/languages/en.png', 'English'),
     ),
     Reaction(
-      previewIcon: builFlagsdPreviewIcon('assets/languages/vn.png', 'Tiếng Việt'),
+      previewIcon: buildFlagsPreviewIcon('assets/languages/vn.png', 'Tiếng Việt'),
       icon: buildIcon('assets/languages/vn.png', 'Tiếng Việt'),
     ),
   ];

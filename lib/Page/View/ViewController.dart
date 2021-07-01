@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +13,7 @@ import 'package:vozforums/GlobalController.dart';
 import 'package:vozforums/Page/NavigationDrawer/NaviDrawerController.dart';
 import 'package:vozforums/Page/reuseWidget.dart';
 import 'dart:io';
+import 'package:html/parser.dart' as parser;
 import 'package:html/dom.dart' as dom;
 
 class ViewController extends GetxController {
@@ -31,7 +33,6 @@ class ViewController extends GetxController {
     super.onInit();
     data['subHeader'] = Get.arguments[0];
     data['subTypeHeader'] = Get.arguments[2] ?? '';
-    print(Get.arguments[1]);
   }
 
   @override
@@ -210,15 +211,15 @@ class ViewController extends GetxController {
 
   final flagsReactions = [
     Reaction(
-      previewIcon: builFlagsdPreviewIcon('assets/reaction/0.png', 'unReact'.tr),
+      previewIcon: buildFlagsPreviewIcon('assets/reaction/0.png', 'unReact'.tr),
       icon: buildIcon('assets/reaction/nil.png', 'react'),
     ),
     Reaction(
-      previewIcon: builFlagsdPreviewIcon('assets/reaction/1.png', 'sweet'.tr),
+      previewIcon: buildFlagsPreviewIcon('assets/reaction/1.png', 'sweet'.tr),
       icon: buildIcon('assets/reaction/1.png', 'sweeted'),
     ),
     Reaction(
-      previewIcon: builFlagsdPreviewIcon('assets/reaction/2.png', 'brick'.tr),
+      previewIcon: buildFlagsPreviewIcon('assets/reaction/2.png', 'brick'.tr),
       icon: buildIcon('assets/reaction/2.png', 'bricked'),
     ),
   ];
@@ -233,24 +234,26 @@ class ViewController extends GetxController {
         data['rMessage2'] = element.getElementsByClassName('pairs pairs--inline')[1].getElementsByTagName('dd')[0].text;
         data['rMessage3'] = element.getElementsByClassName('pairs pairs--inline')[2].getElementsByTagName('dd')[0].text;
         data['rTime'] = element.getElementsByClassName('u-dt')[0].text;
-        data['rReactIcon'] = element.getElementsByClassName('reaction-image js-reaction')[0].attributes['alt'].toString()== 'Ưng' ? '1' : '2';
-        data['avatar'] = element.getElementsByClassName('avatar')[0].getElementsByTagName('img').length > 0 ?
-        element.getElementsByClassName('avatar')[0].getElementsByTagName('img')[0].attributes['src'] : 'no';
+        data['rReactIcon'] = element.getElementsByClassName('reaction-image js-reaction')[0].attributes['alt'].toString() == 'Ưng' ? '1' : '2';
+        data['avatar'] = element.getElementsByClassName('avatar')[0].getElementsByTagName('img').length > 0
+            ? element.getElementsByClassName('avatar')[0].getElementsByTagName('img')[0].attributes['src']
+            : 'no';
         reactionList.add({
-          'rName' : data['rName'],
-          'rTitle' : data['rTitle'],
-          'rMessage' : data['rMessage'],
-          'rMessage2' : data['rMessage2'],
-          'rMessage3' : data['rMessage3'],
-          'rTime' :  data['rTime'],
-          'rReactIcon' : data['rReactIcon'],
-          'rAvatar' : data['avatar'],
+          'rName': data['rName'],
+          'rTitle': data['rTitle'],
+          'rMessage': data['rMessage'],
+          'rMessage2': data['rMessage2'],
+          'rMessage3': data['rMessage3'],
+          'rTime': data['rTime'],
+          'rReactIcon': data['rReactIcon'],
+          'rAvatar': data['avatar'],
         });
       });
     });
   }
 
-  reactionPost(int index, String idPost, int idReact, BuildContext context) async {
+  Future reactionPost(int index, String idPost, int idReact, BuildContext context) async {
+    var status = {};
     setDialog(context, 'popMess'.tr, 'popMess5'.tr);
     var headers = {
       'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
@@ -258,22 +261,31 @@ class ViewController extends GetxController {
       'cookie': '${data['xfCsrfPost']}; xf_user=${GlobalController.i.xfUser};',
     };
     var body = {'_xfWithData': '1', '_xfToken': '${data['dataCsrfPost']}', '_xfResponseType': 'json'};
-    await GlobalController.i.getHttpPost(headers, body, 'https://voz.vn/p/$idPost/react?reaction_id=$idReact?reaction_id=$idReact').then((value) {
-      if (value.documentElement!.getElementsByClassName('reactionsBar-link').length > 0) {
-        data['_commentImg'] = '';
-        value.getElementsByClassName('reaction reaction--small reaction').forEach((element) {
-          data['_commentImg'] += element.attributes['data-reaction-id'].toString();
-        });
-
-        htmlData.elementAt(index)['commentName'] =
-            value.documentElement!.getElementsByClassName('reactionsBar-link')[0].innerHtml.replaceAll(RegExp(r"<[^>]*>"), '');
-        htmlData.elementAt(index)['commentImage'] = data['_commentImg'];
+    await GlobalController.i.getHttpPost(headers, body, 'https://voz.vn/p/$idPost/react?reaction_id=$idReact?reaction_id=$idReact').then((jsonValue) {
+      if (jsonValue['status'] == 'error') {
+        status['status'] = 'error';
+        status['mess'] = jsonValue['errors'].first;
       } else {
-        htmlData.elementAt(index)['commentName'] = '';
-        htmlData.elementAt(index)['commentImage'] = 'no';
+        final value = parser.parse(jsonValue['reactionList']['content']);
+        if (value.documentElement!.getElementsByClassName('reactionsBar-link').length > 0) {
+          data['_commentImg'] = '';
+          value.getElementsByClassName('reaction reaction--small reaction').forEach((element) {
+            data['_commentImg'] += element.attributes['data-reaction-id'].toString();
+          });
+
+          htmlData.elementAt(index)['commentName'] =
+              value.documentElement!.getElementsByClassName('reactionsBar-link')[0].innerHtml.replaceAll(RegExp(r"<[^>]*>"), '');
+          htmlData.elementAt(index)['commentImage'] = data['_commentImg'];
+        } else {
+          htmlData.elementAt(index)['commentName'] = '';
+          htmlData.elementAt(index)['commentImage'] = 'no';
+        }
+        status['status'] = 'ok';
+        status['mess'] = '';
       }
-      update();
-      Get.back();
     });
+    update();
+    Get.back();
+    return status;
   }
 }
