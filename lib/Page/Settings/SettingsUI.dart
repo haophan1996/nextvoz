@@ -9,7 +9,7 @@ class SettingsUI extends GetView<SettingsController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: preferredSize(context, 'setPage'.tr),
+      appBar: preferredSize(context, 'setPage'.tr,''),
       body: Container(
         color: Theme.of(context).backgroundColor,
         padding: EdgeInsets.only(top: 20, left: 50, right: 50),

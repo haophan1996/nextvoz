@@ -53,7 +53,7 @@ class Language extends Translations{
       'popMess4' : 'Bạn phả đăng nhập để react',
       'popMess5' : 'Đang xử lí React',
       'status'  : 'Trang Thái',
-      'statusLoginFail' : "Sai tài khoản/mât khảu hoạc không thể kêt nối tới server/api\nNếu bạn vẩn không đăng nhâp được, hãy thử thoát app và chạy lại",
+      'statusLoginFail' : 'Sai tài khoản/mât khảu hoạc không thể kêt nối tới server/api\nNếu bạn vẩn không đăng nhâp được, hãy thử thoát app và chạy lại',
       'statusLoginInvalid' : 'Tài khoản hoạc mật khẩu quá ngắn hoặc không hợp lệ',
       'statusLoginOK' : 'Đăng nhập thành công',
       'loginMess' : 'Hãy Đăng Nhập Vào Tài Khoản Của bạn',

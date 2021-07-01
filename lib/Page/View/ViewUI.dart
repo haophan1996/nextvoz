@@ -16,7 +16,7 @@ class ViewUI extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       endDrawer: NaviDrawerUI(),
-      appBar: preferredSize(context, Get.find<ViewController>(tag: GlobalController.i.tagView.last).data['subHeader']),
+      appBar: preferredSize(context, Get.find<ViewController>(tag: GlobalController.i.tagView.last).data['subHeader'],Get.find<ViewController>(tag: GlobalController.i.tagView.last).data['subTypeHeader']),
       backgroundColor: Theme.of(context).backgroundColor,
       body: Stack(
         children: <Widget>[
@@ -36,8 +36,8 @@ class ViewUI extends StatelessWidget {
                 return pageNavigation(
                   context,
                   controller.itemScrollController,
-                  controller.currentPage.value,
-                  controller.totalPage.value,
+                  controller.currentPage,
+                  controller.totalPage,
                   (index) => controller.setPageOnClick(index),
                   () => controller.setPageOnClick(controller.totalPage.toString()),
                   () => controller.setPageOnClick("1"),
@@ -56,7 +56,7 @@ class ViewUI extends StatelessWidget {
           enablePullUp: true,
           controller: controller.refreshController,
           onLoading: () {
-            controller.setPageOnClick((controller.currentPage.value + 1).toString());
+            controller.setPageOnClick((controller.currentPage + 1).toString());
           },
           child: ListView.builder(
             cacheExtent: 99999,

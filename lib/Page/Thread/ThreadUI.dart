@@ -7,7 +7,7 @@ import 'package:vozforums/Page/NavigationDrawer/NaviDrawerController.dart';
 import 'package:vozforums/Page/NavigationDrawer/NaviDrawerUI.dart';
 import 'package:vozforums/Page/pageLoadNext.dart';
 import 'package:vozforums/Page/pageNavigation.dart';
-import 'package:vozforums/Page/Thread/subThreadController.dart';
+import 'package:vozforums/Page/Thread/ThreadController.dart';
 import '../reuseWidget.dart';
 
 class ThreadUI extends GetView<ThreadController> {
@@ -18,7 +18,7 @@ class ThreadUI extends GetView<ThreadController> {
       endDrawerEnableOpenDragGesture: true,
       drawerEdgeDragWidth: MediaQuery.of(context).size.width * 0.2,
       backgroundColor: Theme.of(context).backgroundColor,
-      appBar: preferredSize(context, controller.theme),
+      appBar: preferredSize(context, controller.theme,''),
       body: Stack(
         children: <Widget>[
           GetBuilder<ThreadController>(builder: (controller) {
@@ -42,17 +42,18 @@ class ThreadUI extends GetView<ThreadController> {
                           controller.myThreadList.elementAt(index)['isRead'] == true ? FontWeight.bold : FontWeight.normal,
                           controller.myThreadList.elementAt(index)['isRead'] == true ? FontWeight.bold : FontWeight.normal,
                           index,
-                          controller.myThreadList.elementAt(index)['themeTitle'],
+                          controller.myThreadList.elementAt(index)['prefix'],
                           controller.myThreadList.elementAt(index)['title'],
                           controller.myThreadList.elementAt(index)['replies'],
                           controller.myThreadList.elementAt(index)['date'],
                           controller.myThreadList.elementAt(index)['authorName'],
                           () => controller.navigateToThread(
-                              controller.myThreadList.elementAt(index)['title'], controller.myThreadList.elementAt(index)['linkThread']),
+                              index),
                           () {
                             NaviDrawerController.i.shortcuts.insert(0, {
                               'title' : controller.myThreadList.elementAt(index)['title'],
-                              'link' : controller.myThreadList.elementAt(index)['linkThread']
+                              'typeTitle' : controller.myThreadList.elementAt(index)['prefix'],
+                              'link' : controller.myThreadList.elementAt(index)['link']
                             });
                             NaviDrawerController.i.update();
                             GlobalController.i.userStorage.write('shortcut', NaviDrawerController.i.shortcuts);

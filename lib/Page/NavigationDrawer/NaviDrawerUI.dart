@@ -28,14 +28,11 @@ class NaviDrawerUI extends GetView<NaviDrawerController> {
                       itemCount: controller.shortcuts.length,
                       itemBuilder: (BuildContext context, int index) {
                         return ListTile(
-                          title: Text(
-                            controller.shortcuts.elementAt(index)['title'],
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
+                          title: customTitle(context, FontWeight.normal, 1, controller.shortcuts.elementAt(index)['typeTitle'],
+                              controller.shortcuts.elementAt(index)['title']),
                           onTap: () {
-                            controller.navigateToThread(
-                                controller.shortcuts.elementAt(index)['title'], controller.shortcuts.elementAt(index)['link']);
+                            controller.navigateToThread(controller.shortcuts.elementAt(index)['title'], controller.shortcuts.elementAt(index)['link'],
+                                controller.shortcuts.elementAt(index)['typeTitle']);
                           },
                           onLongPress: () async {
                             controller.shortcuts.removeAt(index);
@@ -156,6 +153,9 @@ Widget login(BuildContext context) {
                   Padding(
                     padding: EdgeInsets.fromLTRB(15, 5, 15, 5),
                     child: TextField(
+                      onEditingComplete: () async {
+                        await NaviDrawerController.i.loginFunction(context);
+                      },
                       textInputAction: TextInputAction.next,
                       controller: NaviDrawerController.i.textEditingControllerPassword,
                       style: TextStyle(fontSize: 18, color: Theme.of(context).primaryColor),
@@ -175,8 +175,7 @@ Widget login(BuildContext context) {
                   TextButton(
                       child: text('login'.tr, TextStyle()),
                       onPressed: () async {
-                        setDialog(context, 'popMess'.tr, 'popMess2'.tr);
-                        await NaviDrawerController.i.loginFunction();
+                        await NaviDrawerController.i.loginFunction(context);
                       })
                 ],
               ),

@@ -14,7 +14,7 @@ class HomePageUI extends GetView<HomeController> {
       endDrawerEnableOpenDragGesture: true,
       drawerEdgeDragWidth: MediaQuery.of(context).size.width * 0.2,
       backgroundColor: Theme.of(context).backgroundColor,
-      appBar: preferredSize(context, "theNEXTvoz"),
+      appBar: preferredSize(context, "theNEXTvoz",''),
       body: GetBuilder<HomeController>(
         builder: (controller) {
           return ListView.builder(

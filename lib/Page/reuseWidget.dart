@@ -15,15 +15,11 @@ import 'package:webview_flutter/webview_flutter.dart';
 import 'package:pinch_zoom_image_last/pinch_zoom_image_last.dart';
 
 ///  * Global appbar
-PreferredSize preferredSize(BuildContext context, String title) => PreferredSize(
+PreferredSize preferredSize(BuildContext context, String title, String prefix) => PreferredSize(
       preferredSize: Size.fromHeight(NaviDrawerController.i.heightAppbar),
       child: /* Obx(()=>*/ AppBar(
         automaticallyImplyLeading: false,
-        title: Text(
-          title,
-          maxLines: 2,
-          overflow: TextOverflow.ellipsis,
-        ),
+        title: customTitle(context, FontWeight.normal, 2,prefix, title),
         leading: (ModalRoute.of(context)?.canPop ?? false) ? BackButton() : null,
         actions: <Widget>[
           Stack(
@@ -112,23 +108,7 @@ Widget blockItem(BuildContext context, FontWeight themeTitleWeight, FontWeight t
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    RichText(
-                      overflow: TextOverflow.clip,
-                      text: TextSpan(children: <TextSpan>[
-                        TextSpan(
-                          text: header11,
-                          style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: themeTitleWeight,
-                              color: GlobalController.i.mapInvertColor[GlobalController.i.getColorInvert(header11)],
-                              backgroundColor: GlobalController.i.mapColor[header11]),
-                        ),
-                        TextSpan(
-                          text: header12,
-                          style: TextStyle(color: Theme.of(context).primaryColor, fontSize: 15, fontWeight: titleWeight),
-                        )
-                      ]),
-                    ),
+                    customTitle(context, titleWeight, null,header11, header12),
                     text(
                       "$header21 \u2022 $header22",
                       TextStyle(color: Colors.grey, fontSize: 12),
@@ -153,6 +133,34 @@ Widget blockItem(BuildContext context, FontWeight themeTitleWeight, FontWeight t
         ),
       ),
     );
+
+Widget customTitle(BuildContext context, FontWeight titleWeight, int? maxLines,String header11, String header12) {
+  return RichText(
+    maxLines: maxLines,
+    overflow: maxLines == 1 || maxLines == 2 ? TextOverflow.ellipsis : TextOverflow.clip,
+    textAlign: maxLines == 2 ? TextAlign.center : TextAlign.start,
+    text: TextSpan(children: [
+      WidgetSpan(
+        child: Container(
+          padding: EdgeInsets.only(left: header11 == '' ? 0 : 4, right: header11 == '' ? 0 : 4),
+          decoration: BoxDecoration(color: GlobalController.i.mapColor[header11], borderRadius: BorderRadius.all(Radius.circular(6))),
+          child: Text(
+            header11,
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: titleWeight,
+              color: GlobalController.i.mapInvertColor[GlobalController.i.getColorInvert(header11)],
+            ),
+          ),
+        ),
+      ),
+      TextSpan(
+        text: header12,
+        style: TextStyle(color: Theme.of(context).primaryColor, fontSize: 15, fontWeight: titleWeight),
+      )
+    ]),
+  );
+}
 
 Widget settings(BuildContext context) => TextButton.icon(
       onPressed: () => NaviDrawerController.i.navigateToSetting(),
@@ -285,7 +293,7 @@ Widget reactionChild(ViewController controller, int index) {
           children: [
             Text(
               controller.reactionList.elementAt(index)['rName'],
-              style: TextStyle(fontWeight: FontWeight.bold),
+              style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xFFFD6E00)),
             ),
             Text(controller.reactionList.elementAt(index)['rTitle']),
             Text(
@@ -477,8 +485,13 @@ Widget viewContent(BuildContext context, int index, ViewController controller) =
                 );
               },
               "table": (context, child) {
+                if (context.tree.element!.getElementsByTagName("td")[0].innerHtml.length > 1)
                 return SingleChildScrollView(
-                  scrollDirection: (context.tree.element!.getElementsByTagName("tr").length > 2) ? Axis.horizontal : Axis.vertical,
+                  scrollDirection: (context.tree.element!.getElementsByTagName("tr").length > 1) ||
+                          (context.tree.element!.getElementsByTagName("a")[0].text.length > 25)
+                      ? Axis.horizontal
+                      : Axis.vertical,
+                  //scrollDirection: Axis.horizontal,
                   padding: EdgeInsets.all(2),
                   physics: BouncingScrollPhysics(),
                   child: (context.tree as TableLayoutElement).toWidget(context),

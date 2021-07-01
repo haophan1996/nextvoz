@@ -17,7 +17,7 @@ import 'package:html/dom.dart' as dom;
 class ViewController extends GetxController {
   List htmlData = [];
   RxList reactionList = [].obs;
-  RxInt currentPage = 0.obs, totalPage = 0.obs;
+  int currentPage = 0, totalPage = 0;
   Map<String, dynamic> data = {};
   int lengthHtmlDataList = 0;
   late var _user;
@@ -30,6 +30,8 @@ class ViewController extends GetxController {
   Future<void> onInit() async {
     super.onInit();
     data['subHeader'] = Get.arguments[0];
+    data['subTypeHeader'] = Get.arguments[2] ?? '';
+    print(Get.arguments[1]);
   }
 
   @override
@@ -48,8 +50,6 @@ class ViewController extends GetxController {
     GlobalController.i.tagView.removeLast();
     refreshController.dispose();
     listViewScrollController.dispose();
-    currentPage.close();
-    totalPage.close();
     reactionList.close();
     clearMemoryImageCache();
     GlobalController.i.percentDownload = -1.0;
@@ -69,7 +69,7 @@ class ViewController extends GetxController {
   }
 
   setPageOnClick(String toPage) async {
-    if (int.parse(toPage) > totalPage.value) {
+    if (int.parse(toPage) > totalPage) {
       HapticFeedback.heavyImpact();
       refreshController.loadComplete();
     } else {
@@ -99,14 +99,14 @@ class ViewController extends GetxController {
       value.getElementsByClassName("block block--messages").forEach((element) {
         var lastP = element.getElementsByClassName("pageNavSimple");
         if (lastP.length == 0) {
-          currentPage.value = 1;
-          totalPage.value = 1;
+          currentPage = 1;
+          totalPage = 1;
         } else {
           data['fullUrl'] =
               GlobalController.i.url + element.getElementsByClassName('pageNav-page ')[0].getElementsByTagName('a')[0].attributes['href'].toString();
           var naviPage = element.getElementsByClassName("pageNavSimple-el pageNavSimple-el--current").first.innerHtml.trim();
-          currentPage.value = int.parse(naviPage.replaceAll(RegExp(r'[^0-9]\S*'), ""));
-          totalPage.value = int.parse(naviPage.replaceAll(RegExp(r'\S*[^0-9]'), ""));
+          currentPage = int.parse(naviPage.replaceAll(RegExp(r'[^0-9]\S*'), ""));
+          totalPage = int.parse(naviPage.replaceAll(RegExp(r'\S*[^0-9]'), ""));
         }
         //Get post
         element.getElementsByClassName("message message--post js-post js-inlineModContainer").forEach((element) {
@@ -122,10 +122,7 @@ class ViewController extends GetxController {
             data['_userAvatar'] = "no";
           }
 
-          data['_userName'] = _user.map((e) => e.getElementsByTagName("a")[1].innerHtml).first;
-          if (data['_userName'].contains("span")) {
-            data['_userName'] = _user.map((e) => e.getElementsByTagName("span")[0].innerHtml).first;
-          }
+          data['_userName'] = _user.map((e) => e.getElementsByTagName("a")[1].text).first;
 
           data['_orderPost'] = element
               .getElementsByClassName("message-attribution-opposite message-attribution-opposite--list")
@@ -208,7 +205,7 @@ class ViewController extends GetxController {
 
   scrollToFunc() {
     itemScrollController.scrollTo(
-        index: currentPage.value + 1, duration: Duration(milliseconds: 100), curve: Curves.slowMiddle, alignment: GlobalController.i.pageNaviAlign);
+        index: currentPage + 1, duration: Duration(milliseconds: 100), curve: Curves.slowMiddle, alignment: GlobalController.i.pageNaviAlign);
   }
 
   final flagsReactions = [
@@ -226,7 +223,6 @@ class ViewController extends GetxController {
     ),
   ];
 
-  //https://voz.vn/p/10428349/reactions
   getDataReactionList(int index) async {
     reactionList.clear();
     await GlobalController.i.getBody(GlobalController.i.url + '/p/' + htmlData.elementAt(index)['postID'] + '/reactions', false).then((value) {

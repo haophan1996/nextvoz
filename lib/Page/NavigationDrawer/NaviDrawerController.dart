@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:vozforums/Page/View/ViewController.dart';
 import '../../GlobalController.dart';
 import 'package:http/http.dart' as http;
+import '../reuseWidget.dart';
 
 class NaviDrawerController extends GetxController {
   static NaviDrawerController get i => Get.find();
@@ -18,8 +19,9 @@ class NaviDrawerController extends GetxController {
   String statusLogin = '';
   List shortcuts = [];
 
-  Future<void> loginFunction() async {
-
+  Future<void> loginFunction(BuildContext context) async {
+    statusLogin = '';
+    setDialog(context, 'popMess'.tr, 'popMess2'.tr);
     if (textEditingControllerLogin.text.length < 6 || textEditingControllerPassword.text.length <6){
       statusLogin = 'statusLoginInvalid'.tr;
       update();
@@ -112,12 +114,12 @@ class NaviDrawerController extends GetxController {
     await GlobalController.i.userStorage.remove("date_expire");
   }
 
-  navigateToThread(String title, String link) {
+  navigateToThread(String title, String link, String prefix) {
     Future.delayed(Duration(milliseconds: 100), () async {
       Get.back();
       GlobalController.i.tagView.add(title);
       Get.lazyPut<ViewController>(() => ViewController(), tag: title);
-      Get.toNamed("/ViewPage", arguments: [title, link], preventDuplicates: false);
+      Get.toNamed("/ViewPage", arguments: [title, link, prefix], preventDuplicates: false);
     });
   }
 

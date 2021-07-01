@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
@@ -37,11 +38,11 @@ class ThreadController extends GetxController {
     await loadSubHeader(_url);
   }
 
-  navigateToThread(String title, String link) {
+  navigateToThread(int index) {
     Future.delayed(Duration(milliseconds: 100), () {
-      GlobalController.i.tagView.add(title);
+      GlobalController.i.tagView.add(myThreadList.elementAt(index)['title']);
       Get.lazyPut<ViewController>(() => ViewController(), tag: GlobalController.i.tagView.last);
-      Get.toNamed("/ViewPage", arguments: [title, link]);
+      Get.toNamed("/ViewPage", arguments: [myThreadList.elementAt(index)['title'], myThreadList.elementAt(index)['link'],myThreadList.elementAt(index)['prefix'] ]);
     });
   }
 
@@ -87,17 +88,16 @@ class ThreadController extends GetxController {
             title = _title.map((e) => e.getElementsByTagName("a")[0].innerHtml).first;
             linkThread = _title.map((e) => e.getElementsByTagName("a")[0].attributes['href']).first!;
           } else {
-            title = "   " + _title.map((e) => e.getElementsByTagName("a")[1].innerHtml).first;
+            title = ' ' +_title.map((e) => e.getElementsByTagName("a")[1].innerHtml).first;
             themeTitle = _title.map((e) => e.getElementsByTagName("span")[0].innerHtml).first;
             linkThread = _title.map((e) => e.getElementsByTagName("a")[1].attributes['href']).first!;
           }
            myThreadList.add({
             "title": title,
-            "themeTitle": themeTitle,
+            "prefix": themeTitle,
             'isRead' : linkThread.contains('/unread') ? true : false,
-            //"authorLink": element.getElementsByClassName("structItem-parts").map((e) => e.getElementsByTagName("a")[0].attributes['href']).first,
             "authorName": element.attributes["data-author"],
-            "linkThread": linkThread,
+            "link": linkThread,
             "replies": "Replies " + element.getElementsByClassName("pairs pairs--justified").map((e) => e.getElementsByTagName("dd")[0].innerHtml).first,
             "date": element.getElementsByClassName("structItem-latestDate u-dt").map((e) => e.innerHtml).first,
           });
