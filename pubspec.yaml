@@ -32,8 +32,10 @@ dependencies:
   animated_text_kit: ^4.2.1
   flutter_reaction_button: ^1.0.8
   pinch_zoom_image_last: ^0.4.1
+  sliding_up_panel: ^2.0.0+1
+  flutter_youtube_view: ^2.0.1
 
-  webview_flutter: ^2.0.8
+  #webview_flutter: ^2.0.8
   get: ^4.1.4
   get_storage: ^2.0.2
   dio: ^4.0.0

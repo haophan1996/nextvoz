@@ -16,65 +16,70 @@ class ThreadUI extends GetView<ThreadController> {
     return Scaffold(
       endDrawer: NaviDrawerUI(),
       endDrawerEnableOpenDragGesture: true,
-      drawerEdgeDragWidth: MediaQuery.of(context).size.width * 0.2,
       backgroundColor: Theme.of(context).backgroundColor,
-      appBar: preferredSize(context, controller.theme,''),
-      body: Stack(
-        children: <Widget>[
-          GetBuilder<ThreadController>(builder: (controller) {
-            return refreshIndicatorConfiguration(
-              Scrollbar(
-                child: SmartRefresher(
-                  enablePullDown: false,
-                  enablePullUp: true,
-                  onLoading: () {
-                    controller.setPageOnClick((controller.currentPage + 1).toString());
+      appBar: preferredSize(context, controller.theme, ''),
+      body: slidingUp(
+        GetBuilder<ThreadController>(builder: (controller) {
+          return pageNavigation(
+              context,
+              controller.itemScrollController,
+              controller.currentPage,
+              controller.totalPage,
+              (index) => controller.setPageOnClick(index),
+              () => {controller.setPageOnClick(controller.totalPage.toString())},
+              () => controller.setPageOnClick("1"));
+        }),
+        Column(
+          children: [
+            Expanded(
+              child: Container(
+                color: Theme.of(context).backgroundColor,
+                constraints: BoxConstraints.expand(),
+              ),
+            )
+          ],
+        ),
+        GetBuilder<ThreadController>(builder: (controller) {
+          return refreshIndicatorConfiguration(
+            Scrollbar(
+              child: SmartRefresher(
+                enablePullDown: false,
+                enablePullUp: true,
+                onLoading: () {
+                  controller.setPageOnClick((controller.currentPage + 1).toString());
+                },
+                controller: controller.refreshController,
+                child: ListView.builder(
+                  physics: BouncingScrollPhysics(),
+                  controller: controller.listViewScrollController,
+                  cacheExtent: 500,
+                  itemCount: controller.myThreadList.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return blockItem(
+                        context,
+                        controller.myThreadList.elementAt(index)['isRead'] == true ? FontWeight.bold : FontWeight.normal,
+                        controller.myThreadList.elementAt(index)['isRead'] == true ? FontWeight.bold : FontWeight.normal,
+                        index,
+                        controller.myThreadList.elementAt(index)['prefix'],
+                        controller.myThreadList.elementAt(index)['title'],
+                        controller.myThreadList.elementAt(index)['replies'],
+                        controller.myThreadList.elementAt(index)['date'],
+                        controller.myThreadList.elementAt(index)['authorName'],
+                        () => controller.navigateToThread(index), () {
+                      NaviDrawerController.i.shortcuts.insert(0, {
+                        'title': controller.myThreadList.elementAt(index)['title'],
+                        'typeTitle': controller.myThreadList.elementAt(index)['prefix'],
+                        'link': controller.myThreadList.elementAt(index)['link']
+                      });
+                      NaviDrawerController.i.update();
+                      GlobalController.i.userStorage.write('shortcut', NaviDrawerController.i.shortcuts);
+                    });
                   },
-                  controller: controller.refreshController,
-                  child: ListView.builder(
-                    physics: BouncingScrollPhysics(),
-                    controller: controller.listViewScrollController,
-                    cacheExtent: 500,
-                    itemCount: controller.myThreadList.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      return blockItem(
-                          context,
-                          controller.myThreadList.elementAt(index)['isRead'] == true ? FontWeight.bold : FontWeight.normal,
-                          controller.myThreadList.elementAt(index)['isRead'] == true ? FontWeight.bold : FontWeight.normal,
-                          index,
-                          controller.myThreadList.elementAt(index)['prefix'],
-                          controller.myThreadList.elementAt(index)['title'],
-                          controller.myThreadList.elementAt(index)['replies'],
-                          controller.myThreadList.elementAt(index)['date'],
-                          controller.myThreadList.elementAt(index)['authorName'],
-                          () => controller.navigateToThread(
-                              index),
-                          () {
-                            NaviDrawerController.i.shortcuts.insert(0, {
-                              'title' : controller.myThreadList.elementAt(index)['title'],
-                              'typeTitle' : controller.myThreadList.elementAt(index)['prefix'],
-                              'link' : controller.myThreadList.elementAt(index)['link']
-                            });
-                            NaviDrawerController.i.update();
-                            GlobalController.i.userStorage.write('shortcut', NaviDrawerController.i.shortcuts);
-                          });
-                    },
-                  ),
                 ),
               ),
-            );
-          }),
-          GetBuilder<ThreadController>(builder: (controller) {
-            return pageNavigation(
-                context,
-                controller.itemScrollController,
-                controller.currentPage,
-                controller.totalPage,
-                (index) => controller.setPageOnClick(index),
-                () => {controller.setPageOnClick(controller.totalPage.toString())},
-                () => controller.setPageOnClick("1"));
-          })
-        ],
+            ),
+          );
+        }),
       ),
     );
   }

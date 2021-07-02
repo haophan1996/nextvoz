@@ -11,8 +11,12 @@ import 'package:vozforums/Page/NavigationDrawer/NaviDrawerController.dart';
 import 'package:vozforums/Page/View/ViewController.dart';
 import 'package:vozforums/pop.dart';
 import 'package:html/dom.dart' as dom;
-import 'package:webview_flutter/webview_flutter.dart';
+
+//import 'package:webview_flutter/webview_flutter.dart';
 import 'package:pinch_zoom_image_last/pinch_zoom_image_last.dart';
+import 'package:flutter_youtube_view/flutter_youtube_view.dart';
+
+import 'View/ViewYoutube.dart';
 
 ///  * Global appbar
 PreferredSize preferredSize(BuildContext context, String title, String prefix) => PreferredSize(
@@ -421,7 +425,7 @@ Widget viewContent(BuildContext context, int index, ViewController controller) =
                     renderContext.tree.element!.attributes['alt']!,
                     TextStyle(fontSize: 25),
                   );
-                } else if (renderContext.tree.element!.attributes['alt']?.contains(".gif") == false) {
+                } else {
                   return PinchZoomImage(
                     image: ExtendedImage.network(
                       renderContext.tree.element!.attributes['src'].toString(),
@@ -435,14 +439,6 @@ Widget viewContent(BuildContext context, int index, ViewController controller) =
                     onZoomEnd: () {
                       print('Zoom finished');
                     },
-                  );
-                }
-                else{
-                  return ExtendedImage.network(
-                    renderContext.tree.element!.attributes['src'].toString(),
-                    //imageCacheName: renderContext.tree.element!.attributes['alt']!.split('.gif')[0] + '.jpeg',
-                    cache: true,
-                    clearMemoryCacheIfFailed: true,
                   );
                 }
               },
@@ -507,29 +503,36 @@ Widget viewContent(BuildContext context, int index, ViewController controller) =
                     child: (context.tree as TableLayoutElement).toWidget(context),
                   );
               },
-              "iframe": (RenderContext context, Widget child) {
-                final attrs = context.tree.element?.attributes;
+              "iframe": (RenderContext contexta, Widget child) {
+                final attrs = contexta.tree.element?.attributes;
                 double? width = double.tryParse(attrs!['width'] ?? "");
                 double? height = double.tryParse(attrs['height'] ?? "");
-                return Container(
-                  width: width,
-                  height: height,
-                  child: WebView(
-                    javascriptMode: JavascriptMode.unrestricted,
-                    initialUrl: attrs['src'],
-                    navigationDelegate: (NavigationRequest request) async {
-                      if (attrs['src'] != null && attrs['src']!.contains("youtube.com/embed")) {
-                        if (!request.url.contains("youtube.com/embed")) {
-                          return NavigationDecision.prevent;
-                        } else {
-                          return NavigationDecision.navigate;
-                        }
-                      } else {
-                        return NavigationDecision.navigate;
-                      }
+
+                return TextButton(
+                    onPressed: () {
+                      Get.to(YoutubeDefaultWidget());
                     },
-                  ),
-                );
+                    child: Text('test youtube'));
+
+                // return Container(
+                //   width: width,
+                //   height: height,
+                //   child: WebView(
+                //     javascriptMode: JavascriptMode.unrestricted,
+                //     initialUrl: attrs['src'],
+                //     navigationDelegate: (NavigationRequest request) async {
+                //       if (attrs['src'] != null && attrs['src']!.contains("youtube.com/embed")) {
+                //         if (!request.url.contains("youtube.com/embed")) {
+                //           return NavigationDecision.prevent;
+                //         } else {
+                //           return NavigationDecision.navigate;
+                //         }
+                //       } else {
+                //         return NavigationDecision.navigate;
+                //       }
+                //     },
+                //   ),
+                // );
               }
             },
             style: {
@@ -546,8 +549,6 @@ Widget viewContent(BuildContext context, int index, ViewController controller) =
             onLinkTap: (String? url, RenderContext context, Map<String, String> attributes, dom.Element? element) async {
               print(url);
               controller.launchURL(url!);
-              // if (url?.isNotEmpty == true && url!.contains("/goto/post") && url != "no") {
-              // }
             },
           ),
           Padding(

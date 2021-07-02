@@ -11,44 +11,48 @@ import 'package:vozforums/Page/View/ViewController.dart';
 import '../../GlobalController.dart';
 
 class ViewUI extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       endDrawer: NaviDrawerUI(),
-      appBar: preferredSize(context, Get.find<ViewController>(tag: GlobalController.i.tagView.last).data['subHeader'],Get.find<ViewController>(tag: GlobalController.i.tagView.last).data['subTypeHeader']),
+      appBar: preferredSize(context, Get.find<ViewController>(tag: GlobalController.i.tagView.last).data['subHeader'],
+          Get.find<ViewController>(tag: GlobalController.i.tagView.last).data['subTypeHeader']),
       backgroundColor: Theme.of(context).backgroundColor,
-      body: Stack(
-        children: <Widget>[
-          Container(
-            width: double.infinity,
-            height: MediaQuery.of(context).size.height,
-            child: GetBuilder<ViewController>(
-              tag: GlobalController.i.tagView.last,
-              builder: (controller) {
-                return postContent(context, controller);
-              },
-            ),
-          ),
-          GetBuilder<ViewController>(
-              tag: GlobalController.i.tagView.last,
-              builder: (controller) {
-                return pageNavigation(
-                  context,
-                  controller.itemScrollController,
-                  controller.currentPage,
-                  controller.totalPage,
-                  (index) => controller.setPageOnClick(index),
-                  () => controller.setPageOnClick(controller.totalPage.toString()),
-                  () => controller.setPageOnClick("1"),
-                );
-              })
-        ],
+      body: slidingUp(
+        GetBuilder<ViewController>(
+            tag: GlobalController.i.tagView.last,
+            builder: (controller) {
+              return pageNavigation(
+                context,
+                controller.itemScrollController,
+                controller.currentPage,
+                controller.totalPage,
+                (index) => controller.setPageOnClick(index),
+                () => controller.setPageOnClick(controller.totalPage.toString()),
+                () => controller.setPageOnClick("1"),
+              );
+            }),
+        Column(
+          children: [
+            Expanded(
+              child: Container(
+                color: Theme.of(context).backgroundColor,
+                constraints: BoxConstraints.expand(),
+              ),
+            )
+          ],
+        ),
+        GetBuilder<ViewController>(
+          tag: GlobalController.i.tagView.last,
+          builder: (controller) {
+            return postContent(context, controller);
+          },
+        ),
       ),
     );
   }
 
- Widget postContent(BuildContext context, ViewController controller) {
+  Widget postContent(BuildContext context, ViewController controller) {
     return refreshIndicatorConfiguration(
       Scrollbar(
         child: SmartRefresher(
