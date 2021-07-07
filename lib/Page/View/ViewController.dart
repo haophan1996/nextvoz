@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
+import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vozforums/GlobalController.dart';
 import 'package:vozforums/Page/NavigationDrawer/NaviDrawerController.dart';
@@ -23,22 +24,27 @@ class ViewController extends GetxController {
   int lengthHtmlDataList = 0;
   late var _user;
   late dom.Document res;
-  final RefreshController refreshController = RefreshController(initialRefresh: false);
-  final ScrollController listViewScrollController = ScrollController();
-  final ItemScrollController itemScrollController = ItemScrollController();
+  late RefreshController refreshController = RefreshController(initialRefresh: false);
+  late ScrollController listViewScrollController = ScrollController();
+  late ItemScrollController itemScrollController = ItemScrollController();
+  late PanelController panelController = PanelController();
 
   @override
   Future<void> onInit() async {
     super.onInit();
     data['subHeader'] = Get.arguments[0];
     data['subTypeHeader'] = Get.arguments[2] ?? '';
+    data['view'] = Get.arguments[3];
   }
 
   @override
   Future<void> onReady() async {
     super.onReady();
     data['subLink'] = Get.arguments[1];
-    await loadUserPost(data['fullUrl'] = GlobalController.i.url + data['subLink']);
+
+    data['view'] == 0
+        ? await loadUserPost(data['fullUrl'] = GlobalController.i.url + data['subLink'])
+        : await loadInboxView(data['fullUrl'] = GlobalController.i.url + data['subLink']);
     if (data['fullUrl'].contains("/unread") == true) {
       data['fullUrl'] = data['fullUrl'].split("unread")[0];
     }
@@ -74,8 +80,83 @@ class ViewController extends GetxController {
       refreshController.loadComplete();
     } else {
       GlobalController.i.percentDownload = 0.01;
-      await loadUserPost(data['fullUrl'] + GlobalController.i.pageLink + toPage);
+      data['view'] == 0
+          ? await loadUserPost(data['fullUrl'] + GlobalController.i.pageLink + toPage)
+          : await loadInboxView(data['fullUrl'] + GlobalController.i.pageLink + toPage);
+      //await loadUserPost(data['fullUrl'] + GlobalController.i.pageLink + toPage);
     }
+  }
+
+  getImage(String url) async {
+    return await getCachedImageFile(url);
+  }
+
+  write(String text) async {
+    final Directory directory = await getApplicationDocumentsDirectory();
+    final File file = File('${directory.path}/my_file.txt');
+    await file.writeAsString(text);
+    print('${directory.path}/my_file.txt');
+    print(File('${directory.path}/my_file.txt').toString());
+  }
+
+  saveImage(String url) async {
+    final Directory? directory = Directory("storage/emulated/0/Pictures/vozNext");
+    await directory!.create();
+    final File file = File((await getCachedImageFilePath(url)).toString());
+    await file.copy(directory.path + "/${file.path.split("/").last}.jpg");
+    print(await file.copy(directory.path + "/${file.path.split("/").last}.jpg"));
+  }
+
+  scrollToFunc() {
+    itemScrollController.scrollTo(
+        index: currentPage + 1, duration: Duration(milliseconds: 100), curve: Curves.slowMiddle, alignment: GlobalController.i.pageNaviAlign);
+  }
+
+  getIDYoutube(String link) {
+    return link.split('embed/')[1].split('?')[0];
+  }
+
+  final flagsReactions = [
+    Reaction(
+      previewIcon: buildFlagsPreviewIcon('assets/reaction/0.png', 'unReact'.tr),
+      icon: buildIcon('assets/reaction/nil.png', 'react'),
+    ),
+    Reaction(
+      previewIcon: buildFlagsPreviewIcon('assets/reaction/1.png', 'sweet'.tr),
+      icon: buildIcon('assets/reaction/1.png', 'sweeted'),
+    ),
+    Reaction(
+      previewIcon: buildFlagsPreviewIcon('assets/reaction/2.png', 'brick'.tr),
+      icon: buildIcon('assets/reaction/2.png', 'bricked'),
+    ),
+  ];
+
+  getDataReactionList(int index) async {
+    reactionList.clear();
+    await GlobalController.i.getBody('${data['view'] == 0 ? GlobalController.i.viewReactLink : GlobalController.i.inboxReactLink}' + htmlData.elementAt(index)['postID'] + '/reactions', false).then((value) {
+      value.getElementsByClassName('block-row block-row--separated').forEach((element) {
+        data['rName'] = element.getElementsByClassName('username ')[0].text;
+        data['rTitle'] = element.getElementsByClassName('userTitle')[0].text;
+        data['rMessage'] = element.getElementsByClassName('pairs pairs--inline')[0].getElementsByTagName('dd')[0].text;
+        data['rMessage2'] = element.getElementsByClassName('pairs pairs--inline')[1].getElementsByTagName('dd')[0].text;
+        data['rMessage3'] = element.getElementsByClassName('pairs pairs--inline')[2].getElementsByTagName('dd')[0].text;
+        data['rTime'] = element.getElementsByClassName('u-dt')[0].text;
+        data['rReactIcon'] = element.getElementsByClassName('reaction-image js-reaction')[0].attributes['alt'].toString() == 'Ưng' ? '1' : '2';
+        data['avatar'] = element.getElementsByClassName('avatar')[0].getElementsByTagName('img').length > 0
+            ? element.getElementsByClassName('avatar')[0].getElementsByTagName('img')[0].attributes['src']
+            : 'no';
+        reactionList.add({
+          'rName': data['rName'],
+          'rTitle': data['rTitle'],
+          'rMessage': data['rMessage'],
+          'rMessage2': data['rMessage2'],
+          'rMessage3': data['rMessage3'],
+          'rTime': data['rTime'],
+          'rReactIcon': data['rReactIcon'],
+          'rAvatar': data['avatar'],
+        });
+      });
+    });
   }
 
   Future<void> loadUserPost(String url) async {
@@ -90,9 +171,12 @@ class ViewController extends GetxController {
         NaviDrawerController.i.linkUser.value = GlobalController.i.userStorage.read('linkUser');
         NaviDrawerController.i.avatarUser.value = GlobalController.i.userStorage.read('avatarUser');
         NaviDrawerController.i.nameUser.value = GlobalController.i.userStorage.read('nameUser');
-        GlobalController.i.alertNotification = value.getElementsByClassName('badgeContainer--highlighted').length > 0
-            ? value.getElementsByClassName('badgeContainer--highlighted')[0].attributes['data-badge'].toString()
-            : '0';
+        GlobalController.i.inboxNotifications = value.getElementsByClassName('p-navgroup-link--conversations').length > 0
+            ? int.parse(value.getElementsByClassName('p-navgroup-link--conversations')[0].attributes['data-badge'].toString())
+            : 0;
+        GlobalController.i.alertNotifications = value.getElementsByClassName('p-navgroup-link--alerts').length > 0
+            ? int.parse(value.getElementsByClassName('p-navgroup-link--alerts')[0].attributes['data-badge'].toString())
+            : 0;
         GlobalController.i.update();
       } else
         GlobalController.i.isLogged.value = false;
@@ -183,71 +267,84 @@ class ViewController extends GetxController {
     });
   }
 
-  getImage(String url) async {
-    return await getCachedImageFile(url);
-  }
+  Future<void> loadInboxView(String link) async {
+    data['_commentImg'] = '';
+    await GlobalController.i.getBody(link, false).then((value) {
+      lengthHtmlDataList = htmlData.length;
+      data['dataCsrfPost'] = value.getElementsByTagName('html')[0].attributes['data-csrf'];
+      data['xfCsrfPost'] = GlobalController.i.xfCsrfPost;
+      var lastP = value.getElementsByClassName("pageNavSimple");
+      if (lastP.length == 0) {
+        currentPage = 1;
+        totalPage = 1;
+      } else {
+        data['fullUrl'] =
+            GlobalController.i.url + value.getElementsByClassName('pageNav-page ')[0].getElementsByTagName('a')[0].attributes['href'].toString();
+        var naviPage = value.getElementsByClassName("pageNavSimple-el pageNavSimple-el--current").first.innerHtml.trim();
+        currentPage = int.parse(naviPage.replaceAll(RegExp(r'[^0-9]\S*'), ""));
+        totalPage = int.parse(naviPage.replaceAll(RegExp(r'\S*[^0-9]'), ""));
+      }
 
-  write(String text) async {
-    final Directory directory = await getApplicationDocumentsDirectory();
-    final File file = File('${directory.path}/my_file.txt');
-    await file.writeAsString(text);
-    print('${directory.path}/my_file.txt');
-    print(File('${directory.path}/my_file.txt').toString());
-  }
+      value.getElementsByClassName('message message--conversationMessage').forEach((element) {
+        data['_postContent'] = element.getElementsByClassName('message-body js-selectToQuote')[0].getElementsByClassName('bbWrapper')[0].innerHtml;
+        data['postID'] =
+            element.getElementsByClassName('actionBar-action actionBar-action--mq u-jsOnly js-multiQuote')[0].attributes['data-message-id'];
+        data['name'] = element.getElementsByClassName('username ')[0].text;
+        data['title'] = element.getElementsByClassName('message-userTitle')[0].text;
+        data['date'] = element.getElementsByClassName('u-dt')[0].text;
+        if (element.getElementsByClassName('message-avatar-wrapper')[0].getElementsByTagName('img').length > 0) {
+          data['avatar'] = element.getElementsByClassName('message-avatar-wrapper')[0].getElementsByTagName('img')[0].attributes['src'].toString();
+        } else {
+          data['avatar'] = 'no';
+        }
 
-  saveImage(String url) async {
-    final Directory? directory = Directory("storage/emulated/0/Pictures/vozNext");
-    await directory!.create();
-    final File file = File((await getCachedImageFilePath(url)).toString());
-    await file.copy(directory.path + "/${file.path.split("/").last}.jpg");
-    print(await file.copy(directory.path + "/${file.path.split("/").last}.jpg"));
-  }
+        if (element.getElementsByClassName('reactionsBar-link').length > 0) {
+          data['_commentName'] = element.getElementsByClassName('reactionsBar-link')[0].innerHtml.replaceAll(RegExp(r"<[^>]*>"), '');
 
-  scrollToFunc() {
-    itemScrollController.scrollTo(
-        index: currentPage + 1, duration: Duration(milliseconds: 100), curve: Curves.slowMiddle, alignment: GlobalController.i.pageNaviAlign);
-  }
+          if (element.getElementsByClassName('has-reaction').length > 0) {
+            if (element.getElementsByClassName('has-reaction')[0].getElementsByTagName('img')[0].attributes['title'] == 'Ưng') {
+              data['_commentByMe'] = '1';
+            } else
+              data['_commentByMe'] = '2';
+          } else
+            data['_commentByMe'] = '0';
 
-  final flagsReactions = [
-    Reaction(
-      previewIcon: buildFlagsPreviewIcon('assets/reaction/0.png', 'unReact'.tr),
-      icon: buildIcon('assets/reaction/nil.png', 'react'),
-    ),
-    Reaction(
-      previewIcon: buildFlagsPreviewIcon('assets/reaction/1.png', 'sweet'.tr),
-      icon: buildIcon('assets/reaction/1.png', 'sweeted'),
-    ),
-    Reaction(
-      previewIcon: buildFlagsPreviewIcon('assets/reaction/2.png', 'brick'.tr),
-      icon: buildIcon('assets/reaction/2.png', 'bricked'),
-    ),
-  ];
-
-  getDataReactionList(int index) async {
-    reactionList.clear();
-    await GlobalController.i.getBody(GlobalController.i.url + '/p/' + htmlData.elementAt(index)['postID'] + '/reactions', false).then((value) {
-      value.getElementsByClassName('block-row block-row--separated').forEach((element) {
-        data['rName'] = element.getElementsByClassName('username ')[0].text;
-        data['rTitle'] = element.getElementsByClassName('userTitle')[0].text;
-        data['rMessage'] = element.getElementsByClassName('pairs pairs--inline')[0].getElementsByTagName('dd')[0].text;
-        data['rMessage2'] = element.getElementsByClassName('pairs pairs--inline')[1].getElementsByTagName('dd')[0].text;
-        data['rMessage3'] = element.getElementsByClassName('pairs pairs--inline')[2].getElementsByTagName('dd')[0].text;
-        data['rTime'] = element.getElementsByClassName('u-dt')[0].text;
-        data['rReactIcon'] = element.getElementsByClassName('reaction-image js-reaction')[0].attributes['alt'].toString() == 'Ưng' ? '1' : '2';
-        data['avatar'] = element.getElementsByClassName('avatar')[0].getElementsByTagName('img').length > 0
-            ? element.getElementsByClassName('avatar')[0].getElementsByTagName('img')[0].attributes['src']
-            : 'no';
-        reactionList.add({
-          'rName': data['rName'],
-          'rTitle': data['rTitle'],
-          'rMessage': data['rMessage'],
-          'rMessage2': data['rMessage2'],
-          'rMessage3': data['rMessage3'],
-          'rTime': data['rTime'],
-          'rReactIcon': data['rReactIcon'],
-          'rAvatar': data['avatar'],
+          element.getElementsByClassName('reactionSummary').forEach((element) {
+            element.getElementsByClassName('reaction reaction--small').forEach((element) {
+              data['_commentImg'] += element.attributes['data-reaction-id'].toString();
+            });
+          });
+        } else {
+          data['_commentImg'] = 'no';
+          data['_commentName'] = '';
+          data['_commentByMe'] = '0';
+        }
+        htmlData.add({
+          'newPost': false,
+          'postContent': data['_postContent'],
+          'userPostDate': data['date'],
+          'postID': data['postID'],
+          'userName': data['name'],
+          'userTitle': data['title'],
+          'userAvatar': (data['avatar'] == "no" || data['avatar'].contains("https://")) ? data['avatar'] : GlobalController.i.url + data['avatar'],
+          'commentName': data['_commentName'],
+          'commentImage': data['_commentImg'],
+          'commentByMe': int.parse(data['_commentByMe']),
+          'userLink': '',
+          'orderPost': '',
         });
+        data['_commentImg'] = '';
       });
+      update();
+      if (Get.isDialogOpen == true || refreshController.isLoading) {
+        if (Get.isDialogOpen == true) Get.back();
+        htmlData.removeRange(0, lengthHtmlDataList);
+        listViewScrollController.jumpTo(-10.0);
+      }
+      refreshController.loadComplete();
+    });
+    await Future.delayed(Duration(milliseconds: 50), () {
+      scrollToFunc();
     });
   }
 
@@ -260,7 +357,10 @@ class ViewController extends GetxController {
       'cookie': '${data['xfCsrfPost']}; xf_user=${GlobalController.i.xfUser};',
     };
     var body = {'_xfWithData': '1', '_xfToken': '${data['dataCsrfPost']}', '_xfResponseType': 'json'};
-    await GlobalController.i.getHttpPost(headers, body, 'https://voz.vn/p/$idPost/react?reaction_id=$idReact?reaction_id=$idReact').then((jsonValue) {
+    await GlobalController.i
+        .getHttpPost(headers, body,
+            '${data['view'] == 0 ? GlobalController.i.viewReactLink : GlobalController.i.inboxReactLink}$idPost/react?reaction_id=$idReact?reaction_id=$idReact')
+        .then((jsonValue) {
       if (jsonValue['status'] == 'error') {
         status['status'] = 'error';
         status['mess'] = jsonValue['errors'].first;
@@ -286,5 +386,9 @@ class ViewController extends GetxController {
     update();
     Get.back();
     return status;
+  }
+
+  reply() async {
+    await panelController.open();
   }
 }

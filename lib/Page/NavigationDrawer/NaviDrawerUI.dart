@@ -10,43 +10,52 @@ import 'package:get/get.dart';
 class NaviDrawerUI extends GetView<NaviDrawerController> {
   @override
   Widget build(BuildContext context) {
-    return Drawer(
-      child: SafeArea(
-        child: Column(
-          children: [
-            Obx(
-              () => GlobalController.i.isLogged.value == false ? login(context) : logged(context),
-            ),
-            Divider(
-              color: Theme.of(context).primaryColor,
-            ),
-            Expanded(child: GetBuilder<NaviDrawerController>(builder: (controller) {
-              return controller.shortcuts.length == 0
-                  ? Container()
-                  : ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: controller.shortcuts.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        return ListTile(
-                          title: customTitle(context, FontWeight.normal, 1, controller.shortcuts.elementAt(index)['typeTitle'],
-                              controller.shortcuts.elementAt(index)['title']),
-                          onTap: () {
-                            controller.navigateToThread(controller.shortcuts.elementAt(index)['title'], controller.shortcuts.elementAt(index)['link'],
-                                controller.shortcuts.elementAt(index)['typeTitle']);
-                          },
-                          onLongPress: () async {
-                            controller.shortcuts.removeAt(index);
-                            controller.update();
-                            await GlobalController.i.userStorage.remove('shortcut');
-                            await GlobalController.i.userStorage.write('shortcut', controller.shortcuts);
-                          },
-                        );
-                      });
-            }))
-          ],
-        ),
-      ),
-    );
+    return DraggableScrollableSheet(
+          initialChildSize: 0.9,
+          maxChildSize: 0.9,
+          minChildSize: 0.55,
+          builder: (BuildContext context, ScrollController scrollController) {
+            return SafeArea(child: Card(
+              child: Column(
+                children: [
+                  Obx(
+                        () => GlobalController.i.isLogged.value == false ? login(context) : logged(context),
+                  ),
+                  Divider(
+                    color: Theme.of(context).primaryColor,
+                  ),
+                  Expanded(
+                    child: GetBuilder<NaviDrawerController>(
+                      builder: (controller) {
+                        return controller.shortcuts.length == 0
+                            ? Container()
+                            : ListView.builder(
+                            controller: scrollController,
+                            itemCount: controller.shortcuts.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              return ListTile(
+                                title: customTitle(context, FontWeight.normal, 1, controller.shortcuts.elementAt(index)['typeTitle'],
+                                    controller.shortcuts.elementAt(index)['title']),
+                                onTap: () {
+                                  controller.navigateToThread(controller.shortcuts.elementAt(index)['title'],
+                                      controller.shortcuts.elementAt(index)['link'], controller.shortcuts.elementAt(index)['typeTitle']);
+                                },
+                                onLongPress: () async {
+                                  controller.shortcuts.removeAt(index);
+                                  controller.update();
+                                  await GlobalController.i.userStorage.remove('shortcut');
+                                  await GlobalController.i.userStorage.write('shortcut', controller.shortcuts);
+                                },
+                              );
+                            });
+                      },
+                    ),
+                  )
+                ],
+              ),
+            ));
+          },
+        );
   }
 }
 

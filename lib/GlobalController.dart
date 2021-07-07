@@ -13,19 +13,24 @@ import 'package:vozforums/Page/NavigationDrawer/NaviDrawerController.dart';
 class GlobalController extends GetxController {
   static GlobalController get i => Get.find();
   late dom.Document doc;
-  final String url = "https://voz.vn", pageLink = "page-";
+  final String url = "https://voz.vn", pageLink = "page-", inboxReactLink = 'https://voz.vn/conversations/messages/', viewReactLink = 'https://voz.vn/p/';
   final pageNaviAlign = 0.72, userStorage = GetStorage();
   double percentDownload = 0.0;
   var dio = Dio(), xfCsrfLogin, dataCsrfLogin, xfCsrfPost, dataCsrfPost;
   RxBool isLogged = false.obs;
   List alertList = [];
-  String xfSession = '', dateExpire = '', alertNotification = '0', xfUser = '';
+  String xfSession = '', dateExpire = '', xfUser = '';
+  int alertNotifications = 0, inboxNotifications = 0;
   List tagView = [];
+
   @override
   onInit() async {
     super.onInit();
     isLogged.stream.listen((event) {
-      if (event == false) alertNotification = '0';
+      if (event == false) {
+        alertNotifications = 0;
+        inboxNotifications = 0;
+      }
     });
   }
 
@@ -51,7 +56,7 @@ class GlobalController extends GetxController {
     return parser.parse(response.toString());
   }
 
-  getAlert() {
+  getAlert() async {
     String username, threadName, time, status, link, key;
     if (isLogged.value == true) {
       getBody(url + '/account/alerts?page=1', false).then((value) {
@@ -61,10 +66,14 @@ class GlobalController extends GetxController {
           link = element.getElementsByClassName('fauxBlockLink-blockLink')[0].attributes['href'].toString();
           if (element.getElementsByClassName('username ').length > 0) {
             username = element.getElementsByClassName('username ')[0].text;
-            key = status.contains('the thread') ? 'the thread' : 'a thread called';
+            key = status.contains('the thread')
+                ? 'the thread'
+                : status.contains('a thread called')
+                    ? 'a thread called'
+                    : 'the conversation'; //'a thread called' ? '' : '';
             threadName = status.split('.')[0].trim().split(key)[1];
-            status = status.split('.')[0].trim().split(key)[0].replaceAll(username, '')+key;
-          } else{
+            status = status.split('.')[0].trim().split(key)[0].replaceAll(username, '') + key;
+          } else {
             username = '';
             threadName = '';
           }

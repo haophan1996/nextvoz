@@ -2,11 +2,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:vozforums/Page/Pop/PopBinding.dart';
+import 'package:vozforums/Page/Pop/pop.dart';
 import 'package:vozforums/Page/Settings/SettingsBinding.dart';
 import 'package:vozforums/Page/Settings/SettingsUI.dart';
 import 'package:vozforums/Page/UserProfile/UserProfileBinding.dart';
 import 'package:vozforums/Page/UserProfile/UserProfileUI.dart';
-import 'package:vozforums/Page/View/ViewBinding.dart';
 import 'package:vozforums/Page/View/ViewUI.dart';
 import 'package:vozforums/Page/home/homeBinding.dart';
 import 'package:vozforums/Page/Thread/ThreadBinding.dart';
@@ -16,6 +17,8 @@ import 'package:vozforums/theme.dart';
 import 'GlobalController.dart';
 import 'Page/NavigationDrawer/NaviDrawerController.dart';
 import 'Page/home/homeUI.dart';
+import 'Page/youtubeView/ViewYoutube.dart';
+import 'Page/youtubeView/YoutubeBinding.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -28,7 +31,6 @@ Future<void> main() async {
 }
 
 class MyPage extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
@@ -51,7 +53,9 @@ class MyPage extends StatelessWidget {
             popGesture: true,
             //binding: ViewBinding(),
             maintainState: false),
+        GetPage(name: '/Pop', page: () => Popup(), binding: PopBinding(), popGesture: true),
         GetPage(name: "/UserProfile", page: () => UserProfileUI(), popGesture: true, binding: UserProfileBinding(), maintainState: false),
+        GetPage(name: '/Youtube', page: () => YoutubeView(), binding: YoutubeBinding(), popGesture: true),
         GetPage(
             name: "/Settings",
             page: () => SettingsUI(),

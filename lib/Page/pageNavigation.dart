@@ -81,8 +81,9 @@ Widget pageNavigation(BuildContext context, ItemScrollController scrollControlle
   );
 }
 
-Widget slidingUp(Widget collapsedWidget, Widget panelWidget, Widget bodyWidget) {
+Widget slidingUp(PanelController panelController,Widget collapsedWidget, Widget panelWidget, Widget bodyWidget) {
   return SlidingUpPanel(
+    controller: panelController,
     parallaxEnabled: true,
     parallaxOffset: .5,
     minHeight: Get.height * 0.08,

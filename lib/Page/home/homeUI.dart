@@ -10,10 +10,8 @@ class HomePageUI extends GetView<HomeController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      endDrawer: NaviDrawerUI(),
-      endDrawerEnableOpenDragGesture: true,
       backgroundColor: Theme.of(context).backgroundColor,
-      appBar: preferredSize(context, "theNEXTvoz",''),
+      appBar: preferredSize(context, "theNEXTvoz",'' ),
       body: GetBuilder<HomeController>(
         builder: (controller) {
           return ListView.builder(

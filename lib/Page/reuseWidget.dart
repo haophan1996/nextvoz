@@ -6,17 +6,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_reaction_button/flutter_reaction_button.dart';
 import 'package:get/get.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:vozforums/GlobalController.dart';
 import 'package:vozforums/Page/NavigationDrawer/NaviDrawerController.dart';
+import 'package:vozforums/Page/Pop/PopBinding.dart';
 import 'package:vozforums/Page/View/ViewController.dart';
-import 'package:vozforums/pop.dart';
+import 'package:vozforums/Page/Pop/pop.dart';
 import 'package:html/dom.dart' as dom;
-
-//import 'package:webview_flutter/webview_flutter.dart';
 import 'package:pinch_zoom_image_last/pinch_zoom_image_last.dart';
-import 'package:flutter_youtube_view/flutter_youtube_view.dart';
-
-import 'View/ViewYoutube.dart';
+import 'package:vozforums/Page/pageLoadNext.dart';
+import 'NavigationDrawer/NaviDrawerUI.dart';
 
 ///  * Global appbar
 PreferredSize preferredSize(BuildContext context, String title, String prefix) => PreferredSize(
@@ -28,45 +27,30 @@ PreferredSize preferredSize(BuildContext context, String title, String prefix) =
         actions: <Widget>[
           Stack(
             children: [
-              Hero(
-                flightShuttleBuilder: (
-                  BuildContext flightContext,
-                  Animation<double> animation,
-                  HeroFlightDirection flightDirection,
-                  BuildContext fromHeroContext,
-                  BuildContext toHeroContext,
-                ) {
-                  return Center(
-                    child: Container(
-                      width: MediaQuery.of(context).size.width * 0.8,
-                      height: MediaQuery.of(context).size.height * 0.8,
-                      color: Theme.of(context).backgroundColor,
-                    ),
-                  );
-                },
-                tag: 'noti',
-                child: IconButton(
-                    onPressed: () async {
-                      if (GlobalController.i.alertList.isEmpty) await GlobalController.i.getAlert();
-                      Get.to(() => Popup(), fullscreenDialog: true, opaque: false);
-                    },
-                    icon: Icon(Icons.notifications)),
-              ),
+              IconButton(
+                  onPressed: () {
+                    Get.bottomSheet(NaviDrawerUI(), isScrollControlled: true, ignoreSafeArea: false);
+                  },
+                  icon: Icon(Icons.menu)),
               GetBuilder<GlobalController>(builder: (controller) {
                 return Positioned(
                   right: 0,
                   top: 3,
                   child: Container(
                     width: 30,
-                    decoration: BoxDecoration(shape: BoxShape.circle, color: controller.alertNotification == '0' ? Colors.transparent : Colors.red),
+                    decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: controller.alertNotifications + controller.inboxNotifications == 0 ? Colors.transparent : Colors.red),
                     child: Center(
-                      child: Text(controller.alertNotification == '0' ? '' : controller.alertNotification),
+                      child: Text(controller.alertNotifications + controller.inboxNotifications == 0
+                          ? ''
+                          : (controller.alertNotifications + controller.inboxNotifications).toString()),
                     ),
                   ),
                 );
               })
             ],
-          )
+          ),
         ],
         bottom: PreferredSize(
           child: GetBuilder<GlobalController>(
@@ -166,13 +150,52 @@ Widget customTitle(BuildContext context, FontWeight titleWeight, int? maxLines, 
   );
 }
 
-Widget settings(BuildContext context) => TextButton.icon(
-      onPressed: () => NaviDrawerController.i.navigateToSetting(),
-      icon: Icon(Icons.settings),
-      label: text(
-        'setPage'.tr,
-        TextStyle(color: Theme.of(context).primaryColor),
-      ),
+Widget settings(BuildContext context) => Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Stack(
+          children: [
+            IconButton(
+                onPressed: () async {
+                  if (GlobalController.i.alertList.isEmpty) await GlobalController.i.getAlert();
+                  await Get.toNamed('/Pop', preventDuplicates: false);
+                },
+                icon: Icon(Icons.notifications_none_outlined)),
+            GetBuilder<GlobalController>(builder: (controller) {
+              return Positioned(
+                right: 0,
+                top: 3,
+                child: Container(
+                  width: 30,
+                  decoration: BoxDecoration(shape: BoxShape.circle, color: controller.alertNotifications == 0 ? Colors.transparent : Colors.red),
+                  child: Center(
+                    child: Text(controller.alertNotifications == 0 ? '' : controller.alertNotifications.toString()),
+                  ),
+                ),
+              );
+            })
+          ],
+        ),
+        Stack(
+          children: [
+            IconButton(onPressed: () {}, icon: Icon(Icons.mail_outline)),
+            GetBuilder<GlobalController>(builder: (controller) {
+              return Positioned(
+                right: 0,
+                top: 3,
+                child: Container(
+                  width: 30,
+                  decoration: BoxDecoration(shape: BoxShape.circle, color: controller.inboxNotifications == 0 ? Colors.transparent : Colors.red),
+                  child: Center(
+                    child: Text(controller.inboxNotifications == 0 ? '' : controller.inboxNotifications.toString()),
+                  ),
+                ),
+              );
+            })
+          ],
+        ),
+        IconButton(onPressed: () => NaviDrawerController.i.navigateToSetting(), icon: Icon(Icons.settings)),
+      ],
     );
 
 Widget textDrawer(Color color, double fontSize, String text, FontWeight fontWeight) =>
@@ -342,7 +365,7 @@ Widget listReactionUI(BuildContext context, ViewController controller) {
   );
 }
 
-Widget viewContent(BuildContext context, int index, ViewController controller) => Container(
+Widget viewContent(BuildContext context, int index, dynamic controller) => Container(
       color: Theme.of(context).backgroundColor,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -503,17 +526,50 @@ Widget viewContent(BuildContext context, int index, ViewController controller) =
                     child: (context.tree as TableLayoutElement).toWidget(context),
                   );
               },
-              "iframe": (RenderContext contexta, Widget child) {
-                final attrs = contexta.tree.element?.attributes;
-                double? width = double.tryParse(attrs!['width'] ?? "");
-                double? height = double.tryParse(attrs['height'] ?? "");
+              "iframe": (RenderContext context, Widget child) {
+                final attrs = context.tree.element?.attributes;
+                //controller.getIDYoutube(attrs!['src'].toString());
+                return CupertinoButton(
+                  padding: EdgeInsets.zero,
+                  onPressed: () {
+                    Get.toNamed('/Youtube', arguments: [controller.getIDYoutube(attrs!['src'].toString())]);
+                  },
+                  child: Stack(
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(6),
+                        child: Image.network(
+                          'https://img.youtube.com/vi/${controller.getIDYoutube(attrs!['src'].toString())}/0.jpg',
+                        ),
+                      ),
+                      Positioned.fill(
+                        child: Align(
+                          alignment: Alignment.center,
+                          child: Icon(
+                            Icons.play_circle_fill,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                      Align(
+                        alignment: Alignment.topLeft,
+                        child: Text(
+                          'ascsacsacsac',
+                          style: TextStyle(fontSize: GlobalController.i.userStorage.read('fontSizeView'), color: Colors.white),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
 
-                return TextButton(
-                    onPressed: () {
-                      Get.to(YoutubeDefaultWidget());
-                    },
-                    child: Text('test youtube'));
+                // return TextButton(
+                //     onPressed: () {
+                //       Get.toNamed('/Youtube');
+                //     },
+                //     child: Text('test youtube'));
 
+                //double? width = double.tryParse(attrs!['width'] ?? "");
+                //double? height = double.tryParse(attrs['height'] ?? "");
                 // return Container(
                 //   width: width,
                 //   height: height,
@@ -609,10 +665,44 @@ Widget viewContent(BuildContext context, int index, ViewController controller) =
                   boxRadius: 10,
                   boxAlignment: AlignmentDirectional.bottomEnd,
                 ),
-                TextButton(onPressed: () {}, child: text('rep'.tr, TextStyle()))
+                TextButton(
+                    onPressed: () {
+                      Future.delayed(Duration(milliseconds: 100), () {
+                        controller.reply();
+                      });
+                    },
+                    child: text('rep'.tr, TextStyle()))
               ],
             ),
           )
         ],
       ),
     );
+
+
+Widget postContent(BuildContext context, dynamic controller) {
+  return refreshIndicatorConfiguration(
+    Scrollbar(
+      child: SmartRefresher(
+        enablePullDown: false,
+        enablePullUp: true,
+        controller: controller.refreshController,
+        onLoading: () {
+          controller.setPageOnClick((controller.currentPage + 1).toString());
+        },
+        child: ListView.builder(
+          cacheExtent: 99999,
+          shrinkWrap: true,
+          padding: EdgeInsets.only(top: 2),
+          physics: BouncingScrollPhysics(),
+          scrollDirection: Axis.vertical,
+          controller: controller.listViewScrollController,
+          itemCount: controller.htmlData.length,
+          itemBuilder: (context, index) {
+            return viewContent(context, index, controller);
+          },
+        ),
+      ),
+    ),
+  );
+}

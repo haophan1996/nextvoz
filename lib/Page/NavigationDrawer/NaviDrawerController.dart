@@ -63,8 +63,12 @@ class NaviDrawerController extends GetxController {
 
   getUserProfile() async{
     await GlobalController.i.getBody(GlobalController.i.url, false).then((res) async {
-      GlobalController.i.alertNotification = res.getElementsByClassName('badgeContainer--highlighted').length > 0 ? res.getElementsByClassName('badgeContainer--highlighted')[0].attributes['data-badge'].toString() : '0';
-      GlobalController.i.update();
+      GlobalController.i.inboxNotifications = res.getElementsByClassName('p-navgroup-link--conversations').length > 0
+          ? int.parse(res.getElementsByClassName('p-navgroup-link--conversations')[0].attributes['data-badge'].toString())
+          : 0;
+      GlobalController.i.alertNotifications = res.getElementsByClassName('p-navgroup-link--alerts').length > 0
+          ? int.parse(res.getElementsByClassName('p-navgroup-link--alerts')[0].attributes['data-badge'].toString())
+          : 0;      GlobalController.i.update();
       String linkProfile = res.getElementsByTagName('form')[1].attributes['action']!.split('/post')[0];
       linkUser.value = linkProfile;
        await GlobalController.i.getBody(GlobalController.i.url+linkProfile, false).then((value) {
@@ -119,7 +123,7 @@ class NaviDrawerController extends GetxController {
       Get.back();
       GlobalController.i.tagView.add(title);
       Get.lazyPut<ViewController>(() => ViewController(), tag: title);
-      Get.toNamed("/ViewPage", arguments: [title, link, prefix], preventDuplicates: false);
+      Get.toNamed("/ViewPage", arguments: [title, link, prefix, 0], preventDuplicates: false);
     });
   }
 

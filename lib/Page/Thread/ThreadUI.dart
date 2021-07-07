@@ -14,11 +14,10 @@ class ThreadUI extends GetView<ThreadController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      endDrawer: NaviDrawerUI(),
-      endDrawerEnableOpenDragGesture: true,
       backgroundColor: Theme.of(context).backgroundColor,
       appBar: preferredSize(context, controller.theme, ''),
       body: slidingUp(
+        controller.panelController,
         GetBuilder<ThreadController>(builder: (controller) {
           return pageNavigation(
               context,

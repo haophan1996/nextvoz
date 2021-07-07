@@ -2,23 +2,20 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
-import 'package:pull_to_refresh/pull_to_refresh.dart';
-import 'package:vozforums/Page/NavigationDrawer/NaviDrawerUI.dart';
-import 'package:vozforums/Page/pageLoadNext.dart';
 import 'package:vozforums/Page/pageNavigation.dart';
 import 'package:vozforums/Page/reuseWidget.dart';
 import 'package:vozforums/Page/View/ViewController.dart';
-import '../../GlobalController.dart';
+import 'package:vozforums/GlobalController.dart';
 
 class ViewUI extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      endDrawer: NaviDrawerUI(),
       appBar: preferredSize(context, Get.find<ViewController>(tag: GlobalController.i.tagView.last).data['subHeader'],
           Get.find<ViewController>(tag: GlobalController.i.tagView.last).data['subTypeHeader']),
       backgroundColor: Theme.of(context).backgroundColor,
       body: slidingUp(
+        Get.find<ViewController>(tag: GlobalController.i.tagView.last).panelController,
         GetBuilder<ViewController>(
             tag: GlobalController.i.tagView.last,
             builder: (controller) {
@@ -32,48 +29,12 @@ class ViewUI extends StatelessWidget {
                 () => controller.setPageOnClick("1"),
               );
             }),
-        Column(
-          children: [
-            Expanded(
-              child: Container(
-                color: Theme.of(context).backgroundColor,
-                constraints: BoxConstraints.expand(),
-              ),
-            )
-          ],
-        ),
+        Container(color: Colors.black,),
         GetBuilder<ViewController>(
           tag: GlobalController.i.tagView.last,
           builder: (controller) {
             return postContent(context, controller);
           },
-        ),
-      ),
-    );
-  }
-
-  Widget postContent(BuildContext context, ViewController controller) {
-    return refreshIndicatorConfiguration(
-      Scrollbar(
-        child: SmartRefresher(
-          enablePullDown: false,
-          enablePullUp: true,
-          controller: controller.refreshController,
-          onLoading: () {
-            controller.setPageOnClick((controller.currentPage + 1).toString());
-          },
-          child: ListView.builder(
-            cacheExtent: 99999,
-            shrinkWrap: true,
-            padding: EdgeInsets.only(top: 2),
-            physics: BouncingScrollPhysics(),
-            scrollDirection: Axis.vertical,
-            controller: controller.listViewScrollController,
-            itemCount: controller.htmlData.length,
-            itemBuilder: (context, index) {
-              return viewContent(context, index, controller);
-            },
-          ),
         ),
       ),
     );

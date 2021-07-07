@@ -1,8 +1,8 @@
-import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:get/get.dart';
+import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:vozforums/GlobalController.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:vozforums/Page/NavigationDrawer/NaviDrawerController.dart';
@@ -14,7 +14,7 @@ class ThreadController extends GetxController {
   late RefreshController refreshController = RefreshController(initialRefresh: false);
   late ScrollController listViewScrollController = ScrollController();
   late ItemScrollController itemScrollController = ItemScrollController();
-
+  late PanelController panelController = PanelController();
   List myThreadList = [];
   int currentPage = 0;
   int totalPage = 0;
@@ -42,7 +42,7 @@ class ThreadController extends GetxController {
     Future.delayed(Duration(milliseconds: 100), () {
       GlobalController.i.tagView.add(myThreadList.elementAt(index)['title']);
       Get.lazyPut<ViewController>(() => ViewController(), tag: GlobalController.i.tagView.last);
-      Get.toNamed("/ViewPage", arguments: [myThreadList.elementAt(index)['title'], myThreadList.elementAt(index)['link'],myThreadList.elementAt(index)['prefix'] ]);
+      Get.toNamed("/ViewPage", arguments: [myThreadList.elementAt(index)['title'], myThreadList.elementAt(index)['link'],myThreadList.elementAt(index)['prefix'], 0]);
     });
   }
 
@@ -66,7 +66,12 @@ class ThreadController extends GetxController {
         NaviDrawerController.i.linkUser.value = GlobalController.i.userStorage.read('linkUser');
         NaviDrawerController.i.avatarUser.value = GlobalController.i.userStorage.read('avatarUser');
         NaviDrawerController.i.nameUser.value = GlobalController.i.userStorage.read('nameUser');
-        GlobalController.i.alertNotification = value.getElementsByClassName('badgeContainer--highlighted').length > 0 ? value.getElementsByClassName('badgeContainer--highlighted')[0].attributes['data-badge'].toString() : '0';
+        GlobalController.i.inboxNotifications = value.getElementsByClassName('p-navgroup-link--conversations').length > 0
+            ? int.parse(value.getElementsByClassName('p-navgroup-link--conversations')[0].attributes['data-badge'].toString())
+            : 0;
+        GlobalController.i.alertNotifications = value.getElementsByClassName('p-navgroup-link--alerts').length > 0
+            ? int.parse(value.getElementsByClassName('p-navgroup-link--alerts')[0].attributes['data-badge'].toString())
+            : 0;
         GlobalController.i.update();
       } else
         GlobalController.i.isLogged.value = false;
