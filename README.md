@@ -13,8 +13,6 @@
 <img src="https://github.com/haophan1996/vozForumsApp/blob/main/screenshot/setting_dark.png" width="280" height="540"/>
 <img src="https://github.com/haophan1996/vozForumsApp/blob/main/screenshot/set_dark.png" width="280" height="540"/>
 
-<iframe width="560" height="315"
-src="https://www.youtube.com/embed/MUQfKFzIOeU" 
-frameborder="0" 
-allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" 
-allowfullscreen></iframe>
+<div align="center">
+  <a href="https://www.youtube.com/watch?v=2Fd_mCXTXDc"><img src="https://img.youtube.com/vi/2Fd_mCXTXDc/0.jpg" alt="Demo vozforums app"></a>
+</div>
