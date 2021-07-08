@@ -13,6 +13,7 @@ import 'package:vozforums/Page/View/ViewController.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:pinch_zoom_image_last/pinch_zoom_image_last.dart';
 import 'package:vozforums/Page/pageLoadNext.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 import 'NavigationDrawer/NaviDrawerUI.dart';
 
 ///  * Global appbar
@@ -131,7 +132,10 @@ Widget settings(BuildContext context) => Row(
                   color: Theme.of(context).primaryColor,
                 ),
                 onPressed: () async {
-                  if (GlobalController.i.alertList.isEmpty) await GlobalController.i.getAlert();
+                  if (GlobalController.i.alertList.isEmpty || GlobalController.i.alertNotifications != 0) {
+                    GlobalController.i.alertList.clear();
+                    await GlobalController.i.getAlert();
+                  }
                   await Get.toNamed('/Pop', preventDuplicates: false);
                 }),
             GetBuilder<GlobalController>(builder: (controller) {
@@ -151,7 +155,12 @@ Widget settings(BuildContext context) => Row(
         ),
         Stack(
           children: [
-            CupertinoButton(child: Icon(Icons.mail_outline, color: Theme.of(context).primaryColor,), onPressed: (){}),
+            CupertinoButton(
+                child: Icon(
+                  Icons.mail_outline,
+                  color: Theme.of(context).primaryColor,
+                ),
+                onPressed: () {}),
             GetBuilder<GlobalController>(builder: (controller) {
               return Positioned(
                 right: 0,
@@ -167,7 +176,12 @@ Widget settings(BuildContext context) => Row(
             })
           ],
         ),
-        CupertinoButton(child: Icon(Icons.settings, color: Theme.of(context).primaryColor,), onPressed: () => NaviDrawerController.i.navigateToSetting()),
+        CupertinoButton(
+            child: Icon(
+              Icons.settings,
+              color: Theme.of(context).primaryColor,
+            ),
+            onPressed: () => NaviDrawerController.i.navigateToSetting()),
       ],
     );
 
@@ -502,66 +516,63 @@ Widget viewContent(BuildContext context, int index, ViewController controller) =
               "iframe": (RenderContext context, Widget child) {
                 final attrs = context.tree.element?.attributes;
                 //controller.getIDYoutube(attrs!['src'].toString());
-                return CupertinoButton(
-                  padding: EdgeInsets.zero,
-                  onPressed: () {
-                    Get.toNamed('/Youtube', arguments: [controller.getIDYoutube(attrs!['src'].toString())]);
-                  },
-                  child: Stack(
-                    children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(6),
-                        child: Image.network(
-                          'https://img.youtube.com/vi/${controller.getIDYoutube(attrs!['src'].toString())}/0.jpg',
-                        ),
-                      ),
-                      Positioned.fill(
-                        child: Align(
-                          alignment: Alignment.center,
-                          child: Icon(
-                            Icons.play_circle_fill,
-                            color: Colors.white,
+
+                if (GetPlatform.isAndroid) {
+                  return CupertinoButton(
+                    padding: EdgeInsets.zero,
+                    onPressed: () {
+                      Get.toNamed('/Youtube', arguments: [controller.getIDYoutube(attrs!['src'].toString())]);
+                    },
+                    child: Stack(
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(6),
+                          child: Image.network(
+                            'https://img.youtube.com/vi/${controller.getIDYoutube(attrs!['src'].toString())}/0.jpg',
                           ),
                         ),
-                      ),
-                      Align(
-                        alignment: Alignment.topLeft,
-                        child: Text(
-                          'ascsacsacsac',
-                          style: TextStyle(fontSize: GlobalController.i.userStorage.read('fontSizeView'), color: Colors.white),
+                        Positioned.fill(
+                          child: Align(
+                            alignment: Alignment.center,
+                            child: Icon(
+                              Icons.play_circle_fill,
+                              color: Colors.white,
+                            ),
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                );
-
-                // return TextButton(
-                //     onPressed: () {
-                //       Get.toNamed('/Youtube');
-                //     },
-                //     child: Text('test youtube'));
-
-                //double? width = double.tryParse(attrs!['width'] ?? "");
-                //double? height = double.tryParse(attrs['height'] ?? "");
-                // return Container(
-                //   width: width,
-                //   height: height,
-                //   child: WebView(
-                //     javascriptMode: JavascriptMode.unrestricted,
-                //     initialUrl: attrs['src'],
-                //     navigationDelegate: (NavigationRequest request) async {
-                //       if (attrs['src'] != null && attrs['src']!.contains("youtube.com/embed")) {
-                //         if (!request.url.contains("youtube.com/embed")) {
-                //           return NavigationDecision.prevent;
-                //         } else {
-                //           return NavigationDecision.navigate;
-                //         }
-                //       } else {
-                //         return NavigationDecision.navigate;
-                //       }
-                //     },
-                //   ),
-                // );
+                        Align(
+                          alignment: Alignment.topLeft,
+                          child: Text(
+                            'ascsacsacsac',
+                            style: TextStyle(fontSize: GlobalController.i.userStorage.read('fontSizeView'), color: Colors.white),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                } else {
+                  double? width = double.tryParse(attrs!['width'] ?? "");
+                  double? height = double.tryParse(attrs['height'] ?? "");
+                  return Container(
+                    width: width,
+                    height: height,
+                    child: WebView(
+                      javascriptMode: JavascriptMode.unrestricted,
+                      initialUrl: attrs['src'],
+                      navigationDelegate: (NavigationRequest request) async {
+                        if (attrs['src'] != null && attrs['src']!.contains("youtube.com/embed")) {
+                          if (!request.url.contains("youtube.com/embed")) {
+                            return NavigationDecision.prevent;
+                          } else {
+                            return NavigationDecision.navigate;
+                          }
+                        } else {
+                          return NavigationDecision.navigate;
+                        }
+                      },
+                    ),
+                  );
+                }
               }
             },
             style: {
@@ -642,7 +653,7 @@ Widget viewContent(BuildContext context, int index, ViewController controller) =
                     onPressed: () {
                       Future.delayed(Duration(milliseconds: 100), () {
                         // controller.reply();
-                        controller.quote(context,index);
+                        controller.quote(context, index);
                       });
                     },
                     child: text('rep'.tr, TextStyle()))

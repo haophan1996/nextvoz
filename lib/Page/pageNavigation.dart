@@ -10,14 +10,22 @@ import 'package:sliding_up_panel/sliding_up_panel.dart';
 import '../GlobalController.dart';
 
 Widget pageNavigation(BuildContext context, ItemScrollController scrollController, int currentPage, int totalPage, Function(String item) onCall,
-    Function lastPage, Function firstPage) {
+    Function lastPage, Function firstPage, Function reply) {
   return Padding(
-    padding: EdgeInsets.only(top: 1,bottom: 10),
+    padding: EdgeInsets.only(top: 1, bottom: 10),
     child: Container(
       decoration: BoxDecoration(color: Theme.of(context).backgroundColor, borderRadius: BorderRadius.all(Radius.circular(6))),
       height: MediaQuery.of(context).size.height * 0.06, //0.066,
       child: Stack(
         children: [
+          Align(
+            alignment: Alignment.centerLeft,
+            child: CupertinoButton(
+              padding: EdgeInsets.zero,
+              child: Icon(Icons.reply_outlined, color: Theme.of(context).primaryColor,),
+              onPressed: ()=> reply(),
+            ),
+          ),
           GetBuilder<GlobalController>(builder: (controller) {
             return Align(
               alignment: Alignment.centerRight,
@@ -42,7 +50,7 @@ Widget pageNavigation(BuildContext context, ItemScrollController scrollControlle
                 },
               ),
               SizedBox(
-                width: Get.width * 0.6,
+                width: Get.width * 0.4,
                 height: 36,
                 child: ScrollablePositionedList.builder(
                   itemScrollController: scrollController,
@@ -99,7 +107,7 @@ Widget pageNavigation(BuildContext context, ItemScrollController scrollControlle
   );
 }
 
-Widget slidingUp(double maxHeight,PanelController panelController, Widget bodyWidget, Widget panelWidget) {
+Widget slidingUp(double maxHeight, PanelController panelController, Widget bodyWidget, Widget panelWidget) {
   RxDouble tramsSlide = 0.0.obs;
   return SlidingUpPanel(
     onPanelClosed: () {
@@ -108,7 +116,7 @@ Widget slidingUp(double maxHeight,PanelController panelController, Widget bodyWi
     onPanelOpened: () {
       print('open');
     },
-    onPanelSlide: (value){
+    onPanelSlide: (value) {
       tramsSlide.value = value;
     },
     boxShadow: <BoxShadow>[],
@@ -116,7 +124,8 @@ Widget slidingUp(double maxHeight,PanelController panelController, Widget bodyWi
     parallaxEnabled: true,
     parallaxOffset: .5,
     minHeight: Get.height * 0.08,
-    maxHeight: maxHeight,//Get.height * 0.5,
+    maxHeight: maxHeight,
+    //Get.height * 0.5,
     backdropEnabled: true,
     backdropTapClosesPanel: true,
     //backdropColor: Colors.transparent,
@@ -127,33 +136,54 @@ Widget slidingUp(double maxHeight,PanelController panelController, Widget bodyWi
 }
 
 Widget whatNew(BuildContext context) => Container(
-  decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(6)), color: Theme.of(context).backgroundColor),
-  child: Column(
-    children: [
-      Container(
-        padding: EdgeInsets.only(top: 15),
-        child: Text(
-          'Latest',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, foreground: Paint()..shader = linearGradient),
-        ),
-      ),
-      Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
+      decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(6)), color: Theme.of(context).backgroundColor),
+      child: Column(
         children: [
-          CupertinoButton(child: Text('What\'s new'), onPressed: () {}),
-          CupertinoButton(child: Text('New posts'), onPressed: () {}),
-          CupertinoButton(child: Text('New profile posts'), onPressed: () {}),
+          Container(
+            padding: EdgeInsets.only(top: 15),
+            child: Text(
+              'Latest',
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, foreground: Paint()..shader = linearGradient),
+            ),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Expanded(
+                child: CupertinoButton(
+                    child: Text(
+                      'What\'s new',
+                      maxLines: 1,
+                    ),
+                    onPressed: () {}),
+              ),
+              Expanded(
+                child: CupertinoButton(
+                    child: Text(
+                      'New posts',
+                      maxLines: 1,
+                    ),
+                    onPressed: () {}),
+              ),
+              Expanded(
+                child: CupertinoButton(
+                    child: Text(
+                      'New profile posts',
+                      maxLines: 1,
+                    ),
+                    onPressed: () {}),
+              )
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              CupertinoButton(child: Text('Your news feed'), onPressed: () {}),
+              CupertinoButton(child: Text('Latest activity'), onPressed: () {})
+            ],
+          )
         ],
       ),
-      Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          CupertinoButton(child: Text('Your news feed'), onPressed: () {}),
-          CupertinoButton(child: Text('Latest activity'), onPressed: () {})
-        ],
-      )
-    ],
-  ),
-);
+    );

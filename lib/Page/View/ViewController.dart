@@ -186,6 +186,7 @@ class ViewController extends GetxController {
         GlobalController.i.update();
       } else
         GlobalController.i.isLogged.value = false;
+
       value.getElementsByClassName("block block--messages").forEach((element) {
         var lastP = element.getElementsByClassName("pageNavSimple");
         if (lastP.length == 0) {
@@ -279,6 +280,23 @@ class ViewController extends GetxController {
       lengthHtmlDataList = htmlData.length;
       data['dataCsrfPost'] = value.getElementsByTagName('html')[0].attributes['data-csrf'];
       data['xfCsrfPost'] = GlobalController.i.xfCsrfPost;
+      if (value.getElementsByTagName('html')[0].attributes['data-logged-in'] == 'true') {
+        GlobalController.i.isLogged.value = true;
+        NaviDrawerController.i.titleUser.value = GlobalController.i.userStorage.read('titleUser');
+        NaviDrawerController.i.linkUser.value = GlobalController.i.userStorage.read('linkUser');
+        NaviDrawerController.i.avatarUser.value = GlobalController.i.userStorage.read('avatarUser');
+        NaviDrawerController.i.nameUser.value = GlobalController.i.userStorage.read('nameUser');
+        GlobalController.i.inboxNotifications = value.getElementsByClassName('p-navgroup-link--conversations').length > 0
+            ? int.parse(value.getElementsByClassName('p-navgroup-link--conversations')[0].attributes['data-badge'].toString())
+            : 0;
+        GlobalController.i.alertNotifications = value.getElementsByClassName('p-navgroup-link--alerts').length > 0
+            ? int.parse(value.getElementsByClassName('p-navgroup-link--alerts')[0].attributes['data-badge'].toString())
+            : 0;
+        GlobalController.i.update();
+      } else
+        GlobalController.i.isLogged.value = false;
+
+
       var lastP = value.getElementsByClassName("pageNavSimple");
       if (lastP.length == 0) {
         currentPage = 1;
@@ -394,9 +412,18 @@ class ViewController extends GetxController {
     return status;
   }
 
-  replys(String message) async {
+  reply(String message) async {
+    /// Todo
+    /// Once PostStatus pop back,
+    /// It will receives result from User
+    /// Based User decide, stay on current page or goto last page
+    /// Result will return as boolean true or false
+    /// if
+    ///   true -> last page
+    ///   false -> stay current page
     //                                            token               xf_csrf             link
-    Get.toNamed('/PostStatus', arguments: [data['xfCsrfPost'], data['dataCsrfPost'], data['fullUrl'], message]);
+    var x = await Get.toNamed('/PostStatus', arguments: [data['xfCsrfPost'], data['dataCsrfPost'], data['fullUrl'], message]);
+    print(x);
   }
 
   Future<void> quote(BuildContext context, int index) async {
@@ -415,7 +442,7 @@ class ViewController extends GetxController {
             Get.back();
             if (value['status'] == 'ok'){
               print(value['quoteHtml']);
-              replys(value['quoteHtml']+'<br>');
+              reply(value['quoteHtml']+'<br>');
             } else {
               setDialogError(context, value['errors'][0].toString());
             }

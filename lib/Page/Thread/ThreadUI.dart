@@ -79,7 +79,7 @@ class ThreadUI extends GetView<ThreadController> {
                     controller.totalPage,
                         (index) => controller.setPageOnClick(index),
                         () => {controller.setPageOnClick(controller.totalPage.toString())},
-                        () => controller.setPageOnClick("1"));
+                        () => controller.setPageOnClick("1"), (){});
               }),
               Container(
                 padding: EdgeInsets.only(top: 5),

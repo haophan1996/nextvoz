@@ -56,9 +56,18 @@ class GlobalController extends GetxController {
   }
 
   getAlert() async {
-    String username, threadName, time, status, link, key;
+    String username, threadName, reaction, time, status, link, key;
     if (isLogged.value == true) {
       getBody(url + '/account/alerts?page=1', false).then((value) {
+
+        GlobalController.i.inboxNotifications = value.getElementsByClassName('p-navgroup-link--conversations').length > 0
+            ? int.parse(value.getElementsByClassName('p-navgroup-link--conversations')[0].attributes['data-badge'].toString())
+            : 0;
+        GlobalController.i.alertNotifications = value.getElementsByClassName('p-navgroup-link--alerts').length > 0
+            ? int.parse(value.getElementsByClassName('p-navgroup-link--alerts')[0].attributes['data-badge'].toString())
+            : 0;
+        GlobalController.i.update();
+
         value.getElementsByClassName('alert js-alert block-row block-row--separated').forEach((element) {
           time = element.getElementsByTagName('time')[0].innerHtml;
           status = element.getElementsByClassName('contentRow-main contentRow-main--close')[0].text.replaceAll(time, '').trim();
@@ -76,10 +85,19 @@ class GlobalController extends GetxController {
             username = '';
             threadName = '';
           }
+          if (threadName.contains('with  Ưng')){
+            threadName=threadName.split('with  Ưng')[0];
+            reaction = '1';
+          }else if (threadName.contains('with  Gạch')){
+            threadName=threadName.split('with  Gạch')[0];
+            reaction = '2';
+          } else reaction = '';
+
           alertList.add({
             'username': username,
             'status': status,
             'threadName': threadName,
+            'reaction' : reaction,
             'link': link,
             'time': time,
           });

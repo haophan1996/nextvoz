@@ -1,12 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:rich_editor/rich_editor.dart';
-
 import '../../GlobalController.dart';
 import '../reuseWidget.dart';
 
 class PostStatusController extends GetxController {
   GlobalKey<RichEditorState> keyEditor = GlobalKey();
+  PageController paneControllerPost = PageController(
+    initialPage: 1
+  );
   Map<String, dynamic> data = {};
 
   @override
@@ -16,7 +18,20 @@ class PostStatusController extends GetxController {
     data['xf_csrf'] = Get.arguments[0];
     data['token'] = Get.arguments[1];
     data['link'] = Get.arguments[2];
-    print(data);
+    print('init');
+  }
+
+  @override
+  Future<void> onReady() async {
+    super.onReady();
+  }
+
+  @override
+  onClose(){
+    super.onClose();
+    print('onClose');
+    paneControllerPost.dispose();
+    keyEditor.currentState!.dispose();
   }
 
   Future<void> post(BuildContext context) async {
@@ -35,7 +50,7 @@ class PostStatusController extends GetxController {
     await GlobalController.i.getHttpPost(headers, body, "${data['link']}add-reply").then((value) {
       Get.back();
       if (value['status'] == 'ok'){
-        Get.back();
+        Get.back(result: ['hey']);
       } else {
         setDialogError(context, value['errors'][0].toString());
       }

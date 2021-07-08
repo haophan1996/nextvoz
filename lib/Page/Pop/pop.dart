@@ -25,20 +25,32 @@ class Popup extends GetView<PopController> {
                     bottom: BorderSide(width: 0.5, color: Theme.of(context).primaryColor),
                   )),
                   child: CupertinoButton(
+                    alignment: Alignment.centerLeft,
                     child: RichText(
                       text: TextSpan(
-                        children: <TextSpan>[
+                        children: [
                           TextSpan(text: globalController.alertList.elementAt(index)['username'], style: TextStyle(color: Colors.blue)),
                           TextSpan(
                               text: globalController.alertList.elementAt(index)['status'], style: TextStyle(color: Theme.of(context).primaryColor)),
-                          TextSpan(text: globalController.alertList.elementAt(index)['threadName'] + '\n', style: TextStyle(color: Colors.blue)),
+                          TextSpan(text: globalController.alertList.elementAt(index)['threadName'], style: TextStyle(color: Colors.blue)),
+
+                          globalController.alertList.elementAt(index)['reaction'] == '' ? TextSpan() :
                           TextSpan(
-                              text: globalController.alertList.elementAt(index)['time'],
+                              text: 'with ${globalController.alertList.elementAt(index)['reaction'] == '1' ? 'Ưng ' : 'Gạch '}', style: TextStyle(color: Theme.of(context).primaryColor)),
+
+                          globalController.alertList.elementAt(index)['reaction'] == '' ? TextSpan() :
+                          WidgetSpan(
+                            child: Image.asset('assets/reaction/${globalController.alertList.elementAt(index)['reaction']}.png', width: 18,),
+                          ),
+
+                          TextSpan(
+                              text: '\n' + globalController.alertList.elementAt(index)['time'],
                               style: TextStyle(color: Theme.of(context).secondaryHeaderColor))
                         ],
                       ),
                     ),
                     onPressed: () {
+                      print(globalController.alertList.elementAt(index)['username']);
                       GlobalController.i.tagView.add(globalController.alertList.elementAt(index)['threadName']);
                       if (globalController.alertList.elementAt(index)['link'].toString().contains('conversations/messages')) {
                         controller.view = 1;
