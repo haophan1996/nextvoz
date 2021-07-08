@@ -1,11 +1,12 @@
 import 'package:get/get.dart';
+import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:vozforums/GlobalController.dart';
 import 'package:vozforums/Page/NavigationDrawer/NaviDrawerController.dart';
 
 class HomeController extends GetxController {
-  late String header;
-  late String label;
+  late String header, label;
   List myHomePage = [];
+  late PanelController panelController = PanelController();
 
   @override
   Future<void> onInit() async {

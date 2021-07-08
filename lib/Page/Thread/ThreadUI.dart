@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -14,30 +16,14 @@ class ThreadUI extends GetView<ThreadController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      endDrawer: NaviDrawerUI(),
+      endDrawerEnableOpenDragGesture: true,
+      drawerEdgeDragWidth: MediaQuery.of(context).size.width * 0.2,
       backgroundColor: Theme.of(context).backgroundColor,
       appBar: preferredSize(context, controller.theme, ''),
       body: slidingUp(
+        360,
         controller.panelController,
-        GetBuilder<ThreadController>(builder: (controller) {
-          return pageNavigation(
-              context,
-              controller.itemScrollController,
-              controller.currentPage,
-              controller.totalPage,
-              (index) => controller.setPageOnClick(index),
-              () => {controller.setPageOnClick(controller.totalPage.toString())},
-              () => controller.setPageOnClick("1"));
-        }),
-        Column(
-          children: [
-            Expanded(
-              child: Container(
-                color: Theme.of(context).backgroundColor,
-                constraints: BoxConstraints.expand(),
-              ),
-            )
-          ],
-        ),
         GetBuilder<ThreadController>(builder: (controller) {
           return refreshIndicatorConfiguration(
             Scrollbar(
@@ -79,6 +65,47 @@ class ThreadUI extends GetView<ThreadController> {
             ),
           );
         }),
+        Container(
+          padding: EdgeInsets.only(left: 6,right: 6),
+          //color: Colors.blue,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              GetBuilder<ThreadController>(builder: (controller) {
+                return pageNavigation(
+                    context,
+                    controller.itemScrollController,
+                    controller.currentPage,
+                    controller.totalPage,
+                        (index) => controller.setPageOnClick(index),
+                        () => {controller.setPageOnClick(controller.totalPage.toString())},
+                        () => controller.setPageOnClick("1"));
+              }),
+              Container(
+                padding: EdgeInsets.only(top: 5),
+                decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(6)), color: Theme.of(context).backgroundColor),
+                child: Column(
+                  children: [
+                    Container(
+                      child: Text(
+                        'TheNextVoz - Account',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, foreground: Paint()..shader = linearGradient),
+                      ),
+                    ),
+                    Obx(
+                          () => GlobalController.i.isLogged.value == false ? login(context) : logged(context),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(
+                height: 5,
+              ),
+              whatNew(context),
+            ],
+          ),
+        ),
       ),
     );
   }

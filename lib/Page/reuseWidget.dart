@@ -9,9 +9,7 @@ import 'package:get/get.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:vozforums/GlobalController.dart';
 import 'package:vozforums/Page/NavigationDrawer/NaviDrawerController.dart';
-import 'package:vozforums/Page/Pop/PopBinding.dart';
 import 'package:vozforums/Page/View/ViewController.dart';
-import 'package:vozforums/Page/Pop/pop.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:pinch_zoom_image_last/pinch_zoom_image_last.dart';
 import 'package:vozforums/Page/pageLoadNext.dart';
@@ -24,34 +22,6 @@ PreferredSize preferredSize(BuildContext context, String title, String prefix) =
         automaticallyImplyLeading: false,
         title: customTitle(context, FontWeight.normal, 2, prefix, title),
         leading: (ModalRoute.of(context)?.canPop ?? false) ? BackButton() : null,
-        actions: <Widget>[
-          Stack(
-            children: [
-              IconButton(
-                  onPressed: () {
-                    Get.bottomSheet(NaviDrawerUI(), isScrollControlled: true, ignoreSafeArea: false);
-                  },
-                  icon: Icon(Icons.menu)),
-              GetBuilder<GlobalController>(builder: (controller) {
-                return Positioned(
-                  right: 0,
-                  top: 3,
-                  child: Container(
-                    width: 30,
-                    decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: controller.alertNotifications + controller.inboxNotifications == 0 ? Colors.transparent : Colors.red),
-                    child: Center(
-                      child: Text(controller.alertNotifications + controller.inboxNotifications == 0
-                          ? ''
-                          : (controller.alertNotifications + controller.inboxNotifications).toString()),
-                    ),
-                  ),
-                );
-              })
-            ],
-          ),
-        ],
         bottom: PreferredSize(
           child: GetBuilder<GlobalController>(
             builder: (controller) {
@@ -155,12 +125,15 @@ Widget settings(BuildContext context) => Row(
       children: [
         Stack(
           children: [
-            IconButton(
+            CupertinoButton(
+                child: Icon(
+                  Icons.notifications_none_outlined,
+                  color: Theme.of(context).primaryColor,
+                ),
                 onPressed: () async {
                   if (GlobalController.i.alertList.isEmpty) await GlobalController.i.getAlert();
                   await Get.toNamed('/Pop', preventDuplicates: false);
-                },
-                icon: Icon(Icons.notifications_none_outlined)),
+                }),
             GetBuilder<GlobalController>(builder: (controller) {
               return Positioned(
                 right: 0,
@@ -178,7 +151,7 @@ Widget settings(BuildContext context) => Row(
         ),
         Stack(
           children: [
-            IconButton(onPressed: () {}, icon: Icon(Icons.mail_outline)),
+            CupertinoButton(child: Icon(Icons.mail_outline, color: Theme.of(context).primaryColor,), onPressed: (){}),
             GetBuilder<GlobalController>(builder: (controller) {
               return Positioned(
                 right: 0,
@@ -194,7 +167,7 @@ Widget settings(BuildContext context) => Row(
             })
           ],
         ),
-        IconButton(onPressed: () => NaviDrawerController.i.navigateToSetting(), icon: Icon(Icons.settings)),
+        CupertinoButton(child: Icon(Icons.settings, color: Theme.of(context).primaryColor,), onPressed: () => NaviDrawerController.i.navigateToSetting()),
       ],
     );
 
@@ -679,7 +652,6 @@ Widget viewContent(BuildContext context, int index, dynamic controller) => Conta
       ),
     );
 
-
 Widget postContent(BuildContext context, dynamic controller) {
   return refreshIndicatorConfiguration(
     Scrollbar(
@@ -706,3 +678,7 @@ Widget postContent(BuildContext context, dynamic controller) {
     ),
   );
 }
+
+final Shader linearGradient = LinearGradient(
+  colors: <Color>[Colors.red, Colors.blue],
+).createShader(Rect.fromLTWH(0.0, 0.0, 200.0, 70.0));

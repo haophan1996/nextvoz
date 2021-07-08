@@ -11,7 +11,6 @@ class NaviDrawerController extends GetxController {
   double heightAppbar = 45;
   TextEditingController textEditingControllerLogin = TextEditingController();
   TextEditingController textEditingControllerPassword = TextEditingController();
-
   RxString nameUser = ''.obs;
   RxString titleUser = ''.obs;
   RxString avatarUser = ''.obs;
@@ -127,8 +126,7 @@ class NaviDrawerController extends GetxController {
     });
   }
 
-  navigateToSetting(){
-    Get.back();
+  navigateToSetting(){ 
     Get.toNamed('/Settings');
   }
 }

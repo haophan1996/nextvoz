@@ -27,7 +27,7 @@ class SettingsController extends GetxController {
   saveButton() async {
     await GlobalController.i.userStorage.write('fontSizeView', fontSizeView.value);
     Get.updateLocale(GlobalController.i.langList.elementAt(langIndex));
-    await GlobalController.i.userStorage.write('lang', langIndex);
+    await GlobalController.i.userStorage.write('lang', langIndex).then((value) => Get.back());
   }
 
 

@@ -10,189 +10,207 @@ import 'package:get/get.dart';
 class NaviDrawerUI extends GetView<NaviDrawerController> {
   @override
   Widget build(BuildContext context) {
-    return DraggableScrollableSheet(
-          initialChildSize: 0.9,
-          maxChildSize: 0.9,
-          minChildSize: 0.55,
-          builder: (BuildContext context, ScrollController scrollController) {
-            return SafeArea(child: Card(
-              child: Column(
-                children: [
-                  Obx(
-                        () => GlobalController.i.isLogged.value == false ? login(context) : logged(context),
-                  ),
-                  Divider(
-                    color: Theme.of(context).primaryColor,
-                  ),
-                  Expanded(
-                    child: GetBuilder<NaviDrawerController>(
-                      builder: (controller) {
-                        return controller.shortcuts.length == 0
-                            ? Container()
-                            : ListView.builder(
-                            controller: scrollController,
-                            itemCount: controller.shortcuts.length,
-                            itemBuilder: (BuildContext context, int index) {
-                              return ListTile(
-                                title: customTitle(context, FontWeight.normal, 1, controller.shortcuts.elementAt(index)['typeTitle'],
-                                    controller.shortcuts.elementAt(index)['title']),
-                                onTap: () {
-                                  controller.navigateToThread(controller.shortcuts.elementAt(index)['title'],
-                                      controller.shortcuts.elementAt(index)['link'], controller.shortcuts.elementAt(index)['typeTitle']);
-                                },
-                                onLongPress: () async {
-                                  controller.shortcuts.removeAt(index);
-                                  controller.update();
-                                  await GlobalController.i.userStorage.remove('shortcut');
-                                  await GlobalController.i.userStorage.write('shortcut', controller.shortcuts);
-                                },
-                              );
-                            });
-                      },
-                    ),
-                  )
-                ],
-              ),
-            ));
-          },
-        );
+    return Drawer(
+      child: SafeArea(
+        child: Container(
+          color: Theme.of(context).backgroundColor,
+          child: Column(
+            children: [
+              Text('shortcuts', style: TextStyle(color: Theme.of(context).primaryColor),),
+              Expanded(
+                child: GetBuilder<NaviDrawerController>(
+                  builder: (controller) {
+                    return controller.shortcuts.length == 0
+                        ? Container()
+                        : ListView.builder(
+                        itemCount: controller.shortcuts.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          return ListTile(
+                            title: customTitle(context, FontWeight.normal, 1, controller.shortcuts.elementAt(index)['typeTitle'],
+                                controller.shortcuts.elementAt(index)['title']),
+                            onTap: () {
+                              controller.navigateToThread(controller.shortcuts.elementAt(index)['title'],
+                                  controller.shortcuts.elementAt(index)['link'], controller.shortcuts.elementAt(index)['typeTitle']);
+                            },
+                            onLongPress: () async {
+                              controller.shortcuts.removeAt(index);
+                              controller.update();
+                              await GlobalController.i.userStorage.remove('shortcut');
+                              await GlobalController.i.userStorage.write('shortcut', controller.shortcuts);
+                            },
+                          );
+                        });
+                  },
+                ),
+              )
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }
 
 Widget logged(BuildContext context) {
-  return Column(
-    children: <Widget>[
-      Row(
-        mainAxisAlignment: MainAxisAlignment.center,
+  return Padding(
+    padding: EdgeInsets.only(bottom: 10),
+    child: Container(
+      decoration: BoxDecoration(color: Theme.of(context).backgroundColor, borderRadius: BorderRadius.all(Radius.circular(6))),
+      child: Column(
         children: <Widget>[
-          Padding(
-            padding: EdgeInsets.only(top: 5, left: 15, right: 15),
-            child: Container(
-              width: 52,
-              height: 52,
-              decoration: BoxDecoration(
-                border: Border.all(width: 0.5, color: Colors.black),
-                shape: BoxShape.circle,
-                image: DecorationImage(
-                  image: NaviDrawerController.i.avatarUser.value == "no"
-                      ? Image.asset(
-                          "assets/NoAvata.png",
-                          height: 48,
-                          width: 48,
-                        ).image
-                      : ExtendedNetworkImageProvider((GlobalController.i.url + NaviDrawerController.i.avatarUser.value), cache: true),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Padding(
+                padding: EdgeInsets.only(top: 5, left: 15, right: 15),
+                child: Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    border: Border.all(width: 0.5, color: Colors.black),
+                    shape: BoxShape.circle,
+                    image: DecorationImage(
+                      image: NaviDrawerController.i.avatarUser.value == "no"
+                          ? Image.asset(
+                              "assets/NoAvata.png",
+                              height: 48,
+                              width: 48,
+                            ).image
+                          : ExtendedNetworkImageProvider((GlobalController.i.url + NaviDrawerController.i.avatarUser.value), cache: true),
+                    ),
+                  ),
                 ),
-              ),
-            ),
-          ), //Show avatar
-          Expanded(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                textDrawer(Color(0xFFFD6E00), 16, NaviDrawerController.i.nameUser.value, FontWeight.bold),
-                textDrawer(Theme.of(context).primaryColor, 13, NaviDrawerController.i.titleUser.value, FontWeight.normal),
-              ],
-            ),
-          ), //Title and name user
-          IconButton(
-            onPressed: () async {
-              setDialog(context, 'popMess'.tr, 'popMess3'.tr);
-              await NaviDrawerController.i.getUserProfile();
-              Get.back();
-            },
-            icon: Icon(Icons.refresh),
-            alignment: Alignment.bottomCenter,
-          ), //Refresh user data
-          TextButton(
-            onPressed: () async {
-              await NaviDrawerController.i.logout();
-            },
-            child: text('logout'.tr, TextStyle()),
-          ), //Loggout
+              ), //Show avatar
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    textDrawer(Color(0xFFFD6E00), 16, NaviDrawerController.i.nameUser.value, FontWeight.bold),
+                    textDrawer(Theme.of(context).primaryColor, 13, NaviDrawerController.i.titleUser.value, FontWeight.normal),
+                  ],
+                ),
+              ), //Title and name user
+              settings(context),
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              CupertinoButton(
+                padding: EdgeInsets.only(right: 10),
+                child: Icon(
+                  Icons.refresh,
+                  color: Theme.of(context).primaryColor,
+                ),
+                onPressed: () async {
+                  setDialog(context, 'popMess'.tr, 'popMess3'.tr);
+                  await NaviDrawerController.i.getUserProfile();
+                  Get.back();
+                },
+              ), //Refresh user data
+              CupertinoButton(
+                  padding: EdgeInsets.only(right: 10),
+                  child: text('logout'.tr, TextStyle()),
+                  onPressed: () async {
+                    await NaviDrawerController.i.logout();
+                  }),
+            ],
+          )
         ],
       ),
-      settings(context),
-    ],
+    ),
   );
 }
 
 Widget login(BuildContext context) {
-  return Column(
-    children: [
-      ListTile(
-        title: text('login'.tr, TextStyle()),
-        onTap: () {
-          NaviDrawerController.i.statusLogin = '';
-          NaviDrawerController.i.textEditingControllerPassword.text = '';
-          NaviDrawerController.i.textEditingControllerLogin.text = '';
-          Get.bottomSheet(
-            Container(
-              height: MediaQuery.of(context).size.height,
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: Theme.of(context).backgroundColor.withOpacity(0.8),
-                border: Border.all(color: Colors.grey),
-                borderRadius: BorderRadius.all(
-                  Radius.circular(6),
-                ),
-              ),
-              child: Column(
-                children: [
-                  text(
-                    'loginMess'.tr,
-                    TextStyle(color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(15, 15, 15, 5),
-                    child: TextField(
-                      textInputAction: TextInputAction.next,
-                      controller: NaviDrawerController.i.textEditingControllerLogin,
-                      style: TextStyle(fontSize: 18, color: Theme.of(context).primaryColor),
-                      obscureText: false,
-                      decoration: InputDecoration(
-                        labelText: 'loginAccount'.tr,
-                        border: OutlineInputBorder(
-                          borderSide: BorderSide(color: Color(0xffCED0D2), width: 1),
-                          borderRadius: BorderRadius.all(Radius.circular(6)),
+  return Padding(
+    padding: EdgeInsets.only(bottom: 10),
+    child: Container(
+      decoration: BoxDecoration(color: Theme.of(context).backgroundColor, borderRadius: BorderRadius.all(Radius.circular(6))),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Expanded(
+                  child: ListTile(
+                    title: text('login'.tr, TextStyle()),
+                    onTap: () {
+                      NaviDrawerController.i.statusLogin = '';
+                      NaviDrawerController.i.textEditingControllerPassword.text = '';
+                      NaviDrawerController.i.textEditingControllerLogin.text = '';
+                      Get.bottomSheet(
+                        Container(
+                          height: Get.height,
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).backgroundColor.withOpacity(0.8),
+                            border: Border.all(color: Colors.grey),
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(6),
+                            ),
+                          ),
+                          child: Column(
+                            children: [
+                              text(
+                                'loginMess'.tr,
+                                TextStyle(color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.fromLTRB(15, 15, 15, 5),
+                                child: TextField(
+                                  textInputAction: TextInputAction.next,
+                                  controller: NaviDrawerController.i.textEditingControllerLogin,
+                                  style: TextStyle(fontSize: 18, color: Theme.of(context).primaryColor),
+                                  obscureText: false,
+                                  decoration: InputDecoration(
+                                    labelText: 'loginAccount'.tr,
+                                    border: OutlineInputBorder(
+                                      borderSide: BorderSide(color: Color(0xffCED0D2), width: 1),
+                                      borderRadius: BorderRadius.all(Radius.circular(6)),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.fromLTRB(15, 5, 15, 5),
+                                child: TextField(
+                                  onEditingComplete: () async {
+                                    await NaviDrawerController.i.loginFunction(context);
+                                  },
+                                  textInputAction: TextInputAction.next,
+                                  controller: NaviDrawerController.i.textEditingControllerPassword,
+                                  style: TextStyle(fontSize: 18, color: Theme.of(context).primaryColor),
+                                  obscureText: true,
+                                  decoration: InputDecoration(
+                                    labelText: 'loginPassword'.tr,
+                                    border: OutlineInputBorder(
+                                      borderSide: BorderSide(color: Color(0xffCED0D2), width: 1),
+                                      borderRadius: BorderRadius.all(Radius.circular(6)),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              GetBuilder<NaviDrawerController>(builder: (controller) {
+                                return text(controller.statusLogin, TextStyle(color: Colors.red, fontWeight: FontWeight.bold));
+                              }),
+                              TextButton(
+                                  child: text('login'.tr, TextStyle()),
+                                  onPressed: () async {
+                                    await NaviDrawerController.i.loginFunction(context);
+                                  })
+                            ],
+                          ),
                         ),
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(15, 5, 15, 5),
-                    child: TextField(
-                      onEditingComplete: () async {
-                        await NaviDrawerController.i.loginFunction(context);
-                      },
-                      textInputAction: TextInputAction.next,
-                      controller: NaviDrawerController.i.textEditingControllerPassword,
-                      style: TextStyle(fontSize: 18, color: Theme.of(context).primaryColor),
-                      obscureText: true,
-                      decoration: InputDecoration(
-                        labelText: 'loginPassword'.tr,
-                        border: OutlineInputBorder(
-                          borderSide: BorderSide(color: Color(0xffCED0D2), width: 1),
-                          borderRadius: BorderRadius.all(Radius.circular(6)),
-                        ),
-                      ),
-                    ),
-                  ),
-                  GetBuilder<NaviDrawerController>(builder: (controller) {
-                    return text(controller.statusLogin, TextStyle(color: Colors.red, fontWeight: FontWeight.bold));
-                  }),
-                  TextButton(
-                      child: text('login'.tr, TextStyle()),
-                      onPressed: () async {
-                        await NaviDrawerController.i.loginFunction(context);
-                      })
-                ],
-              ),
-            ),
-          );
-        },
+                      );
+                    },
+                  )),
+              CupertinoButton(child: Icon(Icons.settings), onPressed: () => NaviDrawerController.i.navigateToSetting())
+            ],
+          ),
+          Text('version 1.0', style: TextStyle(height: 3),)
+        ],
       ),
-      settings(context),
-    ],
+    ),
   );
 }

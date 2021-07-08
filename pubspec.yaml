@@ -36,7 +36,7 @@ dependencies:
   flutter_youtube_view: ^2.0.1
 
   #Editor
-  flutter_quill: ^1.6.0
+  rich_editor: ^0.0.4
 
   #webview_flutter: ^2.0.8
   get: ^4.1.4
@@ -79,6 +79,7 @@ flutter:
     - assets/languages/
     - NoAvata.png
     - newPost.png
+    - alerts.png
     - assets/
 
 
