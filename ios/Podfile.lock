@@ -7,6 +7,11 @@ PODS:
   - flutter_inappwebview/Core (0.0.1):
     - Flutter
     - OrderedSet (~> 5.0)
+  - flutter_youtube_view (1.1.4):
+    - Flutter
+    - YoutubeKit
+  - image_picker (0.0.1):
+    - Flutter
   - OrderedSet (5.0.0)
   - path_provider (0.0.1):
     - Flutter
@@ -18,10 +23,13 @@ PODS:
     - Flutter
   - webview_flutter (0.0.1):
     - Flutter
+  - YoutubeKit (0.5.0)
 
 DEPENDENCIES:
   - Flutter (from `Flutter`)
   - flutter_inappwebview (from `.symlinks/plugins/flutter_inappwebview/ios`)
+  - flutter_youtube_view (from `.symlinks/plugins/flutter_youtube_view/ios`)
+  - image_picker (from `.symlinks/plugins/image_picker/ios`)
   - path_provider (from `.symlinks/plugins/path_provider/ios`)
   - url_launcher (from `.symlinks/plugins/url_launcher/ios`)
   - video_player (from `.symlinks/plugins/video_player/ios`)
@@ -31,12 +39,17 @@ DEPENDENCIES:
 SPEC REPOS:
   trunk:
     - OrderedSet
+    - YoutubeKit
 
 EXTERNAL SOURCES:
   Flutter:
     :path: Flutter
   flutter_inappwebview:
     :path: ".symlinks/plugins/flutter_inappwebview/ios"
+  flutter_youtube_view:
+    :path: ".symlinks/plugins/flutter_youtube_view/ios"
+  image_picker:
+    :path: ".symlinks/plugins/image_picker/ios"
   path_provider:
     :path: ".symlinks/plugins/path_provider/ios"
   url_launcher:
@@ -51,12 +64,15 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   Flutter: 434fef37c0980e73bb6479ef766c45957d4b510c
   flutter_inappwebview: bfd58618f49dc62f2676de690fc6dcda1d6c3721
+  flutter_youtube_view: ea93f139b374c5e2b869b3e84190c4ba9668601b
+  image_picker: 50e7c7ff960e5f58faa4d1f4af84a771c671bc4a
   OrderedSet: aaeb196f7fef5a9edf55d89760da9176ad40b93c
   path_provider: abfe2b5c733d04e238b0d8691db0cfd63a27a93c
   url_launcher: 6fef411d543ceb26efce54b05a0a40bfd74cbbef
   video_player: 9cc823b1d9da7e8427ee591e8438bfbcde500e6e
   wakelock: d0fc7c864128eac40eba1617cb5264d9c940b46f
-  webview_flutter: 9f491a9b5a66f2573946a389b2677987b0ff8c0b
+  webview_flutter: 3603125dfd3bcbc9d8d418c3f80aeecf331c068b
+  YoutubeKit: 9f66eba839211158f2aac7ad3833593bd56fa8f9
 
 PODFILE CHECKSUM: aafe91acc616949ddb318b77800a7f51bffa2a4c
 

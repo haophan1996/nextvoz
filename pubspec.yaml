@@ -38,7 +38,7 @@ dependencies:
   #Editor
   #rich_editor: ^0.0.4
   rich_editor:
-    path:  modify_package\rich_editor
+    path:  modify_package/rich_editor/
 
   #webview_flutter: ^2.0.8
   get: ^4.1.4
