@@ -133,7 +133,13 @@ class ViewController extends GetxController {
 
   getDataReactionList(int index) async {
     reactionList.clear();
-    await GlobalController.i.getBody('${data['view'] == 0 ? GlobalController.i.viewReactLink : GlobalController.i.inboxReactLink}' + htmlData.elementAt(index)['postID'] + '/reactions', false).then((value) {
+    await GlobalController.i
+        .getBody(
+            '${data['view'] == 0 ? GlobalController.i.viewReactLink : GlobalController.i.inboxReactLink}' +
+                htmlData.elementAt(index)['postID'] +
+                '/reactions',
+            false)
+        .then((value) {
       value.getElementsByClassName('block-row block-row--separated').forEach((element) {
         data['rName'] = element.getElementsByClassName('username ')[0].text;
         data['rTitle'] = element.getElementsByClassName('userTitle')[0].text;
@@ -388,7 +394,32 @@ class ViewController extends GetxController {
     return status;
   }
 
-  reply() async {
-    await panelController.open();
+  replys(String message) async {
+    //                                            token               xf_csrf             link
+    Get.toNamed('/PostStatus', arguments: [data['xfCsrfPost'], data['dataCsrfPost'], data['fullUrl'], message]);
+  }
+
+  Future<void> quote(BuildContext context, int index) async {
+    print(data['fullUrl']);
+    setDialog(context, 'popMess'.tr, 'popMess2'.tr);
+    var headers = {
+      'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
+      'host': 'voz.vn',
+      'cookie': '${data['xfCsrfPost']}; xf_user=${GlobalController.i.xfUser};',
+    };
+    var body = {'_xfWithData': '1', '_xfToken': '${data['dataCsrfPost']}', '_xfResponseType': 'json'};
+
+    await GlobalController.i.getHttpPost(headers, body, '${data['view'] == 0 ? GlobalController.i.viewReactLink : GlobalController.i.inboxReactLink}${htmlData.elementAt(index)['postID']}/quote').then(
+          (value) {
+            //print(value);
+            Get.back();
+            if (value['status'] == 'ok'){
+              print(value['quoteHtml']);
+              replys(value['quoteHtml']+'<br>');
+            } else {
+              setDialogError(context, value['errors'][0].toString());
+            }
+          },
+        );
   }
 }

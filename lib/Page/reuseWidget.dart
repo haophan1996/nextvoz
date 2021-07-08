@@ -338,7 +338,7 @@ Widget listReactionUI(BuildContext context, ViewController controller) {
   );
 }
 
-Widget viewContent(BuildContext context, int index, dynamic controller) => Container(
+Widget viewContent(BuildContext context, int index, ViewController controller) => Container(
       color: Theme.of(context).backgroundColor,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -641,7 +641,8 @@ Widget viewContent(BuildContext context, int index, dynamic controller) => Conta
                 TextButton(
                     onPressed: () {
                       Future.delayed(Duration(milliseconds: 100), () {
-                        controller.reply();
+                        // controller.reply();
+                        controller.quote(context,index);
                       });
                     },
                     child: text('rep'.tr, TextStyle()))

@@ -37,7 +37,8 @@ class Language extends Translations{
       'sweet' : 'Sweet',
       'brick' : 'Brick',
       'sweeted' : 'Sweet',
-      'bricked' : 'Brick'
+      'bricked' : 'Brick',
+      'createPost' : 'New Post',
 
     },
     'vi_VN' : {
@@ -72,7 +73,8 @@ class Language extends Translations{
       'sweet' : 'Ưng',
       'brick' : 'Gạch',
       'sweeted' : 'Đả Ưng',
-      'bricked' : 'Đả Gạch'
+      'bricked' : 'Đả Gạch',
+      'createPost' : 'Bài Viet Mới',
     }
   };
 

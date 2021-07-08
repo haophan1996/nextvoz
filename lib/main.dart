@@ -4,6 +4,8 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:vozforums/Page/Pop/PopBinding.dart';
 import 'package:vozforums/Page/Pop/pop.dart';
+import 'package:vozforums/Page/PostStatus/PostStatusBindings.dart';
+import 'package:vozforums/Page/PostStatus/PostStatusUI.dart';
 import 'package:vozforums/Page/Settings/SettingsBinding.dart';
 import 'package:vozforums/Page/Settings/SettingsUI.dart';
 import 'package:vozforums/Page/UserProfile/UserProfileBinding.dart';
@@ -56,6 +58,14 @@ class MyPage extends StatelessWidget {
         GetPage(name: '/Pop', page: () => Popup(), binding: PopBinding(), popGesture: true),
         GetPage(name: "/UserProfile", page: () => UserProfileUI(), popGesture: true, binding: UserProfileBinding(), maintainState: false),
         GetPage(name: '/Youtube', page: () => YoutubeView(), binding: YoutubeBinding(), popGesture: true),
+        GetPage(
+            name: "/PostStatus",
+            page: () => PostStatusUI(),
+            popGesture: false,
+            binding: PostStatusBindings(),
+            transition: Transition.downToUp,
+            transitionDuration: Duration(milliseconds: 200),
+            maintainState: false),
         GetPage(
             name: "/Settings",
             page: () => SettingsUI(),

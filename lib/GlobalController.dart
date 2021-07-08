@@ -8,7 +8,6 @@ import 'package:http/http.dart' as http;
 import 'package:html/dom.dart' as dom;
 import 'package:html/parser.dart' as parser;
 import 'package:dio/dio.dart';
-import 'package:rich_editor/rich_editor.dart';
 import 'package:vozforums/Page/NavigationDrawer/NaviDrawerController.dart';
 
 class GlobalController extends GetxController {
@@ -22,7 +21,6 @@ class GlobalController extends GetxController {
   List alertList = [],tagView = [];
   String xfSession = '', dateExpire = '', xfUser = '';
   int alertNotifications = 0, inboxNotifications = 0;
-  GlobalKey<RichEditorState> keyEditor = GlobalKey();
 
   @override
   onInit() async {
