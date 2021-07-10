@@ -61,7 +61,7 @@ class MyPage extends StatelessWidget {
         GetPage(
             name: "/PostStatus",
             page: () => PostStatusUI(),
-            popGesture: false,
+            popGesture: true,
             binding: PostStatusBindings(),
             transition: Transition.downToUp,
             transitionDuration: Duration(milliseconds: 200),

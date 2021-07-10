@@ -1,7 +1,9 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:rich_editor/rich_editor.dart';
+import 'package:vozforums/GlobalController.dart';
+import 'package:vozforums/Page/reuseWidget.dart';
 import 'PostStatusController.dart';
 
 class PostStatusUI extends GetView<PostStatusController> {
@@ -61,23 +63,68 @@ class PostStatusUI extends GetView<PostStatusController> {
       ),
       body: RichEditor(
         key: controller.keyEditor,
-        // value: '''<p>hey</p>''', // initial HTML data
-        value: '''${Get.arguments[3] ??= ''}''', // initial HTML data
+        value: '''<p>hey</p>''', // initial HTML data
+        //value: '''${Get.arguments[3] ??= ''}''', // initial HTML data
         getBottomSheetEmoji: () async {
           await controller.keyEditor.currentState?.unFocus();
-          Get.bottomSheet(Container(
-            constraints: BoxConstraints.expand(),
-            child: PageView(
-              controller: controller.paneControllerPost,
-              children: [
-                Container(constraints: BoxConstraints.expand(),color: Colors.blue,),
-                Container(constraints: BoxConstraints.expand(),color: Colors.yellow,),
-                Container(constraints: BoxConstraints.expand(),color: Colors.black,),
-                Container(constraints: BoxConstraints.expand(),color: Colors.red,),
-                Container(constraints: BoxConstraints.expand(),color: Colors.pink,),
-              ],
+          Get.bottomSheet(
+            Container(
+              color: Theme.of(context).backgroundColor,
+              constraints: BoxConstraints.expand(),
+              alignment: Alignment.topCenter,
+              child: DefaultTabController(
+                initialIndex: controller.currentTab,
+                length: 3,
+                child: Column(
+                  children: [
+                    TabBar(
+                      tabs: [
+                        text(
+                          'Smilies Popo',
+                          TextStyle(color: Theme.of(context).primaryColor),
+                        ),
+                        text(
+                          'Smilies Popo',
+                          TextStyle(color: Theme.of(context).primaryColor),
+                        ),
+                        text(
+                          'Gif',
+                          TextStyle(color: Theme.of(context).primaryColor),
+                        )
+                      ],
+                      onTap: (index) => controller.currentTab = index,
+                    ),
+                    Expanded(
+                      child: TabBarView(
+                        children: [
+                          GridView.builder(
+                              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 5),
+                              itemCount: GlobalController.i.smallVozEmoji.length,
+                              itemBuilder: (BuildContext context, int index) {
+                                return Image.asset('assets/${GlobalController.i.smallVozEmoji.elementAt(index)['dir']}');
+                              }),
+                          GridView.builder(
+                            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 5),
+                            itemCount: GlobalController.i.bigVozEmoji.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              return CupertinoButton(
+                                  child: Image.asset('assets/${GlobalController.i.bigVozEmoji.elementAt(index)['dir']}'),
+                                  onPressed: () async {
+                                    await controller.keyEditor.currentState!.javascriptExecutor
+                                        .insertHtml(' ' + GlobalController.i.bigVozEmoji.elementAt(index)['symbol'].toString() + ' ');
+                                    await controller.keyEditor.currentState?.unFocus();
+                                  });
+                            },
+                          ),
+                          Text('c')
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
-          ));
+          );
         },
         editorOptions: RichEditorOptions(
           placeholder: '''Start typing''',

@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:rich_editor/rich_editor.dart';
 import '../../GlobalController.dart';
@@ -6,9 +7,7 @@ import '../reuseWidget.dart';
 
 class PostStatusController extends GetxController {
   GlobalKey<RichEditorState> keyEditor = GlobalKey();
-  PageController paneControllerPost = PageController(
-    initialPage: 1
-  );
+  int currentTab = 0;
   Map<String, dynamic> data = {};
 
   @override
@@ -30,7 +29,6 @@ class PostStatusController extends GetxController {
   onClose(){
     super.onClose();
     print('onClose');
-    paneControllerPost.dispose();
     keyEditor.currentState!.dispose();
   }
 
