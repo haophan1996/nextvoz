@@ -439,6 +439,7 @@ Widget viewContent(BuildContext context, int index, ViewController controller) =
                   return PinchZoomImage(
                     image: ExtendedImage.network(
                       renderContext.tree.element!.attributes['src'].toString(),
+                      fit: BoxFit.contain,
                       cache: true,
                       clearMemoryCacheIfFailed: true,
                     ),

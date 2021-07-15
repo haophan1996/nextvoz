@@ -6,6 +6,7 @@ import 'package:vozforums/GlobalController.dart';
 import 'package:vozforums/Page/reuseWidget.dart';
 import 'PostStatusController.dart';
 
+
 class PostStatusUI extends GetView<PostStatusController> {
   @override
   Widget build(BuildContext context) {
@@ -40,6 +41,10 @@ class PostStatusUI extends GetView<PostStatusController> {
                   child: Text('Show Keyboard'),
                   value: 3,
                 ),
+                PopupMenuItem(
+                  child: Text('View Code'),
+                  value: 4,
+                ),
               ];
             },
             onSelected: (val) async {
@@ -56,6 +61,10 @@ class PostStatusUI extends GetView<PostStatusController> {
                 case 3:
                   await controller.keyEditor.currentState?.focus();
                   break;
+                case 4:
+                  String? html = await controller.keyEditor.currentState?.getHtml();
+                  print(html);
+                  break;
               }
             },
           ),
@@ -63,70 +72,72 @@ class PostStatusUI extends GetView<PostStatusController> {
       ),
       body: RichEditor(
         key: controller.keyEditor,
-        value: '''<p>hey</p>''', // initial HTML data
-        //value: '''${Get.arguments[3] ??= ''}''', // initial HTML data
-        getBottomSheetEmoji: () async {
-          await controller.keyEditor.currentState?.unFocus();
-          Get.bottomSheet(
-            Container(
-              color: Theme.of(context).backgroundColor,
-              constraints: BoxConstraints.expand(),
-              alignment: Alignment.topCenter,
-              child: DefaultTabController(
-                initialIndex: controller.currentTab,
-                length: 3,
-                child: Column(
-                  children: [
-                    TabBar(
-                      tabs: [
-                        text(
-                          'Smilies Popo',
-                          TextStyle(color: Theme.of(context).primaryColor),
-                        ),
-                        text(
-                          'Smilies Popo',
-                          TextStyle(color: Theme.of(context).primaryColor),
-                        ),
-                        text(
-                          'Gif',
-                          TextStyle(color: Theme.of(context).primaryColor),
-                        )
-                      ],
-                      onTap: (index) => controller.currentTab = index,
-                    ),
-                    Expanded(
-                      child: TabBarView(
-                        children: [
-                          GridView.builder(
-                              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 5),
-                              itemCount: GlobalController.i.smallVozEmoji.length,
-                              itemBuilder: (BuildContext context, int index) {
-                                return Image.asset('assets/${GlobalController.i.smallVozEmoji.elementAt(index)['dir']}');
-                              }),
-                          GridView.builder(
-                            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 5),
-                            itemCount: GlobalController.i.bigVozEmoji.length,
-                            itemBuilder: (BuildContext context, int index) {
-                              return CupertinoButton(
-                                  child: Image.asset('assets/${GlobalController.i.bigVozEmoji.elementAt(index)['dir']}'),
-                                  onPressed: () async {
-                                    await controller.keyEditor.currentState!.javascriptExecutor
-                                        .insertHtml(' ' + GlobalController.i.bigVozEmoji.elementAt(index)['symbol'].toString() + ' ');
-                                    await controller.keyEditor.currentState?.unFocus();
-                                  });
-                            },
-                          ),
-                          Text('c')
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          );
-        },
+        value: '''${controller.data['value']}''', // initial HTML data
+        // getBottomSheetEmoji: () async {
+        //   await controller.keyEditor.currentState?.unFocus();
+        //   await Get.bottomSheet(
+        //     Container(
+        //       color: Theme.of(context).backgroundColor,
+        //       constraints: BoxConstraints.expand(),
+        //       alignment: Alignment.topCenter,
+        //       child: DefaultTabController(
+        //         initialIndex: controller.currentTab,
+        //         length: 3,
+        //         child: Column(
+        //           children: [
+        //             TabBar(
+        //               tabs: [
+        //                 text(
+        //                   'Smilies Popo',
+        //                   TextStyle(color: Theme.of(context).primaryColor),
+        //                 ),
+        //                 text(
+        //                   'Smilies Popo',
+        //                   TextStyle(color: Theme.of(context).primaryColor),
+        //                 ),
+        //                 text(
+        //                   'Gif',
+        //                   TextStyle(color: Theme.of(context).primaryColor),
+        //                 )
+        //               ],
+        //               onTap: (index) => controller.currentTab = index,
+        //             ),
+        //             Expanded(
+        //               child: TabBarView(
+        //                 children: [
+        //                   GridView.builder(
+        //                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 5),
+        //                       itemCount: GlobalController.i.smallVozEmoji.length,
+        //                       itemBuilder: (BuildContext context, int index) {
+        //                         return Image.asset('assets/${GlobalController.i.smallVozEmoji.elementAt(index)['dir']}');
+        //                       }),
+        //                   GridView.builder(
+        //                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 5),
+        //                     itemCount: GlobalController.i.bigVozEmoji.length,
+        //                     itemBuilder: (BuildContext context, int index) {
+        //                       return CupertinoButton(
+        //                           child: Image.asset('assets/${GlobalController.i.bigVozEmoji.elementAt(index)['dir']}'),
+        //                           onPressed: () async {
+        //                             await controller.keyEditor.currentState!.javascriptExecutor
+        //                                 .insertHtml(' ' + GlobalController.i.bigVozEmoji.elementAt(index)['symbol'].toString() + ' ');
+        //                             await controller.keyEditor.currentState?.unFocus();
+        //                           });
+        //                     },
+        //                   ),
+        //                   Text('c')
+        //                 ],
+        //               ),
+        //             ),
+        //           ],
+        //         ),
+        //       ),
+        //     ),
+        //   );
+        //   await controller.keyEditor.currentState?.focus();
+        // },
         editorOptions: RichEditorOptions(
+          //backgroundColor: Theme.of(context).backgroundColor,
+          baseTextColor: Theme.of(context).primaryColor,
           placeholder: '''Start typing''',
           padding: EdgeInsets.symmetric(horizontal: 5.0),
           baseFontFamily: 'sans-serif',

@@ -8,8 +8,9 @@ import '../reuseWidget.dart';
 class PostStatusController extends GetxController {
   GlobalKey<RichEditorState> keyEditor = GlobalKey();
   int currentTab = 0;
+  RxDouble heightKeyboard = 0.1.obs;
   Map<String, dynamic> data = {};
-
+  final FocusNode nodeText6 = FocusNode();
   @override
   void onInit() {
     // TODO: implement onInit
@@ -17,7 +18,7 @@ class PostStatusController extends GetxController {
     data['xf_csrf'] = Get.arguments[0];
     data['token'] = Get.arguments[1];
     data['link'] = Get.arguments[2];
-    print('init');
+    data['value'] = Get.arguments[3] ??= '';
   }
 
   @override
@@ -26,16 +27,25 @@ class PostStatusController extends GetxController {
   }
 
   @override
-  onClose(){
+  onClose() {
     super.onClose();
     print('onClose');
-    keyEditor.currentState!.dispose();
+    heightKeyboard.value = 0.1;
+    heightKeyboard.close();
+  }
+
+  getKeyboardHeight(BuildContext context){
+
+   if (heightKeyboard.value == 0.1){
+     if (MediaQuery.of(context).viewInsets.bottom == 0){
+       heightKeyboard.value = 200;
+     } else heightKeyboard.value = MediaQuery.of(context).viewInsets.bottom;
+   }
   }
 
   Future<void> post(BuildContext context) async {
     setDialog(context, 'popMess'.tr, 'popMess2'.tr);
     String? html = await keyEditor.currentState?.getHtml();
-    print(html);
 
     var headers = {
       'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
@@ -43,11 +53,11 @@ class PostStatusController extends GetxController {
       'cookie': '${data['xf_csrf']}; xf_user=${GlobalController.i.xfUser};',
     };
 
-    var body = {'_xfWithData': '1', '_xfToken': '${data['token']}', '_xfResponseType': 'json', 'message_html' : '$html'};
+    var body = {'_xfWithData': '1', '_xfToken': '${data['token']}', '_xfResponseType': 'json', 'message_html': '$html'};
 
     await GlobalController.i.getHttpPost(headers, body, "${data['link']}add-reply").then((value) {
       Get.back();
-      if (value['status'] == 'ok'){
+      if (value['status'] == 'ok') {
         Get.back(result: ['hey']);
       } else {
         setDialogError(context, value['errors'][0].toString());

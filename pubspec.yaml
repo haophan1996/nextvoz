@@ -22,7 +22,7 @@ environment:
 
 dependencies:
   #Media
-  extended_image: ^4.1.0
+  flutter_youtube_view: ^2.0.1
 
   #UI support
   pull_to_refresh: ^2.0.0
@@ -33,7 +33,8 @@ dependencies:
   flutter_reaction_button: ^1.0.8
   pinch_zoom_image_last: ^0.4.1
   sliding_up_panel: ^2.0.0+1
-  flutter_youtube_view: ^2.0.1
+  keyboard_actions_pt_br: ^3.4.0
+  extended_image: ^4.1.0
 
   #Editor
   #rich_editor: ^0.0.4

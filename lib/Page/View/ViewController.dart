@@ -441,12 +441,27 @@ class ViewController extends GetxController {
             //print(value);
             Get.back();
             if (value['status'] == 'ok'){
-              print(value['quoteHtml']);
-              reply(value['quoteHtml']+'<br>');
+              //print(value['quoteHtml']);
+              fixQuote(value['quoteHtml']);
+              //reply(value['quoteHtml']+'<br>');
             } else {
               setDialogError(context, value['errors'][0].toString());
             }
           },
         );
+  }
+
+  fixQuote(String html){
+    String temp = html;
+    dom.Document document = parser.parse(html);
+    document.getElementsByTagName('img').forEach((element) {
+      if (element.outerHtml.contains('smilie smilie--emoji')){
+        var s = element.outerHtml.replaceAll('>', ' />');
+        temp = temp.replaceAll(s, element.attributes['alt'].toString());
+      }
+
+    });
+    temp = temp.replaceAll('/styles/next/xenforo/smilies', 'https://voz.vn//styles/next/xenforo/smilies');
+    reply(temp+'<br>');
   }
 }
