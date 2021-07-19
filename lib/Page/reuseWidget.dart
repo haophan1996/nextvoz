@@ -2,6 +2,7 @@ import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:expandable/expandable.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_reaction_button/flutter_reaction_button.dart';
@@ -13,8 +14,6 @@ import 'package:vozforums/Page/View/ViewController.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:pinch_zoom_image_last/pinch_zoom_image_last.dart';
 import 'package:vozforums/Page/pageLoadNext.dart';
-import 'package:webview_flutter/webview_flutter.dart';
-import 'NavigationDrawer/NaviDrawerUI.dart';
 
 ///  * Global appbar
 PreferredSize preferredSize(BuildContext context, String title, String prefix) => PreferredSize(
@@ -92,6 +91,15 @@ Widget blockItem(BuildContext context, FontWeight themeTitleWeight, FontWeight t
         ),
       ),
     );
+
+Widget buttonToolHtml(IconData iconData ,String message ,Function onPressed) => CupertinoButton(
+    padding: EdgeInsets.zero,
+    child: Tooltip(
+      message: message,
+      preferBelow: false,
+      child: Icon(iconData, color: Get.theme.primaryColor),
+    ),
+    onPressed: ()=> onPressed());
 
 Widget customTitle(BuildContext context, FontWeight titleWeight, int? maxLines, String header11, String header12) {
   return RichText(
@@ -391,6 +399,33 @@ Widget viewContent(BuildContext context, int index, ViewController controller) =
                         child: RichText(
                           text: TextSpan(children: <TextSpan>[
                             TextSpan(
+                                recognizer: new TapGestureRecognizer()
+                                  ..onTap = () => Get.bottomSheet(Card(
+                                    color: Theme.of(context).canvasColor,
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        CupertinoButton(
+                                            child: Container(
+                                              width: Get.width,
+                                              child: Text('Report'),
+                                            ),
+                                            onPressed: () {}),
+                                        CupertinoButton(
+                                            child: Container(
+                                              width: Get.width,
+                                              child: Text('Edit'),
+                                            ),
+                                            onPressed: () {}),
+                                        CupertinoButton(
+                                            child: Container(
+                                              width: Get.width,
+                                              child: Text('Delete'),
+                                            ),
+                                            onPressed: () {})
+                                      ],
+                                    ),
+                                  )),
                                 text: controller.htmlData.elementAt(index)['userName'] + "\n",
                                 style: TextStyle(color: Color(0xFFFD6E00), fontWeight: FontWeight.bold, fontSize: 16)),
                             TextSpan(
@@ -428,6 +463,8 @@ Widget viewContent(BuildContext context, int index, ViewController controller) =
             data: controller.htmlData.elementAt(index)['postContent'],
             customRender: {
               "img": (renderContext, child) {
+                double? width = double.tryParse(renderContext.tree.element!.attributes['width'].toString());
+                double? height = double.tryParse(renderContext.tree.element!.attributes['height'].toString());
                 if (renderContext.tree.element!.attributes['src']!.contains("/styles/next/xenforo")) {
                   return Image.asset(GlobalController.i.getEmoji(renderContext.tree.element!.attributes['src'].toString()));
                 } else if (renderContext.tree.element!.attributes['src']!.contains("twemoji.maxcdn.com")) {
@@ -440,6 +477,8 @@ Widget viewContent(BuildContext context, int index, ViewController controller) =
                     image: ExtendedImage.network(
                       renderContext.tree.element!.attributes['src'].toString(),
                       fit: BoxFit.contain,
+                      width: width,
+                      height: height,
                       cache: true,
                       clearMemoryCacheIfFailed: true,
                     ),
@@ -516,64 +555,81 @@ Widget viewContent(BuildContext context, int index, ViewController controller) =
               },
               "iframe": (RenderContext context, Widget child) {
                 final attrs = context.tree.element?.attributes;
-                //controller.getIDYoutube(attrs!['src'].toString());
-
-                if (GetPlatform.isAndroid) {
-                  return CupertinoButton(
-                    padding: EdgeInsets.zero,
-                    onPressed: () {
-                      Get.toNamed('/Youtube', arguments: [controller.getIDYoutube(attrs!['src'].toString())]);
-                    },
-                    child: Stack(
-                      children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(6),
-                          child: Image.network(
-                            'https://img.youtube.com/vi/${controller.getIDYoutube(attrs!['src'].toString())}/0.jpg',
-                          ),
-                        ),
-                        Positioned.fill(
-                          child: Align(
-                            alignment: Alignment.center,
-                            child: Icon(
-                              Icons.play_circle_fill,
-                              color: Colors.white,
+                final link = controller.getIDYoutube(attrs!['src'].toString());
+                double? width = double.tryParse(attrs['width'] ?? "");
+                double? height = double.tryParse(attrs['height'] ?? "");
+                return Column(
+                  children: [
+                    CupertinoButton(
+                        minSize: 0,
+                        padding: EdgeInsets.zero,
+                        child: Text('https://www.youtube.com/watch?v=$link'),
+                        onPressed: () async => await controller.launchURL('https://www.youtube.com/watch?v=$link')),
+                    CupertinoButton(
+                      minSize: 0,
+                      padding: EdgeInsets.zero,
+                      onPressed: () {
+                        Get.toNamed('/Youtube', arguments: [controller.getIDYoutube(attrs['src'].toString())]);
+                      },
+                      child: Stack(
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(6),
+                            child: ExtendedImage.network(
+                              'https://img.youtube.com/vi/$link/0.jpg',
+                              clearMemoryCacheWhenDispose: true,
+                              width: width,
+                              height: height,
                             ),
                           ),
-                        ),
-                        Align(
-                          alignment: Alignment.topLeft,
-                          child: Text(
-                            'ascsacsacsac',
-                            style: TextStyle(fontSize: GlobalController.i.userStorage.read('fontSizeView'), color: Colors.white),
+                          Positioned.fill(
+                            child: Align(
+                              alignment: Alignment.center,
+                              child: Icon(
+                                Icons.play_circle_fill,
+                                color: Colors.white,
+                              ),
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                  );
-                } else {
-                  double? width = double.tryParse(attrs!['width'] ?? "");
-                  double? height = double.tryParse(attrs['height'] ?? "");
-                  return Container(
-                    width: width,
-                    height: height,
-                    child: WebView(
-                      javascriptMode: JavascriptMode.unrestricted,
-                      initialUrl: attrs['src'],
-                      navigationDelegate: (NavigationRequest request) async {
-                        if (attrs['src'] != null && attrs['src']!.contains("youtube.com/embed")) {
-                          if (!request.url.contains("youtube.com/embed")) {
-                            return NavigationDecision.prevent;
-                          } else {
-                            return NavigationDecision.navigate;
-                          }
-                        } else {
-                          return NavigationDecision.navigate;
-                        }
-                      },
-                    ),
-                  );
-                }
+                          Positioned(
+                            child: Text(
+                              'Nếu youtube không play được, vui lòng nhấn vô \nlink phía trên',
+                              style: TextStyle(
+                                  fontSize: GlobalController.i.userStorage.read('fontSizeView'),
+                                  color: Colors.white,
+                                  background: Paint()..color = Colors.red),
+                              maxLines: 2,
+                            ),
+                            top: 25,
+                            left: 5,
+                          ),
+                        ],
+                      ),
+                    )
+                  ],
+                );
+
+                // double? width = double.tryParse(attrs!['width'] ?? "");
+                // double? height = double.tryParse(attrs['height'] ?? "");
+                // return Container(
+                //   width: width,
+                //   height: height,
+                //   child: WebView(
+                //     javascriptMode: JavascriptMode.unrestricted,
+                //     initialUrl: attrs['src'],
+                //     navigationDelegate: (NavigationRequest request) async {
+                //       if (attrs['src'] != null && attrs['src']!.contains("youtube.com/embed")) {
+                //         if (!request.url.contains("youtube.com/embed")) {
+                //           return NavigationDecision.prevent;
+                //         } else {
+                //           return NavigationDecision.navigate;
+                //         }
+                //       } else {
+                //         return NavigationDecision.navigate;
+                //       }
+                //     },
+                //   ),
+                // );
               }
             },
             style: {
@@ -582,7 +638,7 @@ Widget viewContent(BuildContext context, int index, ViewController controller) =
               "body": Style(
                 fontSize: FontSize(GlobalController.i.userStorage.read('fontSizeView')),
               )..margin = EdgeInsets.only(bottom: 0, left: 4, right: 3),
-              "span": Style(color: Theme.of(context).primaryColor),
+             // "span": Style(color: Theme.of(context).primaryColor),
               "blockquote": Style(width: double.infinity)
                 ..margin = EdgeInsets.only(left: 5.0, right: 5.0, bottom: 10.0)
                 ..display = Display.BLOCK,

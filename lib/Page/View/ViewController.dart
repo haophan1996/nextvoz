@@ -173,10 +173,10 @@ class ViewController extends GetxController {
       data['xfCsrfPost'] = GlobalController.i.xfCsrfPost;
       if (value.getElementsByTagName('html')[0].attributes['data-logged-in'] == 'true') {
         GlobalController.i.isLogged.value = true;
-        NaviDrawerController.i.titleUser.value = GlobalController.i.userStorage.read('titleUser');
-        NaviDrawerController.i.linkUser.value = GlobalController.i.userStorage.read('linkUser');
-        NaviDrawerController.i.avatarUser.value = GlobalController.i.userStorage.read('avatarUser');
-        NaviDrawerController.i.nameUser.value = GlobalController.i.userStorage.read('nameUser');
+        // NaviDrawerController.i.titleUser.value = GlobalController.i.userStorage.read('titleUser');
+        // NaviDrawerController.i.linkUser.value = GlobalController.i.userStorage.read('linkUser');
+        // NaviDrawerController.i.avatarUser.value = GlobalController.i.userStorage.read('avatarUser');
+        // NaviDrawerController.i.nameUser.value = GlobalController.i.userStorage.read('nameUser');
         GlobalController.i.inboxNotifications = value.getElementsByClassName('p-navgroup-link--conversations').length > 0
             ? int.parse(value.getElementsByClassName('p-navgroup-link--conversations')[0].attributes['data-badge'].toString())
             : 0;
@@ -282,10 +282,10 @@ class ViewController extends GetxController {
       data['xfCsrfPost'] = GlobalController.i.xfCsrfPost;
       if (value.getElementsByTagName('html')[0].attributes['data-logged-in'] == 'true') {
         GlobalController.i.isLogged.value = true;
-        NaviDrawerController.i.titleUser.value = GlobalController.i.userStorage.read('titleUser');
-        NaviDrawerController.i.linkUser.value = GlobalController.i.userStorage.read('linkUser');
-        NaviDrawerController.i.avatarUser.value = GlobalController.i.userStorage.read('avatarUser');
-        NaviDrawerController.i.nameUser.value = GlobalController.i.userStorage.read('nameUser');
+        // NaviDrawerController.i.titleUser.value = GlobalController.i.userStorage.read('titleUser');
+        // NaviDrawerController.i.linkUser.value = GlobalController.i.userStorage.read('linkUser');
+        // NaviDrawerController.i.avatarUser.value = GlobalController.i.userStorage.read('avatarUser');
+        // NaviDrawerController.i.nameUser.value = GlobalController.i.userStorage.read('nameUser');
         GlobalController.i.inboxNotifications = value.getElementsByClassName('p-navgroup-link--conversations').length > 0
             ? int.parse(value.getElementsByClassName('p-navgroup-link--conversations')[0].attributes['data-badge'].toString())
             : 0;
@@ -310,7 +310,7 @@ class ViewController extends GetxController {
       }
 
       value.getElementsByClassName('message message--conversationMessage').forEach((element) {
-        data['_postContent'] = element.getElementsByClassName('message-body js-selectToQuote')[0].getElementsByClassName('bbWrapper')[0].innerHtml;
+        data['_postContent'] = _removeTag(element.getElementsByClassName('message-body js-selectToQuote')[0].getElementsByClassName('bbWrapper')[0].innerHtml);
         data['postID'] =
             element.getElementsByClassName('actionBar-action actionBar-action--mq u-jsOnly js-multiQuote')[0].attributes['data-message-id'];
         data['name'] = element.getElementsByClassName('username ')[0].text;

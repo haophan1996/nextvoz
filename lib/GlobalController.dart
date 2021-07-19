@@ -9,6 +9,9 @@ import 'package:html/dom.dart' as dom;
 import 'package:html/parser.dart' as parser;
 import 'package:dio/dio.dart';
 import 'package:vozforums/Page/NavigationDrawer/NaviDrawerController.dart';
+import 'package:mailer/mailer.dart';
+import 'package:mailer/smtp_server.dart';
+import 'package:vozforums/Page/reuseWidget.dart';
 
 class GlobalController extends GetxController {
   static GlobalController get i => Get.find();
@@ -119,7 +122,7 @@ class GlobalController extends GetxController {
     return jsonDecode(response.body);
   }
 
-  setDataUser() async {
+  Future<void> setDataUser() async {
     if (userStorage.read('shortcut') != null) {
       NaviDrawerController.i.shortcuts.clear();
       NaviDrawerController.i.shortcuts = await userStorage.read('shortcut');
@@ -129,6 +132,9 @@ class GlobalController extends GetxController {
       xfUser = await userStorage.read('xf_user');
       xfSession = await userStorage.read('xf_session');
       dio.options.headers['cookie'] = 'xf_user=${xfUser.toString()}; xf_session=${xfSession.toString()}';
+      NaviDrawerController.i.avatarUser.value = await userStorage.read('avatarUser');
+      NaviDrawerController.i.nameUser.value = await userStorage.read('nameUser');
+      NaviDrawerController.i.titleUser.value = await userStorage.read('titleUser');
     }
   }
 
@@ -138,7 +144,7 @@ class GlobalController extends GetxController {
 
   final langList = {Locale('en', 'US'), Locale('vi', 'VN')};
 
-  checkUserSetting() async {
+  Future<void> checkUserSetting() async {
     if (userStorage.read('lang') == null) {
       await userStorage.write('lang', 0);
     }
@@ -265,4 +271,45 @@ class GlobalController extends GetxController {
     {'dir': "popopo/waaaht.png", 'symbol': ":waaaht:"},
     {'dir': "popopo/what.png", 'symbol': ":what:"}
   ];
+
+
+  sendFeedBack(BuildContext context,String content, String emailValue, String feedBackTitle) async {
+    setDialog(context, 'Xin Vui lòng Đợi', 'Loading');
+
+
+    final smtpServer = gmail(username, password);
+    // Use the SmtpServer class to configure an SMTP server:
+    // final smtpServer = SmtpServer('smtp.domain.com');
+    // See the named arguments of SmtpServer for further configuration
+    // options.
+
+    // Create our message.
+    final message = Message()
+      ..from = Address(username, emailValue)
+      ..recipients.add('vozforumsfeedback@gmail.com')
+    //..ccRecipients.addAll(['destCc1@example.com', 'destCc2@example.com'])
+    //..bccRecipients.add(Address('bccAddress@example.com'))
+      ..subject = feedBackTitle
+     // ..text = 'This is the plain text.\nThis is line 2 of the text part.'
+      ..html = emailValue+'\n'+content;
+
+    try {
+      final sendReport = await send(message, smtpServer);
+      print('Message sent: ' + sendReport.toString());
+      Get.back();
+      Get.back();
+      NaviDrawerController.i.feedBackCNameController.clear();
+      NaviDrawerController.i.feedBackContentController.clear();
+      NaviDrawerController.i.feedBackCTitleController.clear();
+      Get.defaultDialog(title: 'Thông báo', content: Text('Đả Gửi'),textConfirm: 'Ok', onConfirm: (){
+       if (Get.isDialogOpen == true) Get.back();
+      });
+    } on MailerException catch (e) {
+      print('Message not sent.');
+      for (var p in e.problems) {
+        print('Problem: ${p.code}: ${p.msg}');
+      }
+    }
+
+  }
 }

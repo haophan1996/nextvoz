@@ -28,8 +28,10 @@ Future<void> main() async {
   Get.put<NaviDrawerController>(NaviDrawerController(), permanent: true);
   await GetStorage.init().then((value) async {
     await GlobalController.i.checkUserSetting();
+    await GlobalController.i.setDataUser();
   });
   runApp(MyPage());
+
 }
 
 class MyPage extends StatelessWidget {

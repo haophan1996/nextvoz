@@ -11,7 +11,7 @@ class HomeController extends GetxController {
   @override
   Future<void> onInit() async {
     super.onInit();
-    await GlobalController.i.setDataUser();
+    //await GlobalController.i.setDataUser();
   }
 
   Future<void> onReady() async {
@@ -25,10 +25,10 @@ class HomeController extends GetxController {
       GlobalController.i.dataCsrfLogin = doc.getElementsByTagName('html')[0].attributes['data-csrf'];
       if (doc.getElementsByTagName('html')[0].attributes['data-logged-in'] == 'true') {
         GlobalController.i.isLogged.value = true;
-        NaviDrawerController.i.titleUser.value = GlobalController.i.userStorage.read('titleUser');
-        NaviDrawerController.i.linkUser.value = GlobalController.i.userStorage.read('linkUser');
-        NaviDrawerController.i.avatarUser.value = GlobalController.i.userStorage.read('avatarUser');
-        NaviDrawerController.i.nameUser.value = GlobalController.i.userStorage.read('nameUser');
+        // NaviDrawerController.i.titleUser.value = GlobalController.i.userStorage.read('titleUser');
+        // NaviDrawerController.i.linkUser.value = GlobalController.i.userStorage.read('linkUser');
+        // NaviDrawerController.i.avatarUser.value = GlobalController.i.userStorage.read('avatarUser');
+        // NaviDrawerController.i.nameUser.value = GlobalController.i.userStorage.read('nameUser');
         GlobalController.i.inboxNotifications = doc.getElementsByClassName('p-navgroup-link--conversations').length > 0
             ? int.parse(doc.getElementsByClassName('p-navgroup-link--conversations')[0].attributes['data-badge'].toString())
             : 0;

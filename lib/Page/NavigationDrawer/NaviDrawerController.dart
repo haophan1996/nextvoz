@@ -11,6 +11,10 @@ class NaviDrawerController extends GetxController {
   double heightAppbar = 45;
   TextEditingController textEditingControllerLogin = TextEditingController();
   TextEditingController textEditingControllerPassword = TextEditingController();
+  TextEditingController feedBackContentController = TextEditingController();
+  TextEditingController feedBackCNameController = TextEditingController();
+  TextEditingController feedBackCTitleController = TextEditingController();
+
   RxString nameUser = ''.obs;
   RxString titleUser = ''.obs;
   RxString avatarUser = ''.obs;
@@ -76,7 +80,7 @@ class NaviDrawerController extends GetxController {
         if (value.documentElement!.getElementsByClassName('avatar avatar--l').map((e)=>e.innerHtml).first.contains('span') == true){
           avatarUser.value = 'no';
         } else {
-          avatarUser.value = value.documentElement!.getElementsByClassName('avatarWrapper')[0].getElementsByTagName('img')[0].attributes['src'].toString();
+          avatarUser.value = GlobalController.i.url+value.documentElement!.getElementsByClassName('avatarWrapper')[0].getElementsByTagName('img')[0].attributes['src'].toString();
         }
       });
     }).then((value) async {

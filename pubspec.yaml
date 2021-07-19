@@ -48,6 +48,7 @@ dependencies:
   flutter_html: ^2.1.0
   path_provider: ^2.0.2
   webview_flutter: ^2.0.9
+  mailer: ^5.0.1
 
   flutter:
     sdk: flutter

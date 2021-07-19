@@ -17,6 +17,61 @@ class NaviDrawerUI extends GetView<NaviDrawerController> {
           child: Column(
             children: [
               Text('shortcuts', style: TextStyle(color: Theme.of(context).primaryColor),),
+              CupertinoButton(
+                  child: Container(
+                    width: Get.width,
+                    child: Text('FeedBack', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.red),),
+                  ),
+                  onPressed: () {
+                    Get.defaultDialog(content: Container(child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        TextField(
+                          controller: controller.feedBackCNameController,
+                          decoration: InputDecoration(
+                            hintText: 'Email của bạn',
+                          ),
+                        ),
+                        TextField(
+                          controller: controller.feedBackCTitleController,
+                          decoration: InputDecoration(
+                            hintText: 'Chủ đề',
+                          ),
+                        ),
+                        Container(
+                          height: 120,
+                          child: TextField(
+                            maxLines: 5,
+                            controller: controller.feedBackContentController,
+                            decoration: InputDecoration(
+                              hintText: 'Diễn tã lỗi sản phẩm',
+                            ),
+                          ),
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            CupertinoButton(child: Text('Hủy Bỏ'), onPressed: ()=> Get.back()),
+                            CupertinoButton(child: Text('Gửi'), onPressed: ()async{
+                              if (controller.feedBackContentController.text.length < 2 ||
+                                  controller.feedBackCTitleController.text.length < 2 ||
+                                  controller.feedBackCNameController.text.length < 2
+                              )   {
+                                Get.snackbar('Thông Báo', 'Lỗi kí tự quá ngắn, it nhất 2 kí tự trở lên', colorText: Colors.red, backgroundColor: Colors.black);
+                              } else {
+                                GlobalController.i.sendFeedBack(
+                                    context,
+                                    controller.feedBackContentController.text.toString(),
+                                    controller.feedBackCNameController.text.toString(),
+                                    controller.feedBackCTitleController.text.toString());
+                              }
+
+                            }),
+                          ],
+                        )
+                      ],
+                    ),));
+                  }),
               Expanded(
                 child: GetBuilder<NaviDrawerController>(
                   builder: (controller) {
@@ -76,7 +131,7 @@ Widget logged(BuildContext context) {
                               height: 48,
                               width: 48,
                             ).image
-                          : ExtendedNetworkImageProvider((GlobalController.i.url + NaviDrawerController.i.avatarUser.value), cache: true),
+                          :  ExtendedNetworkImageProvider((NaviDrawerController.i.avatarUser.value), cache: true),
                     ),
                   ),
                 ),

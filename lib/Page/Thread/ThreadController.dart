@@ -5,7 +5,6 @@ import 'package:get/get.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:vozforums/GlobalController.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
-import 'package:vozforums/Page/NavigationDrawer/NaviDrawerController.dart';
 import 'package:vozforums/Page/View/ViewController.dart';
 
 class ThreadController extends GetxController {
@@ -62,10 +61,10 @@ class ThreadController extends GetxController {
       lengthHtmlDataList = myThreadList.length;
       if (value.getElementsByTagName('html')[0].attributes['data-logged-in'] == 'true') {
         GlobalController.i.isLogged.value = true;
-        NaviDrawerController.i.titleUser.value = GlobalController.i.userStorage.read('titleUser');
-        NaviDrawerController.i.linkUser.value = GlobalController.i.userStorage.read('linkUser');
-        NaviDrawerController.i.avatarUser.value = GlobalController.i.userStorage.read('avatarUser');
-        NaviDrawerController.i.nameUser.value = GlobalController.i.userStorage.read('nameUser');
+        // NaviDrawerController.i.titleUser.value = GlobalController.i.userStorage.read('titleUser');
+        // NaviDrawerController.i.linkUser.value = GlobalController.i.userStorage.read('linkUser');
+        // NaviDrawerController.i.avatarUser.value = GlobalController.i.userStorage.read('avatarUser');
+        // NaviDrawerController.i.nameUser.value = GlobalController.i.userStorage.read('nameUser');
         GlobalController.i.inboxNotifications = value.getElementsByClassName('p-navgroup-link--conversations').length > 0
             ? int.parse(value.getElementsByClassName('p-navgroup-link--conversations')[0].attributes['data-badge'].toString())
             : 0;
