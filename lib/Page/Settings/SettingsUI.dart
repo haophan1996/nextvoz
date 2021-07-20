@@ -19,9 +19,9 @@ class SettingsUI extends GetView<SettingsController> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  text(
+                  Text(
                     'lang'.tr,
-                    TextStyle(fontWeight: FontWeight.bold),
+                    style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                   Spacer(),
                   FlutterReactionButton(
@@ -38,9 +38,9 @@ class SettingsUI extends GetView<SettingsController> {
               ),
               Row(
                 children: [
-                  text(
+                  Text(
                     'fontSizeView'.tr,
-                    TextStyle(fontWeight: FontWeight.bold),
+                    style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                   Obx(() => Expanded(
                         child: Slider(
@@ -57,9 +57,9 @@ class SettingsUI extends GetView<SettingsController> {
               ),
               Row(
                 children: [
-                  text(
+                  Text(
                     'scrollToMyRepAfterPost'.tr,
-                    TextStyle(fontWeight: FontWeight.bold),
+                    style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                   Spacer(),
                   Obx(()=> CupertinoSwitch(

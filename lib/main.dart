@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:vozforums/Page/Pop/PopBinding.dart';
-import 'package:vozforums/Page/Pop/pop.dart';
+import 'package:vozforums/Page/Pop/PopUI.dart';
 import 'package:vozforums/Page/PostStatus/PostStatusBindings.dart';
 import 'package:vozforums/Page/PostStatus/PostStatusUI.dart';
 import 'package:vozforums/Page/Settings/SettingsBinding.dart';

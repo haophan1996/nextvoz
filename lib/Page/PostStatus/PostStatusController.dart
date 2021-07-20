@@ -1,7 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
-import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -11,7 +9,6 @@ import 'package:sliding_up_panel/sliding_up_panel.dart';
 import '../../GlobalController.dart';
 import '../reuseWidget.dart';
 import 'package:html/parser.dart' as parser;
-import 'package:http/http.dart' as http;
 import 'package:html/dom.dart' as dom;
 import 'package:image_picker/image_picker.dart';
 
@@ -127,7 +124,7 @@ class PostStatusController extends GetxController{
       if (value['status'] == 'ok') {
         Get.back(result: ['ok']);
       } else {
-        setDialogError(context, value['errors'][0].toString());
+        setDialogError(value['errors'][0].toString());
       }
     });
   }
@@ -222,7 +219,7 @@ class PostStatusController extends GetxController{
     String temp = html!;
     final dom.Document document = parser.parse(html);
     if (document.getElementsByTagName('img').length > 0){
-      setDialog(context,'Uploading Image', 'Hang tight');
+      setDialog('Uploading Image', 'Hang tight');
     }
 
     for(var element in document.getElementsByTagName('img'))  {
@@ -232,7 +229,7 @@ class PostStatusController extends GetxController{
     }
 
     if (Get.isDialogOpen == true) Get.back();
-    setDialog(context, 'popMess'.tr, 'popMess2'.tr);
+    setDialog('popMess'.tr, 'popMess2'.tr);
     return Future.value(temp);
   }
 

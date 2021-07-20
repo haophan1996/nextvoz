@@ -180,16 +180,17 @@ Widget insertLink(PostStatusController controller) {
 
 Widget insertYoutube(PostStatusController controller) {
   return Container(
+    width: Get.width,
     padding: EdgeInsets.only(left: 15, right: 15),
     color: Colors.transparent,
     child: Column(
       children: [
-        TextField(
-          controller: controller.link,
-          decoration: InputDecoration(
-            hintText: 'Link',
-          ),
-        ),
+        inputCustom(controller.link, false, 'Link', () async {
+          await controller.keyEditor.currentState!.javascriptExecutor
+              .insertHtml('[MEDIA=youtube]${controller.getIDYt(controller.link.text)}[/MEDIA] ');
+          controller.link.clear();
+          Get.back();
+        }),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -239,7 +240,6 @@ Widget insertImage(BuildContext context, PostStatusController controller) {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       CupertinoButton(child: Text('Cancel'), onPressed: () => Get.back()),
-                      CupertinoButton(child: Text(''), onPressed: () => Get.back()),
                       CupertinoButton(
                           child: Text('Done'),
                           onPressed: () {
@@ -279,23 +279,6 @@ Widget insertImage(BuildContext context, PostStatusController controller) {
   );
 }
 
-Widget _buildNewTransition(
-    BuildContext context,
-    Animation<double> animation,
-    Animation<double> secondaryAnimation,
-    Widget child,
-    ) {
-  return ScaleTransition(
-    scale: CurvedAnimation(
-      parent: animation,
-      curve: Curves.bounceIn,
-      reverseCurve: Curves.bounceIn,
-    ),
-    child: child,
-  );
-}
-
-
 Widget emoji(BuildContext context) {
   return Container(
     color: Theme.of(context).backgroundColor.withOpacity(0.5),
@@ -310,17 +293,17 @@ Widget emoji(BuildContext context) {
         children: [
           TabBar(
             tabs: [
-              text(
+              Text(
                 'Smilies Popo',
-                TextStyle(color: Theme.of(context).primaryColor),
+                style: TextStyle(color: Theme.of(context).primaryColor),
               ),
-              text(
+              Text(
                 'Smilies Popo',
-                TextStyle(color: Theme.of(context).primaryColor),
+                style: TextStyle(color: Theme.of(context).primaryColor),
               ),
-              text(
+              Text(
                 'Gif',
-                TextStyle(color: Theme.of(context).primaryColor),
+                style: TextStyle(color: Theme.of(context).primaryColor),
               )
             ],
             onTap: (index) => PostStatusController.i.currentTab = index,

@@ -45,7 +45,7 @@ Widget pageNavigation(BuildContext context, ItemScrollController scrollControlle
                 iconSize: 25,
                 icon: Icon(Icons.arrow_back_ios_rounded),
                 onPressed: () {
-                  setDialog(context, 'popMess'.tr, 'loading3'.tr);
+                  setDialog('popMess'.tr, 'loading3'.tr);
                   firstPage();
                 },
               ),
@@ -64,7 +64,7 @@ Widget pageNavigation(BuildContext context, ItemScrollController scrollControlle
                       child: InkWell(
                         onTap: () {
                           if (index + 1 != currentPage) {
-                            setDialog(context, 'popMess'.tr, 'loading3'.tr);
+                            setDialog('popMess'.tr, 'loading3'.tr);
                             onCall((index + 1).toString());
                           }
                         },
@@ -77,9 +77,9 @@ Widget pageNavigation(BuildContext context, ItemScrollController scrollControlle
                               shape: BoxShape.rectangle,
                               borderRadius: BorderRadius.all(Radius.circular(5))),
                           alignment: Alignment.center,
-                          child: text(
+                          child: Text(
                             (index + 1).toString(),
-                            TextStyle(
+                            style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
                                 color: (index + 1) == currentPage ? Colors.pink : Theme.of(context).primaryColor),
@@ -96,7 +96,7 @@ Widget pageNavigation(BuildContext context, ItemScrollController scrollControlle
                   iconSize: 25,
                   icon: Icon(Icons.arrow_forward_ios_rounded),
                   onPressed: () {
-                    setDialog(context, 'popMess'.tr, 'loading3'.tr);
+                    setDialog('popMess'.tr, 'loading3'.tr);
                     lastPage();
                   }),
             ],

@@ -4,11 +4,13 @@ import 'package:get/get.dart';
 import 'package:vozforums/GlobalController.dart';
 import 'package:vozforums/Page/Pop/PopController.dart';
 import '../View/ViewController.dart';
+import '../reuseWidget.dart';
 
 class Popup extends GetView<PopController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: preferredSize(context, "Alerts", ''),
       body: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.all(Radius.circular(7)),

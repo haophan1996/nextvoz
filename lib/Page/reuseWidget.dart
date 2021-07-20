@@ -67,9 +67,9 @@ Widget blockItem(BuildContext context, FontWeight themeTitleWeight, FontWeight t
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     customTitle(context, titleWeight, null, header11, header12),
-                    text(
+                    Text(
                       "$header21 \u2022 $header22",
-                      TextStyle(color: Colors.grey, fontSize: 12),
+                      style: TextStyle(color: Colors.grey, fontSize: 12),
                     ),
                     Text(
                       header3,
@@ -196,7 +196,7 @@ Widget settings(BuildContext context) => Row(
 Widget textDrawer(Color color, double fontSize, String text, FontWeight fontWeight) =>
     Text(text, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(color: color, fontWeight: fontWeight, fontSize: fontSize));
 
-Widget popUpWaiting(BuildContext context, String one, String two) => Column(
+Widget popUpWaiting( String one, String two) => Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         CupertinoActivityIndicator(),
@@ -204,7 +204,7 @@ Widget popUpWaiting(BuildContext context, String one, String two) => Column(
           height: 20,
         ),
         DefaultTextStyle(
-          style: TextStyle(color: Theme.of(context).primaryColor),
+          style: TextStyle(color: Get.theme.primaryColor),
           child: AnimatedTextKit(
             repeatForever: true,
             isRepeatingAnimation: true,
@@ -232,30 +232,30 @@ Widget inputCustom(TextEditingController controller, bool obscureText, String hi
     ),
   );
 }
-setDialog(BuildContext context, String textF, String textS) => Get.defaultDialog(
+setDialog(String textF, String textS) => Get.defaultDialog(
     barrierDismissible: false,
     radius: 6,
-    backgroundColor: Theme.of(context).canvasColor.withOpacity(0.8),
-    content: popUpWaiting(context, textF, textS),
+    backgroundColor: Get.theme.canvasColor.withOpacity(0.8),
+    content: popUpWaiting(textF, textS),
     title: 'status'.tr);
 
-setDialogError(BuildContext context, String text) => Get.defaultDialog(
+setDialogError(String text) => Get.defaultDialog(
       content: Text(text, textAlign: TextAlign.center),
       textConfirm: 'Ok',
       title: 'Error',
       confirmTextColor: Colors.white,
       onConfirm: () => Get.back(),
       buttonColor: Colors.red,
-      backgroundColor: Theme.of(context).canvasColor,
+      backgroundColor: Get.theme.canvasColor,
     );
 
 Widget buildFlagsPreviewIcon(String path, String tex) => Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       child: Column(
         children: [
-          text(
+          Text(
             tex,
-            TextStyle(
+            style: TextStyle(
               fontSize: 10,
               fontWeight: FontWeight.w300,
               color: Colors.blue,
@@ -276,11 +276,6 @@ Widget buildIcon(String path, String text) => Row(
         ),
         Text(' ' + text.tr)
       ],
-    );
-
-Widget text(String text, TextStyle style) => Text(
-      text,
-      style: style,
     );
 
 Widget rowNew(String pathImage, Widget text) => Row(
@@ -378,6 +373,64 @@ Widget listReactionUI(BuildContext context, ViewController controller) {
   );
 }
 
+Widget onTapUser() {
+  return Column(
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      CupertinoButton(
+          child: Container(
+            width: Get.width,
+            child: Text('Start conversation'),
+          ),
+          onPressed: () {}),
+      CupertinoButton(
+          child: Container(
+            width: Get.width,
+            child: Text('Follow'),
+          ),
+          onPressed: () {}),
+      CupertinoButton(
+          child: Container(
+            width: Get.width,
+            child: Text('Ignore'),
+          ),
+          onPressed: () {}),
+      CupertinoButton(
+          child: Container(
+            width: Get.width,
+            child: Text('View Profile'),
+          ),
+          onPressed: () {}),
+      CupertinoButton(
+          child: Container(
+            width: Get.width,
+            child: Text('Report'),
+          ),
+          onPressed: () {}),
+    ],
+  );
+}
+
+Widget onTapMine(ViewController controller, int index){
+  return Column(
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      CupertinoButton(
+          child: Container(
+            width: Get.width,
+            child: Text('Edit'),
+          ),
+          onPressed: ()async => controller.editRep(index)),
+      CupertinoButton(
+          child: Container(
+            width: Get.width,
+            child: Text('Delete'),
+          ),
+          onPressed: () {})
+    ],
+  );
+}
+
 Widget viewContent(BuildContext context, int index, ViewController controller) => Container(
       color: Theme.of(context).backgroundColor,
       child: Column(
@@ -420,29 +473,7 @@ Widget viewContent(BuildContext context, int index, ViewController controller) =
                                 recognizer: new TapGestureRecognizer()
                                   ..onTap = () => Get.bottomSheet(Card(
                                     color: Theme.of(context).canvasColor,
-                                    child: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        CupertinoButton(
-                                            child: Container(
-                                              width: Get.width,
-                                              child: Text('Report'),
-                                            ),
-                                            onPressed: () {}),
-                                        CupertinoButton(
-                                            child: Container(
-                                              width: Get.width,
-                                              child: Text('Edit'),
-                                            ),
-                                            onPressed: () {}),
-                                        CupertinoButton(
-                                            child: Container(
-                                              width: Get.width,
-                                              child: Text('Delete'),
-                                            ),
-                                            onPressed: () {})
-                                      ],
-                                    ),
+                                    child: controller.htmlData.elementAt(index)['userName'] == NaviDrawerController.i.nameUser.value ? onTapMine(controller, index) : onTapUser(),
                                   )),
                                 text: controller.htmlData.elementAt(index)['userName'] + "\n",
                                 style: TextStyle(color: Color(0xFFFD6E00), fontWeight: FontWeight.bold, fontSize: 16)),
@@ -461,14 +492,14 @@ Widget viewContent(BuildContext context, int index, ViewController controller) =
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: <Widget>[
-                          text(controller.htmlData.elementAt(index)['userPostDate'], TextStyle(color: Theme.of(context).primaryColor, fontSize: 13)),
+                          Text(controller.htmlData.elementAt(index)['userPostDate'], style: TextStyle(color: Theme.of(context).primaryColor, fontSize: 13)),
                           controller.htmlData.elementAt(index)['newPost'] == false
-                              ? text(
-                                  controller.htmlData.elementAt(index)['orderPost'], TextStyle(color: Theme.of(context).primaryColor, fontSize: 13))
+                              ? Text(
+                                  controller.htmlData.elementAt(index)['orderPost'], style: TextStyle(color: Theme.of(context).primaryColor, fontSize: 13))
                               : rowNew(
                                   'assets/newPost.png',
-                                  text(controller.htmlData.elementAt(index)['orderPost'],
-                                      TextStyle(color: Theme.of(context).primaryColor, fontSize: 13)))
+                                  Text(controller.htmlData.elementAt(index)['orderPost'],
+                                      style: TextStyle(color: Theme.of(context).primaryColor, fontSize: 13)))
                         ],
                       ),
                     ),
@@ -487,9 +518,9 @@ Widget viewContent(BuildContext context, int index, ViewController controller) =
                 if (renderContext.tree.element!.attributes['src']!.contains("/styles/next/xenforo")) {
                   return Image.asset(GlobalController.i.getEmoji(renderContext.tree.element!.attributes['src'].toString()));
                 } else if (renderContext.tree.element!.attributes['src']!.contains("twemoji.maxcdn.com")) {
-                  return text(
+                  return Text(
                     renderContext.tree.element!.attributes['alt']!,
-                    TextStyle(fontSize: 25),
+                    style: TextStyle(fontSize: 25),
                   );
                 } else {
                   return PinchZoomImage(
@@ -525,7 +556,7 @@ Widget viewContent(BuildContext context, int index, ViewController controller) =
                         expanded: ExpandableButton(
                           child: Container(
                             padding: EdgeInsets.all(10),
-                            child: text(
+                            child: Text(
                                 'blockQuote'.tr +
                                     (renderContext.tree.element!.getElementsByClassName("bbCodeBlock-title").length > 0
                                         ? renderContext.tree.element!
@@ -534,7 +565,7 @@ Widget viewContent(BuildContext context, int index, ViewController controller) =
                                             .innerHtml
                                             .toString()
                                         : ""),
-                                TextStyle(fontWeight: FontWeight.bold)),
+                                style: TextStyle(fontWeight: FontWeight.bold)),
                             width: double.infinity,
                             decoration: BoxDecoration(
                               color: Theme.of(context).secondaryHeaderColor,
@@ -702,7 +733,7 @@ Widget viewContent(BuildContext context, int index, ViewController controller) =
                             if (value['status'] != 'error') {
                               controller.htmlData.elementAt(index)['commentByMe'] = 0;
                             } else {
-                              setDialogError(context, value['mess']);
+                              setDialogError(value['mess']);
                             }
                           });
                         } else {
@@ -710,7 +741,7 @@ Widget viewContent(BuildContext context, int index, ViewController controller) =
                             if (value['status'] != 'error') {
                               controller.htmlData.elementAt(index)['commentByMe'] = i;
                             } else {
-                              setDialogError(context, value['mess']);
+                              setDialogError(value['mess']);
                             }
                           });
                         }
@@ -728,10 +759,10 @@ Widget viewContent(BuildContext context, int index, ViewController controller) =
                     onPressed: () {
                       Future.delayed(Duration(milliseconds: 100), () {
                         // controller.reply();
-                        controller.quote(context, index);
+                        controller.quote(index);
                       });
                     },
-                    child: text('rep'.tr, TextStyle()))
+                    child: Text('rep'.tr))
               ],
             ),
           )

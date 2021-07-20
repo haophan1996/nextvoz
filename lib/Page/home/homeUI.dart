@@ -80,9 +80,9 @@ theme(String theme, BuildContext context) {
   return Container(
     color: Theme.of(context).canvasColor,
     child: ListTile(
-      title: text(
+      title: Text(
         theme,
-        TextStyle(color: Theme.of(context).primaryColor, fontWeight: FontWeight.w900),
+        style: TextStyle(color: Theme.of(context).primaryColor, fontWeight: FontWeight.w900),
       ),
     ),
   );

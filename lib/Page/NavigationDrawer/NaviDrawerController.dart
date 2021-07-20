@@ -24,7 +24,7 @@ class NaviDrawerController extends GetxController {
 
   Future<void> loginFunction(BuildContext context) async {
     statusLogin = '';
-    setDialog(context, 'popMess'.tr, 'popMess2'.tr);
+    setDialog('popMess'.tr, 'popMess2'.tr);
     if (textEditingControllerLogin.text.length < 6 || textEditingControllerPassword.text.length <6){
       statusLogin = 'statusLoginInvalid'.tr;
       update();

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -10,11 +12,11 @@ import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vozforums/GlobalController.dart';
-import 'package:vozforums/Page/NavigationDrawer/NaviDrawerController.dart';
 import 'package:vozforums/Page/reuseWidget.dart';
 import 'dart:io';
 import 'package:html/parser.dart' as parser;
 import 'package:html/dom.dart' as dom;
+import 'package:http/http.dart' as http;
 
 class ViewController extends GetxController {
   List htmlData = [];
@@ -374,13 +376,14 @@ class ViewController extends GetxController {
 
   Future reactionPost(int index, String idPost, int idReact, BuildContext context) async {
     var status = {};
-    setDialog(context, 'popMess'.tr, 'popMess5'.tr);
+    setDialog('popMess'.tr, 'popMess5'.tr);
     var headers = {
       'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
       'host': 'voz.vn',
       'cookie': '${data['xfCsrfPost']}; xf_user=${GlobalController.i.xfUser};',
     };
     var body = {'_xfWithData': '1', '_xfToken': '${data['dataCsrfPost']}', '_xfResponseType': 'json'};
+
     await GlobalController.i
         .getHttpPost(headers, body,
             '${data['view'] == 0 ? GlobalController.i.viewReactLink : GlobalController.i.inboxReactLink}$idPost/react?reaction_id=$idReact?reaction_id=$idReact')
@@ -412,15 +415,7 @@ class ViewController extends GetxController {
     return status;
   }
 
-  reply(String message) async {
-    /// Todo
-    /// Once PostStatus pop back,
-    /// It will receives result from User
-    /// Based User decide, stay on current page or goto last page
-    /// Result will return as boolean true or false
-    /// if
-    ///   true -> last page
-    ///   false -> stay current page
+  reply(String message, bool isReply) async {
     //                                            token               xf_csrf             link
     var x = await Get.toNamed('/PostStatus', arguments: [data['xfCsrfPost'], data['dataCsrfPost'], data['fullUrl'], message]);
     if (x?[0] == 'ok'){
@@ -435,9 +430,35 @@ class ViewController extends GetxController {
     }
   }
 
-  Future<void> quote(BuildContext context, int index) async {
-    print(data['fullUrl']);
-    setDialog(context, 'popMess'.tr, 'popMess2'.tr);
+
+
+  editRep(int index) async{
+    if (Get.isBottomSheetOpen==true) Get.back();
+    setDialog('loading3', 'loading3');
+
+    String url = '${data['view'] == 0 ? GlobalController.i.viewReactLink : GlobalController.i.inboxReactLink}${htmlData.elementAt(index)['postID']}/edit?_xfToken=${data['dataCsrfPost']}&_xfResponseType=json';
+    var headers = {
+      'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
+      'host': 'voz.vn',
+      'cookie': '${data['xfCsrfPost']}; xf_user=${GlobalController.i.xfUser};',
+    };
+
+
+    await GlobalController.i.getHttp(headers,url).then((value) {
+      if (Get.isDialogOpen == true) Get.back();
+      if (value['status'] == 'ok'){
+        //print(fixEdit(value['html']['content']));
+        reply(fixEdit(value['html']['content']), false);
+      } else {
+        setDialogError(value['errors'][0]);
+      }
+    });
+
+
+  }
+
+  Future<void> quote(int index) async {
+    setDialog('popMess'.tr, 'popMess2'.tr);
     var headers = {
       'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
       'host': 'voz.vn',
@@ -454,23 +475,72 @@ class ViewController extends GetxController {
               fixQuote(value['quoteHtml']);
               //reply(value['quoteHtml']+'<br>');
             } else {
-              setDialogError(context, value['errors'][0].toString());
+              setDialogError(value['errors'][0].toString());
             }
           },
         );
   }
 
-  fixQuote(String html){
-    String temp = html;
-    dom.Document document = parser.parse(html);
-    document.getElementsByTagName('img').forEach((element) {
-      if (element.outerHtml.contains('smilie smilie--emoji')){
-        var s = element.outerHtml.replaceAll('>', ' />');
-        temp = temp.replaceAll(s, element.attributes['alt'].toString());
-      }
+  fixQuote(String html)async{
+    reply(await fixHtmlUrl(html)+'<br>', true);
+  }
 
-    });
-    temp = temp.replaceAll('/styles/next/xenforo/smilies', 'https://voz.vn//styles/next/xenforo/smilies');
-    reply(temp+'<br>');
+  fixHtmlUrl(String html) async {
+    dom.Document document = parser.parse(html);
+    for(var element in document.getElementsByTagName('img')){
+      if (element.outerHtml.contains('smilie smilie--emoji')){
+        html = html.replaceAll(element.outerHtml.replaceAll('>', ' />'), element.attributes['alt'].toString());
+      } else if (element.attributes['class'] == 'smilie'){
+        var img = await getImageFileFromAssets(element.attributes['src']!.split('smilies/')[1].split('?')[0]);
+        html = html.replaceAll(element.outerHtml.replaceAll('>', ' />'), '<img src="${img.path}" class="smilie">');
+      }
+    }
+    return html.replaceAll('src="/attachments', 'src="https://voz.vn//attachments').replaceAll('\'', '&#039;').replaceAll('amp;', '');
+  }
+
+  fixEdit(String html){
+    late List code = [];
+    html = '<textarea name=' + html.split('<textarea name=')[1].split('</textarea>')[0] + '</textarea>';
+    dom.Document document = parser.parse(html);
+    html = document.getElementsByTagName('textarea')[0].innerHtml;
+
+    if (html.contains('[/CODE]')==true){
+      int lengthCode = (html.split('[/CODE]').length);
+      while(lengthCode!=1){
+        lengthCode-=1;
+        String first = '[CODE'+ html.split('[CODE')[1].split('[/CODE]')[0]+'[/CODE]';
+        html = html.replaceAll(first, '[comCodeLength$lengthCode]');
+        code.insert(0, first);
+      }
+    }
+
+    html = html.replaceAll('&lt;', '<')
+        .replaceAll('&gt;', '>')
+        .replaceAll('&amp;nbsp;', " ")
+        .replaceAll('&amp;quot;', "\"")
+        .replaceAll('&amp;lt;', '<')
+        .replaceAll('&amp;gt;', '>')
+        .replaceAll('&amp;quot;', "\"")
+        .replaceAll('&quot;', "\"");
+
+    if (html.contains('[comCodeLength')==true){
+      while(code.length != 0){
+        html = html.replaceAll('[comCodeLength${code.length}]', code.elementAt(code.length-1));
+        code.removeLast();
+      }
+    }
+
+    return fixHtmlUrl(html);
+  }
+
+  Future<File> getImageFileFromAssets(String path) async {
+    final byteData = await rootBundle.load('assets/$path');
+    final file = File('${(await getTemporaryDirectory()).path}/${path.replaceAll("/", '')}');
+    await file.writeAsBytes(byteData.buffer.asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
+    return file;
   }
 }
+
+
+
+

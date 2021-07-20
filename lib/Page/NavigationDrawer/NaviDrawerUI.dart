@@ -172,14 +172,14 @@ Widget logged(BuildContext context) {
                   color: Theme.of(context).primaryColor,
                 ),
                 onPressed: () async {
-                  setDialog(context, 'popMess'.tr, 'popMess3'.tr);
+                  setDialog('popMess'.tr, 'popMess3'.tr);
                   await NaviDrawerController.i.getUserProfile();
                   Get.back();
                 },
               ), //Refresh user data
               CupertinoButton(
                   padding: EdgeInsets.only(right: 10),
-                  child: text('logout'.tr, TextStyle()),
+                  child: Text('logout'.tr),
                   onPressed: () async {
                     await NaviDrawerController.i.logout();
                   }),
@@ -202,7 +202,7 @@ Widget login(BuildContext context) {
             children: [
               Expanded(
                   child: ListTile(
-                title: text('login'.tr, TextStyle()),
+                title: Text('login'.tr),
                 onTap: () {
                   NaviDrawerController.i.statusLogin = '';
                   NaviDrawerController.i.textEditingControllerPassword.text = '';
@@ -220,9 +220,9 @@ Widget login(BuildContext context) {
                       ),
                       child: Column(
                         children: [
-                          text(
+                          Text(
                             'loginMess'.tr,
-                            TextStyle(color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold),
+                            style: TextStyle(color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold),
                           ),
                           Padding(
                             padding: EdgeInsets.fromLTRB(15, 15, 15, 5),
@@ -234,11 +234,11 @@ Widget login(BuildContext context) {
                                 () async => await NaviDrawerController.i.loginFunction(context)),
                           ),
                           GetBuilder<NaviDrawerController>(builder: (controller) {
-                            return text(controller.statusLogin, TextStyle(color: Colors.red, fontWeight: FontWeight.bold));
+                            return Text(controller.statusLogin, style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold));
                           }),
                           Expanded(
                               child: TextButton(
-                                  child: text('login'.tr, TextStyle()),
+                                  child: Text('login'.tr),
                                   onPressed: () async {
                                     await NaviDrawerController.i.loginFunction(context);
                                   }))
