@@ -423,7 +423,16 @@ class ViewController extends GetxController {
     ///   false -> stay current page
     //                                            token               xf_csrf             link
     var x = await Get.toNamed('/PostStatus', arguments: [data['xfCsrfPost'], data['dataCsrfPost'], data['fullUrl'], message]);
-    print(x);
+    if (x?[0] == 'ok'){
+      if (await GlobalController.i.userStorage.read('scrollToMyRepAfterPost') == true){
+        String lastPage = totalPage.toString();
+        await setPageOnClick(lastPage);
+        if (totalPage.toString() != lastPage){
+          await setPageOnClick(totalPage.toString());
+        }
+        listViewScrollController.jumpTo(listViewScrollController.position.maxScrollExtent);
+      }
+    }
   }
 
   Future<void> quote(BuildContext context, int index) async {

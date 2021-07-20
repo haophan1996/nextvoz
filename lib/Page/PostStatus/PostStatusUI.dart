@@ -148,21 +148,16 @@ class PostStatusUI extends GetView<PostStatusController> {
 Widget insertLink(PostStatusController controller) {
   return Container(
     padding: EdgeInsets.only(left: 15, right: 15),
+    width: Get.width,
     color: Colors.transparent,
     child: Column(
       children: [
-        TextField(
-          controller: controller.link,
-          decoration: InputDecoration(
-            hintText: 'Link',
-          ),
+        Padding(
+          padding: EdgeInsets.only(bottom: 10),
+          child: inputCustom(controller.link, false, 'Link', () {}),
         ),
-        TextField(
-          controller: controller.label,
-          decoration: InputDecoration(
-            hintText: 'Label',
-          ),
-        ),
+        inputCustom(controller.label, false, 'Label', (){}),
+
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -229,15 +224,16 @@ Widget insertImage(BuildContext context, PostStatusController controller) {
           onPressed: () {
             Get.defaultDialog(content: Container(
               padding: EdgeInsets.only(left: 15, right: 15),
+              width: Get.width,
               color: Colors.transparent,
               child: Column(
                 children: [
-                  TextField(
-                    controller: controller.link,
-                    decoration: InputDecoration(
-                      hintText: 'Image link',
-                    ),
-                  ),
+                  inputCustom(controller.link, false, 'Image link', (){
+                    controller.keyEditor.currentState!.javascriptExecutor.insertCustomImage(controller.link.text);
+                    controller.link.clear();
+                    Get.back();
+                    Get.back();
+                  }),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -266,13 +262,13 @@ Widget insertImage(BuildContext context, PostStatusController controller) {
             child: Text('Upload Image'),
           ),
           onPressed: () async {
-            final pickerFile = await controller.picker.getImage(source: ImageSource.gallery);
+            final pickerFile = await controller.picker.getImage(source: ImageSource.gallery, //imageQuality: 25,
+                maxHeight: 1200,
+                maxWidth: 1200);
             if (pickerFile != null) {
               controller.image = File(pickerFile.path);
-              controller.keyEditor.currentState!.javascriptExecutor.insertCustomImage(controller.image.path);
-              //setDialog(context, 'popMess'.tr, 'popMess2'.tr);
-              //controller.uploadImage();
-              //controller.keyEditor.currentState!.javascriptExecutor.insertImage('url', a)
+              await controller.keyEditor.currentState!.javascriptExecutor.insertCustomImage(controller.image.path);
+              Get.back();
             } else{
               print("No file selected");
             }

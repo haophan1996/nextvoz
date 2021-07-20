@@ -1,5 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -9,6 +11,7 @@ import 'package:sliding_up_panel/sliding_up_panel.dart';
 import '../../GlobalController.dart';
 import '../reuseWidget.dart';
 import 'package:html/parser.dart' as parser;
+import 'package:http/http.dart' as http;
 import 'package:html/dom.dart' as dom;
 import 'package:image_picker/image_picker.dart';
 
@@ -109,6 +112,8 @@ class PostStatusController extends GetxController{
   post(BuildContext context) async {
      String? html = await checkImage(context);
 
+
+
     var headers = {
       'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
       'host': 'voz.vn',
@@ -118,9 +123,9 @@ class PostStatusController extends GetxController{
     var body = {'_xfWithData': '1', '_xfToken': '${data['token']}', '_xfResponseType': 'json', 'message_html': '$html'};
 
     await GlobalController.i.getHttpPost(headers, body, "${data['link']}add-reply").then((value) {
-      Get.back();
+      if (Get.isDialogOpen == true) Get.back();
       if (value['status'] == 'ok') {
-        Get.back(result: ['hey']);
+        Get.back(result: ['ok']);
       } else {
         setDialogError(context, value['errors'][0].toString());
       }
@@ -160,6 +165,7 @@ class PostStatusController extends GetxController{
   numList() => keyEditor.currentState!.javascriptExecutor.insertNumberedList();
 
   checkBox(String nameCheck) => keyEditor.currentState!.javascriptExecutor.insertCheckbox(nameCheck);
+
 
   emoji() async{
     typeWidget = 0;
@@ -204,8 +210,10 @@ class PostStatusController extends GetxController{
     var body = {
       'image' : 'data:image/$type;base64,' + base64Encode(File(src).readAsBytesSync()),
     };
+    
 
-    final response = await GlobalController.i.getHttpPost(headers, body, 'https://2.pik.vn/');
+    var response = await GlobalController.i.getHttpPost(headers, body, 'https://2.pik.vn/');
+
     return 'https://3.pik.vn/' +  response['saved'];
   }
 
@@ -215,7 +223,7 @@ class PostStatusController extends GetxController{
     final dom.Document document = parser.parse(html);
     if (document.getElementsByTagName('img').length > 0){
       setDialog(context,'Uploading Image', 'Hang tight');
-    } else setDialog(context, 'popMess'.tr, 'popMess2'.tr);
+    }
 
     for(var element in document.getElementsByTagName('img'))  {
       if (element.attributes['src']!.contains('com.example.vozforums')){
@@ -223,10 +231,8 @@ class PostStatusController extends GetxController{
       }
     }
 
-    if (document.getElementsByTagName('img').length > 0){
-      Get.back();
-      setDialog(context, 'popMess'.tr, 'popMess2'.tr);
-    }
+    if (Get.isDialogOpen == true) Get.back();
+    setDialog(context, 'popMess'.tr, 'popMess2'.tr);
     return Future.value(temp);
   }
 

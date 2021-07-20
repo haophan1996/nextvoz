@@ -21,7 +21,7 @@ class SettingsUI extends GetView<SettingsController> {
                 children: [
                   text(
                     'lang'.tr,
-                    TextStyle(fontSize: 20),
+                    TextStyle(fontWeight: FontWeight.bold),
                   ),
                   Spacer(),
                   FlutterReactionButton(
@@ -40,7 +40,7 @@ class SettingsUI extends GetView<SettingsController> {
                 children: [
                   text(
                     'fontSizeView'.tr,
-                    TextStyle(fontSize: 20),
+                    TextStyle(fontWeight: FontWeight.bold),
                   ),
                   Obx(() => Expanded(
                         child: Slider(
@@ -53,6 +53,21 @@ class SettingsUI extends GetView<SettingsController> {
                               controller.fontSizeView.value = value;
                             }),
                       ))
+                ],
+              ),
+              Row(
+                children: [
+                  text(
+                    'scrollToMyRepAfterPost'.tr,
+                    TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  Spacer(),
+                  Obx(()=> CupertinoSwitch(
+                    value: controller.switchValuePost.value,
+                    onChanged: (value) {
+                      controller.switchValuePost.value = value;
+                    },
+                  ),)
                 ],
               ),
               CupertinoButton(

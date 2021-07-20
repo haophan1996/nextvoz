@@ -29,6 +29,7 @@ Future<void> main() async {
   await GetStorage.init().then((value) async {
     await GlobalController.i.checkUserSetting();
     await GlobalController.i.setDataUser();
+    await GlobalController.i.setAccountUser();
   });
   runApp(MyPage());
 

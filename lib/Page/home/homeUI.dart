@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -19,6 +21,9 @@ class HomePageUI extends GetView<HomeController> {
       appBar: preferredSize(context, "theNEXTvoz", ''),
       body: slidingUp(
         262,
+        (value) {
+          controller.onSliding.value = value;
+        },
         controller.panelController,
         GetBuilder<HomeController>(
           builder: (controller) {
@@ -54,16 +59,16 @@ class HomePageUI extends GetView<HomeController> {
             );
           },
         ),
-        Container(
-          //elevation: 1,
-          padding: EdgeInsets.only(left: 6,right: 6),
-          child: Column(
-              children: [
-                Obx(
-                      () => GlobalController.i.isLogged.value == false ? login(context) : logged(context),
-                ),
-                whatNew(context)
-              ],
+        Obx(
+          () => BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: controller.onSliding.value * 3.0, sigmaY: controller.onSliding.value * 3.0),
+            child: Container(
+              constraints: BoxConstraints.expand(),
+              padding: EdgeInsets.only(left: 6, right: 6),
+              child: Column(
+                children: [GlobalController.i.isLogged.value == false ? login(context) : logged(context), whatNew(context)],
+              ),
+            ),
           ),
         ),
       ),

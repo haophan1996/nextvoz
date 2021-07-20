@@ -214,6 +214,24 @@ Widget popUpWaiting(BuildContext context, String one, String two) => Column(
       ],
     );
 
+Widget inputCustom(TextEditingController controller, bool obscureText, String hint,Function onEditingComplete){
+  return TextField(
+    onEditingComplete: () async {
+      await onEditingComplete();
+    },
+    textInputAction: TextInputAction.next,
+    controller: controller,
+    style: TextStyle(fontSize: 18, color: Get.theme.primaryColor),
+    obscureText: obscureText,
+    decoration: InputDecoration(
+      labelText: hint.tr,
+      border: OutlineInputBorder(
+        borderSide: BorderSide(color: Color(0xffCED0D2), width: 1),
+        borderRadius: BorderRadius.all(Radius.circular(6)),
+      ),
+    ),
+  );
+}
 setDialog(BuildContext context, String textF, String textS) => Get.defaultDialog(
     barrierDismissible: false,
     radius: 6,
@@ -463,8 +481,9 @@ Widget viewContent(BuildContext context, int index, ViewController controller) =
             data: controller.htmlData.elementAt(index)['postContent'],
             customRender: {
               "img": (renderContext, child) {
-                double? width = double.tryParse(renderContext.tree.element!.attributes['width'].toString());
-                double? height = double.tryParse(renderContext.tree.element!.attributes['height'].toString());
+                 // double? width = double.tryParse(renderContext.tree.element!.attributes['width'].toString());
+                 // double? height = double.tryParse(renderContext.tree.element!.attributes['height'].toString());
+                 //
                 if (renderContext.tree.element!.attributes['src']!.contains("/styles/next/xenforo")) {
                   return Image.asset(GlobalController.i.getEmoji(renderContext.tree.element!.attributes['src'].toString()));
                 } else if (renderContext.tree.element!.attributes['src']!.contains("twemoji.maxcdn.com")) {
@@ -476,9 +495,8 @@ Widget viewContent(BuildContext context, int index, ViewController controller) =
                   return PinchZoomImage(
                     image: ExtendedImage.network(
                       renderContext.tree.element!.attributes['src'].toString(),
-                      fit: BoxFit.contain,
-                      width: width,
-                      height: height,
+                     //width: width,
+                      //height: height,
                       cache: true,
                       clearMemoryCacheIfFailed: true,
                     ),

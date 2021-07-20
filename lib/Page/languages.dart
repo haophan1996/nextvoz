@@ -6,7 +6,7 @@ class Language extends Translations{
   Map<String, Map<String, String>> get keys => {
 
     'en_US' : {
-      'lang'    : 'Language:    ',
+      'lang'    : 'Language :',
       'setPage' : 'Settings',
       'blockQuote'   : 'Quote [CLick to expand]: ',
       'notification'    : 'Alerts',
@@ -31,7 +31,7 @@ class Language extends Translations{
       'login'   : 'Login',
       'logout'  : 'Logout',
       'error'   : 'Error',
-      'fontSizeView' : 'Font size  :   ',
+      'fontSizeView' : 'Font size :',
       'unReact' : 'UnReact',
       'react' : 'React ?',
       'sweet' : 'Sweet',
@@ -39,10 +39,11 @@ class Language extends Translations{
       'sweeted' : 'Sweet',
       'bricked' : 'Brick',
       'createPost' : 'New Post',
+      'scrollToMyRepAfterPost' : 'Enable Scroll To My Post:',
 
     },
     'vi_VN' : {
-      'lang'    : 'Ngôn ngữ     : ',
+      'lang'    : 'Ngôn ngữ :',
       'setPage' : 'Cài Đặt',
       'blockQuote'   : 'Quote [Bấm để xem]: ',
       'notification'    : 'Thông Báo',
@@ -67,7 +68,7 @@ class Language extends Translations{
       'login'   : 'Đăng Nhập',
       'logout'  : 'Đăng Xuất',
       'error'   : 'Thông Báo Lỗi',
-      'fontSizeView' : 'Kích Cỡ Chữ:',
+      'fontSizeView' : 'Kích Cỡ Chữ :',
       'unReact' : 'Bỏ React',
       'react' : 'Ưng ?',
       'sweet' : 'Ưng',
@@ -75,6 +76,7 @@ class Language extends Translations{
       'sweeted' : 'Đả Ưng',
       'bricked' : 'Đả Gạch',
       'createPost' : 'Bài Viet Mới',
+      'scrollToMyRepAfterPost' : 'Tự Động Đến Trang Vừa Trả Lời :',
     }
   };
 

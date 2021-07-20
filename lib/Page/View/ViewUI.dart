@@ -20,6 +20,7 @@ class ViewUI extends StatelessWidget {
       backgroundColor: Theme.of(context).backgroundColor,
       body: slidingUp(
         360,
+        (value) {},
         Get.find<ViewController>(tag: GlobalController.i.tagView.last).panelController,
         GetBuilder<ViewController>(
           tag: GlobalController.i.tagView.last,

@@ -59,7 +59,7 @@ Widget pageNavigation(BuildContext context, ItemScrollController scrollControlle
                   itemCount: totalPage,
                   itemBuilder: (context, index) {
                     return Padding(
-                      padding: EdgeInsets.only(left: index == 0 ? 100 : 2, right: index == totalPage - 1 ? 120 : 0),
+                      padding: EdgeInsets.only(left: index == 0 ? 50 : 2, right: index == totalPage - 1 ? 50 : 0),
                       //left: index == 0 ? 100 : 2, right: index == totalPage - 1 ? 120 : 0
                       child: InkWell(
                         onTap: () {
@@ -107,17 +107,11 @@ Widget pageNavigation(BuildContext context, ItemScrollController scrollControlle
   );
 }
 
-Widget slidingUp(double maxHeight, PanelController panelController, Widget bodyWidget, Widget panelWidget) {
-  RxDouble tramsSlide = 0.0.obs;
+Widget slidingUp(double maxHeight,Function (double) onPanelSlide,PanelController panelController, Widget bodyWidget, Widget panelWidget) {
+
   return SlidingUpPanel(
-    onPanelClosed: () {
-      print('close');
-    },
-    onPanelOpened: () {
-      print('open');
-    },
     onPanelSlide: (value) {
-      tramsSlide.value = value;
+      onPanelSlide(value);
     },
     boxShadow: <BoxShadow>[],
     controller: panelController,
@@ -128,7 +122,7 @@ Widget slidingUp(double maxHeight, PanelController panelController, Widget bodyW
     //Get.height * 0.5,
     backdropEnabled: true,
     backdropTapClosesPanel: true,
-    //backdropColor: Colors.transparent,
+    backdropColor: Colors.transparent,
     color: Colors.transparent,
     panel: panelWidget,
     body: bodyWidget,

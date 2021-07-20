@@ -5,6 +5,7 @@ import '../reuseWidget.dart';
 
 class SettingsController extends GetxController {
   RxDouble fontSizeView = 15.0.obs;
+  RxBool switchValuePost = true.obs;
   var langIndex ;
   getLang(){
     return GlobalController.i.userStorage.read('lang');
@@ -16,6 +17,7 @@ class SettingsController extends GetxController {
     super.onInit();
     langIndex = GlobalController.i.userStorage.read('lang');
     fontSizeView.value = GlobalController.i.userStorage.read('fontSizeView');
+    switchValuePost.value = GlobalController.i.userStorage.read('scrollToMyRepAfterPost');
   }
 
   @override
@@ -25,6 +27,7 @@ class SettingsController extends GetxController {
   }
   
   saveButton() async {
+    await GlobalController.i.userStorage.write('scrollToMyRepAfterPost', switchValuePost.value);
     await GlobalController.i.userStorage.write('fontSizeView', fontSizeView.value);
     Get.updateLocale(GlobalController.i.langList.elementAt(langIndex));
     await GlobalController.i.userStorage.write('lang', langIndex).then((value) => Get.back());

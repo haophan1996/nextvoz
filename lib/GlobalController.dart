@@ -132,6 +132,11 @@ class GlobalController extends GetxController {
       xfUser = await userStorage.read('xf_user');
       xfSession = await userStorage.read('xf_session');
       dio.options.headers['cookie'] = 'xf_user=${xfUser.toString()}; xf_session=${xfSession.toString()}';
+    }
+  }
+
+  Future<void> setAccountUser() async {
+    if (isLogged.value == true) {
       NaviDrawerController.i.avatarUser.value = await userStorage.read('avatarUser');
       NaviDrawerController.i.nameUser.value = await userStorage.read('nameUser');
       NaviDrawerController.i.titleUser.value = await userStorage.read('titleUser');
@@ -146,10 +151,13 @@ class GlobalController extends GetxController {
 
   Future<void> checkUserSetting() async {
     if (userStorage.read('lang') == null) {
-      await userStorage.write('lang', 0);
+      await userStorage.write('lang', 1); // Default Vietnamese
     }
     if (userStorage.read('fontSizeView') == null) {
-      userStorage.write('fontSizeView', 17.0);
+      await userStorage.write('fontSizeView', 18.0); // Default fontSize 18
+    }
+    if (userStorage.read('scrollToMyRepAfterPost') == null) {
+      await userStorage.write('scrollToMyRepAfterPost', true); // D
     }
   }
 
@@ -275,6 +283,7 @@ class GlobalController extends GetxController {
 
   sendFeedBack(BuildContext context,String content, String emailValue, String feedBackTitle) async {
     setDialog(context, 'Xin Vui lòng Đợi', 'Loading');
+
 
 
     final smtpServer = gmail(username, password);

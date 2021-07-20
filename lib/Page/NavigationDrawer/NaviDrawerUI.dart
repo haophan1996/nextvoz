@@ -16,61 +16,68 @@ class NaviDrawerUI extends GetView<NaviDrawerController> {
           color: Theme.of(context).backgroundColor,
           child: Column(
             children: [
-              Text('shortcuts', style: TextStyle(color: Theme.of(context).primaryColor),),
+              Text(
+                'shortcuts',
+                style: TextStyle(color: Theme.of(context).primaryColor),
+              ),
               CupertinoButton(
                   child: Container(
                     width: Get.width,
-                    child: Text('FeedBack', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.red),),
+                    child: Text(
+                      'FeedBack',
+                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.red),
+                    ),
                   ),
                   onPressed: () {
-                    Get.defaultDialog(content: Container(child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        TextField(
-                          controller: controller.feedBackCNameController,
-                          decoration: InputDecoration(
-                            hintText: 'Email của bạn',
-                          ),
-                        ),
-                        TextField(
-                          controller: controller.feedBackCTitleController,
-                          decoration: InputDecoration(
-                            hintText: 'Chủ đề',
-                          ),
-                        ),
-                        Container(
-                          height: 120,
-                          child: TextField(
-                            maxLines: 5,
-                            controller: controller.feedBackContentController,
+                    Get.defaultDialog(
+                        content: Container(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          TextField(
+                            controller: controller.feedBackCNameController,
                             decoration: InputDecoration(
-                              hintText: 'Diễn tã lỗi sản phẩm',
+                              hintText: 'Email của bạn',
                             ),
                           ),
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            CupertinoButton(child: Text('Hủy Bỏ'), onPressed: ()=> Get.back()),
-                            CupertinoButton(child: Text('Gửi'), onPressed: ()async{
-                              if (controller.feedBackContentController.text.length < 2 ||
-                                  controller.feedBackCTitleController.text.length < 2 ||
-                                  controller.feedBackCNameController.text.length < 2
-                              )   {
-                                Get.snackbar('Thông Báo', 'Lỗi kí tự quá ngắn, it nhất 2 kí tự trở lên', colorText: Colors.red, backgroundColor: Colors.black);
-                              } else {
-                                GlobalController.i.sendFeedBack(
-                                    context,
-                                    controller.feedBackContentController.text.toString(),
-                                    controller.feedBackCNameController.text.toString(),
-                                    controller.feedBackCTitleController.text.toString());
-                              }
-
-                            }),
-                          ],
-                        )
-                      ],
-                    ),));
+                          TextField(
+                            controller: controller.feedBackCTitleController,
+                            decoration: InputDecoration(
+                              hintText: 'Chủ đề',
+                            ),
+                          ),
+                          Container(
+                            height: 120,
+                            child: TextField(
+                              maxLines: 5,
+                              controller: controller.feedBackContentController,
+                              decoration: InputDecoration(
+                                hintText: 'Diễn tã lỗi sản phẩm',
+                              ),
+                            ),
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              CupertinoButton(child: Text('Hủy Bỏ'), onPressed: () => Get.back()),
+                              CupertinoButton(
+                                  child: Text('Gửi'),
+                                  onPressed: () async {
+                                    if (controller.feedBackContentController.text.length < 2 ||
+                                        controller.feedBackCTitleController.text.length < 2 ||
+                                        controller.feedBackCNameController.text.length < 2) {
+                                      Get.snackbar('Thông Báo', 'Lỗi kí tự quá ngắn, it nhất 2 kí tự trở lên',
+                                          colorText: Colors.red, backgroundColor: Colors.black);
+                                    } else {
+                                      GlobalController.i.sendFeedBack(context, controller.feedBackContentController.text.toString(),
+                                          controller.feedBackCNameController.text.toString(), controller.feedBackCTitleController.text.toString());
+                                    }
+                                  }),
+                            ],
+                          )
+                        ],
+                      ),
+                    ));
                   }),
               Expanded(
                 child: GetBuilder<NaviDrawerController>(
@@ -78,23 +85,23 @@ class NaviDrawerUI extends GetView<NaviDrawerController> {
                     return controller.shortcuts.length == 0
                         ? Container()
                         : ListView.builder(
-                        itemCount: controller.shortcuts.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          return ListTile(
-                            title: customTitle(context, FontWeight.normal, 1, controller.shortcuts.elementAt(index)['typeTitle'],
-                                controller.shortcuts.elementAt(index)['title']),
-                            onTap: () {
-                              controller.navigateToThread(controller.shortcuts.elementAt(index)['title'],
-                                  controller.shortcuts.elementAt(index)['link'], controller.shortcuts.elementAt(index)['typeTitle']);
-                            },
-                            onLongPress: () async {
-                              controller.shortcuts.removeAt(index);
-                              controller.update();
-                              await GlobalController.i.userStorage.remove('shortcut');
-                              await GlobalController.i.userStorage.write('shortcut', controller.shortcuts);
-                            },
-                          );
-                        });
+                            itemCount: controller.shortcuts.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              return ListTile(
+                                title: customTitle(context, FontWeight.normal, 1, controller.shortcuts.elementAt(index)['typeTitle'],
+                                    controller.shortcuts.elementAt(index)['title']),
+                                onTap: () {
+                                  controller.navigateToThread(controller.shortcuts.elementAt(index)['title'],
+                                      controller.shortcuts.elementAt(index)['link'], controller.shortcuts.elementAt(index)['typeTitle']);
+                                },
+                                onLongPress: () async {
+                                  controller.shortcuts.removeAt(index);
+                                  controller.update();
+                                  await GlobalController.i.userStorage.remove('shortcut');
+                                  await GlobalController.i.userStorage.write('shortcut', controller.shortcuts);
+                                },
+                              );
+                            });
                   },
                 ),
               )
@@ -131,7 +138,13 @@ Widget logged(BuildContext context) {
                               height: 48,
                               width: 48,
                             ).image
-                          :  ExtendedNetworkImageProvider((NaviDrawerController.i.avatarUser.value), cache: true),
+                          : NaviDrawerController.i.avatarUser.value.length > 5
+                              ? ExtendedNetworkImageProvider((NaviDrawerController.i.avatarUser.value), cache: true)
+                              : Image.asset(
+                                  "assets/NoAvata.png",
+                                  height: 48,
+                                  width: 48,
+                                ).image,
                     ),
                   ),
                 ),
@@ -189,81 +202,59 @@ Widget login(BuildContext context) {
             children: [
               Expanded(
                   child: ListTile(
-                    title: text('login'.tr, TextStyle()),
-                    onTap: () {
-                      NaviDrawerController.i.statusLogin = '';
-                      NaviDrawerController.i.textEditingControllerPassword.text = '';
-                      NaviDrawerController.i.textEditingControllerLogin.text = '';
-                      Get.bottomSheet(
-                        Container(
-                          height: Get.height,
-                          width: double.infinity,
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).backgroundColor.withOpacity(0.8),
-                            border: Border.all(color: Colors.grey),
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(6),
-                            ),
+                title: text('login'.tr, TextStyle()),
+                onTap: () {
+                  NaviDrawerController.i.statusLogin = '';
+                  NaviDrawerController.i.textEditingControllerPassword.text = '';
+                  NaviDrawerController.i.textEditingControllerLogin.text = '';
+                  Get.bottomSheet(
+                    Container(
+                      height: Get.height,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).backgroundColor.withOpacity(0.8),
+                        border: Border.all(color: Colors.grey),
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(6),
+                        ),
+                      ),
+                      child: Column(
+                        children: [
+                          text(
+                            'loginMess'.tr,
+                            TextStyle(color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold),
                           ),
-                          child: Column(
-                            children: [
-                              text(
-                                'loginMess'.tr,
-                                TextStyle(color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.fromLTRB(15, 15, 15, 5),
-                                child: TextField(
-                                  textInputAction: TextInputAction.next,
-                                  controller: NaviDrawerController.i.textEditingControllerLogin,
-                                  style: TextStyle(fontSize: 18, color: Theme.of(context).primaryColor),
-                                  obscureText: false,
-                                  decoration: InputDecoration(
-                                    labelText: 'loginAccount'.tr,
-                                    border: OutlineInputBorder(
-                                      borderSide: BorderSide(color: Color(0xffCED0D2), width: 1),
-                                      borderRadius: BorderRadius.all(Radius.circular(6)),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.fromLTRB(15, 5, 15, 5),
-                                child: TextField(
-                                  onEditingComplete: () async {
-                                    await NaviDrawerController.i.loginFunction(context);
-                                  },
-                                  textInputAction: TextInputAction.next,
-                                  controller: NaviDrawerController.i.textEditingControllerPassword,
-                                  style: TextStyle(fontSize: 18, color: Theme.of(context).primaryColor),
-                                  obscureText: true,
-                                  decoration: InputDecoration(
-                                    labelText: 'loginPassword'.tr,
-                                    border: OutlineInputBorder(
-                                      borderSide: BorderSide(color: Color(0xffCED0D2), width: 1),
-                                      borderRadius: BorderRadius.all(Radius.circular(6)),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              GetBuilder<NaviDrawerController>(builder: (controller) {
-                                return text(controller.statusLogin, TextStyle(color: Colors.red, fontWeight: FontWeight.bold));
-                              }),
-                              TextButton(
+                          Padding(
+                            padding: EdgeInsets.fromLTRB(15, 15, 15, 5),
+                            child: inputCustom(NaviDrawerController.i.textEditingControllerLogin, false, 'loginAccount', () {}),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.fromLTRB(15, 5, 15, 5),
+                            child: inputCustom(NaviDrawerController.i.textEditingControllerPassword, true, 'loginPassword',
+                                () async => await NaviDrawerController.i.loginFunction(context)),
+                          ),
+                          GetBuilder<NaviDrawerController>(builder: (controller) {
+                            return text(controller.statusLogin, TextStyle(color: Colors.red, fontWeight: FontWeight.bold));
+                          }),
+                          Expanded(
+                              child: TextButton(
                                   child: text('login'.tr, TextStyle()),
                                   onPressed: () async {
                                     await NaviDrawerController.i.loginFunction(context);
-                                  })
-                            ],
-                          ),
-                        ),
-                      );
-                    },
-                  )),
+                                  }))
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              )),
               CupertinoButton(child: Icon(Icons.settings), onPressed: () => NaviDrawerController.i.navigateToSetting())
             ],
           ),
-          Text('version 1.0', style: TextStyle(height: 3),)
+          Text(
+            'version 1.0',
+            style: TextStyle(height: 3),
+          )
         ],
       ),
     ),

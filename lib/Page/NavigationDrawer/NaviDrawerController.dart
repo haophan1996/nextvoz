@@ -80,7 +80,9 @@ class NaviDrawerController extends GetxController {
         if (value.documentElement!.getElementsByClassName('avatar avatar--l').map((e)=>e.innerHtml).first.contains('span') == true){
           avatarUser.value = 'no';
         } else {
-          avatarUser.value = GlobalController.i.url+value.documentElement!.getElementsByClassName('avatarWrapper')[0].getElementsByTagName('img')[0].attributes['src'].toString();
+          final url = GlobalController.i.url+value.documentElement!.getElementsByClassName('avatarWrapper')[0].getElementsByTagName('img')[0].attributes['src'].toString();;
+          print(url);
+          avatarUser.value = url;
         }
       });
     }).then((value) async {
