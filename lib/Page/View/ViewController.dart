@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -16,7 +14,7 @@ import 'package:vozforums/Page/reuseWidget.dart';
 import 'dart:io';
 import 'package:html/parser.dart' as parser;
 import 'package:html/dom.dart' as dom;
-import 'package:http/http.dart' as http;
+import 'package:expandable/expandable.dart';
 
 class ViewController extends GetxController {
   List htmlData = [];
@@ -37,6 +35,7 @@ class ViewController extends GetxController {
     data['subHeader'] = Get.arguments[0];
     data['subTypeHeader'] = Get.arguments[2] ?? '';
     data['view'] = Get.arguments[3];
+    print(data['view']);
   }
 
   @override
@@ -415,9 +414,9 @@ class ViewController extends GetxController {
     return status;
   }
 
-  reply(String message, bool isReply) async {
+  reply(String message, bool isEditPost) async {
     //                                            token               xf_csrf             link
-    var x = await Get.toNamed('/PostStatus', arguments: [data['xfCsrfPost'], data['dataCsrfPost'], data['fullUrl'], message]);
+    var x = await Get.toNamed('/PostStatus', arguments: [data['xfCsrfPost'], data['dataCsrfPost'], data['fullUrl'], data['postID'],isEditPost,data['view'],message]);
     if (x?[0] == 'ok'){
       if (await GlobalController.i.userStorage.read('scrollToMyRepAfterPost') == true){
         String lastPage = totalPage.toString();
@@ -444,11 +443,11 @@ class ViewController extends GetxController {
     };
 
 
-    await GlobalController.i.getHttp(headers,url).then((value) {
+    await GlobalController.i.getHttp(headers,url).then((value) async{
       if (Get.isDialogOpen == true) Get.back();
       if (value['status'] == 'ok'){
-        //print(fixEdit(value['html']['content']));
-        reply(fixEdit(value['html']['content']), false);
+        data['postID'] = htmlData.elementAt(index)['postID'];
+        reply(await fixEdit(value['html']['content']), true);
       } else {
         setDialogError(value['errors'][0]);
       }
@@ -482,20 +481,23 @@ class ViewController extends GetxController {
   }
 
   fixQuote(String html)async{
-    reply(await fixHtmlUrl(html)+'<br>', true);
+    reply(await fixHtmlUrl(html)+'<br>', false);
   }
 
   fixHtmlUrl(String html) async {
     dom.Document document = parser.parse(html);
-    for(var element in document.getElementsByTagName('img')){
-      if (element.outerHtml.contains('smilie smilie--emoji')){
-        html = html.replaceAll(element.outerHtml.replaceAll('>', ' />'), element.attributes['alt'].toString());
-      } else if (element.attributes['class'] == 'smilie'){
-        var img = await getImageFileFromAssets(element.attributes['src']!.split('smilies/')[1].split('?')[0]);
-        html = html.replaceAll(element.outerHtml.replaceAll('>', ' />'), '<img src="${img.path}" class="smilie">');
+    if (document.getElementsByTagName('img').length > 0){
+      for(var element in document.getElementsByTagName('img')){
+        if (element.outerHtml.contains('smilie smilie--emoji')){
+          html = html.replaceAll(element.outerHtml.replaceAll('>', ' />'), element.attributes['alt'].toString());
+        } else if (element.attributes['class'] == 'smilie'){
+          var img = await GlobalController.i.getImageFileFromAssets(element.attributes['src']!.split('smilies/')[1].split('?')[0]);
+          html = html.replaceAll(element.outerHtml.replaceAll('>', ' />'), '<img src="${img.path}" class="smilie">');
+        }
       }
     }
-    return html.replaceAll('src="/attachments', 'src="https://voz.vn//attachments').replaceAll('\'', '&#039;').replaceAll('amp;', '');
+
+    return html.replaceAll('src="/attachments', 'src="https://voz.vn/attachments').replaceAll('src="/data/attachments', 'src="https://voz.vn/data/attachments').replaceAll('\'', '&#039;').replaceAll('amp;', '');
   }
 
   fixEdit(String html){
@@ -531,13 +533,6 @@ class ViewController extends GetxController {
     }
 
     return fixHtmlUrl(html);
-  }
-
-  Future<File> getImageFileFromAssets(String path) async {
-    final byteData = await rootBundle.load('assets/$path');
-    final file = File('${(await getTemporaryDirectory()).path}/${path.replaceAll("/", '')}');
-    await file.writeAsBytes(byteData.buffer.asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
-    return file;
   }
 }
 

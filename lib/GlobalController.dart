@@ -1,7 +1,9 @@
 import 'dart:convert';
 import 'dart:ui';
+import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
@@ -133,6 +135,13 @@ class GlobalController extends GetxController {
       setDialogError('Server down or No connection\n\n Details: $err');
     });
     return jsonDecode(response.body);
+  }
+
+  Future<File> getImageFileFromAssets(String path) async {
+    final byteData = await rootBundle.load('assets/$path');
+    final file = File('${(await getTemporaryDirectory()).path}/${path.replaceAll("/", '-')}');
+    await file.writeAsBytes(byteData.buffer.asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
+    return file;
   }
 
   Future<void> setDataUser() async {

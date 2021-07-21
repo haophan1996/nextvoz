@@ -54,7 +54,7 @@ class SettingsUI extends GetView<SettingsController> {
                             }),
                       ))
                 ],
-              ),
+              ),//fontsize
               Row(
                 children: [
                   Text(
@@ -69,7 +69,53 @@ class SettingsUI extends GetView<SettingsController> {
                     },
                   ),)
                 ],
-              ),
+              ),//scroll post
+              Row(
+                children: [
+                  Text(
+                    'showGifImageFromImgur'.tr,
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  Spacer(),
+                  Obx(()=> CupertinoSwitch(
+                    value: controller.switchValuePost.value,
+                    onChanged: (value) {
+                      controller.switchValuePost.value = value;
+                    },
+                  ),)
+                ],
+              ),//show gif
+              Row(
+                children: [
+                  Text(
+                    'showOtherImage'.tr,
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  Spacer(),
+                  Obx(()=> CupertinoSwitch(
+                    value: controller.switchValuePost.value,
+                    onChanged: (value) {
+                      controller.switchValuePost.value = value;
+                    },
+                  ),)
+                ],
+              ),//show images
+              Row(
+                children: [
+                  Text(
+                    'appSignature'.tr,
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  Spacer(),
+                  Obx(()=> CupertinoSwitch(
+                    value: controller.switchValuePost.value,
+                    onChanged: (value) {
+                      controller.switchValuePost.value = value;
+                    },
+                  ),)
+                ],
+              ),//app signature
+
               CupertinoButton(
                   child: Text('Save'),
                   onPressed: () {

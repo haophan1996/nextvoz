@@ -40,7 +40,9 @@ class Language extends Translations{
       'bricked' : 'Brick',
       'createPost' : 'New Post',
       'scrollToMyRepAfterPost' : 'Enable Scroll To My Post:',
-
+      'showGifImageFromImgur' : 'Show Gif Image From Imgur',
+      'showOtherImage' : 'Show Other Image',
+      'appSignature' : 'App Signature',
     },
     'vi_VN' : {
       'lang'    : 'Ngôn ngữ :',
@@ -77,6 +79,9 @@ class Language extends Translations{
       'bricked' : 'Đả Gạch',
       'createPost' : 'Bài Viet Mới',
       'scrollToMyRepAfterPost' : 'Tự Động Đến Trang Vừa Trả Lời :',
+      'showGifImageFromImgur' : 'Hiển Thị GIF Emoji Từ Imgur :',
+      'showOtherImage' : 'Hiển Thị Những Hình Ảnh Khác :',
+      'appSignature' : 'Chữ Ký Ứng Dụng',
     }
   };
 

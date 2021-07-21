@@ -29,7 +29,7 @@ class PostStatusUI extends GetView<PostStatusController> {
               itemBuilder: (context) {
                 return [
                   PopupMenuItem(
-                    child: Text('Post'),
+                    child: Text(controller.data['isEditPost'] == true? 'Save' :'Post'),
                     value: 0,
                   ),
                   PopupMenuItem(
@@ -53,7 +53,7 @@ class PostStatusUI extends GetView<PostStatusController> {
               onSelected: (val) async {
                 switch (val) {
                   case 0:
-                    await controller.post(context);
+                    controller.data['isEditPost'] == true? await controller.editPost() : await controller.post();
                     break;
                   case 1:
                     await controller.keyEditor.currentState?.clear();
@@ -108,7 +108,7 @@ class PostStatusUI extends GetView<PostStatusController> {
                   buttonToolHtml(Icons.link_outlined, 'Insert Link', () {
                     Get.defaultDialog(title: 'Insert Link', content: insertLink(controller));
                   }),
-                  buttonToolHtml(Icons.emoji_emotions_outlined, 'Emoji', () => Get.bottomSheet(emoji(context))),
+                  buttonToolHtml(Icons.emoji_emotions_outlined, 'Emoji', () => Get.bottomSheet(emoji(context, controller))),
                   buttonToolHtml(Icons.image_outlined, 'Insert Image', (){
                     Get.bottomSheet(insertImage(context,controller));
                   }),
@@ -279,7 +279,7 @@ Widget insertImage(BuildContext context, PostStatusController controller) {
   );
 }
 
-Widget emoji(BuildContext context) {
+Widget emoji(BuildContext context, PostStatusController controller) {
   return Container(
     color: Theme.of(context).backgroundColor.withOpacity(0.5),
     height: MediaQuery.of(context).viewInsets.bottom != 0.0
@@ -318,8 +318,7 @@ Widget emoji(BuildContext context) {
                       return CupertinoButton(
                           child: Image.asset('assets/${GlobalController.i.smallVozEmoji.elementAt(index)['dir']}'),
                           onPressed: () async {
-                            await PostStatusController.i.keyEditor.currentState!.javascriptExecutor
-                                .insertHtml(' ' + GlobalController.i.smallVozEmoji.elementAt(index)['symbol'].toString() + ' ');
+                            controller.insertEmojiVozOnly(GlobalController.i.smallVozEmoji.elementAt(index)['dir']);
                           });
                     }),
                 GridView.builder(
@@ -330,8 +329,7 @@ Widget emoji(BuildContext context) {
                         padding: EdgeInsets.zero,
                         child: Image.asset('assets/${GlobalController.i.bigVozEmoji.elementAt(index)['dir']}'),
                         onPressed: () async {
-                          await PostStatusController.i.keyEditor.currentState!.javascriptExecutor
-                              .insertHtml(' ' + GlobalController.i.bigVozEmoji.elementAt(index)['symbol'].toString() + ' ');
+                          controller.insertEmojiVozOnly(GlobalController.i.bigVozEmoji.elementAt(index)['dir']);
                         });
                   },
                 ),

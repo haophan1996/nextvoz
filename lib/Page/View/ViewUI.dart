@@ -43,7 +43,7 @@ class ViewUI extends StatelessWidget {
                       controller.totalPage,
                       (index) => controller.setPageOnClick(index),
                       () => controller.setPageOnClick(controller.totalPage.toString()),
-                      () => controller.setPageOnClick("1"), ()=> controller.reply('', true)
+                      () => controller.setPageOnClick("1"), ()=> controller.reply('', false)
                     );
                   }),
               Container(

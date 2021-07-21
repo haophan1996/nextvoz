@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_html/shims/dart_ui_real.dart';
 import 'package:flutter_reaction_button/flutter_reaction_button.dart';
 import 'package:get/get.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -14,6 +15,7 @@ import 'package:vozforums/Page/View/ViewController.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:pinch_zoom_image_last/pinch_zoom_image_last.dart';
 import 'package:vozforums/Page/pageLoadNext.dart';
+
 
 ///  * Global appbar
 PreferredSize preferredSize(BuildContext context, String title, String prefix) => PreferredSize(
@@ -522,12 +524,38 @@ Widget viewContent(BuildContext context, int index, ViewController controller) =
                     renderContext.tree.element!.attributes['alt']!,
                     style: TextStyle(fontSize: 25),
                   );
-                } else {
+                } else if (renderContext.tree.element!.attributes['data-url']!.contains(".gif")){
+
+                  return Image.network(
+                    renderContext.tree.element!.attributes['src'].toString(),
+                    filterQuality: FilterQuality.low,
+                  );
+                }
+                else {
                   return PinchZoomImage(
                     image: ExtendedImage.network(
                       renderContext.tree.element!.attributes['src'].toString(),
                      //width: width,
                       //height: height,
+                      filterQuality: FilterQuality.medium,
+                      loadStateChanged: (value){
+                        switch (value.extendedImageLoadState){
+                          case LoadState.loading: return Text('Loading Image');
+                          case LoadState.completed:
+                            return ExtendedRawImage(
+                                image: value.extendedImageInfo?.image,
+                                //width: ScreenUtil.instance.setWidth(600),
+                                //height: ScreenUtil.instance.setWidth(400),
+                            );
+                            break;
+                          case LoadState.failed:
+                            return InkWell(
+                              child: Text('Load faill'),
+                              onTap: ()=> value.reLoadImage(),
+                            );
+                            break;
+                        }
+                      },
                       cache: true,
                       clearMemoryCacheIfFailed: true,
                     ),
@@ -542,11 +570,6 @@ Widget viewContent(BuildContext context, int index, ViewController controller) =
                 }
               },
               "blockquote": (renderContext, child) {
-                renderContext.tree.children.forEach((element) {
-                  element.style = Style(
-                    display: Display.INLINE,
-                  );
-                });
                 return ExpandableNotifier(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
