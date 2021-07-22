@@ -1,14 +1,15 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:get/get.dart';
+import 'package:html/parser.dart' as parser;
+import 'package:html/dom.dart' as dom;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:get/get.dart';
 import 'package:rich_editor/rich_editor.dart';
-import '../../GlobalController.dart';
-import '../reuseWidget.dart';
-import 'package:html/parser.dart' as parser;
-import 'package:html/dom.dart' as dom;
+import 'package:vozforums/GlobalController.dart';
+import 'package:vozforums/Page/reuseWidget.dart';
+
 import 'package:image_picker/image_picker.dart';
 
 class PostStatusController extends GetxController{
@@ -88,8 +89,6 @@ class PostStatusController extends GetxController{
     data['isEditPost'] = Get.arguments[4] ??= '';
     data['view'] = Get.arguments[5] ??= '';
     data['value'] = Get.arguments[6] ??= '';
-
-
   }
 
   @override
@@ -180,6 +179,19 @@ class PostStatusController extends GetxController{
   numList() => keyEditor.currentState!.javascriptExecutor.insertNumberedList();
 
   checkBox(String nameCheck) => keyEditor.currentState!.javascriptExecutor.insertCheckbox(nameCheck);
+
+  insertLink(){
+    keyEditor.currentState!.javascriptExecutor.insertLink(link.text, label.text == '' ? link.text : label.text);
+    link.clear();
+    label.clear();
+    if (Get.isDialogOpen == true) Get.back();
+  }
+
+  editLink(List<dynamic> args) async{
+    args[0] = link.text;
+    args[1] = label.text;
+    if (Get.isDialogOpen == true) Get.back();
+  }
 
   insertEmojiVozOnly(String url) async {
     var img = await GlobalController.i.getImageFileFromAssets(url);

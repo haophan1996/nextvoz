@@ -1,5 +1,5 @@
-import 'package:flutter_youtube_view/flutter_youtube_view.dart';
 import 'package:get/get.dart';
+import 'package:flutter_youtube_view/flutter_youtube_view.dart';
 
 class YoutubeController extends GetxController implements YouTubePlayerListener{
   double currentVideoSecond = 0.0;

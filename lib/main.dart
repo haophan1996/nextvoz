@@ -1,26 +1,26 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:vozforums/Page/Pop/PopBinding.dart';
-import 'package:vozforums/Page/Pop/PopUI.dart';
-import 'package:vozforums/Page/PostStatus/PostStatusBindings.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:vozforums/theme.dart';
+import 'package:vozforums/Page/languages.dart';
+import 'package:vozforums/Page/home/homeUI.dart';
+import 'package:vozforums/GlobalController.dart';
+import 'package:vozforums/Page/View/ViewUI.dart';
+import 'package:vozforums/Page/Alerts/AlertUI.dart';
+import 'package:vozforums/Page/Thread/ThreadUI.dart';
+import 'package:vozforums/Page/home/homeBinding.dart';
+import 'package:vozforums/Page/Settings/SettingsUI.dart';
+import 'package:vozforums/Page/Alerts/AlertsBinding.dart';
+import 'package:vozforums/Page/Thread/ThreadBinding.dart';
+import 'package:vozforums/Page/youtubeView/ViewYoutube.dart';
 import 'package:vozforums/Page/PostStatus/PostStatusUI.dart';
 import 'package:vozforums/Page/Settings/SettingsBinding.dart';
-import 'package:vozforums/Page/Settings/SettingsUI.dart';
-import 'package:vozforums/Page/UserProfile/UserProfileBinding.dart';
 import 'package:vozforums/Page/UserProfile/UserProfileUI.dart';
-import 'package:vozforums/Page/View/ViewUI.dart';
-import 'package:vozforums/Page/home/homeBinding.dart';
-import 'package:vozforums/Page/Thread/ThreadBinding.dart';
-import 'package:vozforums/Page/Thread/ThreadUI.dart';
-import 'package:vozforums/Page/languages.dart';
-import 'package:vozforums/theme.dart';
-import 'GlobalController.dart';
-import 'Page/NavigationDrawer/NaviDrawerController.dart';
-import 'Page/home/homeUI.dart';
-import 'Page/youtubeView/ViewYoutube.dart';
-import 'Page/youtubeView/YoutubeBinding.dart';
+import 'package:vozforums/Page/youtubeView/YoutubeBinding.dart';
+import 'package:vozforums/Page/PostStatus/PostStatusBindings.dart';
+import 'package:vozforums/Page/UserProfile/UserProfileBinding.dart';
+import 'package:vozforums/Page/NavigationDrawer/NaviDrawerController.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -33,6 +33,10 @@ Future<void> main() async {
   });
   runApp(MyPage());
 
+}
+
+String getTag(){
+  return DateTime.now().millisecondsSinceEpoch.toString();
 }
 
 class MyPage extends StatelessWidget {
@@ -58,7 +62,7 @@ class MyPage extends StatelessWidget {
             popGesture: true,
             //binding: ViewBinding(),
             maintainState: false),
-        GetPage(name: '/Pop', page: () => Popup(), binding: PopBinding(), popGesture: true),
+        GetPage(name: '/Pop', page: () => AlertsUI(), binding: PopBinding(), popGesture: true),
         GetPage(name: "/UserProfile", page: () => UserProfileUI(), popGesture: true, binding: UserProfileBinding(), maintainState: false),
         GetPage(name: '/Youtube', page: () => YoutubeView(), binding: YoutubeBinding(), popGesture: true),
         GetPage(

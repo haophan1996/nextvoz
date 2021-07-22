@@ -1,16 +1,15 @@
 import 'dart:ui';
-
+import 'package:get/get.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:vozforums/GlobalController.dart';
-import 'package:vozforums/Page/NavigationDrawer/NaviDrawerController.dart';
-import 'package:vozforums/Page/NavigationDrawer/NaviDrawerUI.dart';
+import 'package:vozforums/Page/reuseWidget.dart';
 import 'package:vozforums/Page/pageLoadNext.dart';
 import 'package:vozforums/Page/pageNavigation.dart';
+import 'package:vozforums/Page/NavigationDrawer/NaviDrawerController.dart';
+import 'package:vozforums/Page/NavigationDrawer/NaviDrawerUI.dart';
 import 'package:vozforums/Page/Thread/ThreadController.dart';
-import '../reuseWidget.dart';
 
 class ThreadUI extends GetView<ThreadController> {
   @override

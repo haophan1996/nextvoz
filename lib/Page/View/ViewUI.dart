@@ -1,7 +1,6 @@
+import 'package:get/get.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:get/get.dart';
 import 'package:vozforums/Page/NavigationDrawer/NaviDrawerUI.dart';
 import 'package:vozforums/Page/pageNavigation.dart';
 import 'package:vozforums/Page/reuseWidget.dart';
@@ -15,15 +14,15 @@ class ViewUI extends StatelessWidget {
       endDrawer: NaviDrawerUI(),
       endDrawerEnableOpenDragGesture: true,
       drawerEdgeDragWidth: MediaQuery.of(context).size.width * 0.2,
-      appBar: preferredSize(context, Get.find<ViewController>(tag: GlobalController.i.tagView.last).data['subHeader'],
-          Get.find<ViewController>(tag: GlobalController.i.tagView.last).data['subTypeHeader']),
+      appBar: preferredSize(context, Get.find<ViewController>(tag: GlobalController.i.sessionTag.last).data['subHeader'],
+          Get.find<ViewController>(tag: GlobalController.i.sessionTag.last).data['subTypeHeader']),
       backgroundColor: Theme.of(context).backgroundColor,
       body: slidingUp(
         360,
         (value) {},
-        Get.find<ViewController>(tag: GlobalController.i.tagView.last).panelController,
+        Get.find<ViewController>(tag: GlobalController.i.sessionTag.last).panelController,
         GetBuilder<ViewController>(
-          tag: GlobalController.i.tagView.last,
+          tag: GlobalController.i.sessionTag.last,
           builder: (controller) {
             return postContent(context, controller);
           },
@@ -34,7 +33,7 @@ class ViewUI extends StatelessWidget {
           child: Column(
             children: [
               GetBuilder<ViewController>(
-                  tag: GlobalController.i.tagView.last,
+                  tag: GlobalController.i.sessionTag.last,
                   builder: (controller) {
                     return pageNavigation(
                       context,

@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'PostStatusController.dart';
+import 'package:vozforums/Page/PostStatus/PostStatusController.dart';
 
 class PostStatusBindings extends Bindings{
   @override

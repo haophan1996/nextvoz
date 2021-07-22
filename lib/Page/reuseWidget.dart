@@ -1,19 +1,19 @@
-import 'package:animated_text_kit/animated_text_kit.dart';
-import 'package:expandable/expandable.dart';
-import 'package:extended_image/extended_image.dart';
+import 'package:get/get.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_html/flutter_html.dart';
-import 'package:flutter_html/shims/dart_ui_real.dart';
-import 'package:flutter_reaction_button/flutter_reaction_button.dart';
-import 'package:get/get.dart';
-import 'package:pull_to_refresh/pull_to_refresh.dart';
-import 'package:vozforums/GlobalController.dart';
-import 'package:vozforums/Page/NavigationDrawer/NaviDrawerController.dart';
-import 'package:vozforums/Page/View/ViewController.dart';
 import 'package:html/dom.dart' as dom;
+import 'package:expandable/expandable.dart';
+import 'package:flutter_html/flutter_html.dart';
+import 'package:extended_image/extended_image.dart';
+import 'package:flutter_html/shims/dart_ui_real.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:pinch_zoom_image_last/pinch_zoom_image_last.dart';
+import 'package:flutter_reaction_button/flutter_reaction_button.dart';
+import 'package:vozforums/GlobalController.dart';
+import 'package:vozforums/Page/NavigationDrawer/NaviDrawerController.dart'; 
+import 'package:vozforums/Page/View/ViewController.dart';
 import 'package:vozforums/Page/pageLoadNext.dart';
 
 
@@ -22,7 +22,7 @@ PreferredSize preferredSize(BuildContext context, String title, String prefix) =
       preferredSize: Size.fromHeight(NaviDrawerController.i.heightAppbar),
       child: /* Obx(()=>*/ AppBar(
         automaticallyImplyLeading: false,
-        title: customTitle(context, FontWeight.normal, 2, prefix, title),
+        title: customTitle(FontWeight.normal,Get.theme.primaryColor, 2, prefix, title),
         leading: (ModalRoute.of(context)?.canPop ?? false) ? BackButton() : null,
         bottom: PreferredSize(
           child: GetBuilder<GlobalController>(
@@ -38,6 +38,22 @@ PreferredSize preferredSize(BuildContext context, String title, String prefix) =
         ),
       ),
     );
+
+/// * Appbar only for PostStatus and Pop
+PreferredSize appBarOnly(String title, Widget action) {
+  return PreferredSize(
+    preferredSize: Size.fromHeight(NaviDrawerController.i.heightAppbar),
+    child: AppBar(
+      automaticallyImplyLeading: false,
+      title: Text(title.tr),
+      leading: IconButton(
+        icon: Icon(Icons.close_rounded),
+        onPressed: () => Get.back(),
+      ),
+      actions: [action],
+    ),
+  );
+}
 
 /// * [header11] - [header12] black/white color depends on Dark/light mode.
 /// * [header21] - [header22] grey color default.
@@ -68,7 +84,7 @@ Widget blockItem(BuildContext context, FontWeight themeTitleWeight, FontWeight t
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    customTitle(context, titleWeight, null, header11, header12),
+                    customTitle(titleWeight, Get.theme.primaryColor,null, header11, header12),
                     Text(
                       "$header21 \u2022 $header22",
                       style: TextStyle(color: Colors.grey, fontSize: 12),
@@ -103,32 +119,36 @@ Widget buttonToolHtml(IconData iconData ,String message ,Function onPressed) => 
     ),
     onPressed: ()=> onPressed());
 
-Widget customTitle(BuildContext context, FontWeight titleWeight, int? maxLines, String header11, String header12) {
+Widget customTitle(FontWeight titleWeight, Color titleColor,int? maxLines, String header11, String header12) {
   return RichText(
     maxLines: maxLines,
     overflow: maxLines == 1 || maxLines == 2 ? TextOverflow.ellipsis : TextOverflow.clip,
     textAlign: maxLines == 2 ? TextAlign.center : TextAlign.start,
-    text: TextSpan(children: [
-      WidgetSpan(
-        child: Container(
-          padding: EdgeInsets.only(left: header11 == '' ? 0 : 4, right: header11 == '' ? 0 : 4),
-          decoration: BoxDecoration(color: GlobalController.i.mapColor[header11], borderRadius: BorderRadius.all(Radius.circular(6))),
-          child: Text(
-            header11,
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: titleWeight,
-              color: GlobalController.i.mapInvertColor[GlobalController.i.getColorInvert(header11)],
-            ),
+    text: customTitleChild(titleWeight, titleColor,header11, header12),
+  );
+}
+
+TextSpan customTitleChild(FontWeight titleWeight, Color titleColor,String header11, String header12){
+  return TextSpan(children: [
+    WidgetSpan(
+      child: Container(
+        padding: EdgeInsets.only(left: header11 == '' ? 0 : 4, right: header11 == '' ? 0 : 4),
+        decoration: BoxDecoration(color: GlobalController.i.mapColor[header11], borderRadius: BorderRadius.all(Radius.circular(6))),
+        child: Text(
+          header11,
+          style: TextStyle(
+            fontSize: 14,
+            fontWeight: titleWeight,
+            color: GlobalController.i.mapInvertColor[GlobalController.i.getColorInvert(header11)],
           ),
         ),
       ),
-      TextSpan(
-        text: header12,
-        style: TextStyle(color: Theme.of(context).primaryColor, fontSize: 15, fontWeight: titleWeight),
-      )
-    ]),
-  );
+    ),
+    TextSpan(
+      text: header12,
+      style: TextStyle(color: titleColor/*Get.theme.primaryColor*/, fontSize: 15, fontWeight: titleWeight),
+    )
+  ]);
 }
 
 Widget settings(BuildContext context) => Row(
@@ -147,6 +167,7 @@ Widget settings(BuildContext context) => Row(
                     await GlobalController.i.getAlert();
                   }
                   await Get.toNamed('/Pop', preventDuplicates: false);
+                  //await Get.to(()=> Popup(), preventDuplicates: false, arguments: [0]);
                 }),
             GetBuilder<GlobalController>(builder: (controller) {
               return Positioned(
@@ -525,11 +546,11 @@ Widget viewContent(BuildContext context, int index, ViewController controller) =
                     style: TextStyle(fontSize: 25),
                   );
                 } else if (renderContext.tree.element!.attributes['data-url']!.contains(".gif")){
-
-                  return Image.network(
-                    renderContext.tree.element!.attributes['src'].toString(),
-                    filterQuality: FilterQuality.low,
-                  );
+                  // This will just ignore gif image
+                  // return Image.network(
+                  //   renderContext.tree.element!.attributes['src'].toString(),
+                  //   filterQuality: FilterQuality.low,
+                  // );
                 }
                 else {
                   return PinchZoomImage(
@@ -547,13 +568,11 @@ Widget viewContent(BuildContext context, int index, ViewController controller) =
                                 //width: ScreenUtil.instance.setWidth(600),
                                 //height: ScreenUtil.instance.setWidth(400),
                             );
-                            break;
                           case LoadState.failed:
                             return InkWell(
                               child: Text('Load faill'),
                               onTap: ()=> value.reLoadImage(),
                             );
-                            break;
                         }
                       },
                       cache: true,

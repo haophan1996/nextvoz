@@ -1,6 +1,6 @@
+import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_youtube_view/flutter_youtube_view.dart';
-import 'package:get/get.dart';
 import 'package:vozforums/Page/youtubeView/YoutubeController.dart';
 
 class YoutubeView extends GetView<YoutubeController> {

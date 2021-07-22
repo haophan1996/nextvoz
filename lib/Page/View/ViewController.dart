@@ -1,20 +1,20 @@
-import 'package:extended_image/extended_image.dart';
+import 'dart:io';
+import 'package:get/get.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_reaction_button/flutter_reaction_button.dart';
-import 'package:get/get.dart';
+import 'package:html/parser.dart' as parser;
+import 'package:html/dom.dart' as dom;
+import 'package:extended_image/extended_image.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:flutter_reaction_button/flutter_reaction_button.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vozforums/GlobalController.dart';
 import 'package:vozforums/Page/reuseWidget.dart';
-import 'dart:io';
-import 'package:html/parser.dart' as parser;
-import 'package:html/dom.dart' as dom;
-import 'package:expandable/expandable.dart';
+
 
 class ViewController extends GetxController {
   List htmlData = [];
@@ -54,7 +54,7 @@ class ViewController extends GetxController {
   @override
   onClose() {
     super.onClose();
-    GlobalController.i.tagView.removeLast();
+    GlobalController.i.sessionTag.removeLast();
     refreshController.dispose();
     listViewScrollController.dispose();
     reactionList.close();

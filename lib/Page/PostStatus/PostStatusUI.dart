@@ -1,26 +1,21 @@
 import 'dart:io';
+import 'package:get/get.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:get/get.dart';
-import 'package:rich_editor/rich_editor.dart';
-import 'package:vozforums/Page/reuseWidget.dart';
-import '../../GlobalController.dart';
-import 'PostStatusController.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:rich_editor/rich_editor.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:vozforums/Page/reuseWidget.dart';
+import 'package:vozforums/GlobalController.dart';
+import 'package:vozforums/Page/PostStatus/PostStatusController.dart';
 
 class PostStatusUI extends GetView<PostStatusController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          leading: IconButton(
-            icon: Icon(Icons.close_rounded),
-            onPressed: () => Get.back(),
-          ),
-          title: Text('createPost'.tr),
-          actions: [
+        appBar: appBarOnly(
+            'createPost',
             PopupMenuButton(
               child: IconButton(
                 icon: Icon(Icons.more_vert),
@@ -29,7 +24,7 @@ class PostStatusUI extends GetView<PostStatusController> {
               itemBuilder: (context) {
                 return [
                   PopupMenuItem(
-                    child: Text(controller.data['isEditPost'] == true? 'Save' :'Post'),
+                    child: Text(controller.data['isEditPost'] == true ? 'Save' : 'Post'),
                     value: 0,
                   ),
                   PopupMenuItem(
@@ -53,7 +48,7 @@ class PostStatusUI extends GetView<PostStatusController> {
               onSelected: (val) async {
                 switch (val) {
                   case 0:
-                    controller.data['isEditPost'] == true? await controller.editPost() : await controller.post();
+                    controller.data['isEditPost'] == true ? await controller.editPost() : await controller.post();
                     break;
                   case 1:
                     await controller.keyEditor.currentState?.clear();
@@ -70,30 +65,37 @@ class PostStatusUI extends GetView<PostStatusController> {
                     break;
                 }
               },
-            ),
-          ],
-        ),
+            )),
         body: Column(
           children: [
             Container(
-              decoration: BoxDecoration(
-                  border: Border(
-                    bottom: BorderSide(width: 0.5, color: Theme.of(context).primaryColor),
-                  )),
-              child: RichEditor(
-                key: controller.keyEditor,
-                value: '''${controller.data['value']}''',
-                editorOptions: RichEditorOptions(
-                  //backgroundColor: Theme.of(context).backgroundColor,
-                  baseTextColor: Theme.of(context).primaryColor,
-                  placeholder: '''Start typing''',
-                  padding: EdgeInsets.symmetric(horizontal: 5.0),
-                  baseFontFamily: 'sans-serif',
-                  barPosition: BarPosition.CUSTOM,
+                decoration: BoxDecoration(
+                  border: Border(bottom: BorderSide(width: 0.5, color: Theme.of(context).primaryColor)),
                 ),
-              ),
-              height: controller.heightEditor,
-            ),
+                child: RichEditor(
+                  key: controller.keyEditor,
+                  value: '''${controller.data['value']}''',
+                  editorOptions: RichEditorOptions(
+                    //backgroundColor: Theme.of(context).backgroundColor,
+                    baseTextColor: Theme.of(context).primaryColor,
+                    placeholder: '''Start typing''',
+                    padding: EdgeInsets.symmetric(horizontal: 5.0),
+                    baseFontFamily: 'sans-serif',
+                    barPosition: BarPosition.CUSTOM,
+                  ),
+                  getEditLink: (List<dynamic> args) async {
+                    print(args.length);
+                    controller.link.text = args[0];
+                    controller.label.text = args[1];
+                    await Get.defaultDialog(title: 'Insert Link', content: insertLink(controller, ()=> controller.editLink(args)));
+                    args[0] = controller.link.text;
+                    args[1] = controller.label.text;
+                    controller.label.clear();
+                    controller.link.clear();
+                    return args;
+                  },
+                ),
+                height: controller.heightEditor),
             Spacer(),
             Container(
               height: controller.heightToolbar,
@@ -106,13 +108,13 @@ class PostStatusUI extends GetView<PostStatusController> {
                   buttonToolHtml(Icons.format_italic_outlined, 'Italic', () => controller.italic()),
                   buttonToolHtml(Icons.format_quote_outlined, 'Blockquote', () => controller.blockquote()),
                   buttonToolHtml(Icons.link_outlined, 'Insert Link', () {
-                    Get.defaultDialog(title: 'Insert Link', content: insertLink(controller));
+                    Get.defaultDialog(title: 'Insert Link', content: insertLink(controller, ()=> controller.insertLink()));
                   }),
                   buttonToolHtml(Icons.emoji_emotions_outlined, 'Emoji', () => Get.bottomSheet(emoji(context, controller))),
-                  buttonToolHtml(Icons.image_outlined, 'Insert Image', (){
-                    Get.bottomSheet(insertImage(context,controller));
+                  buttonToolHtml(Icons.image_outlined, 'Insert Image', () {
+                    Get.bottomSheet(insertImage(context, controller));
                   }),
-                  buttonToolHtml(Icons.video_collection_outlined, 'Insert Youtube', ()=> Get.defaultDialog(content: insertYoutube(controller))),
+                  buttonToolHtml(Icons.video_collection_outlined, 'Insert Youtube', () => Get.defaultDialog(content: insertYoutube(controller))),
                   buttonToolHtml(Icons.undo_outlined, 'Undo', () => controller.undo()),
                   buttonToolHtml(Icons.redo_outlined, 'Redo', () => controller.redo()),
                   buttonToolHtml(Icons.format_underline_outlined, 'UnderLine', () => controller.underline()),
@@ -135,7 +137,7 @@ class PostStatusUI extends GetView<PostStatusController> {
                   buttonToolHtml(Icons.format_align_right_outlined, 'Align Right', () => controller.alignRight()),
                   buttonToolHtml(Icons.format_align_justify_outlined, 'Justify', () => controller.alignFull()),
                   buttonToolHtml(Icons.format_list_bulleted_outlined, 'Bullet List', () => controller.bulletList()),
-                  buttonToolHtml(Icons.format_list_numbered_outlined, 'Number List', () => controller.numList()),
+                  buttonToolHtml(Icons.format_list_numbered_outlined, 'Number List', () => controller.numList())
                   //buttonToolHtml(Icons.check_box_outlined, 'Checkbox', () {}),
                 ],
               ),
@@ -145,7 +147,7 @@ class PostStatusUI extends GetView<PostStatusController> {
   }
 }
 
-Widget insertLink(PostStatusController controller) {
+Widget insertLink(PostStatusController controller, Function onDone) {
   return Container(
     padding: EdgeInsets.only(left: 15, right: 15),
     width: Get.width,
@@ -156,8 +158,7 @@ Widget insertLink(PostStatusController controller) {
           padding: EdgeInsets.only(bottom: 10),
           child: inputCustom(controller.link, false, 'Link', () {}),
         ),
-        inputCustom(controller.label, false, 'Label', (){}),
-
+        inputCustom(controller.label, false, 'Label', () {}),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -166,10 +167,12 @@ Widget insertLink(PostStatusController controller) {
             CupertinoButton(
                 child: Text('Done'),
                 onPressed: () {
-                  controller.keyEditor.currentState!.javascriptExecutor.insertLink(controller.link.text, controller.label.text == '' ? controller.link.text : controller.label.text);
-                  controller.link.clear();
-                  controller.label.clear();
-                  Get.back();
+                  onDone();
+                  // controller.keyEditor.currentState!.javascriptExecutor
+                  //     .insertLink(controller.link.text, controller.label.text == '' ? controller.link.text : controller.label.text);
+                  // controller.link.clear();
+                  // controller.label.clear();
+                  // Get.back();
                 }),
           ],
         )
@@ -180,35 +183,28 @@ Widget insertLink(PostStatusController controller) {
 
 Widget insertYoutube(PostStatusController controller) {
   return Container(
-    width: Get.width,
-    padding: EdgeInsets.only(left: 15, right: 15),
-    color: Colors.transparent,
-    child: Column(
-      children: [
+      width: Get.width,
+      padding: EdgeInsets.only(left: 15, right: 15),
+      color: Colors.transparent,
+      child: Column(children: [
         inputCustom(controller.link, false, 'Link', () async {
           await controller.keyEditor.currentState!.javascriptExecutor
               .insertHtml('[MEDIA=youtube]${controller.getIDYt(controller.link.text)}[/MEDIA] ');
           controller.link.clear();
           Get.back();
         }),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            CupertinoButton(child: Text('Cancel'), onPressed: () => Get.back()),
-            CupertinoButton(
-                child: Text('Done'),
-                onPressed: () {
-                  controller.keyEditor.currentState!.javascriptExecutor
-                      .insertHtml('[MEDIA=youtube]${controller.getIDYt(controller.link.text)}[/MEDIA] ');
-                  controller.link.clear();
-                  Get.back();
-                }),
-          ],
-        )
-      ],
-    ),
-  );
+        Row(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.center, children: [
+          CupertinoButton(child: Text('Cancel'), onPressed: () => Get.back()),
+          CupertinoButton(
+              child: Text('Done'),
+              onPressed: () {
+                controller.keyEditor.currentState!.javascriptExecutor
+                    .insertHtml('[MEDIA=youtube]${controller.getIDYt(controller.link.text)}[/MEDIA] ');
+                controller.link.clear();
+                Get.back();
+              }),
+        ])
+      ]));
 }
 
 Widget insertImage(BuildContext context, PostStatusController controller) {
@@ -221,38 +217,45 @@ Widget insertImage(BuildContext context, PostStatusController controller) {
       children: [
         CupertinoButton(
           alignment: Alignment.centerLeft,
-          child: Container(width: Get.width,child: Text('Insert Link Image', textAlign: TextAlign.start,),),
-          onPressed: () {
-            Get.defaultDialog(content: Container(
-              padding: EdgeInsets.only(left: 15, right: 15),
+          child: Container(
               width: Get.width,
-              color: Colors.transparent,
-              child: Column(
-                children: [
-                  inputCustom(controller.link, false, 'Image link', (){
-                    controller.keyEditor.currentState!.javascriptExecutor.insertCustomImage(controller.link.text);
-                    controller.link.clear();
-                    Get.back();
-                    Get.back();
-                  }),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      CupertinoButton(child: Text('Cancel'), onPressed: () => Get.back()),
-                      CupertinoButton(
-                          child: Text('Done'),
-                          onPressed: () {
-                            controller.keyEditor.currentState!.javascriptExecutor.insertCustomImage(controller.link.text);
-                            controller.link.clear();
-                            Get.back();
-                            Get.back();
-                          }),
-                    ],
-                  )
-                ],
+              child: Text(
+                'Insert Link Image',
+                textAlign: TextAlign.start,
+              )),
+          onPressed: () {
+            Get.defaultDialog(
+              content: Container(
+                padding: EdgeInsets.only(left: 15, right: 15),
+                width: Get.width,
+                color: Colors.transparent,
+                child: Column(
+                  children: [
+                    inputCustom(controller.link, false, 'Image link', () {
+                      controller.keyEditor.currentState!.javascriptExecutor.insertCustomImage(controller.link.text);
+                      controller.link.clear();
+                      Get.back();
+                      Get.back();
+                    }),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        CupertinoButton(child: Text('Cancel'), onPressed: () => Get.back()),
+                        CupertinoButton(
+                            child: Text('Done'),
+                            onPressed: () {
+                              controller.keyEditor.currentState!.javascriptExecutor.insertCustomImage(controller.link.text);
+                              controller.link.clear();
+                              Get.back();
+                              Get.back();
+                            }),
+                      ],
+                    )
+                  ],
+                ),
               ),
-            ),);
+            );
           },
         ),
         CupertinoButton(
@@ -262,14 +265,15 @@ Widget insertImage(BuildContext context, PostStatusController controller) {
             child: Text('Upload Image'),
           ),
           onPressed: () async {
-            final pickerFile = await controller.picker.getImage(source: ImageSource.gallery, //imageQuality: 25,
+            final pickerFile = await controller.picker.getImage(
+                source: ImageSource.gallery, //imageQuality: 25,
                 maxHeight: 1200,
                 maxWidth: 1200);
             if (pickerFile != null) {
               controller.image = File(pickerFile.path);
               await controller.keyEditor.currentState!.javascriptExecutor.insertCustomImage(controller.image.path);
               Get.back();
-            } else{
+            } else {
               print("No file selected");
             }
           },
@@ -401,9 +405,7 @@ Widget fontSize(BuildContext context, PostStatusController controller) {
             height: 30,
           ),
           onTap: () async {
-            await controller.keyEditor.currentState!.javascriptExecutor.setFontSize(
-              int.parse(controller.formatsSize.elementAt(index)['id'])
-            );
+            await controller.keyEditor.currentState!.javascriptExecutor.setFontSize(int.parse(controller.formatsSize.elementAt(index)['id']));
             Get.back();
           },
         );

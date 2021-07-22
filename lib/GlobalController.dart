@@ -1,19 +1,20 @@
+import 'package:get/get.dart';
 import 'dart:convert';
 import 'dart:ui';
 import 'dart:io';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
+import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
 import 'package:html/dom.dart' as dom;
 import 'package:html/parser.dart' as parser;
-import 'package:dio/dio.dart';
-import 'package:vozforums/Page/NavigationDrawer/NaviDrawerController.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:mailer/mailer.dart';
 import 'package:mailer/smtp_server.dart';
+import 'package:get_storage/get_storage.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:vozforums/Page/reuseWidget.dart';
+import 'package:vozforums/Page/NavigationDrawer/NaviDrawerController.dart';
 
 class GlobalController extends GetxController {
   static GlobalController get i => Get.find();
@@ -26,7 +27,7 @@ class GlobalController extends GetxController {
   double percentDownload = 0.0;
   var dio = Dio(), xfCsrfLogin, dataCsrfLogin, xfCsrfPost, dataCsrfPost;
   RxBool isLogged = false.obs;
-  List alertList = [], tagView = [];
+  List alertList = [], sessionTag = [];
   String xfSession = '', dateExpire = '', xfUser = '';
   int alertNotifications = 0, inboxNotifications = 0;
 
@@ -64,7 +65,7 @@ class GlobalController extends GetxController {
   }
 
   getAlert() async {
-    String username, threadName, reaction, time, status, link, key;
+    String username, threadName, prefix, reaction, time, status, link, key;
     if (isLogged.value == true) {
       getBody(url + '/account/alerts?page=1', false).then((value) {
         GlobalController.i.inboxNotifications = value.getElementsByClassName('p-navgroup-link--conversations').length > 0
@@ -73,7 +74,7 @@ class GlobalController extends GetxController {
         GlobalController.i.alertNotifications = value.getElementsByClassName('p-navgroup-link--alerts').length > 0
             ? int.parse(value.getElementsByClassName('p-navgroup-link--alerts')[0].attributes['data-badge'].toString())
             : 0;
-        GlobalController.i.update();
+        //GlobalController.i.update();
 
         value.getElementsByClassName('alert js-alert block-row block-row--separated').forEach((element) {
           time = element.getElementsByTagName('time')[0].innerHtml;
@@ -100,27 +101,44 @@ class GlobalController extends GetxController {
             reaction = '2';
           } else
             reaction = '';
+          if (element.getElementsByTagName('span')[0].attributes['dir'] == 'auto'){
+            print(element.getElementsByTagName('span')[0].text);
+            threadName = threadName.replaceFirst(element.getElementsByTagName('span')[0].text, '', 0).trim();
+            threadName = ' '+threadName+' ';
+            prefix = element.getElementsByTagName('span')[0].text;
+          } else prefix = '';
 
           alertList.add({
             'username': username,
-            'status': status,
+            'status': prefix.length > 2 ? status+' ' : status,
+            'prefix' : prefix,
             'threadName': threadName,
             'reaction': reaction,
             'link': link,
             'time': time,
           });
         });
-        update();
+        if (alertList.length == 0){
+          alertList.add({
+            'username': '',
+            'status': 'No Alerts',
+            'threadName': '',
+            'reaction': '',
+            'link': '',
+            'time': '',
+          });
+        }
       });
+
+
+      update();
     }
   }
 
-  getInboxAlert(){
-
-  }
+  getInboxAlert() {}
 
   Future getHttpPost(Map<String, String> header, Map<String, String> body, String link) async {
-    final response = await http.post(Uri.parse(link), headers: header, body: body).catchError((err){
+    final response = await http.post(Uri.parse(link), headers: header, body: body).catchError((err) {
       print('get http post error: $header \n$body \n$link');
       Get.back();
       setDialogError('Server down or No connection\n\n Details: $err');
@@ -129,7 +147,7 @@ class GlobalController extends GetxController {
   }
 
   Future getHttp(Map<String, String> header, String link) async {
-    final response = await http.get(Uri.parse(link), headers: header).catchError((err){
+    final response = await http.get(Uri.parse(link), headers: header).catchError((err) {
       print('get http post error: $header \n$link');
       Get.back();
       setDialogError('Server down or No connection\n\n Details: $err');
@@ -384,8 +402,7 @@ class GlobalController extends GetxController {
     "popopo/what.png": ":what:",
   };
 
-
-  sendFeedBack(BuildContext context,String content, String emailValue, String feedBackTitle) async {
+  sendFeedBack(BuildContext context, String content, String emailValue, String feedBackTitle) async {
     setDialog('Xin Vui lòng Đợi', 'Loading');
 
     String username = 'vozforumsfeedback@gmail.com';
@@ -401,11 +418,11 @@ class GlobalController extends GetxController {
     final message = Message()
       ..from = Address(username, emailValue)
       ..recipients.add('vozforumsfeedback@gmail.com')
-    //..ccRecipients.addAll(['destCc1@example.com', 'destCc2@example.com'])
-    //..bccRecipients.add(Address('bccAddress@example.com'))
+      //..ccRecipients.addAll(['destCc1@example.com', 'destCc2@example.com'])
+      //..bccRecipients.add(Address('bccAddress@example.com'))
       ..subject = feedBackTitle
-     // ..text = 'This is the plain text.\nThis is line 2 of the text part.'
-      ..html = emailValue+'\n'+content;
+      // ..text = 'This is the plain text.\nThis is line 2 of the text part.'
+      ..html = emailValue + '\n' + content;
 
     try {
       final sendReport = await send(message, smtpServer);
@@ -415,15 +432,18 @@ class GlobalController extends GetxController {
       NaviDrawerController.i.feedBackCNameController.clear();
       NaviDrawerController.i.feedBackContentController.clear();
       NaviDrawerController.i.feedBackCTitleController.clear();
-      Get.defaultDialog(title: 'Thông báo', content: Text('Đả Gửi'),textConfirm: 'Ok', onConfirm: (){
-       if (Get.isDialogOpen == true) Get.back();
-      });
+      Get.defaultDialog(
+          title: 'Thông báo',
+          content: Text('Đả Gửi'),
+          textConfirm: 'Ok',
+          onConfirm: () {
+            if (Get.isDialogOpen == true) Get.back();
+          });
     } on MailerException catch (e) {
       print('Message not sent.');
       for (var p in e.problems) {
         print('Problem: ${p.code}: ${p.msg}');
       }
     }
-
   }
 }

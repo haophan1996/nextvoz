@@ -1,7 +1,7 @@
-import 'package:flutter_reaction_button/flutter_reaction_button.dart';
 import 'package:get/get.dart';
+import 'package:flutter_reaction_button/flutter_reaction_button.dart';
 import 'package:vozforums/GlobalController.dart';
-import '../reuseWidget.dart';
+import 'package:vozforums/Page/reuseWidget.dart';
 
 class SettingsController extends GetxController {
   RxDouble fontSizeView = 15.0.obs;

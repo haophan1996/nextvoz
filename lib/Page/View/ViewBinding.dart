@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'ViewController.dart';
+import 'package:vozforums/Page/View/ViewController.dart';
 
 class ViewBinding extends Bindings{
   @override

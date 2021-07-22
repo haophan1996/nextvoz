@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:flutter/material.dart';
 import 'package:vozforums/Page/NavigationDrawer/NaviDrawerUI.dart';
-import 'UserProfileController.dart';
+import 'package:vozforums/Page/UserProfile/UserProfileController.dart';
 
 class UserProfileUI extends GetView<UserProfileController>{
   @override

@@ -1,11 +1,10 @@
+import 'package:get/get.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get_state_manager/src/simple/get_view.dart';
 import 'package:vozforums/GlobalController.dart';
 import 'package:vozforums/Page/NavigationDrawer/NaviDrawerController.dart';
 import 'package:vozforums/Page/reuseWidget.dart';
 import 'package:extended_image/extended_image.dart';
-import 'package:get/get.dart';
 
 class NaviDrawerUI extends GetView<NaviDrawerController> {
   @override
@@ -88,7 +87,7 @@ class NaviDrawerUI extends GetView<NaviDrawerController> {
                             itemCount: controller.shortcuts.length,
                             itemBuilder: (BuildContext context, int index) {
                               return ListTile(
-                                title: customTitle(context, FontWeight.normal, 1, controller.shortcuts.elementAt(index)['typeTitle'],
+                                title: customTitle(FontWeight.normal, Get.theme.primaryColor, 1, controller.shortcuts.elementAt(index)['typeTitle'],
                                     controller.shortcuts.elementAt(index)['title']),
                                 onTap: () {
                                   controller.navigateToThread(controller.shortcuts.elementAt(index)['title'],

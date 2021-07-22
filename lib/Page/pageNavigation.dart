@@ -1,13 +1,11 @@
+import 'package:get/get.dart';
 import 'dart:ui';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:vozforums/Page/reuseWidget.dart';
-import 'package:sliding_up_panel/sliding_up_panel.dart';
-
-import '../GlobalController.dart';
+import 'package:vozforums/GlobalController.dart';
 
 Widget pageNavigation(BuildContext context, ItemScrollController scrollController, int currentPage, int totalPage, Function(String item) onCall,
     Function lastPage, Function firstPage, Function reply) {

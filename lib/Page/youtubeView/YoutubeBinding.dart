@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'YoutubeController.dart';
+import 'package:vozforums/Page/youtubeView/YoutubeController.dart';
 
 class YoutubeBinding extends Bindings {
   @override

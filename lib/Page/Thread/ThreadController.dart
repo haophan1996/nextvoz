@@ -1,10 +1,10 @@
+import 'package:get/get.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
-import 'package:get/get.dart';
-import 'package:sliding_up_panel/sliding_up_panel.dart';
-import 'package:vozforums/GlobalController.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:sliding_up_panel/sliding_up_panel.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
+import 'package:vozforums/GlobalController.dart';
 import 'package:vozforums/Page/View/ViewController.dart';
 
 class ThreadController extends GetxController {
@@ -39,8 +39,8 @@ class ThreadController extends GetxController {
 
   navigateToThread(int index) {
     Future.delayed(Duration(milliseconds: 100), () {
-      GlobalController.i.tagView.add(myThreadList.elementAt(index)['title']);
-      Get.lazyPut<ViewController>(() => ViewController(), tag: GlobalController.i.tagView.last);
+      GlobalController.i.sessionTag.add(myThreadList.elementAt(index)['title']);
+      Get.lazyPut<ViewController>(() => ViewController(), tag: GlobalController.i.sessionTag.last);
       Get.toNamed("/ViewPage", arguments: [myThreadList.elementAt(index)['title'], myThreadList.elementAt(index)['link'],myThreadList.elementAt(index)['prefix'], 0]);
     });
   }

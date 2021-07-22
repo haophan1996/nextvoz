@@ -1,13 +1,12 @@
 import 'dart:ui';
-
+import 'package:get/get.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:vozforums/Page/NavigationDrawer/NaviDrawerUI.dart';
 import 'package:vozforums/Page/home/homeController.dart';
 import 'package:vozforums/Page/pageNavigation.dart';
 import 'package:vozforums/Page/reuseWidget.dart';
-import '../../GlobalController.dart';
+import 'package:vozforums/GlobalController.dart';
 
 class HomePageUI extends GetView<HomeController> {
   // This widget is the root of your application.
