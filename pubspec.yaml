@@ -88,6 +88,7 @@ flutter:
     - newPost.png
     - alerts.png
     - assets/
+    - modify_package/rich_editor/assets/editor/
 
 
 module:

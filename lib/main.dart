@@ -1,7 +1,10 @@
+import 'dart:io';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:vozforums/theme.dart';
 import 'package:vozforums/Page/languages.dart';
 import 'package:vozforums/Page/home/homeUI.dart';
@@ -30,13 +33,39 @@ Future<void> main() async {
     await GlobalController.i.checkUserSetting();
     await GlobalController.i.setDataUser();
     await GlobalController.i.setAccountUser();
+    if (GetPlatform.isIOS == true){
+      await getImageFileFromAssets();
+    }
   });
   runApp(MyPage());
-
 }
 
-String getTag(){
-  return DateTime.now().millisecondsSinceEpoch.toString();
+Future<void> getImageFileFromAssets() async {
+  String dir = (await getApplicationDocumentsDirectory()).path+'/editor';
+  if (await Directory(dir).exists() == false) {
+    await Directory(dir).create();
+  }
+  List<String> listFile = [
+    'editor.html',
+    'interact.min.js',
+    'long-press-event.min.js',
+    'normalize.css',
+    'platform_style.css',
+    'rich_text_editor.js',
+    'style.css',
+  ];
+  for(String fileName in listFile){
+    await getEditorFileFromAssets(dir, fileName);
+  }
+}
+
+getEditorFileFromAssets(String dir,String fileName) async{
+  //This method only for iOS devices
+  if (await File(dir+'/$fileName').exists() == false){
+    final byteData = await rootBundle.load('modify_package/rich_editor/assets/editor/$fileName');
+    final file = File(dir+'/$fileName');
+    await file.writeAsBytes(byteData.buffer.asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
+  }
 }
 
 class MyPage extends StatelessWidget {
