@@ -44,7 +44,7 @@ dependencies:
     path:  modify_package/rich_editor/
 
   #webview_flutter: ^2.0.8
-  get: ^4.1.4
+  get: 4.1.4
   get_storage: ^2.0.2
   dio: ^4.0.0
   flutter_html: ^2.1.0
