@@ -4,8 +4,7 @@
 
  
          
-<img src="https://github.com/haophan1996/vozForumsApp/blob/main/screenshot/bottom.png" width="280" height="540"/>
-<img src="https://github.com/haophan1996/vozForumsApp/blob/main/screenshot/bottom_dark.png" width="280" height="540"/>
+<img src="https://github.com/haophan1996/vozForumsApp/blob/main/screenshot/bottom.png" width="280" height="540"/><img src="https://github.com/haophan1996/vozForumsApp/blob/main/screenshot/bottom_dark.png" width="280" height="540"/>
 <img src="https://github.com/haophan1996/vozForumsApp/blob/main/screenshot/home.png" width="280" height="540"/>
 <img src="https://github.com/haophan1996/vozForumsApp/blob/main/screenshot/home_dark.png" width="280" height="540"/>
 <img src="https://github.com/haophan1996/vozForumsApp/blob/main/screenshot/loadingAlerts.png" width="280" height="540"/>
