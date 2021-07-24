@@ -18,8 +18,7 @@ class ViewUI extends StatelessWidget {
           Get.find<ViewController>(tag: GlobalController.i.sessionTag.last).data['subTypeHeader']),
       backgroundColor: Theme.of(context).backgroundColor,
       body: slidingUp(
-        360,
-        (value) {},
+        0,
         Get.find<ViewController>(tag: GlobalController.i.sessionTag.last).panelController,
         GetBuilder<ViewController>(
           tag: GlobalController.i.sessionTag.last,

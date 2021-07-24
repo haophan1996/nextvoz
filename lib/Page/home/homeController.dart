@@ -6,7 +6,6 @@ class HomeController extends GetxController {
   late String header, label;
   List myHomePage = [];
   late PanelController panelController = PanelController();
-  RxDouble onSliding = 0.0.obs;
 
   @override
   Future<void> onInit() async {

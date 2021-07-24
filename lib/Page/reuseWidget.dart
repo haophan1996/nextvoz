@@ -397,7 +397,7 @@ Widget listReactionUI(BuildContext context, ViewController controller) {
 }
 
 Widget onTapUser() {
-  return Column(
+  return Padding(padding: EdgeInsets.only(bottom: 30), child: Column(
     mainAxisSize: MainAxisSize.min,
     children: [
       CupertinoButton(
@@ -431,27 +431,29 @@ Widget onTapUser() {
           ),
           onPressed: () {}),
     ],
-  );
+  ),);
 }
 
-Widget onTapMine(ViewController controller, int index){
-  return Column(
-    mainAxisSize: MainAxisSize.min,
-    children: [
-      CupertinoButton(
-          child: Container(
-            width: Get.width,
-            child: Text('Edit'),
-          ),
-          onPressed: ()async => controller.editRep(index)),
-      CupertinoButton(
-          child: Container(
-            width: Get.width,
-            child: Text('Delete'),
-          ),
-          onPressed: () {})
-    ],
-  );
+Widget onTapMine(ViewController controller, int index) {
+  return Padding(
+      padding: EdgeInsets.only(bottom: 30),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          CupertinoButton(
+              child: Container(
+                width: Get.width,
+                child: Text('Edit'),
+              ),
+              onPressed: () async => controller.editRep(index)),
+          CupertinoButton(
+              child: Container(
+                width: Get.width,
+                child: Text('Delete'),
+              ),
+              onPressed: () {})
+        ],
+      ));
 }
 
 Widget viewContent(BuildContext context, int index, ViewController controller) => Container(
@@ -497,7 +499,7 @@ Widget viewContent(BuildContext context, int index, ViewController controller) =
                                   ..onTap = () => Get.bottomSheet(Card(
                                     color: Theme.of(context).canvasColor,
                                     child: controller.htmlData.elementAt(index)['userName'] == NaviDrawerController.i.nameUser.value ? onTapMine(controller, index) : onTapUser(),
-                                  )),
+                                  ), ignoreSafeArea: false),
                                 text: controller.htmlData.elementAt(index)['userName'] + "\n",
                                 style: TextStyle(color: Color(0xFFFD6E00), fontWeight: FontWeight.bold, fontSize: 16)),
                             TextSpan(

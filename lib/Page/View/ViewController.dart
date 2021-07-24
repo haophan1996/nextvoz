@@ -15,13 +15,13 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:vozforums/GlobalController.dart';
 import 'package:vozforums/Page/reuseWidget.dart';
 
-
 class ViewController extends GetxController {
   List htmlData = [];
   RxList reactionList = [].obs;
   int currentPage = 0, totalPage = 0;
   Map<String, dynamic> data = {};
   int lengthHtmlDataList = 0;
+  bool isEdit = false;
   late var _user;
   late dom.Document res;
   late RefreshController refreshController = RefreshController(initialRefresh: false);
@@ -202,7 +202,11 @@ class ViewController extends GetxController {
         }
         //Get post
         element.getElementsByClassName("message message--post js-post js-inlineModContainer").forEach((element) {
-          data['_postContent'] = element.getElementsByClassName("message-body js-selectToQuote").map((e) => e.outerHtml).first;
+          data['_postContent'] = element.getElementsByClassName("message-body js-selectToQuote")[0].outerHtml;
+          if (element.getElementsByClassName('message-lastEdit').length > 0) {
+            data['_postContent'] = data['_postContent'] + fixLastEditPost(element.getElementsByClassName('message-lastEdit')[0].text);
+          }
+
           data['_userPostDate'] = element.getElementsByClassName("u-concealed").map((e) => e.getElementsByTagName("time")[0].innerHtml).first;
 
           _user = element.getElementsByClassName("message-cell message-cell--user");
@@ -263,7 +267,7 @@ class ViewController extends GetxController {
         });
       });
       update();
-      if (Get.isDialogOpen == true || refreshController.isLoading) {
+      if (Get.isDialogOpen == true || refreshController.isLoading || isEdit == true) {
         if (Get.isDialogOpen == true) Get.back();
         htmlData.removeRange(0, lengthHtmlDataList);
         listViewScrollController.jumpTo(-10.0);
@@ -297,7 +301,6 @@ class ViewController extends GetxController {
       } else
         GlobalController.i.isLogged.value = false;
 
-
       var lastP = value.getElementsByClassName("pageNavSimple");
       if (lastP.length == 0) {
         currentPage = 1;
@@ -311,7 +314,8 @@ class ViewController extends GetxController {
       }
 
       value.getElementsByClassName('message message--conversationMessage').forEach((element) {
-        data['_postContent'] = _removeTag(element.getElementsByClassName('message-body js-selectToQuote')[0].getElementsByClassName('bbWrapper')[0].innerHtml);
+        data['_postContent'] =
+            _removeTag(element.getElementsByClassName('message-body js-selectToQuote')[0].getElementsByClassName('bbWrapper')[0].innerHtml);
         data['postID'] =
             element.getElementsByClassName('actionBar-action actionBar-action--mq u-jsOnly js-multiQuote')[0].attributes['data-message-id'];
         data['name'] = element.getElementsByClassName('username ')[0].text;
@@ -361,7 +365,7 @@ class ViewController extends GetxController {
         data['_commentImg'] = '';
       });
       update();
-      if (Get.isDialogOpen == true || refreshController.isLoading) {
+      if (Get.isDialogOpen == true || refreshController.isLoading || isEdit == true) {
         if (Get.isDialogOpen == true) Get.back();
         htmlData.removeRange(0, lengthHtmlDataList);
         listViewScrollController.jumpTo(-10.0);
@@ -416,44 +420,43 @@ class ViewController extends GetxController {
 
   reply(String message, bool isEditPost) async {
     //                                            token               xf_csrf             link
-    var x = await Get.toNamed('/PostStatus', arguments: [data['xfCsrfPost'], data['dataCsrfPost'], data['fullUrl'], data['postID'],isEditPost,data['view'],message]);
-    if (x?[0] == 'ok'){
-      if (await GlobalController.i.userStorage.read('scrollToMyRepAfterPost') == true){
+    var x = await Get.toNamed('/PostStatus',
+        arguments: [data['xfCsrfPost'], data['dataCsrfPost'], data['fullUrl'], data['postID'], isEditPost, data['view'], message]);
+    if (x?[0] == 'ok') {
+      if (await GlobalController.i.userStorage.read('scrollToMyRepAfterPost') == true) {
+        isEdit = true;
         String lastPage = totalPage.toString();
         await setPageOnClick(lastPage);
-        if (totalPage.toString() != lastPage){
+        if (totalPage.toString() != lastPage) {
           await setPageOnClick(totalPage.toString());
         }
+        isEdit = false;
         listViewScrollController.jumpTo(listViewScrollController.position.maxScrollExtent);
       }
     }
   }
 
-
-
-  editRep(int index) async{
-    if (Get.isBottomSheetOpen==true) Get.back();
+  editRep(int index) async {
+    if (Get.isBottomSheetOpen == true) Get.back();
     setDialog('loading3', 'loading3');
 
-    String url = '${data['view'] == 0 ? GlobalController.i.viewReactLink : GlobalController.i.inboxReactLink}${htmlData.elementAt(index)['postID']}/edit?_xfToken=${data['dataCsrfPost']}&_xfResponseType=json';
+    String url =
+        '${data['view'] == 0 ? GlobalController.i.viewReactLink : GlobalController.i.inboxReactLink}${htmlData.elementAt(index)['postID']}/edit?_xfToken=${data['dataCsrfPost']}&_xfResponseType=json';
     var headers = {
       'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
       'host': 'voz.vn',
       'cookie': '${data['xfCsrfPost']}; xf_user=${GlobalController.i.xfUser};',
     };
 
-
-    await GlobalController.i.getHttp(headers,url).then((value) async{
+    await GlobalController.i.getHttp(headers, url).then((value) async {
       if (Get.isDialogOpen == true) Get.back();
-      if (value['status'] == 'ok'){
+      if (value['status'] == 'ok') {
         data['postID'] = htmlData.elementAt(index)['postID'];
         reply(await fixEdit(value['html']['content']), true);
       } else {
         setDialogError(value['errors'][0]);
       }
     });
-
-
   }
 
   Future<void> quote(int index) async {
@@ -465,58 +468,68 @@ class ViewController extends GetxController {
     };
     var body = {'_xfWithData': '1', '_xfToken': '${data['dataCsrfPost']}', '_xfResponseType': 'json'};
 
-    await GlobalController.i.getHttpPost(headers, body, '${data['view'] == 0 ? GlobalController.i.viewReactLink : GlobalController.i.inboxReactLink}${htmlData.elementAt(index)['postID']}/quote').then(
-          (value) {
-            //print(value);
-            Get.back();
-            if (value['status'] == 'ok'){
-              //print(value['quoteHtml']);
-              fixQuote(value['quoteHtml']);
-              //reply(value['quoteHtml']+'<br>');
-            } else {
-              setDialogError(value['errors'][0].toString());
-            }
-          },
-        );
+    await GlobalController.i
+        .getHttpPost(headers, body,
+            '${data['view'] == 0 ? GlobalController.i.viewReactLink : GlobalController.i.inboxReactLink}${htmlData.elementAt(index)['postID']}/quote')
+        .then(
+      (value) {
+        //print(value);
+        Get.back();
+        if (value['status'] == 'ok') {
+          fixQuote(value['quoteHtml']);
+        } else {
+          setDialogError(value['errors'][0].toString());
+        }
+      },
+    );
   }
 
-  fixQuote(String html)async{
-    reply(await fixHtmlUrl(html)+'<br>', false);
+  fixLastEditPost(String text) {
+    return '''<p style="text-align: right;"><span style="font-family: arial; color: rgb(143, 145, 147); font-size: 12px;">$text</span></p>''';
+  }
+
+  fixQuote(String html) async {
+    reply(await fixHtmlUrl(html) + '<br>', false);
   }
 
   fixHtmlUrl(String html) async {
     dom.Document document = parser.parse(html);
-    if (document.getElementsByTagName('img').length > 0){
-      for(var element in document.getElementsByTagName('img')){
-        if (element.outerHtml.contains('smilie smilie--emoji')){
+    if (document.getElementsByTagName('img').length > 0) {
+      for (var element in document.getElementsByTagName('img')) {
+        if (element.outerHtml.contains('smilie smilie--emoji')) {
           html = html.replaceAll(element.outerHtml.replaceAll('>', ' />'), element.attributes['alt'].toString());
-        } else if (element.attributes['class'] == 'smilie'){
+        } else if (element.attributes['class'] == 'smilie') {
           var img = await GlobalController.i.getImageFileFromAssets(element.attributes['src']!.split('smilies/')[1].split('?')[0]);
           html = html.replaceAll(element.outerHtml.replaceAll('>', ' />'), '<img src="${img.path}" class="smilie">');
         }
       }
     }
 
-    return html.replaceAll('src="/attachments', 'src="https://voz.vn/attachments').replaceAll('src="/data/attachments', 'src="https://voz.vn/data/attachments').replaceAll('\'', '&#039;').replaceAll('amp;', '');
+    return html
+        .replaceAll('src="/attachments', 'src="https://voz.vn/attachments')
+        .replaceAll('src="/data/attachments', 'src="https://voz.vn/data/attachments')
+        .replaceAll('\'', '&#039;')
+        .replaceAll('amp;', '');
   }
 
-  fixEdit(String html){
+  fixEdit(String html) {
     late List code = [];
     html = '<textarea name=' + html.split('<textarea name=')[1].split('</textarea>')[0] + '</textarea>';
     dom.Document document = parser.parse(html);
     html = document.getElementsByTagName('textarea')[0].innerHtml;
 
-    if (html.contains('[/CODE]')==true){
+    if (html.contains('[/CODE]') == true) {
       int lengthCode = (html.split('[/CODE]').length);
-      while(lengthCode!=1){
-        lengthCode-=1;
-        String first = '[CODE'+ html.split('[CODE')[1].split('[/CODE]')[0]+'[/CODE]';
+      while (lengthCode != 1) {
+        lengthCode -= 1;
+        String first = '[CODE' + html.split('[CODE')[1].split('[/CODE]')[0] + '[/CODE]';
         html = html.replaceAll(first, '[comCodeLength$lengthCode]');
         code.insert(0, first);
       }
     }
 
-    html = html.replaceAll('&lt;', '<')
+    html = html
+        .replaceAll('&lt;', '<')
         .replaceAll('&gt;', '>')
         .replaceAll('&amp;nbsp;', " ")
         .replaceAll('&amp;quot;', "\"")
@@ -525,9 +538,10 @@ class ViewController extends GetxController {
         .replaceAll('&amp;quot;', "\"")
         .replaceAll('&quot;', "\"");
 
-    if (html.contains('[comCodeLength')==true){
-      while(code.length != 0){
-        html = html.replaceAll('[comCodeLength${code.length}]', code.elementAt(code.length-1));
+    if (html.contains('[comCodeLength') == true) {
+      while (code.length != 0) {
+        html = html.replaceAll(
+            '[comCodeLength${code.length}]', code.elementAt(code.length - 1).toString().replaceAll('&lt;', '<').replaceAll('&gt;', '>'));
         code.removeLast();
       }
     }
@@ -535,7 +549,3 @@ class ViewController extends GetxController {
     return fixHtmlUrl(html);
   }
 }
-
-
-
-

@@ -21,8 +21,7 @@ class ThreadUI extends GetView<ThreadController> {
       backgroundColor: Theme.of(context).backgroundColor,
       appBar: preferredSize(context, controller.theme, ''),
       body: slidingUp(
-        360,
-        (value) {},
+        0,
         controller.panelController,
         GetBuilder<ThreadController>(builder: (controller) {
           return refreshIndicatorConfiguration(
