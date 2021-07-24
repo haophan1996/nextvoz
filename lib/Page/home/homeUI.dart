@@ -19,7 +19,7 @@ class HomePageUI extends GetView<HomeController> {
       backgroundColor: Theme.of(context).backgroundColor,
       appBar: preferredSize(context, "theNEXTvoz", ''),
       body: slidingUp(
-        -100,
+        GetPlatform.isAndroid ? Get.height*(-0.09) :-100,
         controller.panelController,
         GetBuilder<HomeController>(
           builder: (controller) {

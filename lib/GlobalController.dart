@@ -102,7 +102,6 @@ class GlobalController extends GetxController {
           } else
             reaction = '';
           if (element.getElementsByTagName('span')[0].attributes['dir'] == 'auto'){
-            print(element.getElementsByTagName('span')[0].text);
             threadName = threadName.replaceFirst(element.getElementsByTagName('span')[0].text, '', 0).trim();
             threadName = ' '+threadName+' ';
             prefix = element.getElementsByTagName('span')[0].text;

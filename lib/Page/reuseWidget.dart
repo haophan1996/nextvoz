@@ -12,17 +12,16 @@ import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:pinch_zoom_image_last/pinch_zoom_image_last.dart';
 import 'package:flutter_reaction_button/flutter_reaction_button.dart';
 import 'package:vozforums/GlobalController.dart';
-import 'package:vozforums/Page/NavigationDrawer/NaviDrawerController.dart'; 
+import 'package:vozforums/Page/NavigationDrawer/NaviDrawerController.dart';
 import 'package:vozforums/Page/View/ViewController.dart';
 import 'package:vozforums/Page/pageLoadNext.dart';
-
 
 ///  * Global appbar
 PreferredSize preferredSize(BuildContext context, String title, String prefix) => PreferredSize(
       preferredSize: Size.fromHeight(NaviDrawerController.i.heightAppbar),
       child: /* Obx(()=>*/ AppBar(
         automaticallyImplyLeading: false,
-        title: customTitle(FontWeight.normal,Get.theme.primaryColor, 2, prefix, title),
+        title: customTitle(FontWeight.normal, Get.theme.primaryColor, 2, prefix, title),
         leading: (ModalRoute.of(context)?.canPop ?? false) ? BackButton() : null,
         bottom: PreferredSize(
           child: GetBuilder<GlobalController>(
@@ -84,7 +83,7 @@ Widget blockItem(BuildContext context, FontWeight themeTitleWeight, FontWeight t
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    customTitle(titleWeight, Get.theme.primaryColor,null, header11, header12),
+                    customTitle(titleWeight, Get.theme.primaryColor, null, header11, header12),
                     Text(
                       "$header21 \u2022 $header22",
                       style: TextStyle(color: Colors.grey, fontSize: 12),
@@ -110,25 +109,25 @@ Widget blockItem(BuildContext context, FontWeight themeTitleWeight, FontWeight t
       ),
     );
 
-Widget buttonToolHtml(IconData iconData ,String message ,Function onPressed) => CupertinoButton(
+Widget buttonToolHtml(IconData iconData, String message, Function onPressed) => CupertinoButton(
     padding: EdgeInsets.zero,
     child: Tooltip(
       message: message,
       preferBelow: false,
       child: Icon(iconData, color: Get.theme.primaryColor),
     ),
-    onPressed: ()=> onPressed());
+    onPressed: () => onPressed());
 
-Widget customTitle(FontWeight titleWeight, Color titleColor,int? maxLines, String header11, String header12) {
+Widget customTitle(FontWeight titleWeight, Color titleColor, int? maxLines, String header11, String header12) {
   return RichText(
     maxLines: maxLines,
     overflow: maxLines == 1 || maxLines == 2 ? TextOverflow.ellipsis : TextOverflow.clip,
     textAlign: maxLines == 2 ? TextAlign.center : TextAlign.start,
-    text: customTitleChild(titleWeight, titleColor,header11, header12),
+    text: customTitleChild(titleWeight, titleColor, header11, header12),
   );
 }
 
-TextSpan customTitleChild(FontWeight titleWeight, Color titleColor,String header11, String header12){
+TextSpan customTitleChild(FontWeight titleWeight, Color titleColor, String header11, String header12) {
   return TextSpan(children: [
     WidgetSpan(
       child: Container(
@@ -146,7 +145,7 @@ TextSpan customTitleChild(FontWeight titleWeight, Color titleColor,String header
     ),
     TextSpan(
       text: header12,
-      style: TextStyle(color: titleColor/*Get.theme.primaryColor*/, fontSize: 15, fontWeight: titleWeight),
+      style: TextStyle(color: titleColor /*Get.theme.primaryColor*/, fontSize: 15, fontWeight: titleWeight),
     )
   ]);
 }
@@ -219,7 +218,7 @@ Widget settings(BuildContext context) => Row(
 Widget textDrawer(Color color, double fontSize, String text, FontWeight fontWeight) =>
     Text(text, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(color: color, fontWeight: fontWeight, fontSize: fontSize));
 
-Widget popUpWaiting( String one, String two) => Column(
+Widget popUpWaiting(String one, String two) => Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         CupertinoActivityIndicator(),
@@ -237,7 +236,7 @@ Widget popUpWaiting( String one, String two) => Column(
       ],
     );
 
-Widget inputCustom(TextEditingController controller, bool obscureText, String hint,Function onEditingComplete){
+Widget inputCustom(TextEditingController controller, bool obscureText, String hint, Function onEditingComplete) {
   return TextField(
     onEditingComplete: () async {
       await onEditingComplete();
@@ -255,6 +254,7 @@ Widget inputCustom(TextEditingController controller, bool obscureText, String hi
     ),
   );
 }
+
 setDialog(String textF, String textS) => Get.defaultDialog(
     barrierDismissible: false,
     radius: 6,
@@ -397,41 +397,44 @@ Widget listReactionUI(BuildContext context, ViewController controller) {
 }
 
 Widget onTapUser() {
-  return Padding(padding: EdgeInsets.only(bottom: 30), child: Column(
-    mainAxisSize: MainAxisSize.min,
-    children: [
-      CupertinoButton(
-          child: Container(
-            width: Get.width,
-            child: Text('Start conversation'),
-          ),
-          onPressed: () {}),
-      CupertinoButton(
-          child: Container(
-            width: Get.width,
-            child: Text('Follow'),
-          ),
-          onPressed: () {}),
-      CupertinoButton(
-          child: Container(
-            width: Get.width,
-            child: Text('Ignore'),
-          ),
-          onPressed: () {}),
-      CupertinoButton(
-          child: Container(
-            width: Get.width,
-            child: Text('View Profile'),
-          ),
-          onPressed: () {}),
-      CupertinoButton(
-          child: Container(
-            width: Get.width,
-            child: Text('Report'),
-          ),
-          onPressed: () {}),
-    ],
-  ),);
+  return Padding(
+    padding: EdgeInsets.only(bottom: 30),
+    child: Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        CupertinoButton(
+            child: Container(
+              width: Get.width,
+              child: Text('Start conversation'),
+            ),
+            onPressed: () {}),
+        CupertinoButton(
+            child: Container(
+              width: Get.width,
+              child: Text('Follow'),
+            ),
+            onPressed: () {}),
+        CupertinoButton(
+            child: Container(
+              width: Get.width,
+              child: Text('Ignore'),
+            ),
+            onPressed: () {}),
+        CupertinoButton(
+            child: Container(
+              width: Get.width,
+              child: Text('View Profile'),
+            ),
+            onPressed: () {}),
+        CupertinoButton(
+            child: Container(
+              width: Get.width,
+              child: Text('Report'),
+            ),
+            onPressed: () {}),
+      ],
+    ),
+  );
 }
 
 Widget onTapMine(ViewController controller, int index) {
@@ -446,15 +449,46 @@ Widget onTapMine(ViewController controller, int index) {
                 child: Text('Edit'),
               ),
               onPressed: () async => controller.editRep(index)),
-          CupertinoButton(
-              child: Container(
-                width: Get.width,
-                child: Text('Delete'),
-              ),
-              onPressed: () {})
+          controller.htmlData.elementAt(index)['orderPost'] == ''
+              ? Text('')
+              : CupertinoButton(
+                  child: Container(
+                    width: Get.width,
+                    child: Text('Delete'),
+                  ),
+                  onPressed: () {
+                    if (Get.isBottomSheetOpen == true) Get.back();
+                    Get.defaultDialog(
+                      title: 'Delete post',
+                      content: Container(
+                        width: Get.width,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            inputCustom(controller.input, false, 'Reason for deletion', ()=> controller.deletePost(controller.input.text, index)),
+                            dialogButtonYesNo((){
+                              controller.deletePost(controller.input.text, index);
+                            })
+                          ],
+                        )),
+                    );
+                  })
         ],
       ));
 }
+
+Widget dialogButtonYesNo(Function onDone) => Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        CupertinoButton(child: Text('Cancel'), onPressed: () => Get.back()),
+        CupertinoButton(
+            child: Text('Done'),
+            onPressed: () {
+              onDone();
+            }),
+      ],
+    );
 
 Widget viewContent(BuildContext context, int index, ViewController controller) => Container(
       color: Theme.of(context).backgroundColor,
@@ -496,10 +530,14 @@ Widget viewContent(BuildContext context, int index, ViewController controller) =
                           text: TextSpan(children: <TextSpan>[
                             TextSpan(
                                 recognizer: new TapGestureRecognizer()
-                                  ..onTap = () => Get.bottomSheet(Card(
-                                    color: Theme.of(context).canvasColor,
-                                    child: controller.htmlData.elementAt(index)['userName'] == NaviDrawerController.i.nameUser.value ? onTapMine(controller, index) : onTapUser(),
-                                  ), ignoreSafeArea: false),
+                                  ..onTap = () => Get.bottomSheet(
+                                      Card(
+                                        color: Theme.of(context).canvasColor,
+                                        child: controller.htmlData.elementAt(index)['userName'] == NaviDrawerController.i.nameUser.value
+                                            ? onTapMine(controller, index)
+                                            : onTapUser(),
+                                      ),
+                                      ignoreSafeArea: false),
                                 text: controller.htmlData.elementAt(index)['userName'] + "\n",
                                 style: TextStyle(color: Color(0xFFFD6E00), fontWeight: FontWeight.bold, fontSize: 16)),
                             TextSpan(
@@ -517,10 +555,11 @@ Widget viewContent(BuildContext context, int index, ViewController controller) =
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: <Widget>[
-                          Text(controller.htmlData.elementAt(index)['userPostDate'], style: TextStyle(color: Theme.of(context).primaryColor, fontSize: 13)),
+                          Text(controller.htmlData.elementAt(index)['userPostDate'],
+                              style: TextStyle(color: Theme.of(context).primaryColor, fontSize: 13)),
                           controller.htmlData.elementAt(index)['newPost'] == false
-                              ? Text(
-                                  controller.htmlData.elementAt(index)['orderPost'], style: TextStyle(color: Theme.of(context).primaryColor, fontSize: 13))
+                              ? Text(controller.htmlData.elementAt(index)['orderPost'],
+                                  style: TextStyle(color: Theme.of(context).primaryColor, fontSize: 13))
                               : rowNew(
                                   'assets/newPost.png',
                                   Text(controller.htmlData.elementAt(index)['orderPost'],
@@ -537,9 +576,9 @@ Widget viewContent(BuildContext context, int index, ViewController controller) =
             data: controller.htmlData.elementAt(index)['postContent'],
             customRender: {
               "img": (renderContext, child) {
-                 // double? width = double.tryParse(renderContext.tree.element!.attributes['width'].toString());
-                 // double? height = double.tryParse(renderContext.tree.element!.attributes['height'].toString());
-                 //
+                // double? width = double.tryParse(renderContext.tree.element!.attributes['width'].toString());
+                // double? height = double.tryParse(renderContext.tree.element!.attributes['height'].toString());
+                //
                 if (renderContext.tree.element!.attributes['src']!.contains("/styles/next/xenforo")) {
                   return Image.asset(GlobalController.i.getEmoji(renderContext.tree.element!.attributes['src'].toString()));
                 } else if (renderContext.tree.element!.attributes['src']!.contains("twemoji.maxcdn.com")) {
@@ -547,33 +586,33 @@ Widget viewContent(BuildContext context, int index, ViewController controller) =
                     renderContext.tree.element!.attributes['alt']!,
                     style: TextStyle(fontSize: 25),
                   );
-                } else if (renderContext.tree.element!.attributes['data-url']!.contains(".gif")){
+                } else if (renderContext.tree.element!.attributes['data-url']!.contains(".gif")) {
                   // This will just ignore gif image
                   // return Image.network(
                   //   renderContext.tree.element!.attributes['src'].toString(),
                   //   filterQuality: FilterQuality.low,
                   // );
-                }
-                else {
+                } else {
                   return PinchZoomImage(
                     image: ExtendedImage.network(
                       renderContext.tree.element!.attributes['src'].toString(),
-                     //width: width,
+                      //width: width,
                       //height: height,
                       filterQuality: FilterQuality.medium,
-                      loadStateChanged: (value){
-                        switch (value.extendedImageLoadState){
-                          case LoadState.loading: return Text('Loading Image');
+                      loadStateChanged: (value) {
+                        switch (value.extendedImageLoadState) {
+                          case LoadState.loading:
+                            return Text('Loading Image');
                           case LoadState.completed:
                             return ExtendedRawImage(
-                                image: value.extendedImageInfo?.image,
-                                //width: ScreenUtil.instance.setWidth(600),
-                                //height: ScreenUtil.instance.setWidth(400),
+                              image: value.extendedImageInfo?.image,
+                              //width: ScreenUtil.instance.setWidth(600),
+                              //height: ScreenUtil.instance.setWidth(400),
                             );
                           case LoadState.failed:
                             return InkWell(
                               child: Text('Load faill'),
-                              onTap: ()=> value.reLoadImage(),
+                              onTap: () => value.reLoadImage(),
                             );
                         }
                       },
@@ -731,7 +770,7 @@ Widget viewContent(BuildContext context, int index, ViewController controller) =
               "body": Style(
                 fontSize: FontSize(GlobalController.i.userStorage.read('fontSizeView')),
               )..margin = EdgeInsets.only(bottom: 0, left: 4, right: 3),
-             // "span": Style(color: Theme.of(context).primaryColor),
+              // "span": Style(color: Theme.of(context).primaryColor),
               "blockquote": Style(width: double.infinity)
                 ..margin = EdgeInsets.only(left: 5.0, right: 5.0, bottom: 10.0)
                 ..display = Display.BLOCK,

@@ -159,23 +159,7 @@ Widget insertLink(PostStatusController controller, Function onDone) {
           child: inputCustom(controller.link, false, 'Link', () {}),
         ),
         inputCustom(controller.label, false, 'Label', () {}),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            CupertinoButton(child: Text('Cancel'), onPressed: () => Get.back()),
-            CupertinoButton(
-                child: Text('Done'),
-                onPressed: () {
-                  onDone();
-                  // controller.keyEditor.currentState!.javascriptExecutor
-                  //     .insertLink(controller.link.text, controller.label.text == '' ? controller.link.text : controller.label.text);
-                  // controller.link.clear();
-                  // controller.label.clear();
-                  // Get.back();
-                }),
-          ],
-        )
+        dialogButtonYesNo(()=> onDone()),
       ],
     ),
   );
@@ -188,22 +172,11 @@ Widget insertYoutube(PostStatusController controller) {
       color: Colors.transparent,
       child: Column(children: [
         inputCustom(controller.link, false, 'Link', () async {
-          await controller.keyEditor.currentState!.javascriptExecutor
-              .insertHtml('[MEDIA=youtube]${controller.getIDYt(controller.link.text)}[/MEDIA] ');
-          controller.link.clear();
-          Get.back();
+          await controller.getIDYt();
         }),
-        Row(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.center, children: [
-          CupertinoButton(child: Text('Cancel'), onPressed: () => Get.back()),
-          CupertinoButton(
-              child: Text('Done'),
-              onPressed: () {
-                controller.keyEditor.currentState!.javascriptExecutor
-                    .insertHtml('[MEDIA=youtube]${controller.getIDYt(controller.link.text)}[/MEDIA] ');
-                controller.link.clear();
-                Get.back();
-              }),
-        ])
+        dialogButtonYesNo(() async{
+         await controller.getIDYt();
+        }),
       ]));
 }
 
@@ -231,27 +204,23 @@ Widget insertImage(BuildContext context, PostStatusController controller) {
                 color: Colors.transparent,
                 child: Column(
                   children: [
-                    inputCustom(controller.link, false, 'Image link', () {
-                      controller.keyEditor.currentState!.javascriptExecutor.insertCustomImage(controller.link.text);
-                      controller.link.clear();
-                      Get.back();
-                      Get.back();
+                    inputCustom(controller.link, false, 'Image link', () async {
+                      if (controller.link.text.isURL){
+                        await controller.keyEditor.currentState!.javascriptExecutor.insertCustomImage(controller.link.text);
+                        controller.link.clear();
+                        Get.back();
+                        Get.back();
+                      }
                     }),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        CupertinoButton(child: Text('Cancel'), onPressed: () => Get.back()),
-                        CupertinoButton(
-                            child: Text('Done'),
-                            onPressed: () {
-                              controller.keyEditor.currentState!.javascriptExecutor.insertCustomImage(controller.link.text);
-                              controller.link.clear();
-                              Get.back();
-                              Get.back();
-                            }),
-                      ],
-                    )
+                    dialogButtonYesNo(() async {
+                      if (controller.link.text.isURL){
+                        await controller.keyEditor.currentState!.javascriptExecutor.insertCustomImage(controller.link.text);
+                        controller.link.clear();
+                        Get.back();
+                        Get.back();
+                      }
+                    }),
+
                   ],
                 ),
               ),

@@ -28,6 +28,7 @@ class ViewController extends GetxController {
   late ScrollController listViewScrollController = ScrollController();
   late ItemScrollController itemScrollController = ItemScrollController();
   late PanelController panelController = PanelController();
+  TextEditingController input = TextEditingController();
 
   @override
   Future<void> onInit() async {
@@ -207,7 +208,7 @@ class ViewController extends GetxController {
             data['_postContent'] = data['_postContent'] + fixLastEditPost(element.getElementsByClassName('message-lastEdit')[0].text);
           }
 
-          data['_userPostDate'] = element.getElementsByClassName("u-concealed").map((e) => e.getElementsByTagName("time")[0].innerHtml).first;
+          data['_userPostDate'] = element.getElementsByClassName("u-concealed")[0].text.trim();
 
           _user = element.getElementsByClassName("message-cell message-cell--user");
           data['_userLink'] = _user.map((e) => e.getElementsByTagName("a")[1].attributes['href']).first!;
@@ -547,5 +548,33 @@ class ViewController extends GetxController {
     }
 
     return fixHtmlUrl(html);
+  }
+
+  deletePost(String response, int index) async{
+    if (response.length == 0){
+      setDialogError('Reason cannot be NULL');
+      return;
+    }
+    setDialog('popMess'.tr, 'popMess2'.tr);
+    var headers = {
+      'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
+      'host': 'voz.vn',
+      'cookie': '${data['xfCsrfPost']}; xf_user=${GlobalController.i.xfUser};',
+    };
+    var body = {'_xfToken': '${data['dataCsrfPost']}', '_xfResponseType': 'json', 'reason' : response};
+
+    await GlobalController.i.getHttpPost(headers, body, GlobalController.i.viewReactLink+htmlData.elementAt(index)['postID']+'/delete').then((value) async {
+      if (value['status'] == 'ok') {
+        if (Get.isDialogOpen==true) Get.back();
+        if (Get.isDialogOpen==true) Get.back();
+        setDialog('Refreshing Page', 'Loading');
+        await setPageOnClick(currentPage.toString());
+        input.clear();
+      } else {
+        if (Get.isDialogOpen==true) Get.back();
+        setDialogError(value['errors'][0].toString());
+      }
+    });
+
   }
 }

@@ -33,11 +33,17 @@ class AlertsUI extends GetView<AlertsController> {
                       );
                     },
                   )
-                : CardListSkeleton(
-                    isCircularImage: false,
-                    isBottomLinesActive: true,
-                    length: 5,
-                  );
+                : Get.isDarkMode == false
+                    ? CardListSkeleton(
+                        isCircularImage: false,
+                        isBottomLinesActive: true,
+                        length: 5,
+                      )
+                    : DarkCardListSkeleton(
+                        isCircularImage: false,
+                        isBottomLinesActive: true,
+                        length: 5,
+                      );
           },
         ),
       ),

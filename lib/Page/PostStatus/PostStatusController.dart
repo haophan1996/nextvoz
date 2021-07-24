@@ -215,8 +215,13 @@ class PostStatusController extends GetxController{
     isToolClicked.value = false;
   }
 
-  getIDYt(String text){
-    return text.split("?v=")[1];
+  getIDYt() async {
+    if (link.text.length < 4) return;
+    await keyEditor.currentState!.javascriptExecutor
+        .insertHtml('[MEDIA=youtube]${link.text.split("?v=")[1]}[/MEDIA] ');
+    link.clear();
+    Get.back();
+
   }
 
   uploadImage(String src) async {
