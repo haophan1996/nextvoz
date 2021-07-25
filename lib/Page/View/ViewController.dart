@@ -315,6 +315,7 @@ class ViewController extends GetxController {
       }
 
       value.getElementsByClassName('message message--conversationMessage').forEach((element) {
+
         data['_postContent'] =
             _removeTag(element.getElementsByClassName('message-body js-selectToQuote')[0].getElementsByClassName('bbWrapper')[0].innerHtml);
         data['postID'] =

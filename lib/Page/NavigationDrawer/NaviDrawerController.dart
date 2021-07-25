@@ -121,6 +121,7 @@ class NaviDrawerController extends GetxController {
     await GlobalController.i.userStorage.remove("xf_user");
     await GlobalController.i.userStorage.remove("xf_session");
     await GlobalController.i.userStorage.remove("date_expire");
+    update();
   }
 
   navigateToThread(String title, String link, String prefix) {

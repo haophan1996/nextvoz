@@ -5,6 +5,8 @@ import 'package:get_storage/get_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:vozforums/Page/Alert_Inbox/InboxBindings.dart';
+import 'package:vozforums/Page/Alert_Inbox/InboxUI.dart';
 import 'package:vozforums/theme.dart';
 import 'package:vozforums/Page/languages.dart';
 import 'package:vozforums/Page/home/homeUI.dart';
@@ -37,6 +39,7 @@ Future<void> main() async {
   runApp(MyPage());
 }
 
+
 class MyPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -60,7 +63,8 @@ class MyPage extends StatelessWidget {
             popGesture: true,
             //binding: ViewBinding(),
             maintainState: false),
-        GetPage(name: '/Pop', page: () => AlertsUI(), binding: PopBinding(), popGesture: true),
+        GetPage(name: '/Alerts', page: () => AlertsUI(), binding: PopBinding(), popGesture: true),
+        GetPage(name: '/AlertsInbox', page: () => InboxUI(), binding: InboxBindings(), popGesture: true),
         GetPage(name: "/UserProfile", page: () => UserProfileUI(), popGesture: true, binding: UserProfileBinding(), maintainState: false),
         GetPage(name: '/Youtube', page: () => YoutubeView(), binding: YoutubeBinding(), popGesture: true),
         GetPage(

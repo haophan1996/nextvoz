@@ -16,7 +16,7 @@ class PostStatusUI extends GetView<PostStatusController> {
     return Scaffold(
         appBar: appBarOnly(
             'createPost',
-            PopupMenuButton(
+            [PopupMenuButton(
               child: IconButton(
                 icon: Icon(Icons.more_vert),
                 onPressed: null,
@@ -65,7 +65,7 @@ class PostStatusUI extends GetView<PostStatusController> {
                     break;
                 }
               },
-            )),
+            )]),
         body: Column(
           children: [
             Container(

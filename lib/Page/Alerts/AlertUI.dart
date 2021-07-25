@@ -11,7 +11,7 @@ class AlertsUI extends GetView<AlertsController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: appBarOnly('Alerts', IconButton(icon: Icon(Icons.refresh), onPressed: () async => controller.refreshList())),
+      appBar: appBarOnly('Alerts', [IconButton(icon: Icon(Icons.refresh), onPressed: () async => controller.refreshList())]),
       body: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.all(Radius.circular(7)),
@@ -35,12 +35,12 @@ class AlertsUI extends GetView<AlertsController> {
                   )
                 : Get.isDarkMode == false
                     ? CardListSkeleton(
-                        isCircularImage: false,
+                        isCircularImage: true,
                         isBottomLinesActive: true,
                         length: 5,
                       )
                     : DarkCardListSkeleton(
-                        isCircularImage: false,
+                        isCircularImage: true,
                         isBottomLinesActive: true,
                         length: 5,
                       );

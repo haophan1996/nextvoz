@@ -19,7 +19,7 @@ class HomePageUI extends GetView<HomeController> {
       backgroundColor: Theme.of(context).backgroundColor,
       appBar: preferredSize(context, "theNEXTvoz", ''),
       body: slidingUp(
-        GetPlatform.isAndroid ? Get.height*(-0.09) :-100,
+        GetPlatform.isAndroid ? Get.height * (-0.09) : -100,
         controller.panelController,
         GetBuilder<HomeController>(
           builder: (controller) {
@@ -59,7 +59,12 @@ class HomePageUI extends GetView<HomeController> {
           constraints: BoxConstraints.expand(),
           padding: EdgeInsets.only(left: 6, right: 6),
           child: Column(
-            children: [GlobalController.i.isLogged.value == false ? login(context) : logged(context), whatNew(context)],
+            children: [
+              Obx(
+                () => GlobalController.i.isLogged.value == false ? login(context) : logged(context),
+              ),
+              whatNew(context)
+            ],
           ),
         ),
       ),

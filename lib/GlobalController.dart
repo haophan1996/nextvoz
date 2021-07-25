@@ -27,7 +27,7 @@ class GlobalController extends GetxController {
   double percentDownload = 0.0;
   var dio = Dio(), xfCsrfLogin, dataCsrfLogin, xfCsrfPost, dataCsrfPost;
   RxBool isLogged = false.obs;
-  List alertList = [], sessionTag = [];
+  List alertList = [], inboxList = [], sessionTag = [];
   String xfSession = '', dateExpire = '', xfUser = '';
   int alertNotifications = 0, inboxNotifications = 0;
 
@@ -68,10 +68,10 @@ class GlobalController extends GetxController {
     String username, threadName, prefix, reaction, time, status, link, key;
     if (isLogged.value == true) {
       getBody(url + '/account/alerts?page=1', false).then((value) {
-        GlobalController.i.inboxNotifications = value.getElementsByClassName('p-navgroup-link--conversations').length > 0
+        inboxNotifications = value.getElementsByClassName('p-navgroup-link--conversations').length > 0
             ? int.parse(value.getElementsByClassName('p-navgroup-link--conversations')[0].attributes['data-badge'].toString())
             : 0;
-        GlobalController.i.alertNotifications = value.getElementsByClassName('p-navgroup-link--alerts').length > 0
+        alertNotifications = value.getElementsByClassName('p-navgroup-link--alerts').length > 0
             ? int.parse(value.getElementsByClassName('p-navgroup-link--alerts')[0].attributes['data-badge'].toString())
             : 0;
         //GlobalController.i.update();
@@ -101,23 +101,24 @@ class GlobalController extends GetxController {
             reaction = '2';
           } else
             reaction = '';
-          if (element.getElementsByTagName('span')[0].attributes['dir'] == 'auto'){
+          if (element.getElementsByTagName('span')[0].attributes['dir'] == 'auto') {
             threadName = threadName.replaceFirst(element.getElementsByTagName('span')[0].text, '', 0).trim();
-            threadName = ' '+threadName+' ';
+            threadName = ' ' + threadName + ' ';
             prefix = element.getElementsByTagName('span')[0].text;
-          } else prefix = '';
+          } else
+            prefix = '';
 
           alertList.add({
             'username': username,
-            'status': prefix.length > 2 ? status+' ' : status,
-            'prefix' : prefix,
+            'status': prefix.length > 2 ? status + ' ' : status,
+            'prefix': prefix,
             'threadName': threadName,
             'reaction': reaction,
             'link': link,
             'time': time,
           });
         });
-        if (alertList.length == 0){
+        if (alertList.length == 0) {
           alertList.add({
             'username': '',
             'status': 'No Alerts',
@@ -129,12 +130,70 @@ class GlobalController extends GetxController {
         }
       });
 
-
       update();
     }
   }
 
-  getInboxAlert() {}
+  getInboxAlert() async {
+    String getName = '', title, link, rep, party, latestDay, latestRep, avatarLink, avatarColor1, avatarColor2, isUnread;
+    if (isLogged.value == true) {
+      getBody(url + '/conversations/', false).then((value) {
+        inboxNotifications = value.getElementsByClassName('p-navgroup-link--conversations').length > 0
+            ? int.parse(value.getElementsByClassName('p-navgroup-link--conversations')[0].attributes['data-badge'].toString())
+            : 0;
+        alertNotifications = value.getElementsByClassName('p-navgroup-link--alerts').length > 0
+            ? int.parse(value.getElementsByClassName('p-navgroup-link--alerts')[0].attributes['data-badge'].toString())
+            : 0;
+
+        var items = value.getElementsByClassName('structItem structItem--conversation  js-inlineModContainer');
+        if (items.length > 0) {
+          items.forEach((element) {
+
+            isUnread = element.attributes['class']!.contains('is-unread') == true ? 'true' : 'false';
+            title = element.getElementsByClassName('structItem-title')[0].text; //title
+            link = element.getElementsByClassName('structItem-title')[0].attributes['href'].toString(); //link
+            rep = element.getElementsByClassName('pairs pairs--justified')[0].getElementsByTagName('dd')[0].text; //replies
+            party = element.getElementsByClassName('pairs pairs--justified structItem-minor')[0].getElementsByTagName('dd')[0].text; // participants
+            latestDay = element.getElementsByClassName('structItem-latestDate u-dt')[0].text; //latestDate
+            latestRep = element.getElementsByClassName('username').last.text;
+
+            var getClassName =
+                element.getElementsByClassName('listInline listInline--comma listInline--selfInline')[0].getElementsByClassName('username ');
+            getClassName.forEach((element) {
+              getName += element.text + ', ';
+            });
+
+
+            var avatar = element.getElementsByClassName('avatar avatar--s').first;
+            if (avatar.getElementsByTagName('img').length >0 ){
+              avatarLink = url+avatar.getElementsByTagName('img')[0].attributes['src'].toString();
+              avatarColor1 = '0x00000000';
+              avatarColor2 = '0x00000000';
+            } else {
+              avatarLink = 'no';
+              avatarColor1 = '0xFFF'+avatar.attributes['style'].toString().split('#')[1].split(';')[0];
+              avatarColor2 = '0xFFF'+avatar.attributes['style'].toString().split('#')[2];
+            }
+
+            inboxList.add({
+              'isUnread' : isUnread,
+              'title': title,
+              'linkInbox': link,
+              'repAndParty': 'Replies: $rep \u2022 Participants: $party',
+              'latestDay': latestDay,
+              'conservationWith': getName.replaceFirst(', ', '', getName.length - 2),
+              'latestRep': latestRep,
+              'avatarLink' : avatarLink,
+              'avatarColor1' : avatarColor1,
+              'avatarColor2' : avatarColor2,
+            });
+            getName = '';
+          });
+        }
+      });
+      update();
+    }
+  }
 
   Future getHttpPost(Map<String, String> header, Map<String, String> body, String link) async {
     final response = await http.post(Uri.parse(link), headers: header, body: body).catchError((err) {

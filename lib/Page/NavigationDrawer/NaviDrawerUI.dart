@@ -1,9 +1,11 @@
+import 'package:flutter_html/shims/dart_ui_real.dart';
 import 'package:get/get.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:vozforums/GlobalController.dart';
 import 'package:vozforums/Page/NavigationDrawer/NaviDrawerController.dart';
 import 'package:vozforums/Page/reuseWidget.dart';
+import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'package:extended_image/extended_image.dart';
 
 class NaviDrawerUI extends GetView<NaviDrawerController> {
@@ -200,53 +202,61 @@ Widget login(BuildContext context) {
           Row(
             children: [
               Expanded(
-                  child: ListTile(
-                title: Text('login'.tr),
-                onTap: () {
-                  NaviDrawerController.i.statusLogin = '';
-                  NaviDrawerController.i.textEditingControllerPassword.text = '';
-                  NaviDrawerController.i.textEditingControllerLogin.text = '';
-                  Get.bottomSheet(
-                    Container(
-                      height: Get.height,
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).backgroundColor.withOpacity(0.8),
-                        border: Border.all(color: Colors.grey),
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(6),
-                        ),
-                      ),
-                      child: Column(
-                        children: [
-                          Text(
-                            'loginMess'.tr,
-                            style: TextStyle(color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold),
+                child: ListTile(
+                  title: Text('login'.tr),
+                  onTap: () {
+                    NaviDrawerController.i.statusLogin = '';
+                    NaviDrawerController.i.textEditingControllerPassword.text = '';
+                    NaviDrawerController.i.textEditingControllerLogin.text = '';
+                    Get.bottomSheet(
+                        Container(
+                          //height: Get.height - (Get.height * 0.2),
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).backgroundColor,
+                            border: Border.all(color: Colors.grey),
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(6),
+                            ),
                           ),
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(15, 15, 15, 5),
-                            child: inputCustom(NaviDrawerController.i.textEditingControllerLogin, false, 'loginAccount', () {}),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(15, 5, 15, 5),
-                            child: inputCustom(NaviDrawerController.i.textEditingControllerPassword, true, 'loginPassword',
-                                () async => await NaviDrawerController.i.loginFunction(context)),
-                          ),
-                          GetBuilder<NaviDrawerController>(builder: (controller) {
-                            return Text(controller.statusLogin, style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold));
-                          }),
-                          Expanded(
-                              child: TextButton(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Container(
+                                child: Text(
+                                  'loginMess'.tr,
+                                  style: TextStyle(foreground: Paint()..shader = linearGradient, fontWeight: FontWeight.bold),
+                                ),
+                                padding: EdgeInsets.all(5),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.fromLTRB(15, 15, 15, 5),
+                                child: inputCustom(NaviDrawerController.i.textEditingControllerLogin, false, 'loginAccount', () {}),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.fromLTRB(15, 5, 15, 5),
+                                child: inputCustom(NaviDrawerController.i.textEditingControllerPassword, true, 'loginPassword',
+                                    () async => await NaviDrawerController.i.loginFunction(context)),
+                              ),
+                              GetBuilder<NaviDrawerController>(builder: (controller) {
+                                return Text(controller.statusLogin, style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold));
+                              }),
+                              TextButton(
                                   child: Text('login'.tr),
                                   onPressed: () async {
                                     await NaviDrawerController.i.loginFunction(context);
-                                  }))
-                        ],
-                      ),
-                    ),
-                  );
-                },
-              )),
+                                  }),
+                              SignInButton(Buttons.Google, onPressed: () {}),
+                              SignInButton(Buttons.Facebook, onPressed: () {})
+                            ],
+                          ),
+                        ),
+                        isScrollControlled: true,
+                        useRootNavigator: true,
+                        ignoreSafeArea: false);
+                  },
+                ),
+              ),
               CupertinoButton(child: Icon(Icons.settings), onPressed: () => NaviDrawerController.i.navigateToSetting())
             ],
           ),

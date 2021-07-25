@@ -5,7 +5,7 @@ class AlertsController extends GetxController{
 
   refreshList() async {
     GlobalController.i.alertList.clear();
-    GlobalController.i.getAlert();
+    await GlobalController.i.getAlert();
   }
 
 }

@@ -1,15 +1,11 @@
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:vozforums/GlobalController.dart';
 import 'package:vozforums/Page/View/ViewController.dart';
-import 'dart:io';
-
 
 class ThreadController extends GetxController {
   late String _url;

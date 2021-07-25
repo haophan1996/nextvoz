@@ -39,7 +39,7 @@ PreferredSize preferredSize(BuildContext context, String title, String prefix) =
     );
 
 /// * Appbar only for PostStatus and Pop
-PreferredSize appBarOnly(String title, Widget action) {
+PreferredSize appBarOnly(String title, List<Widget> action) {
   return PreferredSize(
     preferredSize: Size.fromHeight(NaviDrawerController.i.heightAppbar),
     child: AppBar(
@@ -49,7 +49,7 @@ PreferredSize appBarOnly(String title, Widget action) {
         icon: Icon(Icons.close_rounded),
         onPressed: () => Get.back(),
       ),
-      actions: [action],
+      actions: action,
     ),
   );
 }
@@ -165,7 +165,7 @@ Widget settings(BuildContext context) => Row(
                     GlobalController.i.alertList.clear();
                     await GlobalController.i.getAlert();
                   }
-                  await Get.toNamed('/Pop', preventDuplicates: false);
+                  await Get.toNamed('/Alerts', preventDuplicates: false);
                   //await Get.to(()=> Popup(), preventDuplicates: false, arguments: [0]);
                 }),
             GetBuilder<GlobalController>(builder: (controller) {
@@ -190,7 +190,13 @@ Widget settings(BuildContext context) => Row(
                   Icons.mail_outline,
                   color: Theme.of(context).primaryColor,
                 ),
-                onPressed: () {}),
+                onPressed: () async{
+                  if (GlobalController.i.inboxList.isEmpty == true || GlobalController.i.inboxNotifications !=0){
+                    GlobalController.i.inboxList.clear();
+                    await GlobalController.i.getInboxAlert();
+                  }
+                  await Get.toNamed('/AlertsInbox', preventDuplicates: false);
+                }),
             GetBuilder<GlobalController>(builder: (controller) {
               return Positioned(
                 right: 0,
@@ -245,10 +251,13 @@ Widget inputCustom(TextEditingController controller, bool obscureText, String hi
     controller: controller,
     style: TextStyle(fontSize: 18, color: Get.theme.primaryColor),
     obscureText: obscureText,
+    autocorrect: false,
+    enableSuggestions: false,
     decoration: InputDecoration(
-      labelText: hint.tr,
+      labelText: hint.tr, 
+      labelStyle: TextStyle(color: Get.theme.primaryColor.withOpacity(0.7)),
       border: OutlineInputBorder(
-        borderSide: BorderSide(color: Color(0xffCED0D2), width: 1),
+        borderSide: BorderSide(width: 1),
         borderRadius: BorderRadius.all(Radius.circular(6)),
       ),
     ),
@@ -643,10 +652,7 @@ Widget viewContent(BuildContext context, int index, ViewController controller) =
                                 'blockQuote'.tr +
                                     (renderContext.tree.element!.getElementsByClassName("bbCodeBlock-title").length > 0
                                         ? renderContext.tree.element!
-                                            .getElementsByClassName("bbCodeBlock-title")[0]
-                                            .getElementsByTagName("a")[0]
-                                            .innerHtml
-                                            .toString()
+                                            .getElementsByClassName("bbCodeBlock-title")[0].text.trim()
                                         : ""),
                                 style: TextStyle(fontWeight: FontWeight.bold)),
                             width: double.infinity,

@@ -37,6 +37,7 @@ dependencies:
   extended_image: ^4.1.0
   #rounded_loading_button: ^2.0.5
   loader_skeleton: ^0.0.4
+  flutter_signin_button: ^2.0.0
 
   #Editor
   #rich_editor: ^0.0.4
