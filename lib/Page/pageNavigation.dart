@@ -40,16 +40,13 @@ Widget pageNavigation(BuildContext context, ItemScrollController scrollControlle
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              IconButton(
-                alignment: Alignment.center,
-                splashColor: Colors.green,
-                iconSize: 25,
-                icon: Icon(Icons.arrow_back_ios_rounded),
-                onPressed: () {
-                  setDialog('popMess'.tr, 'loading3'.tr);
-                  firstPage();
-                },
-              ),
+              CupertinoButton(
+                  padding: EdgeInsets.zero,
+                  child: Icon(Icons.arrow_back_ios_rounded, color: Theme.of(context).primaryColor),
+                  onPressed: () {
+                    setDialog('popMess'.tr, 'loading3'.tr);
+                    firstPage();
+                  }),
               SizedBox(
                 width: Get.width * 0.4,
                 height: 36,
@@ -91,11 +88,9 @@ Widget pageNavigation(BuildContext context, ItemScrollController scrollControlle
                   },
                 ),
               ),
-              IconButton(
-                  alignment: Alignment.center,
-                  splashColor: Colors.green,
-                  iconSize: 25,
-                  icon: Icon(Icons.arrow_forward_ios_rounded),
+              CupertinoButton(
+                  padding: EdgeInsets.zero,
+                  child: Icon(Icons.arrow_forward_ios_rounded, color: Theme.of(context).primaryColor),
                   onPressed: () {
                     setDialog('popMess'.tr, 'loading3'.tr);
                     lastPage();
@@ -115,7 +110,8 @@ Widget slidingUp(double maxHeight, PanelController panelController, Widget bodyW
     parallaxEnabled: true,
     parallaxOffset: .5,
     minHeight: Get.height * 0.08,
-    maxHeight: Get.height * 0.42+maxHeight,
+    maxHeight: Get.height / 2,
+    // * 0.42+maxHeight,
     //maxHeight,
     //Get.height * 0.5,
     backdropEnabled: true,
@@ -127,59 +123,63 @@ Widget slidingUp(double maxHeight, PanelController panelController, Widget bodyW
   );
 }
 
-Widget whatNew(BuildContext context) => Expanded(
-      child: Container(
-        constraints: BoxConstraints.expand(),
-        decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(6)), color: Theme.of(context).backgroundColor),
-        child: Column(
-          mainAxisSize: MainAxisSize.max,
-          children: [
-            Container(
-              padding: EdgeInsets.only(top: 15),
-              child: Text(
-                'Latest',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, foreground: Paint()..shader = linearGradient),
+Widget whatNew(BuildContext context) => Container(
+      //constraints: BoxConstraints.expand(),
+      decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(6)), color: Theme.of(context).backgroundColor),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            padding: EdgeInsets.only(top: 5),
+            child: Text(
+              'Latest',
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, foreground: Paint()..shader = linearGradient),
+            ),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Expanded(
+                child: CupertinoButton(
+                    padding: EdgeInsets.zero,
+                    child: Text(
+                      'What\'s new',
+                      maxLines: 1,
+                    ),
+                    onPressed: () {}),
               ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Expanded(
-                  child: CupertinoButton(
-                      child: Text(
-                        'What\'s new',
-                        maxLines: 1,
-                      ),
-                      onPressed: () {}),
-                ),
-                Expanded(
-                  child: CupertinoButton(
-                      child: Text(
-                        'New posts',
-                        maxLines: 1,
-                      ),
-                      onPressed: () {}),
-                ),
-                Expanded(
-                  child: CupertinoButton(
-                      child: Text(
-                        'New profile posts',
-                        maxLines: 1,
-                      ),
-                      onPressed: () {}),
-                )
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                CupertinoButton(child: Text('Your news feed'), onPressed: () {}),
-                CupertinoButton(child: Text('Latest activity'), onPressed: () {})
-              ],
-            ),
-          ],
-        ),
+              Expanded(
+                child: CupertinoButton(
+                    padding: EdgeInsets.zero,
+                    child: Text(
+                      'New posts',
+                      maxLines: 1,
+                    ),
+                    onPressed: () {}),
+              ),
+              Expanded(
+                child: CupertinoButton(
+                    //padding: EdgeInsets.zero,
+                    child: Text(
+                      'New profile posts',
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                    ),
+                    onPressed: () {}),
+              )
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Expanded(
+                child: CupertinoButton(padding: EdgeInsets.zero, child: Text('Your news feed'), onPressed: () {}),
+              ),
+              Expanded(child: CupertinoButton(padding: EdgeInsets.zero, child: Text('Latest activity'), onPressed: () {}))
+            ],
+          ),
+        ],
       ),
     );

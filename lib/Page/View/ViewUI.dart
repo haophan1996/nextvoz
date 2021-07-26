@@ -57,15 +57,13 @@ class ViewUI extends StatelessWidget {
                       ),
                     ),
                     Obx(
-                      () => GlobalController.i.isLogged.value == false ? login(context) : logged(context),
+                          () => GlobalController.i.isLogged.value == false ? login(context) : logged(context),
                     ),
                   ],
                 ),
               ),
-              SizedBox(
-                height: 5,
-              ),
-              whatNew(context),
+              SizedBox(height: 10,),
+              Expanded(child: whatNew(context)),
             ],
           ),
         ),

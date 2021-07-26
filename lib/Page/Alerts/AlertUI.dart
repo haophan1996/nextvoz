@@ -26,6 +26,7 @@ class AlertsUI extends GetView<AlertsController> {
                     itemBuilder: (BuildContext context, int index) {
                       return Container(
                         decoration: BoxDecoration(
+                          color: globalController.alertList.elementAt(index)['unread'] == 'true' ? Get.theme.canvasColor : Colors.transparent,
                             border: Border(
                           bottom: BorderSide(width: 0.5, color: Theme.of(context).primaryColor),
                         )),
@@ -81,6 +82,10 @@ class AlertsUI extends GetView<AlertsController> {
         ),
       ),
       onPressed: () {
+        if (globalController.alertList.elementAt(index)['unread'] == 'true'){
+          globalController.alertList.elementAt(index)['unread'] = 'false';
+          globalController.update();
+        }
         GlobalController.i.sessionTag.add(globalController.alertList.elementAt(index)['threadName']);
         Get.lazyPut<ViewController>(() => ViewController(), tag: GlobalController.i.sessionTag.last);
         Get.toNamed("/ViewPage", arguments: [

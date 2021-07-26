@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:vozforums/GlobalController.dart';
 import 'package:vozforums/Page/NavigationDrawer/NaviDrawerController.dart';
+import 'package:vozforums/Page/UserProfile/UserProfileController.dart';
 import 'package:vozforums/Page/reuseWidget.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'package:extended_image/extended_image.dart';
@@ -151,14 +152,18 @@ Widget logged(BuildContext context) {
                 ),
               ), //Show avatar
               Expanded(
-                child: Column(
+                child: customCupertinoButton(Alignment.centerLeft,EdgeInsets.zero, Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    textDrawer(Color(0xFFFD6E00), 16, NaviDrawerController.i.nameUser.value, FontWeight.bold),
-                    textDrawer(Theme.of(context).primaryColor, 13, NaviDrawerController.i.titleUser.value, FontWeight.normal),
+                    textDrawer(Color(0xFFFD6E00), Get.textTheme.headline6!.fontSize, NaviDrawerController.i.nameUser.value, FontWeight.bold),
+                    textDrawer(Theme.of(context).primaryColor, Get.textTheme.caption!.fontSize, NaviDrawerController.i.titleUser.value, FontWeight.normal),
                   ],
-                ),
+                ), () async {
+                  GlobalController.i.sessionTag.add('profile${DateTime.now().toString()}');
+                  Get.lazyPut<UserProfileController>(() => UserProfileController(), tag: GlobalController.i.sessionTag.last);
+                  Get.toNamed('/UserProfile',arguments: [NaviDrawerController.i.linkUser] ,preventDuplicates: false);
+                }),
               ), //Title and name user
               settings(context),
             ],

@@ -13,6 +13,7 @@ import 'package:mailer/mailer.dart';
 import 'package:mailer/smtp_server.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:vozforums/Page/reuseWidget.dart';
 import 'package:vozforums/Page/NavigationDrawer/NaviDrawerController.dart';
 
@@ -42,7 +43,7 @@ class GlobalController extends GetxController {
     });
   }
 
-  Future<dom.Document> getBody(String url, bool isHomePage) async {
+  Future<dom.Document?> getBody(String url, bool isHomePage) async {
     percentDownload = 0.1;
     update();
     final response = await dio.get(url, onReceiveProgress: (actual, total) {
@@ -55,7 +56,30 @@ class GlobalController extends GetxController {
       if (CancelToken.isCancel(err)) {
         print('Request canceled! ' + err.message);
       } else {
-        print("Heysacsa");
+        print('sac');
+      }
+    });
+    xfCsrfPost = cookXfCsrf(response.headers['set-cookie'].toString());
+    if (isHomePage == true) xfCsrfLogin = cookXfCsrf(response.headers['set-cookie'].toString());
+
+    return parser.parse(response.toString());
+  }
+
+  Future<dom.Document?> getBodya(Function onError, String url, bool isHomePage) async {
+    percentDownload = 0.1;
+    update();
+    final response = await dio.get(url, onReceiveProgress: (actual, total) {
+      percentDownload = (actual.bitLength - 4) / total.bitLength;
+      update();
+    }).whenComplete(() async {
+      percentDownload = -1.0;
+      update();
+    }).catchError((err) {
+      if (CancelToken.isCancel(err)) {
+        print('Request canceled! ' + err.message);
+      } else {
+        print('sac');
+        onError();
       }
     });
     xfCsrfPost = cookXfCsrf(response.headers['set-cookie'].toString());
@@ -65,10 +89,11 @@ class GlobalController extends GetxController {
   }
 
   getAlert() async {
-    String username, threadName, prefix, reaction, time, status, link, key;
+    String username, threadName = '', prefix, reaction, time, status, link, key, unread;
+    //String username = '', threadName = '', prefix = '', reaction = '', time = '', status = '', link = '', key = '';
     if (isLogged.value == true) {
       getBody(url + '/account/alerts?page=1', false).then((value) {
-        inboxNotifications = value.getElementsByClassName('p-navgroup-link--conversations').length > 0
+        inboxNotifications = value!.getElementsByClassName('p-navgroup-link--conversations').length > 0
             ? int.parse(value.getElementsByClassName('p-navgroup-link--conversations')[0].attributes['data-badge'].toString())
             : 0;
         alertNotifications = value.getElementsByClassName('p-navgroup-link--alerts').length > 0
@@ -77,21 +102,32 @@ class GlobalController extends GetxController {
         //GlobalController.i.update();
 
         value.getElementsByClassName('alert js-alert block-row block-row--separated').forEach((element) {
+          unread = element.attributes['class']!.contains('is-unread') ? 'true' : 'false';
           time = element.getElementsByTagName('time')[0].innerHtml;
           status = element.getElementsByClassName('contentRow-main contentRow-main--close')[0].text.replaceAll(time, '').trim();
           link = element.getElementsByClassName('fauxBlockLink-blockLink')[0].attributes['href'].toString();
           if (element.getElementsByClassName('username ').length > 0) {
             username = element.getElementsByClassName('username ')[0].text;
+            status = status.replaceAll(username, '');
             key = status.contains('the thread')
                 ? 'the thread'
                 : status.contains('a thread called')
                     ? 'a thread called'
-                    : 'the conversation'; //'a thread called' ? '' : '';
-            threadName = status.split('.')[0].trim().split(key)[1];
-            status = status.split('.')[0].trim().split(key)[0].replaceAll(username, '') + key;
+                    : status.contains('reacted to your')
+                        ? 'reacted to your'
+                        : 'the conversation'; //'a thread called' ? '' : '';
+
+
+            if (status.contains('is now following you.')) {
+              threadName = '';
+            } else {
+              threadName = status.split(key)[1].replaceAll(' There may be more posts after this', '');
+              status = status.split('.')[0].split(key)[0] + key;
+            }
           } else {
+            threadName = status.split(':')[1];
+            status = status.split(':')[0] + ":";
             username = '';
-            threadName = '';
           }
           if (threadName.contains('with  Ưng')) {
             threadName = threadName.split('with  Ưng')[0];
@@ -109,8 +145,9 @@ class GlobalController extends GetxController {
             prefix = '';
 
           alertList.add({
+            'unread': unread,
             'username': username,
-            'status': prefix.length > 2 ? status + ' ' : status,
+            'status': prefix.length > 1 ? status + ' ' : status,
             'prefix': prefix,
             'threadName': threadName,
             'reaction': reaction,
@@ -120,6 +157,7 @@ class GlobalController extends GetxController {
         });
         if (alertList.length == 0) {
           alertList.add({
+            'unread': 'true',
             'username': '',
             'status': 'No Alerts',
             'threadName': '',
@@ -138,7 +176,7 @@ class GlobalController extends GetxController {
     String getName = '', title, link, rep, party, latestDay, latestRep, avatarLink, avatarColor1, avatarColor2, isUnread;
     if (isLogged.value == true) {
       getBody(url + '/conversations/', false).then((value) {
-        inboxNotifications = value.getElementsByClassName('p-navgroup-link--conversations').length > 0
+        inboxNotifications = value!.getElementsByClassName('p-navgroup-link--conversations').length > 0
             ? int.parse(value.getElementsByClassName('p-navgroup-link--conversations')[0].attributes['data-badge'].toString())
             : 0;
         alertNotifications = value.getElementsByClassName('p-navgroup-link--alerts').length > 0
@@ -148,7 +186,6 @@ class GlobalController extends GetxController {
         var items = value.getElementsByClassName('structItem structItem--conversation  js-inlineModContainer');
         if (items.length > 0) {
           items.forEach((element) {
-
             isUnread = element.attributes['class']!.contains('is-unread') == true ? 'true' : 'false';
             title = element.getElementsByClassName('structItem-title')[0].text; //title
             link = element.getElementsByClassName('structItem-title')[0].attributes['href'].toString(); //link
@@ -163,29 +200,28 @@ class GlobalController extends GetxController {
               getName += element.text + ', ';
             });
 
-
             var avatar = element.getElementsByClassName('avatar avatar--s').first;
-            if (avatar.getElementsByTagName('img').length >0 ){
-              avatarLink = url+avatar.getElementsByTagName('img')[0].attributes['src'].toString();
+            if (avatar.getElementsByTagName('img').length > 0) {
+              avatarLink = url + avatar.getElementsByTagName('img')[0].attributes['src'].toString();
               avatarColor1 = '0x00000000';
               avatarColor2 = '0x00000000';
             } else {
               avatarLink = 'no';
-              avatarColor1 = '0xFFF'+avatar.attributes['style'].toString().split('#')[1].split(';')[0];
-              avatarColor2 = '0xFFF'+avatar.attributes['style'].toString().split('#')[2];
+              avatarColor1 = '0xFFF' + avatar.attributes['style'].toString().split('#')[1].split(';')[0];
+              avatarColor2 = '0xFFF' + avatar.attributes['style'].toString().split('#')[2];
             }
 
             inboxList.add({
-              'isUnread' : isUnread,
+              'isUnread': isUnread,
               'title': title,
               'linkInbox': link,
               'repAndParty': 'Replies: $rep \u2022 Participants: $party',
               'latestDay': latestDay,
               'conservationWith': getName.replaceFirst(', ', '', getName.length - 2),
               'latestRep': latestRep,
-              'avatarLink' : avatarLink,
-              'avatarColor1' : avatarColor1,
-              'avatarColor2' : avatarColor2,
+              'avatarLink': avatarLink,
+              'avatarColor1': avatarColor1,
+              'avatarColor2': avatarColor2,
             });
             getName = '';
           });
@@ -238,6 +274,7 @@ class GlobalController extends GetxController {
       NaviDrawerController.i.avatarUser.value = await userStorage.read('avatarUser');
       NaviDrawerController.i.nameUser.value = await userStorage.read('nameUser');
       NaviDrawerController.i.titleUser.value = await userStorage.read('titleUser');
+      NaviDrawerController.i.linkUser = await userStorage.read('linkUser');
     }
   }
 
@@ -502,6 +539,18 @@ class GlobalController extends GetxController {
       for (var p in e.problems) {
         print('Problem: ${p.code}: ${p.msg}');
       }
+    }
+  }
+
+  getIDYoutube(String link) {
+    return link.split('embed/')[1].split('?')[0];
+  }
+
+  launchURL(String url) async {
+    if (await canLaunch(url)) {
+      await launch(url, forceSafariVC: true, forceWebView: false, enableJavaScript: true);
+    } else {
+      throw 'Could not launch $url';
     }
   }
 }

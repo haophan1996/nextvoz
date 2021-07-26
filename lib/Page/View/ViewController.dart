@@ -63,13 +63,7 @@ class ViewController extends GetxController {
     GlobalController.i.percentDownload = -1.0;
   }
 
-  launchURL(String url) async {
-    if (await canLaunch(url)) {
-      await launch(url, forceSafariVC: true, forceWebView: false, enableJavaScript: true);
-    } else {
-      throw 'Could not launch $url';
-    }
-  }
+
 
   _removeTag(String content) {
     return content.replaceAll(
@@ -114,9 +108,7 @@ class ViewController extends GetxController {
         index: currentPage + 1, duration: Duration(milliseconds: 100), curve: Curves.slowMiddle, alignment: GlobalController.i.pageNaviAlign);
   }
 
-  getIDYoutube(String link) {
-    return link.split('embed/')[1].split('?')[0];
-  }
+
 
   final flagsReactions = [
     Reaction(
@@ -142,7 +134,7 @@ class ViewController extends GetxController {
                 '/reactions',
             false)
         .then((value) {
-      value.getElementsByClassName('block-row block-row--separated').forEach((element) {
+      value!.getElementsByClassName('block-row block-row--separated').forEach((element) {
         data['rName'] = element.getElementsByClassName('username ')[0].text;
         data['rTitle'] = element.getElementsByClassName('userTitle')[0].text;
         data['rMessage'] = element.getElementsByClassName('pairs pairs--inline')[0].getElementsByTagName('dd')[0].text;
@@ -171,7 +163,7 @@ class ViewController extends GetxController {
     data['_commentImg'] = '';
     await GlobalController.i.getBody(url, false).then((value) async {
       lengthHtmlDataList = htmlData.length;
-      data['dataCsrfPost'] = value.getElementsByTagName('html')[0].attributes['data-csrf'];
+      data['dataCsrfPost'] = value!.getElementsByTagName('html')[0].attributes['data-csrf'];
       data['xfCsrfPost'] = GlobalController.i.xfCsrfPost;
       if (value.getElementsByTagName('html')[0].attributes['data-logged-in'] == 'true') {
         GlobalController.i.isLogged.value = true;
@@ -284,7 +276,7 @@ class ViewController extends GetxController {
     data['_commentImg'] = '';
     await GlobalController.i.getBody(link, false).then((value) {
       lengthHtmlDataList = htmlData.length;
-      data['dataCsrfPost'] = value.getElementsByTagName('html')[0].attributes['data-csrf'];
+      data['dataCsrfPost'] = value!.getElementsByTagName('html')[0].attributes['data-csrf'];
       data['xfCsrfPost'] = GlobalController.i.xfCsrfPost;
       if (value.getElementsByTagName('html')[0].attributes['data-logged-in'] == 'true') {
         GlobalController.i.isLogged.value = true;
@@ -320,9 +312,10 @@ class ViewController extends GetxController {
             _removeTag(element.getElementsByClassName('message-body js-selectToQuote')[0].getElementsByClassName('bbWrapper')[0].innerHtml);
         data['postID'] =
             element.getElementsByClassName('actionBar-action actionBar-action--mq u-jsOnly js-multiQuote')[0].attributes['data-message-id'];
-        data['name'] = element.getElementsByClassName('username ')[0].text;
-        data['title'] = element.getElementsByClassName('message-userTitle')[0].text;
-        data['date'] = element.getElementsByClassName('u-dt')[0].text;
+        data['_userName'] = element.getElementsByClassName('username ')[0].text;
+        data['_userLink'] = element.getElementsByClassName('username')[0].attributes['href'].toString();
+        data['_userTitle'] = element.getElementsByClassName('message-userTitle')[0].text;
+        data['_userPostDate'] = element.getElementsByClassName('u-dt')[0].text;
         if (element.getElementsByClassName('message-avatar-wrapper')[0].getElementsByTagName('img').length > 0) {
           data['avatar'] = element.getElementsByClassName('message-avatar-wrapper')[0].getElementsByTagName('img')[0].attributes['src'].toString();
         } else {
@@ -353,15 +346,15 @@ class ViewController extends GetxController {
         htmlData.add({
           'newPost': false,
           'postContent': data['_postContent'],
-          'userPostDate': data['date'],
+          'userPostDate': data['_userPostDate'],
           'postID': data['postID'],
-          'userName': data['name'],
-          'userTitle': data['title'],
+          'userName': data['_userName'],
+          'userTitle': data['_userTitle'],
           'userAvatar': (data['avatar'] == "no" || data['avatar'].contains("https://")) ? data['avatar'] : GlobalController.i.url + data['avatar'],
           'commentName': data['_commentName'],
           'commentImage': data['_commentImg'],
           'commentByMe': int.parse(data['_commentByMe']),
-          'userLink': '',
+          'userLink': data['_userLink'],
           'orderPost': '',
         });
         data['_commentImg'] = '';

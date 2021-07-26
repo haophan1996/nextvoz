@@ -65,7 +65,7 @@ class MyPage extends StatelessWidget {
             maintainState: false),
         GetPage(name: '/Alerts', page: () => AlertsUI(), binding: PopBinding(), popGesture: true),
         GetPage(name: '/AlertsInbox', page: () => InboxUI(), binding: InboxBindings(), popGesture: true),
-        GetPage(name: "/UserProfile", page: () => UserProfileUI(), popGesture: true, binding: UserProfileBinding(), maintainState: false),
+        GetPage(name: "/UserProfile", page: () => UserProfileUI(),popGesture: true/*, binding: UserProfileBinding()*/, maintainState: false),
         GetPage(name: '/Youtube', page: () => YoutubeView(), binding: YoutubeBinding(), popGesture: true),
         GetPage(
             name: "/PostStatus",

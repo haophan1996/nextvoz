@@ -29,6 +29,8 @@ class ThreadController extends GetxController {
     super.onInit();
     theme = Get.arguments[0];
     _url = Get.arguments[1];
+
+    print(Get.height);
   }
 
   @override
@@ -59,7 +61,7 @@ class ThreadController extends GetxController {
   loadSubHeader(String url) async {
     await GlobalController.i.getBody(url, false).then((value) async {
       lengthHtmlDataList = myThreadList.length;
-      if (value.getElementsByTagName('html')[0].attributes['data-logged-in'] == 'true') {
+      if (value!.getElementsByTagName('html')[0].attributes['data-logged-in'] == 'true') {
         GlobalController.i.isLogged.value = true;
         // NaviDrawerController.i.titleUser.value = GlobalController.i.userStorage.read('titleUser');
         // NaviDrawerController.i.linkUser.value = GlobalController.i.userStorage.read('linkUser');

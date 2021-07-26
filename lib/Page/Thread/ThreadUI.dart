@@ -98,10 +98,9 @@ class ThreadUI extends GetView<ThreadController> {
                   ],
                 ),
               ),
-              SizedBox(
-                height: 5,
-              ),
-              whatNew(context),
+              SizedBox(height: 10,),
+              Expanded(child: whatNew(context)),
+              //SizedBox(height: 10,),
             ],
           ),
         ),

@@ -63,7 +63,32 @@ class HomePageUI extends GetView<HomeController> {
               Obx(
                 () => GlobalController.i.isLogged.value == false ? login(context) : logged(context),
               ),
-              whatNew(context)
+              whatNew(context),
+              SizedBox(
+                height: 10,
+              ),
+              Expanded(
+                child: Container(
+                  width: Get.width,
+                  decoration: BoxDecoration(color: Theme.of(context).backgroundColor, borderRadius: BorderRadius.all(Radius.circular(6))),
+                  height: MediaQuery.of(context).size.height * 0.06, //0.066,
+                  child: Column(
+                    children: [
+                      Container(
+                        padding: EdgeInsets.only(top: 15),
+                        child: Text(
+                          'Frequently asked questions\n',
+                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, foreground: Paint()..shader = linearGradient),
+                        ),
+                      ),
+                      Expanded(
+                          child: Text('1. Tại sao app bị lỗi khi vào một sô trang nhất định\nNếu bạn gặp trường hợp này,'
+                              ' hay report cho lập trinh viên biết bạn đang gặp lỗi ở trang nào và sẻ được support nhanh nhất có thể ', maxLines: 3,
+                            textAlign: TextAlign.center,overflow: TextOverflow.ellipsis,)),
+                    ],
+                  ),
+                ),
+              ),
             ],
           ),
         ),

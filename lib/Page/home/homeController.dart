@@ -21,7 +21,7 @@ class HomeController extends GetxController {
     await GlobalController.i.getBody(GlobalController.i.url, true).then((doc) async {
       //Set token
 
-      GlobalController.i.dataCsrfLogin = doc.getElementsByTagName('html')[0].attributes['data-csrf'];
+      GlobalController.i.dataCsrfLogin = doc!.getElementsByTagName('html')[0].attributes['data-csrf'];
       if (doc.getElementsByTagName('html')[0].attributes['data-logged-in'] == 'true') {
         GlobalController.i.isLogged.value = true;
         // NaviDrawerController.i.titleUser.value = GlobalController.i.userStorage.read('titleUser');
