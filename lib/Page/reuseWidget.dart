@@ -7,6 +7,7 @@ import 'package:expandable/expandable.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter_html/shims/dart_ui_real.dart';
+import 'package:loader_skeleton/loader_skeleton.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:pinch_zoom_image_last/pinch_zoom_image_last.dart';
@@ -16,7 +17,7 @@ import 'package:vozforums/Page/NavigationDrawer/NaviDrawerController.dart';
 import 'package:vozforums/Page/View/ViewController.dart';
 import 'package:vozforums/Page/pageLoadNext.dart';
 
-import 'UserProfile/UserProfileController.dart';
+import 'Profile/UserProfile/UserProfileController.dart';
 
 ///  * Global appbar
 PreferredSize preferredSize(BuildContext context, String title, String prefix) => PreferredSize(
@@ -64,10 +65,6 @@ Widget blockItem(BuildContext context, FontWeight themeTitleWeight, FontWeight t
     Padding(
       padding: EdgeInsets.only(top: 1, left: 8, right: 8),
       child: InkWell(
-        focusColor: Colors.red,
-        hoverColor: Colors.red,
-        highlightColor: Colors.red,
-        splashColor: Colors.red,
         splashFactory: InkRipple.splashFactory,
         onTap: () => onTap(),
         onLongPress: () => onLongPress(),
@@ -118,7 +115,6 @@ Widget customCupertinoButton(Alignment alignment, EdgeInsets edgeInsets, Widget 
       onPressed: () => onTap(),
     );
 
-
 Widget buttonToolHtml(IconData iconData, String message, Function onPressed) => customCupertinoButton(
     Alignment.center,
     EdgeInsets.zero,
@@ -128,7 +124,6 @@ Widget buttonToolHtml(IconData iconData, String message, Function onPressed) => 
       child: Icon(iconData, color: Get.theme.primaryColor),
     ),
     () => onPressed());
-
 
 Widget customTitle(FontWeight titleWeight, Color titleColor, int? maxLines, String header11, String header12) {
   return RichText(
@@ -293,6 +288,20 @@ setDialogError(String text) => Get.defaultDialog(
       backgroundColor: Get.theme.canvasColor,
     );
 
+Widget loadingShimmer() {
+  return Get.isDarkMode == false
+      ? CardListSkeleton(
+          isCircularImage: true,
+          isBottomLinesActive: true,
+          length: 5,
+        )
+      : DarkCardListSkeleton(
+          isCircularImage: true,
+          isBottomLinesActive: true,
+          length: 5,
+        );
+}
+
 Widget buildFlagsPreviewIcon(String path, String tex) => Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       child: Column(
@@ -446,10 +455,10 @@ Widget onTapUser(ViewController controller, int index) {
               width: Get.width,
               child: Text('View Profile'),
             ),
-            onPressed: () async{
+            onPressed: () async {
               GlobalController.i.sessionTag.add('profile${DateTime.now().toString()}');
               Get.lazyPut<UserProfileController>(() => UserProfileController(), tag: GlobalController.i.sessionTag.last);
-              Get.toNamed('/UserProfile',arguments: [controller.htmlData.elementAt(index)['userLink']] ,preventDuplicates: false);
+              Get.toNamed('/UserProfile', arguments: [controller.htmlData.elementAt(index)['userLink']], preventDuplicates: false);
             }),
         CupertinoButton(
             child: Container(
@@ -702,7 +711,7 @@ Widget postContent(BuildContext context, dynamic controller) {
   );
 }
 
-Widget customHtml(List htmlData, int index){
+Widget customHtml(List htmlData, int index) {
   return Html(
     data: htmlData.elementAt(index)['postContent'],
     tagsList: Html.tags..remove('noscript'),
@@ -804,10 +813,10 @@ Widget customHtml(List htmlData, int index){
       "table": (context, child) {
         if (context.tree.element!.getElementsByTagName("td").length > 2)
           return SingleChildScrollView(
-            scrollDirection: (context.tree.element!.getElementsByTagName("tr").length > 1) ||
-                (context.tree.element!.getElementsByTagName("a")[0].text.length > 25)
-                ? Axis.horizontal
-                : Axis.vertical,
+            scrollDirection:
+                (context.tree.element!.getElementsByTagName("tr").length > 1) || (context.tree.element!.getElementsByTagName("a")[0].text.length > 25)
+                    ? Axis.horizontal
+                    : Axis.vertical,
             padding: EdgeInsets.all(2),
             physics: BouncingScrollPhysics(),
             child: (context.tree as TableLayoutElement).toWidget(context),

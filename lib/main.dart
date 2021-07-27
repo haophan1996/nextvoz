@@ -1,10 +1,7 @@
-import 'dart:io';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:vozforums/Page/Alert_Inbox/InboxBindings.dart';
 import 'package:vozforums/Page/Alert_Inbox/InboxUI.dart';
 import 'package:vozforums/theme.dart';
@@ -21,11 +18,10 @@ import 'package:vozforums/Page/Thread/ThreadBinding.dart';
 import 'package:vozforums/Page/youtubeView/ViewYoutube.dart';
 import 'package:vozforums/Page/PostStatus/PostStatusUI.dart';
 import 'package:vozforums/Page/Settings/SettingsBinding.dart';
-import 'package:vozforums/Page/UserProfile/UserProfileUI.dart';
 import 'package:vozforums/Page/youtubeView/YoutubeBinding.dart';
 import 'package:vozforums/Page/PostStatus/PostStatusBindings.dart';
-import 'package:vozforums/Page/UserProfile/UserProfileBinding.dart';
-import 'package:vozforums/Page/NavigationDrawer/NaviDrawerController.dart';
+import 'package:vozforums/Page/NavigationDrawer/NaviDrawerController.dart'; 
+import 'Page/Profile/UserProfile/UserProfileUI.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

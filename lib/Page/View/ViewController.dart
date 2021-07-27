@@ -36,7 +36,6 @@ class ViewController extends GetxController {
     data['subHeader'] = Get.arguments[0];
     data['subTypeHeader'] = Get.arguments[2] ?? '';
     data['view'] = Get.arguments[3];
-    print(data['view']);
   }
 
   @override
@@ -100,7 +99,6 @@ class ViewController extends GetxController {
     await directory!.create();
     final File file = File((await getCachedImageFilePath(url)).toString());
     await file.copy(directory.path + "/${file.path.split("/").last}.jpg");
-    print(await file.copy(directory.path + "/${file.path.split("/").last}.jpg"));
   }
 
   scrollToFunc() {
@@ -167,17 +165,12 @@ class ViewController extends GetxController {
       data['xfCsrfPost'] = GlobalController.i.xfCsrfPost;
       if (value.getElementsByTagName('html')[0].attributes['data-logged-in'] == 'true') {
         GlobalController.i.isLogged.value = true;
-        // NaviDrawerController.i.titleUser.value = GlobalController.i.userStorage.read('titleUser');
-        // NaviDrawerController.i.linkUser.value = GlobalController.i.userStorage.read('linkUser');
-        // NaviDrawerController.i.avatarUser.value = GlobalController.i.userStorage.read('avatarUser');
-        // NaviDrawerController.i.nameUser.value = GlobalController.i.userStorage.read('nameUser');
         GlobalController.i.inboxNotifications = value.getElementsByClassName('p-navgroup-link--conversations').length > 0
             ? int.parse(value.getElementsByClassName('p-navgroup-link--conversations')[0].attributes['data-badge'].toString())
             : 0;
         GlobalController.i.alertNotifications = value.getElementsByClassName('p-navgroup-link--alerts').length > 0
             ? int.parse(value.getElementsByClassName('p-navgroup-link--alerts')[0].attributes['data-badge'].toString())
             : 0;
-        GlobalController.i.update();
       } else
         GlobalController.i.isLogged.value = false;
 
@@ -193,16 +186,20 @@ class ViewController extends GetxController {
           currentPage = int.parse(naviPage.replaceAll(RegExp(r'[^0-9]\S*'), ""));
           totalPage = int.parse(naviPage.replaceAll(RegExp(r'\S*[^0-9]'), ""));
         }
+
         //Get post
         element.getElementsByClassName("message message--post js-post js-inlineModContainer").forEach((element) {
           data['_postContent'] = element.getElementsByClassName("message-body js-selectToQuote")[0].outerHtml;
+           
           if (element.getElementsByClassName('message-lastEdit').length > 0) {
             data['_postContent'] = data['_postContent'] + fixLastEditPost(element.getElementsByClassName('message-lastEdit')[0].text);
           }
 
           data['_userPostDate'] = element.getElementsByClassName("u-concealed")[0].text.trim();
 
+
           _user = element.getElementsByClassName("message-cell message-cell--user");
+          data['postID'] = element.attributes['id']!.split('t-')[1];
           data['_userLink'] = _user.map((e) => e.getElementsByTagName("a")[1].attributes['href']).first!;
           data['_userTitle'] = _user.map((e) => e.getElementsByClassName("userTitle message-userTitle")[0].innerHtml).first;
           if (_user.map((e) => e.getElementsByTagName("img").length).toString() == "(1)") {
@@ -253,7 +250,7 @@ class ViewController extends GetxController {
             "orderPost": data['_orderPost'],
             "commentName": data['_commentName'],
             "commentImage": data['_commentImg'],
-            "postID": element.attributes['id']!.split('t-')[1],
+            "postID": data['postID'],
             'commentByMe': int.parse(data['_commentByMe'])
           });
           data['_commentImg'] = '';
@@ -272,6 +269,7 @@ class ViewController extends GetxController {
     });
   }
 
+
   Future<void> loadInboxView(String link) async {
     data['_commentImg'] = '';
     await GlobalController.i.getBody(link, false).then((value) {
@@ -280,17 +278,12 @@ class ViewController extends GetxController {
       data['xfCsrfPost'] = GlobalController.i.xfCsrfPost;
       if (value.getElementsByTagName('html')[0].attributes['data-logged-in'] == 'true') {
         GlobalController.i.isLogged.value = true;
-        // NaviDrawerController.i.titleUser.value = GlobalController.i.userStorage.read('titleUser');
-        // NaviDrawerController.i.linkUser.value = GlobalController.i.userStorage.read('linkUser');
-        // NaviDrawerController.i.avatarUser.value = GlobalController.i.userStorage.read('avatarUser');
-        // NaviDrawerController.i.nameUser.value = GlobalController.i.userStorage.read('nameUser');
         GlobalController.i.inboxNotifications = value.getElementsByClassName('p-navgroup-link--conversations').length > 0
             ? int.parse(value.getElementsByClassName('p-navgroup-link--conversations')[0].attributes['data-badge'].toString())
             : 0;
         GlobalController.i.alertNotifications = value.getElementsByClassName('p-navgroup-link--alerts').length > 0
             ? int.parse(value.getElementsByClassName('p-navgroup-link--alerts')[0].attributes['data-badge'].toString())
             : 0;
-        GlobalController.i.update();
       } else
         GlobalController.i.isLogged.value = false;
 
@@ -468,7 +461,6 @@ class ViewController extends GetxController {
             '${data['view'] == 0 ? GlobalController.i.viewReactLink : GlobalController.i.inboxReactLink}${htmlData.elementAt(index)['postID']}/quote')
         .then(
       (value) {
-        //print(value);
         Get.back();
         if (value['status'] == 'ok') {
           fixQuote(value['quoteHtml']);

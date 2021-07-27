@@ -65,7 +65,7 @@ class GlobalController extends GetxController {
     return parser.parse(response.toString());
   }
 
-  Future<dom.Document?> getBodya(Function onError, String url, bool isHomePage) async {
+  Future<dom.Document?> getBodyBeta(Function onError, String url, bool isHomePage) async {
     percentDownload = 0.1;
     update();
     final response = await dio.get(url, onReceiveProgress: (actual, total) {
@@ -86,6 +86,18 @@ class GlobalController extends GetxController {
     if (isHomePage == true) xfCsrfLogin = cookXfCsrf(response.headers['set-cookie'].toString());
 
     return parser.parse(response.toString());
+  }
+
+  String keyStatus(String status) {
+    return status.contains('the thread')
+        ? 'the thread'
+        : status.contains('a thread called')
+            ? 'a thread called'
+            : status.contains('reacted to your message in the conversation') // status
+                ? 'reacted to your message in the conversation'
+                : status.contains('reacted to your')
+                    ? 'reacted to your'
+                    : 'the conversation';
   }
 
   getAlert() async {
@@ -109,14 +121,7 @@ class GlobalController extends GetxController {
           if (element.getElementsByClassName('username ').length > 0) {
             username = element.getElementsByClassName('username ')[0].text;
             status = status.replaceAll(username, '');
-            key = status.contains('the thread')
-                ? 'the thread'
-                : status.contains('a thread called')
-                    ? 'a thread called'
-                    : status.contains('reacted to your')
-                        ? 'reacted to your'
-                        : 'the conversation'; //'a thread called' ? '' : '';
-
+            key = keyStatus(status);
 
             if (status.contains('is now following you.')) {
               threadName = '';

@@ -15,57 +15,65 @@ class PostStatusUI extends GetView<PostStatusController> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: appBarOnly(
-            'createPost',
-            [PopupMenuButton(
-              child: IconButton(
-                icon: Icon(Icons.more_vert),
-                onPressed: null,
-              ),
-              itemBuilder: (context) {
-                return [
-                  PopupMenuItem(
-                    child: Text(controller.data['isEditPost'] == true ? 'Save' : 'Post'),
-                    value: 0,
-                  ),
-                  PopupMenuItem(
-                    child: Text('Clear content'),
-                    value: 1,
-                  ),
-                  PopupMenuItem(
-                    child: Text('Hide keyboard'),
-                    value: 2,
-                  ),
-                  PopupMenuItem(
-                    child: Text('Show Keyboard'),
-                    value: 3,
-                  ),
-                  PopupMenuItem(
-                    child: Text('View Code'),
-                    value: 4,
-                  ),
-                ];
-              },
-              onSelected: (val) async {
-                switch (val) {
-                  case 0:
-                    controller.data['isEditPost'] == true ? await controller.editPost() : await controller.post();
-                    break;
-                  case 1:
-                    await controller.keyEditor.currentState?.clear();
-                    break;
-                  case 2:
-                    await SystemChannels.textInput.invokeMethod('TextInput.hide'); //controller.keyEditor.currentState?.unFocus();
-                    break;
-                  case 3:
-                    await controller.keyEditor.currentState!.focus(); //controller.keyEditor.currentState?.focus();
-                    break;
-                  case 4:
-                    String? html = await controller.keyEditor.currentState?.getHtml();
-                    print(html);
-                    break;
-                }
-              },
-            )]),
+            controller.data['view'] == '0'
+                ? 'createPost'.tr
+                : controller.data['view'] == '1'
+                    ? 'editPost'.tr
+                    : controller.data['view'] == '2'
+                        ? 'newConversation'.tr
+                        : 'newThread'.tr,
+            [
+              PopupMenuButton(
+                child: IconButton(
+                  icon: Icon(Icons.more_vert),
+                  onPressed: null,
+                ),
+                itemBuilder: (context) {
+                  return [
+                    PopupMenuItem(
+                      child: Text(controller.data['isEditPost'] == true ? 'Save' : 'Post'),
+                      value: 0,
+                    ),
+                    PopupMenuItem(
+                      child: Text('Clear content'),
+                      value: 1,
+                    ),
+                    PopupMenuItem(
+                      child: Text('Hide keyboard'),
+                      value: 2,
+                    ),
+                    PopupMenuItem(
+                      child: Text('Show Keyboard'),
+                      value: 3,
+                    ),
+                    PopupMenuItem(
+                      child: Text('View Code'),
+                      value: 4,
+                    ),
+                  ];
+                },
+                onSelected: (val) async {
+                  switch (val) {
+                    case 0:
+                      controller.data['isEditPost'] == true ? await controller.editPost() : await controller.post();
+                      break;
+                    case 1:
+                      await controller.keyEditor.currentState?.clear();
+                      break;
+                    case 2:
+                      await SystemChannels.textInput.invokeMethod('TextInput.hide'); //controller.keyEditor.currentState?.unFocus();
+                      break;
+                    case 3:
+                      await controller.keyEditor.currentState!.focus(); //controller.keyEditor.currentState?.focus();
+                      break;
+                    case 4:
+                      String? html = await controller.keyEditor.currentState?.getHtml();
+                      print(html);
+                      break;
+                  }
+                },
+              )
+            ]),
         body: Column(
           children: [
             Container(
@@ -87,7 +95,7 @@ class PostStatusUI extends GetView<PostStatusController> {
                     print(args.length);
                     controller.link.text = args[0];
                     controller.label.text = args[1];
-                    await Get.defaultDialog(title: 'Insert Link', content: insertLink(controller, ()=> controller.editLink(args)));
+                    await Get.defaultDialog(title: 'Insert Link', content: insertLink(controller, () => controller.editLink(args)));
                     args[0] = controller.link.text;
                     args[1] = controller.label.text;
                     controller.label.clear();
@@ -108,7 +116,7 @@ class PostStatusUI extends GetView<PostStatusController> {
                   buttonToolHtml(Icons.format_italic_outlined, 'Italic', () => controller.italic()),
                   buttonToolHtml(Icons.format_quote_outlined, 'Blockquote', () => controller.blockquote()),
                   buttonToolHtml(Icons.link_outlined, 'Insert Link', () {
-                    Get.defaultDialog(title: 'Insert Link', content: insertLink(controller, ()=> controller.insertLink()));
+                    Get.defaultDialog(title: 'Insert Link', content: insertLink(controller, () => controller.insertLink()));
                   }),
                   buttonToolHtml(Icons.emoji_emotions_outlined, 'Emoji', () => Get.bottomSheet(emoji(context, controller))),
                   buttonToolHtml(Icons.image_outlined, 'Insert Image', () {
@@ -159,7 +167,7 @@ Widget insertLink(PostStatusController controller, Function onDone) {
           child: inputCustom(controller.link, false, 'Link', () {}),
         ),
         inputCustom(controller.label, false, 'Label', () {}),
-        dialogButtonYesNo(()=> onDone()),
+        dialogButtonYesNo(() => onDone()),
       ],
     ),
   );
@@ -174,8 +182,8 @@ Widget insertYoutube(PostStatusController controller) {
         inputCustom(controller.link, false, 'Link', () async {
           await controller.getIDYt();
         }),
-        dialogButtonYesNo(() async{
-         await controller.getIDYt();
+        dialogButtonYesNo(() async {
+          await controller.getIDYt();
         }),
       ]));
 }
@@ -205,7 +213,7 @@ Widget insertImage(BuildContext context, PostStatusController controller) {
                 child: Column(
                   children: [
                     inputCustom(controller.link, false, 'Image link', () async {
-                      if (controller.link.text.isURL){
+                      if (controller.link.text.isURL) {
                         await controller.keyEditor.currentState!.javascriptExecutor.insertCustomImage(controller.link.text);
                         controller.link.clear();
                         Get.back();
@@ -213,14 +221,13 @@ Widget insertImage(BuildContext context, PostStatusController controller) {
                       }
                     }),
                     dialogButtonYesNo(() async {
-                      if (controller.link.text.isURL){
+                      if (controller.link.text.isURL) {
                         await controller.keyEditor.currentState!.javascriptExecutor.insertCustomImage(controller.link.text);
                         controller.link.clear();
                         Get.back();
                         Get.back();
                       }
                     }),
-
                   ],
                 ),
               ),

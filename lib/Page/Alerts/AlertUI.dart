@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:loader_skeleton/loader_skeleton.dart';
 import 'package:vozforums/GlobalController.dart';
+import 'package:vozforums/Page/Profile/UserProfile/UserProfileController.dart';
 import 'package:vozforums/Page/View/ViewController.dart';
 import 'package:vozforums/Page/reuseWidget.dart';
 import 'package:vozforums/Page/Alerts/AlertsController.dart';
@@ -26,10 +27,10 @@ class AlertsUI extends GetView<AlertsController> {
                     itemBuilder: (BuildContext context, int index) {
                       return Container(
                         decoration: BoxDecoration(
-                          color: globalController.alertList.elementAt(index)['unread'] == 'true' ? Get.theme.canvasColor : Colors.transparent,
+                            color: globalController.alertList.elementAt(index)['unread'] == 'true' ? Get.theme.canvasColor : Colors.transparent,
                             border: Border(
-                          bottom: BorderSide(width: 0.5, color: Theme.of(context).primaryColor),
-                        )),
+                              bottom: BorderSide(width: 0.5, color: Theme.of(context).primaryColor),
+                            )),
                         child: itemList(globalController, index),
                       );
                     },
@@ -82,18 +83,27 @@ class AlertsUI extends GetView<AlertsController> {
         ),
       ),
       onPressed: () {
-        if (globalController.alertList.elementAt(index)['unread'] == 'true'){
+        if (globalController.alertList.elementAt(index)['unread'] == 'true') {
           globalController.alertList.elementAt(index)['unread'] = 'false';
           globalController.update();
         }
-        GlobalController.i.sessionTag.add(globalController.alertList.elementAt(index)['threadName']);
-        Get.lazyPut<ViewController>(() => ViewController(), tag: GlobalController.i.sessionTag.last);
-        Get.toNamed("/ViewPage", arguments: [
-          globalController.alertList.elementAt(index)['threadName'],
-          globalController.alertList.elementAt(index)['link'],
-          globalController.alertList.elementAt(index)['prefix'],
-          globalController.alertList.elementAt(index)['link'].toString().contains('conversations/messages') ? 1 : 0
-        ]);
+        if (globalController.alertList.elementAt(index)['link'].contains('/u/', 0) == true) {
+          GlobalController.i.sessionTag.add('profile${DateTime.now().toString()}');
+          Get.lazyPut<UserProfileController>(() => UserProfileController(), tag: GlobalController.i.sessionTag.last);
+          Get.toNamed('/UserProfile', arguments: [globalController.alertList.elementAt(index)['link']], preventDuplicates: false);
+        } else if (globalController.alertList.elementAt(index)['link'].contains('/profile-posts/', 0) == true) {
+          // Go to status
+          print('status');
+        } else {
+          GlobalController.i.sessionTag.add(globalController.alertList.elementAt(index)['threadName']);
+          Get.lazyPut<ViewController>(() => ViewController(), tag: GlobalController.i.sessionTag.last);
+          Get.toNamed("/ViewPage", arguments: [
+            globalController.alertList.elementAt(index)['threadName'],
+            globalController.alertList.elementAt(index)['link'],
+            globalController.alertList.elementAt(index)['prefix'],
+            globalController.alertList.elementAt(index)['link'].toString().contains('conversations/messages') ? 1 : 0
+          ]);
+        }
       },
     );
   }

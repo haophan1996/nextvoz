@@ -32,17 +32,7 @@ class InboxUI extends GetView<InboxController> {
                       );
                     },
                   )
-                : Get.isDarkMode == false
-                    ? CardListSkeleton(
-                        isCircularImage: true,
-                        isBottomLinesActive: true,
-                        length: 5,
-                      )
-                    : DarkCardListSkeleton(
-                        isCircularImage: true,
-                        isBottomLinesActive: true,
-                        length: 5,
-                      );
+                : loadingShimmer();
           },
         ),
       ),

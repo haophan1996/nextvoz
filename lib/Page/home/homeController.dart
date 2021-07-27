@@ -3,24 +3,33 @@ import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:vozforums/GlobalController.dart';
 
 class HomeController extends GetxController {
-  late String header, label;
+  String loadingStatus = 'loading';
   List myHomePage = [];
   late PanelController panelController = PanelController();
 
   @override
   Future<void> onInit() async {
     super.onInit();
-    //await GlobalController.i.setDataUser();
   }
 
   Future<void> onReady() async {
     await loading();
   }
 
-  loading() async {
-    await GlobalController.i.getBody(GlobalController.i.url, true).then((doc) async {
-      //Set token
+  onLoadError() {
+    loadingStatus = 'loadFailed';
+    update();
+  }
 
+  onRefresh() async {
+    update();
+    await loading();
+  }
+
+  loading() async {
+    loadingStatus = 'loading';
+    await GlobalController.i.getBodyBeta(() => onLoadError(), GlobalController.i.url, true).then((doc) async {
+      //Set token
       GlobalController.i.dataCsrfLogin = doc!.getElementsByTagName('html')[0].attributes['data-csrf'];
       if (doc.getElementsByTagName('html')[0].attributes['data-logged-in'] == 'true') {
         GlobalController.i.isLogged.value = true;
@@ -55,7 +64,10 @@ class HomeController extends GetxController {
           });
         });
       });
-    }).then((value) => {update()});
+    }).then((value) {
+      loadingStatus = 'loadSucceeded';
+      update();
+    });
   }
 
   navigateToThread(String title, String link) async {
