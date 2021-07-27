@@ -292,13 +292,13 @@ Widget loadingShimmer() {
   return Get.isDarkMode == false
       ? CardListSkeleton(
           isCircularImage: true,
-          isBottomLinesActive: true,
-          length: 5,
+          isBottomLinesActive: false,
+          length: 1,
         )
       : DarkCardListSkeleton(
           isCircularImage: true,
-          isBottomLinesActive: true,
-          length: 5,
+          isBottomLinesActive: false,
+          length: 1,
         );
 }
 

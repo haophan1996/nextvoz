@@ -20,7 +20,7 @@ import 'package:vozforums/Page/PostStatus/PostStatusUI.dart';
 import 'package:vozforums/Page/Settings/SettingsBinding.dart';
 import 'package:vozforums/Page/youtubeView/YoutubeBinding.dart';
 import 'package:vozforums/Page/PostStatus/PostStatusBindings.dart';
-import 'package:vozforums/Page/NavigationDrawer/NaviDrawerController.dart'; 
+import 'package:vozforums/Page/NavigationDrawer/NaviDrawerController.dart';
 import 'Page/Profile/UserProfile/UserProfileUI.dart';
 
 Future<void> main() async {
@@ -34,7 +34,6 @@ Future<void> main() async {
   });
   runApp(MyPage());
 }
-
 
 class MyPage extends StatelessWidget {
   @override
@@ -50,18 +49,33 @@ class MyPage extends StatelessWidget {
       initialRoute: "/HomePage",
       getPages: [
         GetPage(name: "/HomePage", page: () => HomePageUI(), popGesture: true, binding: HomeBinding(), maintainState: false),
-        GetPage(name: "/ThreadPage", page: () => ThreadUI(), popGesture: true, binding: ThreadBinding(), maintainState: false),
+        GetPage(
+            name: "/ThreadPage",
+            page: () => ThreadUI(),
+            popGesture: true,
+            binding: ThreadBinding(),
+            gestureWidth: (context) {
+              return context.width * 0.8;
+            },
+            maintainState: false),
         GetPage(
             name: "/ViewPage",
             page: () => ViewUI(),
             transition: Transition.rightToLeft,
             transitionDuration: Duration(milliseconds: 200),
+            gestureWidth: (context) => context.width * 0.8,
             popGesture: true,
             //binding: ViewBinding(),
             maintainState: false),
-        GetPage(name: '/Alerts', page: () => AlertsUI(), binding: PopBinding(), popGesture: true),
-        GetPage(name: '/AlertsInbox', page: () => InboxUI(), binding: InboxBindings(), popGesture: true),
-        GetPage(name: "/UserProfile", page: () => UserProfileUI(),popGesture: true/*, binding: UserProfileBinding()*/, maintainState: false),
+        GetPage(name: '/Alerts', page: () => AlertsUI(), binding: PopBinding(), gestureWidth: (context) => context.width, popGesture: true),
+        GetPage(
+            name: '/AlertsInbox', page: () => InboxUI(), binding: InboxBindings(), gestureWidth: (context) => context.width, popGesture: true),
+        GetPage(
+            name: "/UserProfile",
+            page: () => UserProfileUI(),
+            gestureWidth: (context) => context.width,
+            popGesture: true /*, binding: UserProfileBinding()*/,
+            maintainState: false),
         GetPage(name: '/Youtube', page: () => YoutubeView(), binding: YoutubeBinding(), popGesture: true),
         GetPage(
             name: "/PostStatus",
@@ -74,6 +88,7 @@ class MyPage extends StatelessWidget {
         GetPage(
             name: "/Settings",
             page: () => SettingsUI(),
+            gestureWidth: (context) => context.width,
             popGesture: true,
             binding: SettingsBinding(),
             transition: Transition.rightToLeft,

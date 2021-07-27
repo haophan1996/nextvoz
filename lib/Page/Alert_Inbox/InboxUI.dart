@@ -2,7 +2,6 @@ import 'package:extended_image/extended_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:loader_skeleton/loader_skeleton.dart';
 import 'package:vozforums/GlobalController.dart';
 import 'package:vozforums/Page/Alert_Inbox/InboxController.dart';
 import 'package:vozforums/Page/View/ViewController.dart';
