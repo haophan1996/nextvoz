@@ -130,7 +130,6 @@ class HomePageUI extends GetView<HomeController> {
                         child: Text(
                       '1. Tại sao app bị lỗi khi vào một sô trang nhất định\nNếu bạn gặp trường hợp này,'
                       ' hay report cho lập trinh viên biết bạn đang gặp lỗi ở trang nào và sẻ được support nhanh nhất có thể ',
-                      maxLines: 3,
                       textAlign: TextAlign.center,
                       overflow: TextOverflow.ellipsis,
                     )),

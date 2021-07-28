@@ -1,4 +1,3 @@
-import 'package:extended_image/extended_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
@@ -86,30 +85,8 @@ class UserProfileUI extends StatelessWidget {
             Align(
               child: Padding(
                 padding: EdgeInsets.only(right: 5),
-                child: Container(
-                  width: 70,
-                  height: 70,
-                  decoration: BoxDecoration(
-                      color: Color(
-                        int.parse(controller.data['avatarColor1']),
-                      ),
-                      shape: BoxShape.circle),
-                  child: controller.data['avatarLink'] == 'no'
-                      ? Center(
-                          child: Text(
-                            controller.data['conservationWith'].toString().toUpperCase()[0],
-                            style: TextStyle(
-                                color: Color(int.parse(controller.data['avatarColor2'])),
-                                fontWeight: FontWeight.bold,
-                                fontSize: Get.theme.textTheme.headline5!.fontSize),
-                          ),
-                        )
-                      : ExtendedImage.network(
-                          controller.data['avatarLink'],
-                          shape: BoxShape.circle,
-                          fit: BoxFit.fill,
-                        ),
-                ),
+                child: displayAvatar(
+                    80, controller.data['avatarColor1'], controller.data['avatarColor2'], controller.data['userName'], controller.data['avatarLink']),
               ),
               alignment: Alignment.center,
             ), //Avatar
@@ -124,7 +101,8 @@ class UserProfileUI extends StatelessWidget {
                     TextSpan(
                         text: '${controller.data['title'] ??= 'Loading Title...'}\n', style: TextStyle(color: Get.theme.primaryColor, fontSize: 16)),
                     TextSpan(
-                        text: controller.data['from'] != '' ? '${controller.data['from']}\n' : '', style: TextStyle(color: Get.theme.primaryColor, fontSize: 16)),
+                        text: controller.data['from'] != '' ? '${controller.data['from']}\n' : '',
+                        style: TextStyle(color: Get.theme.primaryColor, fontSize: 16)),
                     TextSpan(
                         text: 'Joined: ${controller.data['joined'] ??= 'Loading...'}\n',
                         style: TextStyle(color: Get.theme.primaryColor, fontSize: 16)),

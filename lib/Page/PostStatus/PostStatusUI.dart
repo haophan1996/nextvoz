@@ -95,7 +95,7 @@ class PostStatusUI extends GetView<PostStatusController> {
                     print(args.length);
                     controller.link.text = args[0];
                     controller.label.text = args[1];
-                    await Get.defaultDialog(title: 'Insert Link', content: insertLink(controller, () => controller.editLink(args)));
+                    await Get.defaultDialog(title: 'Insert Link', content: insertLink(context, controller, () => controller.editLink(args)));
                     args[0] = controller.link.text;
                     args[1] = controller.label.text;
                     controller.label.clear();
@@ -116,13 +116,13 @@ class PostStatusUI extends GetView<PostStatusController> {
                   buttonToolHtml(Icons.format_italic_outlined, 'Italic', () => controller.italic()),
                   buttonToolHtml(Icons.format_quote_outlined, 'Blockquote', () => controller.blockquote()),
                   buttonToolHtml(Icons.link_outlined, 'Insert Link', () {
-                    Get.defaultDialog(title: 'Insert Link', content: insertLink(controller, () => controller.insertLink()));
+                    Get.defaultDialog(title: 'Insert Link', content: insertLink(context, controller, () => controller.insertLink()));
                   }),
                   buttonToolHtml(Icons.emoji_emotions_outlined, 'Emoji', () => Get.bottomSheet(emoji(context, controller))),
                   buttonToolHtml(Icons.image_outlined, 'Insert Image', () {
                     Get.bottomSheet(insertImage(context, controller));
                   }),
-                  buttonToolHtml(Icons.video_collection_outlined, 'Insert Youtube', () => Get.defaultDialog(content: insertYoutube(controller))),
+                  buttonToolHtml(Icons.video_collection_outlined, 'Insert Youtube', () => Get.defaultDialog(content: insertYoutube(context, controller))),
                   buttonToolHtml(Icons.undo_outlined, 'Undo', () => controller.undo()),
                   buttonToolHtml(Icons.redo_outlined, 'Redo', () => controller.redo()),
                   buttonToolHtml(Icons.format_underline_outlined, 'UnderLine', () => controller.underline()),
@@ -155,7 +155,7 @@ class PostStatusUI extends GetView<PostStatusController> {
   }
 }
 
-Widget insertLink(PostStatusController controller, Function onDone) {
+Widget insertLink(BuildContext context, PostStatusController controller, Function onDone) {
   return Container(
     padding: EdgeInsets.only(left: 15, right: 15),
     width: Get.width,
@@ -173,7 +173,7 @@ Widget insertLink(PostStatusController controller, Function onDone) {
   );
 }
 
-Widget insertYoutube(PostStatusController controller) {
+Widget insertYoutube(BuildContext context, PostStatusController controller) {
   return Container(
       width: Get.width,
       padding: EdgeInsets.only(left: 15, right: 15),

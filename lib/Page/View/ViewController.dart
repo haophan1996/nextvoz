@@ -2,16 +2,13 @@ import 'dart:io';
 import 'package:get/get.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:html/parser.dart' as parser;
 import 'package:html/dom.dart' as dom;
 import 'package:extended_image/extended_image.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:flutter_reaction_button/flutter_reaction_button.dart';
-import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:vozforums/GlobalController.dart';
 import 'package:vozforums/Page/reuseWidget.dart';
 
@@ -26,7 +23,6 @@ class ViewController extends GetxController {
   late dom.Document res;
   late RefreshController refreshController = RefreshController(initialRefresh: false);
   late ScrollController listViewScrollController = ScrollController();
-  late ItemScrollController itemScrollController = ItemScrollController();
   late PanelController panelController = PanelController();
   TextEditingController input = TextEditingController();
 
@@ -42,7 +38,7 @@ class ViewController extends GetxController {
   Future<void> onReady() async {
     super.onReady();
     data['subLink'] = Get.arguments[1];
-
+    data['subLink'] = data['subLink'].toString().replaceAll(GlobalController.i.url, '');
     data['view'] == 0
         ? await loadUserPost(data['fullUrl'] = GlobalController.i.url + data['subLink'])
         : await loadInboxView(data['fullUrl'] = GlobalController.i.url + data['subLink']);
@@ -62,24 +58,17 @@ class ViewController extends GetxController {
     GlobalController.i.percentDownload = -1.0;
   }
 
-
-
   _removeTag(String content) {
     return content.replaceAll(
         RegExp(r'<div class="bbCodeBlock-expandLink js-expandLink"><a role="button" tabindex="0">Click to expand...</a></div>'), "");
   }
 
-  setPageOnClick(String toPage) async {
-    if (int.parse(toPage) > totalPage) {
-      HapticFeedback.heavyImpact();
-      refreshController.loadComplete();
-    } else {
-      GlobalController.i.percentDownload = 0.01;
-      data['view'] == 0
-          ? await loadUserPost(data['fullUrl'] + GlobalController.i.pageLink + toPage)
-          : await loadInboxView(data['fullUrl'] + GlobalController.i.pageLink + toPage);
-      //await loadUserPost(data['fullUrl'] + GlobalController.i.pageLink + toPage);
-    }
+  setPageOnClick(int toPage) async {
+    GlobalController.i.percentDownload = 0.01;
+    data['view'] == 0
+        ? await loadUserPost(data['fullUrl'] + GlobalController.i.pageLink + toPage.toString())
+        : await loadInboxView(data['fullUrl'] + GlobalController.i.pageLink + toPage.toString());
+    //await loadUserPost(data['fullUrl'] + GlobalController.i.pageLink + toPage);
   }
 
   getImage(String url) async {
@@ -100,13 +89,6 @@ class ViewController extends GetxController {
     final File file = File((await getCachedImageFilePath(url)).toString());
     await file.copy(directory.path + "/${file.path.split("/").last}.jpg");
   }
-
-  scrollToFunc() {
-    itemScrollController.scrollTo(
-        index: currentPage + 1, duration: Duration(milliseconds: 100), curve: Curves.slowMiddle, alignment: GlobalController.i.pageNaviAlign);
-  }
-
-
 
   final flagsReactions = [
     Reaction(
@@ -190,22 +172,27 @@ class ViewController extends GetxController {
         //Get post
         element.getElementsByClassName("message message--post js-post js-inlineModContainer").forEach((element) {
           data['_postContent'] = element.getElementsByClassName("message-body js-selectToQuote")[0].outerHtml;
-           
+
           if (element.getElementsByClassName('message-lastEdit').length > 0) {
             data['_postContent'] = data['_postContent'] + fixLastEditPost(element.getElementsByClassName('message-lastEdit')[0].text);
           }
 
           data['_userPostDate'] = element.getElementsByClassName("u-concealed")[0].text.trim();
 
-
           _user = element.getElementsByClassName("message-cell message-cell--user");
           data['postID'] = element.attributes['id']!.split('t-')[1];
           data['_userLink'] = _user.map((e) => e.getElementsByTagName("a")[1].attributes['href']).first!;
           data['_userTitle'] = _user.map((e) => e.getElementsByClassName("userTitle message-userTitle")[0].innerHtml).first;
-          if (_user.map((e) => e.getElementsByTagName("img").length).toString() == "(1)") {
-            data['_userAvatar'] = _user.map((e) => e.getElementsByTagName("img")[0].attributes['src']).first!;
+
+          //print(element.getElementsByClassName('avatar avatar--m')[0].outerHtml);
+          if (element.getElementsByClassName('avatar avatar--m')[0].getElementsByTagName('img').length > 0){
+            data['_userAvatar'] = GlobalController.i.url + element.getElementsByClassName('avatar avatar--m')[0].getElementsByTagName('img')[0].attributes['src'].toString();
+            data['avatarColor1'] = '0x00000000';
+            data['avatarColor2'] = '0x00000000';
           } else {
-            data['_userAvatar'] = "no";
+            data['_userAvatar'] = 'no';
+            data['avatarColor1'] = '0xFFF' + element.getElementsByClassName('avatar avatar--m')[0].attributes['style'].toString().split('#')[1].split(';')[0];
+            data['avatarColor2'] = '0xFFF' + element.getElementsByClassName('avatar avatar--m')[0].attributes['style'].toString().split('#')[2];
           }
 
           data['_userName'] = _user.map((e) => e.getElementsByTagName("a")[1].text).first;
@@ -237,6 +224,8 @@ class ViewController extends GetxController {
             data['_commentName'] = '';
             data['_commentByMe'] = '0';
           }
+
+
           htmlData.add({
             'newPost': element.getElementsByClassName('message-newIndicator').isNotEmpty == false ? false : true,
             "postContent": _removeTag(data['_postContent']),
@@ -244,9 +233,9 @@ class ViewController extends GetxController {
             "userName": data['_userName'],
             "userLink": data['_userLink'],
             "userTitle": data['_userTitle'],
-            "userAvatar": (data['_userAvatar'] == "no" || data['_userAvatar'].contains("https://"))
-                ? data['_userAvatar']
-                : GlobalController.i.url + data['_userAvatar'],
+            "userAvatar": data['_userAvatar'],
+            'avatarColor1' : data['avatarColor1'],
+            'avatarColor2' : data['avatarColor2'],
             "orderPost": data['_orderPost'],
             "commentName": data['_commentName'],
             "commentImage": data['_commentImg'],
@@ -264,11 +253,7 @@ class ViewController extends GetxController {
       }
       refreshController.loadComplete();
     });
-    await Future.delayed(Duration(milliseconds: 50), () {
-      scrollToFunc();
-    });
   }
-
 
   Future<void> loadInboxView(String link) async {
     data['_commentImg'] = '';
@@ -300,7 +285,6 @@ class ViewController extends GetxController {
       }
 
       value.getElementsByClassName('message message--conversationMessage').forEach((element) {
-
         data['_postContent'] =
             _removeTag(element.getElementsByClassName('message-body js-selectToQuote')[0].getElementsByClassName('bbWrapper')[0].innerHtml);
         data['postID'] =
@@ -309,10 +293,15 @@ class ViewController extends GetxController {
         data['_userLink'] = element.getElementsByClassName('username')[0].attributes['href'].toString();
         data['_userTitle'] = element.getElementsByClassName('message-userTitle')[0].text;
         data['_userPostDate'] = element.getElementsByClassName('u-dt')[0].text;
-        if (element.getElementsByClassName('message-avatar-wrapper')[0].getElementsByTagName('img').length > 0) {
-          data['avatar'] = element.getElementsByClassName('message-avatar-wrapper')[0].getElementsByTagName('img')[0].attributes['src'].toString();
+
+        if (element.getElementsByClassName('avatar avatar--m')[0].getElementsByTagName('img').length > 0){
+          data['_userAvatar'] = GlobalController.i.url + element.getElementsByClassName('avatar avatar--m')[0].getElementsByTagName('img')[0].attributes['src'].toString();
+          data['avatarColor1'] = '0x00000000';
+          data['avatarColor2'] = '0x00000000';
         } else {
-          data['avatar'] = 'no';
+          data['_userAvatar'] = 'no';
+          data['avatarColor1'] = '0xFFF' + element.getElementsByClassName('avatar avatar--m')[0].attributes['style'].toString().split('#')[1].split(';')[0];
+          data['avatarColor2'] = '0xFFF' + element.getElementsByClassName('avatar avatar--m')[0].attributes['style'].toString().split('#')[2];
         }
 
         if (element.getElementsByClassName('reactionsBar-link').length > 0) {
@@ -343,7 +332,9 @@ class ViewController extends GetxController {
           'postID': data['postID'],
           'userName': data['_userName'],
           'userTitle': data['_userTitle'],
-          'userAvatar': (data['avatar'] == "no" || data['avatar'].contains("https://")) ? data['avatar'] : GlobalController.i.url + data['avatar'],
+          'userAvatar': data['_userAvatar'],
+          'avatarColor1': data['avatarColor1'],
+          'avatarColor2': data['avatarColor2'],
           'commentName': data['_commentName'],
           'commentImage': data['_commentImg'],
           'commentByMe': int.parse(data['_commentByMe']),
@@ -359,9 +350,6 @@ class ViewController extends GetxController {
         listViewScrollController.jumpTo(-10.0);
       }
       refreshController.loadComplete();
-    });
-    await Future.delayed(Duration(milliseconds: 50), () {
-      scrollToFunc();
     });
   }
 
@@ -413,10 +401,10 @@ class ViewController extends GetxController {
     if (x?[0] == 'ok') {
       if (await GlobalController.i.userStorage.read('scrollToMyRepAfterPost') == true) {
         isEdit = true;
-        String lastPage = totalPage.toString();
+        int lastPage = totalPage;
         await setPageOnClick(lastPage);
-        if (totalPage.toString() != lastPage) {
-          await setPageOnClick(totalPage.toString());
+        if (totalPage != lastPage) {
+          await setPageOnClick(totalPage);
         }
         isEdit = false;
         listViewScrollController.jumpTo(listViewScrollController.position.maxScrollExtent);
@@ -536,8 +524,8 @@ class ViewController extends GetxController {
     return fixHtmlUrl(html);
   }
 
-  deletePost(String response, int index) async{
-    if (response.length == 0){
+  deletePost(String response, int index) async {
+    if (response.length == 0) {
       setDialogError('Reason cannot be NULL');
       return;
     }
@@ -547,20 +535,21 @@ class ViewController extends GetxController {
       'host': 'voz.vn',
       'cookie': '${data['xfCsrfPost']}; xf_user=${GlobalController.i.xfUser};',
     };
-    var body = {'_xfToken': '${data['dataCsrfPost']}', '_xfResponseType': 'json', 'reason' : response};
+    var body = {'_xfToken': '${data['dataCsrfPost']}', '_xfResponseType': 'json', 'reason': response};
 
-    await GlobalController.i.getHttpPost(headers, body, GlobalController.i.viewReactLink+htmlData.elementAt(index)['postID']+'/delete').then((value) async {
+    await GlobalController.i
+        .getHttpPost(headers, body, GlobalController.i.viewReactLink + htmlData.elementAt(index)['postID'] + '/delete')
+        .then((value) async {
       if (value['status'] == 'ok') {
-        if (Get.isDialogOpen==true) Get.back();
-        if (Get.isDialogOpen==true) Get.back();
+        if (Get.isDialogOpen == true) Get.back();
+        if (Get.isDialogOpen == true) Get.back();
         setDialog('Refreshing Page', 'Loading');
-        await setPageOnClick(currentPage.toString());
+        await setPageOnClick(currentPage);
         input.clear();
       } else {
-        if (Get.isDialogOpen==true) Get.back();
+        if (Get.isDialogOpen == true) Get.back();
         setDialogError(value['errors'][0].toString());
       }
     });
-
   }
 }

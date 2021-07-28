@@ -236,7 +236,7 @@ Widget login(BuildContext context) {
                               ),
                               Padding(
                                 padding: EdgeInsets.fromLTRB(15, 15, 15, 5),
-                                child: inputCustom(NaviDrawerController.i.textEditingControllerLogin, false, 'loginAccount', () {}),
+                                child: inputCustom(NaviDrawerController.i.textEditingControllerLogin, false, 'loginAccount', (){}),
                               ),
                               Padding(
                                 padding: EdgeInsets.fromLTRB(15, 5, 15, 5),

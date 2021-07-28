@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -30,7 +31,12 @@ class ThreadUI extends GetView<ThreadController> {
                 enablePullDown: false,
                 enablePullUp: true,
                 onLoading: () {
-                  controller.setPageOnClick((controller.currentPage + 1).toString());
+                  if (controller.currentPage+1 > controller.totalPage){
+                    HapticFeedback.lightImpact();
+                  }
+                  if (controller.totalPage != 0 && controller.currentPage != 0) {
+                    controller.setPageOnClick(controller.currentPage + 1);
+                  }
                 },
                 controller: controller.refreshController,
                 child: ListView.builder(
@@ -65,20 +71,25 @@ class ThreadUI extends GetView<ThreadController> {
           );
         }),
         Container(
-          padding: EdgeInsets.only(left: 6,right: 6),
+          padding: EdgeInsets.only(left: 6, right: 6),
           //color: Colors.blue,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               GetBuilder<ThreadController>(builder: (controller) {
-                return pageNavigation(
-                    context,
-                    controller.itemScrollController,
-                    controller.currentPage,
-                    controller.totalPage,
-                        (index) => controller.setPageOnClick(index),
-                        () => {controller.setPageOnClick(controller.totalPage.toString())},
-                        () => controller.setPageOnClick("1"), (){});
+                return pageNavigation(controller.currentPage, controller.totalPage, (index) {
+                  if (index > controller.totalPage || index < 1){
+                    HapticFeedback.lightImpact();
+                    if (index==0) index =1;
+                    if(index>controller.totalPage) index-=1;
+                  }
+                  if (controller.totalPage!= 0 && controller.currentPage != 0){
+                    setDialog('popMess'.tr, 'loading3'.tr);
+                    controller.setPageOnClick(index);
+                  }
+                }, () {
+                  print('reply ');
+                });
               }),
               Container(
                 padding: EdgeInsets.only(top: 5),
@@ -93,12 +104,14 @@ class ThreadUI extends GetView<ThreadController> {
                       ),
                     ),
                     Obx(
-                          () => GlobalController.i.isLogged.value == false ? login(context) : logged(context),
+                      () => GlobalController.i.isLogged.value == false ? login(context) : logged(context),
                     ),
                   ],
                 ),
               ),
-              SizedBox(height: 10,),
+              SizedBox(
+                height: 10,
+              ),
               Expanded(child: whatNew(context)),
               //SizedBox(height: 10,),
             ],

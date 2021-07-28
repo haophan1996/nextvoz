@@ -80,7 +80,7 @@ class NaviDrawerController extends GetxController {
         if (value.documentElement!.getElementsByClassName('avatar avatar--l').map((e)=>e.innerHtml).first.contains('span') == true){
           avatarUser.value = 'no';
         } else {
-          final url = GlobalController.i.url+value.documentElement!.getElementsByClassName('avatarWrapper')[0].getElementsByTagName('img')[0].attributes['src'].toString();;
+          final url = GlobalController.i.url+value.documentElement!.getElementsByClassName('avatarWrapper')[0].getElementsByTagName('img')[0].attributes['src'].toString();
           print(url);
           avatarUser.value = url;
         }
@@ -112,6 +112,7 @@ class NaviDrawerController extends GetxController {
 
   logout() async{
     GlobalController.i.dio.options.headers['cookie'] = '';
+    GlobalController.i.xfUser = '';
     GlobalController.i.isLogged.value = false;
     nameUser.value = '';
     titleUser.value = '';

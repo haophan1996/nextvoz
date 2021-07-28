@@ -1,11 +1,15 @@
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:vozforums/Page/NavigationDrawer/NaviDrawerUI.dart';
 import 'package:vozforums/Page/pageNavigation.dart';
 import 'package:vozforums/Page/reuseWidget.dart';
 import 'package:vozforums/Page/View/ViewController.dart';
 import 'package:vozforums/GlobalController.dart';
+
+import '../pageLoadNext.dart';
 
 class ViewUI extends StatelessWidget {
   @override
@@ -27,23 +31,29 @@ class ViewUI extends StatelessWidget {
           },
         ),
         Container(
-          padding: EdgeInsets.only(left: 6, right: 6),
-          color: Colors.transparent,
           child: Column(
             children: [
               GetBuilder<ViewController>(
-                  tag: GlobalController.i.sessionTag.last,
-                  builder: (controller) {
-                    return pageNavigation(
-                      context,
-                      controller.itemScrollController,
-                      controller.currentPage,
-                      controller.totalPage,
-                      (index) => controller.setPageOnClick(index),
-                      () => controller.setPageOnClick(controller.totalPage.toString()),
-                      () => controller.setPageOnClick("1"), ()=> controller.reply('', false)
-                    );
-                  }),
+                tag: GlobalController.i.sessionTag.last,
+                builder: (controller) {
+                  return pageNavigation(
+                    controller.currentPage,
+                    controller.totalPage,
+                    (index) {
+                      if (index > controller.totalPage || index < 1){
+                        HapticFeedback.lightImpact();
+                        if (index==0) index =1;
+                        if(index>controller.totalPage) index-=1;
+                      }
+                      if (controller.totalPage!= 0 && controller.currentPage != 0){
+                        setDialog('popMess'.tr, 'loading3'.tr);
+                        controller.setPageOnClick(index);
+                      }
+                    },
+                    () => controller.reply('', false),
+                  );
+                },
+              ),
               Container(
                 padding: EdgeInsets.only(top: 5),
                 decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(6)), color: Theme.of(context).backgroundColor),
@@ -57,14 +67,48 @@ class ViewUI extends StatelessWidget {
                       ),
                     ),
                     Obx(
-                          () => GlobalController.i.isLogged.value == false ? login(context) : logged(context),
+                      () => GlobalController.i.isLogged.value == false ? login(context) : logged(context),
                     ),
                   ],
                 ),
               ),
-              SizedBox(height: 10,),
+              SizedBox(
+                height: 10,
+              ),
               Expanded(child: whatNew(context)),
             ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget postContent(BuildContext context, ViewController controller) {
+    return refreshIndicatorConfiguration(
+      Scrollbar(
+        child: SmartRefresher(
+          enablePullDown: false,
+          enablePullUp: true,
+          controller: controller.refreshController,
+          onLoading: () {
+            if (controller.currentPage + 1 > controller.totalPage) {
+              HapticFeedback.lightImpact();
+            }
+            if (controller.totalPage != 0 && controller.currentPage != 0) {
+              controller.setPageOnClick(controller.currentPage + 1);
+            }
+          },
+          child: ListView.builder(
+            cacheExtent: 99999,
+            shrinkWrap: true,
+            padding: EdgeInsets.only(top: 2),
+            physics: BouncingScrollPhysics(),
+            scrollDirection: Axis.vertical,
+            controller: controller.listViewScrollController,
+            itemCount: controller.htmlData.length,
+            itemBuilder: (context, index) {
+              return viewContent(context, index, controller);
+            },
           ),
         ),
       ),

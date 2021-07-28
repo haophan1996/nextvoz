@@ -28,7 +28,7 @@
     </queries>
     <application
         android:icon="@mipmap/ic_launcher"
-        android:label="vozforums">
+        android:label="theNEXTvoz">
 
         <activity
             android:name=".MainActivity"

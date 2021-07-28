@@ -88,7 +88,6 @@ class MyPage extends StatelessWidget {
         GetPage(
             name: "/Settings",
             page: () => SettingsUI(),
-            gestureWidth: (context) => context.width,
             popGesture: true,
             binding: SettingsBinding(),
             transition: Transition.rightToLeft,

@@ -3,17 +3,15 @@ import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
-import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:vozforums/Page/reuseWidget.dart';
 import 'package:vozforums/GlobalController.dart';
 
-Widget pageNavigation(BuildContext context, ItemScrollController scrollController, int currentPage, int totalPage, Function(String item) onCall,
-    Function lastPage, Function firstPage, Function reply) {
+Widget pageNavigation(int currentPage, int totalPage, Function(int index) gotoPage, Function reply) {
   return Padding(
-    padding: EdgeInsets.only(top: 1, bottom: 10),
+    padding: EdgeInsets.only(bottom: 5),
     child: Container(
-      decoration: BoxDecoration(color: Theme.of(context).backgroundColor, borderRadius: BorderRadius.all(Radius.circular(6))),
-      height: MediaQuery.of(context).size.height * 0.06, //0.066,
+      decoration: BoxDecoration(color: Get.theme.backgroundColor, borderRadius: BorderRadius.all(Radius.circular(6))),
+      height: Get.size.height * 0.06, //0.066,
       child: Stack(
         children: [
           Align(
@@ -22,17 +20,25 @@ Widget pageNavigation(BuildContext context, ItemScrollController scrollControlle
               padding: EdgeInsets.zero,
               child: Icon(
                 Icons.reply_outlined,
-                color: Theme.of(context).primaryColor,
+                color: Get.theme.primaryColor,
               ),
-              onPressed: () => reply(),
+              onPressed: () {
+                if (GlobalController.i.isLogged.value == false) {
+                  setDialogError('You must be logged-in to do that.');
+                } else
+                  reply();
+              },
             ),
           ),
           GetBuilder<GlobalController>(builder: (controller) {
             return Align(
               alignment: Alignment.centerRight,
-              child: Image.asset(
-                'assets/${controller.alertNotifications != 0 || controller.inboxNotifications != 0 ? 'alerts' : 'reaction/nil'}.png',
-                width: 10,
+              child: Padding(
+                padding: EdgeInsets.only(right: 5),
+                child: Image.asset(
+                  'assets/${controller.alertNotifications != 0 || controller.inboxNotifications != 0 ? 'alerts' : 'reaction/nil'}.png',
+                  width: 10,
+                ),
               ),
             );
           }),
@@ -40,63 +46,24 @@ Widget pageNavigation(BuildContext context, ItemScrollController scrollControlle
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              CupertinoButton(
-                  padding: EdgeInsets.zero,
-                  child: Icon(Icons.arrow_back_ios_rounded, color: Theme.of(context).primaryColor),
-                  onPressed: () {
-                    setDialog('popMess'.tr, 'loading3'.tr);
-                    firstPage();
-                  }),
-              SizedBox(
-                width: Get.width * 0.4,
-                height: 36,
-                child: ScrollablePositionedList.builder(
-                  itemScrollController: scrollController,
-                  physics: BouncingScrollPhysics(),
-                  scrollDirection: Axis.horizontal,
-                  itemCount: totalPage,
-                  itemBuilder: (context, index) {
-                    return Padding(
-                      padding: EdgeInsets.only(left: index == 0 ? 50 : 2, right: index == totalPage - 1 ? 50 : 0),
-                      //left: index == 0 ? 100 : 2, right: index == totalPage - 1 ? 120 : 0
-                      child: InkWell(
-                        onTap: () {
-                          if (index + 1 != currentPage) {
-                            setDialog('popMess'.tr, 'loading3'.tr);
-                            onCall((index + 1).toString());
-                          }
-                        },
-                        child: Container(
-                          height: 50,
-                          constraints: BoxConstraints(minWidth: 33, minHeight: 45),
-                          decoration: BoxDecoration(
-                              color: (index + 1) == currentPage ? Theme.of(context).primaryColor : Colors.transparent,
-                              border: Border.all(width: 2, color: (index + 1) == currentPage ? Colors.red : Colors.greenAccent),
-                              shape: BoxShape.rectangle,
-                              borderRadius: BorderRadius.all(Radius.circular(5))),
-                          alignment: Alignment.center,
-                          child: Text(
-                            (index + 1).toString(),
-                            style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: (index + 1) == currentPage ? Colors.pink : Theme.of(context).primaryColor),
-                          ),
-                        ),
-                      ),
-                    );
-                  },
-                ),
+              customCupertinoButton(Alignment.center, EdgeInsets.zero, Icon(Icons.arrow_back, color: Get.theme.primaryColor), () {
+                gotoPage(1);
+              }),
+              customCupertinoButton(Alignment.center, EdgeInsets.zero, Icon(Icons.arrow_back_ios_rounded, color: Get.theme.primaryColor), () {
+                gotoPage(currentPage -= 1);
+              }),
+              Text(
+                '${currentPage.toString()} of ${totalPage.toString()}',
+                style: TextStyle(fontWeight: FontWeight.bold),
               ),
-              CupertinoButton(
-                  padding: EdgeInsets.zero,
-                  child: Icon(Icons.arrow_forward_ios_rounded, color: Theme.of(context).primaryColor),
-                  onPressed: () {
-                    setDialog('popMess'.tr, 'loading3'.tr);
-                    lastPage();
-                  }),
+              customCupertinoButton(Alignment.center, EdgeInsets.zero, Icon(Icons.arrow_forward_ios_rounded, color: Get.theme.primaryColor), () {
+                gotoPage(currentPage += 1);
+              }),
+              customCupertinoButton(Alignment.center, EdgeInsets.zero, Icon(Icons.arrow_forward, color: Get.theme.primaryColor), () {
+                gotoPage(totalPage);
+              }),
             ],
-          ),
+          )
         ],
       ),
     ),
@@ -111,14 +78,13 @@ Widget slidingUp(double maxHeight, PanelController panelController, Widget bodyW
     parallaxOffset: .5,
     minHeight: Get.height * 0.08,
     maxHeight: Get.height / 2,
-    // * 0.42+maxHeight,
-    //maxHeight,
-    //Get.height * 0.5,
+    padding: EdgeInsets.only(left: 5, right: 5),
     backdropEnabled: true,
     backdropTapClosesPanel: true,
-    backdropColor: Colors.transparent,
+    backdropColor: Colors.grey.shade700,
     color: Colors.transparent,
     panel: panelWidget,
+    //snapPoint: 0.2,
     body: bodyWidget,
   );
 }

@@ -1,6 +1,5 @@
 import 'package:get/get.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:expandable/expandable.dart';
@@ -8,15 +7,12 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter_html/shims/dart_ui_real.dart';
 import 'package:loader_skeleton/loader_skeleton.dart';
-import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:pinch_zoom_image_last/pinch_zoom_image_last.dart';
 import 'package:flutter_reaction_button/flutter_reaction_button.dart';
 import 'package:vozforums/GlobalController.dart';
 import 'package:vozforums/Page/NavigationDrawer/NaviDrawerController.dart';
 import 'package:vozforums/Page/View/ViewController.dart';
-import 'package:vozforums/Page/pageLoadNext.dart';
-
 import 'Profile/UserProfile/UserProfileController.dart';
 
 ///  * Global appbar
@@ -82,7 +78,7 @@ Widget blockItem(BuildContext context, FontWeight themeTitleWeight, FontWeight t
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    customTitle(titleWeight, Get.theme.primaryColor, null, header11, header12),
+                    customTitle(titleWeight, Colors.blue, null, header11, header12),
                     Text(
                       "$header21 \u2022 $header22",
                       style: TextStyle(color: Colors.grey, fontSize: 12),
@@ -95,13 +91,8 @@ Widget blockItem(BuildContext context, FontWeight themeTitleWeight, FontWeight t
                     )
                   ],
                 ),
-                flex: 1,
+                //flex: 1,
               ),
-              Icon(
-                Icons.arrow_forward_ios_outlined,
-                color: Colors.grey,
-                size: 18,
-              )
             ],
           ),
         ),
@@ -251,9 +242,7 @@ Widget popUpWaiting(String one, String two) => Column(
 
 Widget inputCustom(TextEditingController controller, bool obscureText, String hint, Function onEditingComplete) {
   return TextField(
-    onEditingComplete: () async {
-      await onEditingComplete();
-    },
+    onEditingComplete: () async => await onEditingComplete(),
     textInputAction: TextInputAction.next,
     controller: controller,
     style: TextStyle(fontSize: 18, color: Get.theme.primaryColor),
@@ -471,7 +460,7 @@ Widget onTapUser(ViewController controller, int index) {
   );
 }
 
-Widget onTapMine(ViewController controller, int index) {
+Widget onTapMine(context, ViewController controller, int index) {
   return Padding(
       padding: EdgeInsets.only(bottom: 30),
       child: Column(
@@ -543,22 +532,12 @@ Widget viewContent(BuildContext context, int index, ViewController controller) =
                         children: <Widget>[
                           Padding(
                             padding: EdgeInsets.only(top: 5, left: 5, bottom: 5),
-                            child: Container(
-                              width: 48,
-                              height: 48,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                image: DecorationImage(
-                                  image: controller.htmlData.elementAt(index)["userAvatar"] == "no"
-                                      ? Image.asset(
-                                          "assets/NoAvata.png",
-                                          height: 48,
-                                          width: 48,
-                                        ).image
-                                      : ExtendedNetworkImageProvider(controller.htmlData.elementAt(index)["userAvatar"], cache: true),
-                                ),
-                              ),
-                            ),
+                            child: displayAvatar(
+                                48,
+                                controller.htmlData.elementAt(index)["avatarColor1"],
+                                controller.htmlData.elementAt(index)["avatarColor2"],
+                                controller.htmlData.elementAt(index)["userName"],
+                                controller.htmlData.elementAt(index)["userAvatar"]),
                           ),
                           Padding(
                             padding: EdgeInsets.only(top: 10, left: 10),
@@ -604,7 +583,7 @@ Widget viewContent(BuildContext context, int index, ViewController controller) =
                     Card(
                       color: Theme.of(context).canvasColor,
                       child: controller.htmlData.elementAt(index)['userName'] == NaviDrawerController.i.nameUser.value
-                          ? onTapMine(controller, index)
+                          ? onTapMine(context, controller, index)
                           : onTapUser(controller, index),
                     ),
                     ignoreSafeArea: false);
@@ -684,32 +663,30 @@ Widget viewContent(BuildContext context, int index, ViewController controller) =
       ),
     );
 
-Widget postContent(BuildContext context, dynamic controller) {
-  return refreshIndicatorConfiguration(
-    Scrollbar(
-      child: SmartRefresher(
-        enablePullDown: false,
-        enablePullUp: true,
-        controller: controller.refreshController,
-        onLoading: () {
-          controller.setPageOnClick((controller.currentPage + 1).toString());
-        },
-        child: ListView.builder(
-          cacheExtent: 99999,
-          shrinkWrap: true,
-          padding: EdgeInsets.only(top: 2),
-          physics: BouncingScrollPhysics(),
-          scrollDirection: Axis.vertical,
-          controller: controller.listViewScrollController,
-          itemCount: controller.htmlData.length,
-          itemBuilder: (context, index) {
-            return viewContent(context, index, controller);
-          },
+Widget displayAvatar(double sizeImage, String avatarColor1, String avatarColor2, String? userName, String imageLink) {
+  return Container(
+    width: sizeImage,
+    height: sizeImage,
+    decoration: BoxDecoration(
+        color: Color(
+          int.parse(avatarColor1),
         ),
-      ),
-    ),
+        shape: BoxShape.circle),
+    child: imageLink == 'no'
+        ? Center(
+            child: Text(
+              userName!.toUpperCase()[0],
+              style: TextStyle(color: Color(int.parse(avatarColor2)), fontWeight: FontWeight.bold, fontSize: Get.theme.textTheme.headline5!.fontSize),
+            ),
+          )
+        : ExtendedImage.network(
+            imageLink,
+            shape: BoxShape.circle,
+            fit: BoxFit.fill,
+          ),
   );
 }
+
 
 Widget customHtml(List htmlData, int index) {
   return Html(
@@ -821,6 +798,13 @@ Widget customHtml(List htmlData, int index) {
             physics: BouncingScrollPhysics(),
             child: (context.tree as TableLayoutElement).toWidget(context),
           );
+        else
+          return SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            padding: EdgeInsets.all(2),
+            physics: BouncingScrollPhysics(),
+            child: (context.tree as TableLayoutElement).toWidget(context),
+          );
       },
       "iframe": (RenderContext context, Widget child) {
         final attrs = context.tree.element?.attributes;
@@ -913,8 +897,15 @@ Widget customHtml(List htmlData, int index) {
         ..display = Display.BLOCK,
     },
     onLinkTap: (String? url, RenderContext context, Map<String, String> attributes, dom.Element? element) async {
-      print(url);
-      GlobalController.i.launchURL(url!);
+      if (url != null) {
+        if (url.contains('https://voz.vn/t/', 0)) {
+          print(url);
+          GlobalController.i.sessionTag.add('ViewController at $url');
+          Get.lazyPut<ViewController>(() => ViewController(), tag: GlobalController.i.sessionTag.last);
+          Get.toNamed("/ViewPage", arguments: [url.replaceFirst(GlobalController.i.url + '/t/', '', 0), url, '', 0], preventDuplicates: false);
+        } else
+          GlobalController.i.launchURL(url);
+      }
     },
   );
 }

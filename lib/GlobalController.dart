@@ -24,7 +24,7 @@ class GlobalController extends GetxController {
       pageLink = "page-",
       inboxReactLink = 'https://voz.vn/conversations/messages/',
       viewReactLink = 'https://voz.vn/p/';
-  final pageNaviAlign = 0.72, userStorage = GetStorage();
+  final userStorage = GetStorage();
   double percentDownload = 0.0;
   var dio = Dio(), xfCsrfLogin, dataCsrfLogin, xfCsrfPost, dataCsrfPost;
   RxBool isLogged = false.obs;

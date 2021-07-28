@@ -3,7 +3,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
-import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:vozforums/GlobalController.dart';
 import 'package:vozforums/Page/View/ViewController.dart';
 
@@ -12,7 +11,6 @@ class ThreadController extends GetxController {
   late String theme;
   late RefreshController refreshController = RefreshController(initialRefresh: false);
   late ScrollController listViewScrollController = ScrollController();
-  late ItemScrollController itemScrollController = ItemScrollController();
   late PanelController panelController = PanelController();
   List myThreadList = [];
   int currentPage = 0;
@@ -52,8 +50,8 @@ class ThreadController extends GetxController {
     listViewScrollController.dispose();
   }
 
-  setPageOnClick(String toPage) async {
-    await loadSubHeader(_url + GlobalController.i.pageLink + toPage);
+  setPageOnClick(int toPage) async {
+    await loadSubHeader(_url + GlobalController.i.pageLink + toPage.toString());
   }
 
   loadSubHeader(String url) async {
@@ -110,8 +108,6 @@ class ThreadController extends GetxController {
       if (Get.isDialogOpen == true || refreshController.isLoading) {
         if (Get.isDialogOpen == true) Get.back();
         myThreadList.removeRange(0, lengthHtmlDataList);
-        itemScrollController.scrollTo(
-            index: currentPage + 1, duration: Duration(milliseconds: 100), curve: Curves.easeInOutCubic, alignment: GlobalController.i.pageNaviAlign);
         listViewScrollController.jumpTo(-10.0);
       }
       refreshController.loadComplete();
