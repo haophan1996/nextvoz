@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
-import 'package:vozforums/GlobalController.dart';
-import 'package:vozforums/Page/reuseWidget.dart';
-import 'UserProfileController.dart';
+import '/GlobalController.dart';
+import '/Page/reuseWidget.dart';
+import '/Page/Profile/UserProfile/UserProfileController.dart';
 
 class UserProfileUI extends StatelessWidget {
   @override

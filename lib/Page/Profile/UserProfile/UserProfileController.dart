@@ -1,7 +1,7 @@
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
-import 'package:vozforums/GlobalController.dart';
-import 'package:vozforums/Page/NavigationDrawer/NaviDrawerController.dart';
+import '/GlobalController.dart';
+import '/Page/NavigationDrawer/NaviDrawerController.dart';
 
 class UserProfileController extends GetxController {
   late var xfCsrfPost;

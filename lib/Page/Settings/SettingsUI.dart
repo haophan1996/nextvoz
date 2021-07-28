@@ -2,8 +2,8 @@ import 'package:get/get.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_reaction_button/flutter_reaction_button.dart';
-import 'package:vozforums/Page/reuseWidget.dart';
-import 'package:vozforums/Page/Settings/SettingsController.dart';
+import '/Page/reuseWidget.dart';
+import '/Page/Settings/SettingsController.dart';
 
 class SettingsUI extends GetView<SettingsController> {
   @override

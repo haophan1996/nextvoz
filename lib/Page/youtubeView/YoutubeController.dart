@@ -61,5 +61,4 @@ class YoutubeController extends GetxController implements YouTubePlayerListener{
   void onYoutubeCreated(FlutterYoutubeViewController controller) {
     this.controller = controller;
   }
-
 }

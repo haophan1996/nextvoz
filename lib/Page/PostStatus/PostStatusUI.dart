@@ -6,13 +6,14 @@ import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:rich_editor/rich_editor.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:vozforums/Page/reuseWidget.dart';
-import 'package:vozforums/GlobalController.dart';
-import 'package:vozforums/Page/PostStatus/PostStatusController.dart';
+import '/Page/reuseWidget.dart';
+import '/GlobalController.dart';
+import '/Page/PostStatus/PostStatusController.dart';
 
 class PostStatusUI extends GetView<PostStatusController> {
   @override
-  Widget build(BuildContext context) {
+
+   Widget build(BuildContext context) {
     return Scaffold(
         appBar: appBarOnly(
             controller.data['view'] == '0'
@@ -152,7 +153,7 @@ class PostStatusUI extends GetView<PostStatusController> {
             ),
           ],
         ));
-  }
+   }
 }
 
 Widget insertLink(BuildContext context, PostStatusController controller, Function onDone) {

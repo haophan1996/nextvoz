@@ -3,8 +3,8 @@ import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
-import 'package:vozforums/Page/reuseWidget.dart';
-import 'package:vozforums/GlobalController.dart';
+import '/Page/reuseWidget.dart';
+import '/GlobalController.dart';
 
 Widget pageNavigation(int currentPage, int totalPage, Function(int index) gotoPage, Function reply) {
   return Padding(
@@ -42,7 +42,7 @@ Widget pageNavigation(int currentPage, int totalPage, Function(int index) gotoPa
               ),
             );
           }),
-          Row(
+          Align(alignment: Alignment.center,child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
@@ -63,7 +63,7 @@ Widget pageNavigation(int currentPage, int totalPage, Function(int index) gotoPa
                 gotoPage(totalPage);
               }),
             ],
-          )
+          ),)
         ],
       ),
     ),

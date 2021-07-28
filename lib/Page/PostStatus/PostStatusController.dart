@@ -7,9 +7,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:rich_editor/rich_editor.dart';
-import 'package:vozforums/GlobalController.dart';
-import 'package:vozforums/Page/reuseWidget.dart';
-
+import '/GlobalController.dart';
+import '/Page/reuseWidget.dart';
 import 'package:image_picker/image_picker.dart';
 
 class PostStatusController extends GetxController{

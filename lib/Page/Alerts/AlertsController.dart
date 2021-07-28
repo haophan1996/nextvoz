@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:vozforums/GlobalController.dart';
+import '/GlobalController.dart';
 
 class AlertsController extends GetxController{
 

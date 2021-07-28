@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:vozforums/Page/Settings/SettingsController.dart';
+import '/Page/Settings/SettingsController.dart';
 
 class SettingsBinding extends Bindings{
   @override

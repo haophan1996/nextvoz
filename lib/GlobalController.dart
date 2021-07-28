@@ -14,8 +14,8 @@ import 'package:mailer/smtp_server.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:vozforums/Page/reuseWidget.dart';
-import 'package:vozforums/Page/NavigationDrawer/NaviDrawerController.dart';
+import '/Page/reuseWidget.dart';
+import '/Page/NavigationDrawer/NaviDrawerController.dart';
 
 class GlobalController extends GetxController {
   static GlobalController get i => Get.find();

@@ -34,10 +34,9 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId "com.example.vozforums"
+        applicationId "com.vozer.nextvoz"
         minSdkVersion 23
         targetSdkVersion 30
-        multiDexEnabled true
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
     }

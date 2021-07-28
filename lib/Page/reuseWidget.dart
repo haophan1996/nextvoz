@@ -10,9 +10,9 @@ import 'package:loader_skeleton/loader_skeleton.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:pinch_zoom_image_last/pinch_zoom_image_last.dart';
 import 'package:flutter_reaction_button/flutter_reaction_button.dart';
-import 'package:vozforums/GlobalController.dart';
-import 'package:vozforums/Page/NavigationDrawer/NaviDrawerController.dart';
-import 'package:vozforums/Page/View/ViewController.dart';
+import '/GlobalController.dart';
+import '/Page/NavigationDrawer/NaviDrawerController.dart';
+import '/Page/View/ViewController.dart';
 import 'Profile/UserProfile/UserProfileController.dart';
 
 ///  * Global appbar

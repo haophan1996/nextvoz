@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:vozforums/Page/home/homeController.dart';
+import '/Page/home/homeController.dart';
 
 class HomeBinding extends Bindings{
   @override

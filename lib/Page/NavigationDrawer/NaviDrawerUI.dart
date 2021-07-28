@@ -2,10 +2,10 @@ import 'package:flutter_html/shims/dart_ui_real.dart';
 import 'package:get/get.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:vozforums/GlobalController.dart';
-import 'package:vozforums/Page/NavigationDrawer/NaviDrawerController.dart';
-import 'package:vozforums/Page/Profile/UserProfile/UserProfileController.dart';
-import 'package:vozforums/Page/reuseWidget.dart';
+import '/GlobalController.dart';
+import '/Page/NavigationDrawer/NaviDrawerController.dart';
+import '/Page/Profile/UserProfile/UserProfileController.dart';
+import '/Page/reuseWidget.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'package:extended_image/extended_image.dart';
 

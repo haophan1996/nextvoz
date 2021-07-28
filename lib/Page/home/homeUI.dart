@@ -2,11 +2,11 @@ import 'dart:ui';
 import 'package:get/get.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:vozforums/Page/NavigationDrawer/NaviDrawerUI.dart';
-import 'package:vozforums/Page/home/homeController.dart';
-import 'package:vozforums/Page/pageNavigation.dart';
-import 'package:vozforums/Page/reuseWidget.dart';
-import 'package:vozforums/GlobalController.dart';
+import '/Page/NavigationDrawer/NaviDrawerUI.dart';
+import '/Page/home/homeController.dart';
+import '/Page/pageNavigation.dart';
+import '/Page/reuseWidget.dart';
+import '/GlobalController.dart';
 
 class HomePageUI extends GetView<HomeController> {
   // This widget is the root of your application.
@@ -116,7 +116,7 @@ class HomePageUI extends GetView<HomeController> {
               child: Container(
                 width: Get.width,
                 decoration: BoxDecoration(color: Theme.of(context).backgroundColor, borderRadius: BorderRadius.all(Radius.circular(6))),
-                height: MediaQuery.of(context).size.height * 0.06, //0.066,
+                //height: MediaQuery.of(context).size.height * 0.06, //0.066,
                 child: Column(
                   children: [
                     Container(
@@ -126,13 +126,12 @@ class HomePageUI extends GetView<HomeController> {
                         style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, foreground: Paint()..shader = linearGradient),
                       ),
                     ),
-                    Expanded(
-                        child: Text(
+                    Text(
                       '1. Tại sao app bị lỗi khi vào một sô trang nhất định\nNếu bạn gặp trường hợp này,'
-                      ' hay report cho lập trinh viên biết bạn đang gặp lỗi ở trang nào và sẻ được support nhanh nhất có thể ',
+                          ' hay report cho lập trinh viên biết bạn đang gặp lỗi ở trang nào và sẻ được support nhanh nhất có thể ',
                       textAlign: TextAlign.center,
-                      overflow: TextOverflow.ellipsis,
-                    )),
+                      overflow: TextOverflow.fade,
+                    ),
                   ],
                 ),
               ),

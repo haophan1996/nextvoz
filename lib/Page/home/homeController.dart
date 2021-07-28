@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
-import 'package:vozforums/GlobalController.dart';
+import '/GlobalController.dart';
 
 class HomeController extends GetxController {
   String loadingStatus = 'loading';

@@ -3,8 +3,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
-import 'package:vozforums/GlobalController.dart';
-import 'package:vozforums/Page/View/ViewController.dart';
+import '/GlobalController.dart';
+import '/Page/View/ViewController.dart';
 
 class ThreadController extends GetxController {
   late String _url;

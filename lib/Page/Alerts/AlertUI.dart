@@ -2,11 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:loader_skeleton/loader_skeleton.dart';
-import 'package:vozforums/GlobalController.dart';
-import 'package:vozforums/Page/Profile/UserProfile/UserProfileController.dart';
-import 'package:vozforums/Page/View/ViewController.dart';
-import 'package:vozforums/Page/reuseWidget.dart';
-import 'package:vozforums/Page/Alerts/AlertsController.dart';
+import '/GlobalController.dart';
+import '/Page/Profile/UserProfile/UserProfileController.dart';
+import '/Page/View/ViewController.dart';
+import '/Page/reuseWidget.dart';
+import '/Page/Alerts/AlertsController.dart';
 
 class AlertsUI extends GetView<AlertsController> {
   @override

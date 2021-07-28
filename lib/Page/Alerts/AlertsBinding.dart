@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:vozforums/Page/Alerts/AlertsController.dart';
+import '/Page/Alerts/AlertsController.dart';
 
 class PopBinding extends Bindings {
   @override

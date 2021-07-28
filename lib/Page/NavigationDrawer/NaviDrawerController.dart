@@ -2,9 +2,9 @@ import 'dart:convert';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/cupertino.dart';
-import 'package:vozforums/Page/View/ViewController.dart';
-import 'package:vozforums/GlobalController.dart';
-import 'package:vozforums/Page/reuseWidget.dart';
+import '/Page/View/ViewController.dart';
+import '/GlobalController.dart';
+import '/Page/reuseWidget.dart';
 
 class NaviDrawerController extends GetxController {
   static NaviDrawerController get i => Get.find();
