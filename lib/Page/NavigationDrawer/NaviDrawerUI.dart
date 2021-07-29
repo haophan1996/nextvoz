@@ -13,9 +13,9 @@ class NaviDrawerUI extends GetView<NaviDrawerController> {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      child: SafeArea(
-        child: Container(
-          color: Theme.of(context).backgroundColor,
+      child: Container(
+        color: Theme.of(context).backgroundColor,
+        child: SafeArea(
           child: Column(
             children: [
               Text(
@@ -33,53 +33,53 @@ class NaviDrawerUI extends GetView<NaviDrawerController> {
                   onPressed: () {
                     Get.defaultDialog(
                         content: Container(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          TextField(
-                            controller: controller.feedBackCNameController,
-                            decoration: InputDecoration(
-                              hintText: 'Email của bạn',
-                            ),
-                          ),
-                          TextField(
-                            controller: controller.feedBackCTitleController,
-                            decoration: InputDecoration(
-                              hintText: 'Chủ đề',
-                            ),
-                          ),
-                          Container(
-                            height: 120,
-                            child: TextField(
-                              maxLines: 5,
-                              controller: controller.feedBackContentController,
-                              decoration: InputDecoration(
-                                hintText: 'Diễn tã lỗi sản phẩm',
-                              ),
-                            ),
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
                             children: [
-                              CupertinoButton(child: Text('Hủy Bỏ'), onPressed: () => Get.back()),
-                              CupertinoButton(
-                                  child: Text('Gửi'),
-                                  onPressed: () async {
-                                    if (controller.feedBackContentController.text.length < 2 ||
-                                        controller.feedBackCTitleController.text.length < 2 ||
-                                        controller.feedBackCNameController.text.length < 2) {
-                                      Get.snackbar('Thông Báo', 'Lỗi kí tự quá ngắn, it nhất 2 kí tự trở lên',
-                                          colorText: Colors.red, backgroundColor: Colors.black);
-                                    } else {
-                                      GlobalController.i.sendFeedBack(context, controller.feedBackContentController.text.toString(),
-                                          controller.feedBackCNameController.text.toString(), controller.feedBackCTitleController.text.toString());
-                                    }
-                                  }),
+                              TextField(
+                                controller: controller.feedBackCNameController,
+                                decoration: InputDecoration(
+                                  hintText: 'Email của bạn',
+                                ),
+                              ),
+                              TextField(
+                                controller: controller.feedBackCTitleController,
+                                decoration: InputDecoration(
+                                  hintText: 'Chủ đề',
+                                ),
+                              ),
+                              Container(
+                                height: 120,
+                                child: TextField(
+                                  maxLines: 5,
+                                  controller: controller.feedBackContentController,
+                                  decoration: InputDecoration(
+                                    hintText: 'Diễn tã lỗi sản phẩm',
+                                  ),
+                                ),
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  CupertinoButton(child: Text('Hủy Bỏ'), onPressed: () => Get.back()),
+                                  CupertinoButton(
+                                      child: Text('Gửi'),
+                                      onPressed: () async {
+                                        if (controller.feedBackContentController.text.length < 2 ||
+                                            controller.feedBackCTitleController.text.length < 2 ||
+                                            controller.feedBackCNameController.text.length < 2) {
+                                          Get.snackbar('Thông Báo', 'Lỗi kí tự quá ngắn, it nhất 2 kí tự trở lên',
+                                              colorText: Colors.red, backgroundColor: Colors.black);
+                                        } else {
+                                          GlobalController.i.sendFeedBack(context, controller.feedBackContentController.text.toString(),
+                                              controller.feedBackCNameController.text.toString(), controller.feedBackCTitleController.text.toString());
+                                        }
+                                      }),
+                                ],
+                              )
                             ],
-                          )
-                        ],
-                      ),
-                    ));
+                          ),
+                        ));
                   }),
               Expanded(
                 child: GetBuilder<NaviDrawerController>(
@@ -87,23 +87,23 @@ class NaviDrawerUI extends GetView<NaviDrawerController> {
                     return controller.shortcuts.length == 0
                         ? Container()
                         : ListView.builder(
-                            itemCount: controller.shortcuts.length,
-                            itemBuilder: (BuildContext context, int index) {
-                              return ListTile(
-                                title: customTitle(FontWeight.normal, Get.theme.primaryColor, 1, controller.shortcuts.elementAt(index)['typeTitle'],
-                                    controller.shortcuts.elementAt(index)['title']),
-                                onTap: () {
-                                  controller.navigateToThread(controller.shortcuts.elementAt(index)['title'],
-                                      controller.shortcuts.elementAt(index)['link'], controller.shortcuts.elementAt(index)['typeTitle']);
-                                },
-                                onLongPress: () async {
-                                  controller.shortcuts.removeAt(index);
-                                  controller.update();
-                                  await GlobalController.i.userStorage.remove('shortcut');
-                                  await GlobalController.i.userStorage.write('shortcut', controller.shortcuts);
-                                },
-                              );
-                            });
+                        itemCount: controller.shortcuts.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          return ListTile(
+                            title: customTitle(FontWeight.normal, Get.theme.primaryColor, 1, controller.shortcuts.elementAt(index)['typeTitle'],
+                                controller.shortcuts.elementAt(index)['title']),
+                            onTap: () {
+                              controller.navigateToThread(controller.shortcuts.elementAt(index)['title'],
+                                  controller.shortcuts.elementAt(index)['link'], controller.shortcuts.elementAt(index)['typeTitle']);
+                            },
+                            onLongPress: () async {
+                              controller.shortcuts.removeAt(index);
+                              controller.update();
+                              await GlobalController.i.userStorage.remove('shortcut');
+                              await GlobalController.i.userStorage.write('shortcut', controller.shortcuts);
+                            },
+                          );
+                        });
                   },
                 ),
               )
@@ -117,7 +117,7 @@ class NaviDrawerUI extends GetView<NaviDrawerController> {
 
 Widget logged(BuildContext context) {
   return Padding(
-    padding: EdgeInsets.only(bottom: 10),
+    padding: EdgeInsets.only(bottom: 5),
     child: Container(
       decoration: BoxDecoration(color: Theme.of(context).backgroundColor, borderRadius: BorderRadius.all(Radius.circular(6))),
       child: Column(
@@ -172,7 +172,7 @@ Widget logged(BuildContext context) {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               CupertinoButton(
-                padding: EdgeInsets.only(right: 10),
+                padding: EdgeInsets.only(right: 10, top: 10),
                 child: Icon(
                   Icons.refresh,
                   color: Theme.of(context).primaryColor,
@@ -184,7 +184,7 @@ Widget logged(BuildContext context) {
                 },
               ), //Refresh user data
               CupertinoButton(
-                  padding: EdgeInsets.only(right: 10),
+                  padding: EdgeInsets.only(right: 10, top: 10),
                   child: Text('logout'.tr),
                   onPressed: () async {
                     await NaviDrawerController.i.logout();

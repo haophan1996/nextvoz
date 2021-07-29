@@ -548,7 +548,8 @@ Widget viewContent(BuildContext context, int index, ViewController controller) =
                         padding: EdgeInsets.only(top: 10, right: 10),
                         child: Align(
                           alignment: Alignment.centerRight,
-                          child: Text('${controller.htmlData.elementAt(index)['userPostDate']}\n ${controller.htmlData.elementAt(index)['orderPost']}',
+                          child: Text(
+                              '${controller.htmlData.elementAt(index)['userPostDate']}\n ${controller.htmlData.elementAt(index)['orderPost']}',
                               textAlign: TextAlign.right,
                               style: TextStyle(color: Get.theme.primaryColor, fontSize: 13)),
                         ),
@@ -673,8 +674,8 @@ Widget customHtml(List htmlData, int index) {
     tagsList: Html.tags..remove('noscript'),
     customRender: {
       "img": (renderContext, child) {
-        // double? width = double.tryParse(renderContext.tree.element!.attributes['width'].toString());
-        // double? height = double.tryParse(renderContext.tree.element!.attributes['height'].toString());
+         double? width = double.tryParse(renderContext.tree.element!.attributes['width'].toString());
+         double? height = double.tryParse(renderContext.tree.element!.attributes['height'].toString());
         //
         if (renderContext.tree.element!.attributes['src']!.contains("/styles/next/xenforo")) {
           return Image.asset(GlobalController.i.getEmoji(renderContext.tree.element!.attributes['src'].toString()));
@@ -685,39 +686,47 @@ Widget customHtml(List htmlData, int index) {
           );
         } else if (renderContext.tree.element!.attributes['data-url']!.contains(".gif")) {
         } else {
-          return PinchZoomImage(
-            image: ExtendedImage.network(
-              renderContext.tree.element!.attributes['src'].toString(),
-              //width: width,
-              //height: height,
-              filterQuality: FilterQuality.medium,
-              loadStateChanged: (value) {
-                switch (value.extendedImageLoadState) {
-                  case LoadState.loading:
-                    return Text('Loading Image');
-                  case LoadState.completed:
-                    return ExtendedRawImage(
-                      image: value.extendedImageInfo?.image,
-                      //width: ScreenUtil.instance.setWidth(600),
-                      //height: ScreenUtil.instance.setWidth(400),
-                    );
-                  case LoadState.failed:
-                    return InkWell(
-                      child: Text('Load faill'),
-                      onTap: () => value.reLoadImage(),
-                    );
-                }
+          print('$width + ' ' + $height');
+          return Container(
+
+            child: PinchZoomImage(
+              image: ExtendedImage.network(
+                renderContext.tree.element!.attributes['src']!.contains('data:image/', 0) == true
+                    ? renderContext.tree.element!.attributes['data-src'].toString()
+                    : renderContext.tree.element!.attributes['src'].toString(),
+                width: Size.fromHeight(width!).shortestSide,
+                height: Size.fromHeight(height!).height,
+                filterQuality: FilterQuality.low,
+                cacheRawData: true,
+                enableLoadState: false,
+                // loadStateChanged: (value) {
+                //   switch (value.extendedImageLoadState) {
+                //     case LoadState.loading:
+                //       return Text('Loading Image');
+                //     case LoadState.completed:
+                //       return ExtendedRawImage(
+                //         image: value.extendedImageInfo?.image,
+                //         //width: ScreenUtil.instance.setWidth(600),
+                //         //height: ScreenUtil.instance.setWidth(400),
+                //       );
+                //     case LoadState.failed:
+                //       return InkWell(
+                //         child: Text('Load faill'),
+                //         onTap: () => value.reLoadImage(),
+                //       );
+                //   }
+                // },
+                cache: true,
+                clearMemoryCacheIfFailed: true,
+              ),
+              zoomedBackgroundColor: Color.fromRGBO(240, 240, 240, 1.0),
+              onZoomStart: () {
+                print('Zoom started');
               },
-              cache: true,
-              clearMemoryCacheIfFailed: true,
+              onZoomEnd: () {
+                print('Zoom finished');
+              },
             ),
-            zoomedBackgroundColor: Color.fromRGBO(240, 240, 240, 1.0),
-            onZoomStart: () {
-              print('Zoom started');
-            },
-            onZoomEnd: () {
-              print('Zoom finished');
-            },
           );
         }
       },
@@ -864,8 +873,8 @@ Widget customHtml(List htmlData, int index) {
       "table": Style(backgroundColor: Get.theme.cardColor),
       "body": Style(
         fontSize: FontSize(GlobalController.i.userStorage.read('fontSizeView')),
-      ),//..margin = EdgeInsets.only(bottom: 0, left: 4, right: 3),
-      "div" : Style()..display = Display.INLINE,
+      ), //..margin = EdgeInsets.only(bottom: 0, left: 4, right: 3),
+      "div": Style()..display = Display.INLINE,
       // "span": Style(color: Theme.of(context).primaryColor),
       "blockquote": Style(width: double.infinity)
         ..margin = EdgeInsets.only(left: 5.0, right: 5.0, bottom: 10.0)
@@ -882,11 +891,11 @@ Widget customHtml(List htmlData, int index) {
           Get.lazyPut<UserProfileController>(() => UserProfileController(), tag: GlobalController.i.sessionTag.last);
           Get.toNamed('/UserProfile', arguments: [url.replaceFirst(GlobalController.i.url, '', 0)], preventDuplicates: false);
         } else
-          print(url.toString().split('?id=')[1]);
-
-            var i =  htmlData.firstWhere((element) => element['postID'] == url.toString().split('?id=')[1]);
-            print(htmlData.indexOf(i));
-          //GlobalController.i.launchURL(url);
+          // print(url.toString().split('?id=')[1]);
+          //
+          //   var i =  htmlData.firstWhere((element) => element['postID'] == url.toString().split('?id=')[1]);
+          //   print(htmlData.indexOf(i));
+          GlobalController.i.launchURL(url);
       }
     },
   );

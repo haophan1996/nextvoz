@@ -32,6 +32,8 @@ class ViewController extends GetxController {
     data['subHeader'] = Get.arguments[0];
     data['subTypeHeader'] = Get.arguments[2] ?? '';
     data['view'] = Get.arguments[3];
+
+
   }
 
   @override

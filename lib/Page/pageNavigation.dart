@@ -8,10 +8,12 @@ import '/GlobalController.dart';
 
 Widget pageNavigation(int currentPage, int totalPage, Function(int index) gotoPage, Function reply) {
   return Padding(
-    padding: EdgeInsets.only(bottom: 5),
+    padding: EdgeInsets.only(bottom: 15, top: 1),//Get.theme.backgroundColor,
     child: Container(
+      alignment: Alignment.topCenter,
       decoration: BoxDecoration(color: Get.theme.backgroundColor, borderRadius: BorderRadius.all(Radius.circular(6))),
-      height: Get.size.height * 0.06, //0.066,
+      height: Get.size.height * 0.08, //0.066,
+      padding: EdgeInsets.only(bottom: 22),
       child: Stack(
         children: [
           Align(

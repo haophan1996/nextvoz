@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import '/Page/NavigationDrawer/NaviDrawerUI.dart';
 import '/Page/pageNavigation.dart';
 import '/Page/reuseWidget.dart';
@@ -85,6 +86,7 @@ class ViewUI extends StatelessWidget {
   Widget postContent(BuildContext context, ViewController controller) {
     return refreshIndicatorConfiguration(
       Scrollbar(
+        controller: controller.listViewScrollController,
         child: SmartRefresher(
           enablePullDown: false,
           enablePullUp: true,
@@ -98,8 +100,7 @@ class ViewUI extends StatelessWidget {
             }
           },
           child: ListView.builder(
-            cacheExtent: 99999,
-            shrinkWrap: true,
+            cacheExtent: 999999999999999,
             padding: EdgeInsets.only(top: 2),
             physics: BouncingScrollPhysics(),
             scrollDirection: Axis.vertical,
