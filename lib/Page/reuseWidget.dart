@@ -85,7 +85,7 @@ Widget blockItem(BuildContext context, FontWeight themeTitleWeight, FontWeight t
                     ),
                     Text(
                       header3,
-                      style: TextStyle(color: Color(0xFFFD6E00)),
+                      style: TextStyle(color: Colors.grey /**/),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     )
@@ -291,12 +291,12 @@ Widget loadingShimmer() {
         );
 }
 
-Widget buildFlagsPreviewIcon(String path, String tex) => Padding(
+Widget buildFlagsPreviewIcon(String path, String text) => Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       child: Column(
         children: [
           Text(
-            tex,
+            text.tr,
             style: TextStyle(
               fontSize: 10,
               fontWeight: FontWeight.w300,
@@ -317,20 +317,6 @@ Widget buildIcon(String path, String text) => Row(
           width: 17,
         ),
         Text(' ' + text.tr)
-      ],
-    );
-
-Widget rowNew(String pathImage, Widget text) => Row(
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: [
-        Padding(
-          padding: EdgeInsets.only(right: 5),
-          child: Image.asset(
-            pathImage,
-            width: 10,
-          ),
-        ),
-        text,
       ],
     );
 
@@ -445,6 +431,7 @@ Widget onTapUser(ViewController controller, int index) {
               child: Text('View Profile'),
             ),
             onPressed: () async {
+              if (Get.isBottomSheetOpen == true) Get.back();
               GlobalController.i.sessionTag.add('profile${DateTime.now().toString()}');
               Get.lazyPut<UserProfileController>(() => UserProfileController(), tag: GlobalController.i.sessionTag.last);
               Get.toNamed('/UserProfile', arguments: [controller.htmlData.elementAt(index)['userLink']], preventDuplicates: false);
@@ -471,7 +458,10 @@ Widget onTapMine(context, ViewController controller, int index) {
                 width: Get.width,
                 child: Text('Edit'),
               ),
-              onPressed: () async => controller.editRep(index)),
+              onPressed: () async {
+                if (Get.isBottomSheetOpen == true) Get.back();
+                controller.editRep(index);
+              }),
           controller.htmlData.elementAt(index)['orderPost'] == ''
               ? Text('')
               : CupertinoButton(
@@ -514,7 +504,7 @@ Widget dialogButtonYesNo(Function onDone) => Row(
     );
 
 Widget viewContent(BuildContext context, int index, ViewController controller) => Container(
-      color: Theme.of(context).backgroundColor,
+      color: Get.theme.backgroundColor,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
@@ -524,7 +514,7 @@ Widget viewContent(BuildContext context, int index, ViewController controller) =
                 padding: EdgeInsets.only(bottom: 5),
                 child: Card(
                   elevation: 5,
-                  color: Theme.of(context).canvasColor,
+                  color: controller.htmlData.elementAt(index)['newPost'] == true ? Get.theme.shadowColor : Get.theme.canvasColor,
                   child: Stack(
                     children: [
                       Row(
@@ -545,10 +535,10 @@ Widget viewContent(BuildContext context, int index, ViewController controller) =
                               text: TextSpan(children: <TextSpan>[
                                 TextSpan(
                                     text: controller.htmlData.elementAt(index)['userName'] + "\n",
-                                    style: TextStyle(color: Color(0xFFFD6E00), fontWeight: FontWeight.bold, fontSize: 16)),
+                                    style: TextStyle(color: Colors.blue, fontWeight: FontWeight.bold, fontSize: 16)),
                                 TextSpan(
                                     text: controller.htmlData.elementAt(index)['userTitle'],
-                                    style: TextStyle(color: Theme.of(context).primaryColor, fontSize: 13)),
+                                    style: TextStyle(color: Get.theme.primaryColor, fontSize: 13)),
                               ]),
                             ),
                           ),
@@ -558,20 +548,9 @@ Widget viewContent(BuildContext context, int index, ViewController controller) =
                         padding: EdgeInsets.only(top: 10, right: 10),
                         child: Align(
                           alignment: Alignment.centerRight,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: <Widget>[
-                              Text(controller.htmlData.elementAt(index)['userPostDate'],
-                                  style: TextStyle(color: Theme.of(context).primaryColor, fontSize: 13)),
-                              controller.htmlData.elementAt(index)['newPost'] == false
-                                  ? Text(controller.htmlData.elementAt(index)['orderPost'],
-                                      style: TextStyle(color: Theme.of(context).primaryColor, fontSize: 13))
-                                  : rowNew(
-                                      'assets/newPost.png',
-                                      Text(controller.htmlData.elementAt(index)['orderPost'],
-                                          style: TextStyle(color: Theme.of(context).primaryColor, fontSize: 13)))
-                            ],
-                          ),
+                          child: Text('${controller.htmlData.elementAt(index)['userPostDate']}\n ${controller.htmlData.elementAt(index)['orderPost']}',
+                              textAlign: TextAlign.right,
+                              style: TextStyle(color: Get.theme.primaryColor, fontSize: 13)),
                         ),
                       ),
                     ],
@@ -581,7 +560,7 @@ Widget viewContent(BuildContext context, int index, ViewController controller) =
               onPressed: () {
                 Get.bottomSheet(
                     Card(
-                      color: Theme.of(context).canvasColor,
+                      color: Get.theme.canvasColor,
                       child: controller.htmlData.elementAt(index)['userName'] == NaviDrawerController.i.nameUser.value
                           ? onTapMine(context, controller, index)
                           : onTapUser(controller, index),
@@ -613,7 +592,7 @@ Widget viewContent(BuildContext context, int index, ViewController controller) =
                 ),
                 FlutterReactionButton(
                   onReactionChanged: (reaction, i) {
-                    if (GlobalController.i.isLogged.value == false) {
+                    if (GlobalController.i.isLogged == false) {
                       controller.update();
                       setDialogError('popMess4'.tr);
                     } else {
@@ -683,10 +662,10 @@ Widget displayAvatar(double sizeImage, String avatarColor1, String avatarColor2,
             imageLink,
             shape: BoxShape.circle,
             fit: BoxFit.fill,
+            enableLoadState: false,
           ),
   );
 }
-
 
 Widget customHtml(List htmlData, int index) {
   return Html(
@@ -702,14 +681,9 @@ Widget customHtml(List htmlData, int index) {
         } else if (renderContext.tree.element!.attributes['src']!.contains("twemoji.maxcdn.com")) {
           return Text(
             renderContext.tree.element!.attributes['alt']!,
-            style: TextStyle(fontSize: 25),
+            style: TextStyle(fontSize: GlobalController.i.userStorage.read('fontSizeView')),
           );
         } else if (renderContext.tree.element!.attributes['data-url']!.contains(".gif")) {
-          // This will just ignore gif image
-          // return Image.network(
-          //   renderContext.tree.element!.attributes['src'].toString(),
-          //   filterQuality: FilterQuality.low,
-          // );
         } else {
           return PinchZoomImage(
             image: ExtendedImage.network(
@@ -890,7 +864,8 @@ Widget customHtml(List htmlData, int index) {
       "table": Style(backgroundColor: Get.theme.cardColor),
       "body": Style(
         fontSize: FontSize(GlobalController.i.userStorage.read('fontSizeView')),
-      )..margin = EdgeInsets.only(bottom: 0, left: 4, right: 3),
+      ),//..margin = EdgeInsets.only(bottom: 0, left: 4, right: 3),
+      "div" : Style()..display = Display.INLINE,
       // "span": Style(color: Theme.of(context).primaryColor),
       "blockquote": Style(width: double.infinity)
         ..margin = EdgeInsets.only(left: 5.0, right: 5.0, bottom: 10.0)
@@ -899,12 +874,19 @@ Widget customHtml(List htmlData, int index) {
     onLinkTap: (String? url, RenderContext context, Map<String, String> attributes, dom.Element? element) async {
       if (url != null) {
         if (url.contains('https://voz.vn/t/', 0)) {
-          print(url);
           GlobalController.i.sessionTag.add('ViewController at $url');
           Get.lazyPut<ViewController>(() => ViewController(), tag: GlobalController.i.sessionTag.last);
           Get.toNamed("/ViewPage", arguments: [url.replaceFirst(GlobalController.i.url + '/t/', '', 0), url, '', 0], preventDuplicates: false);
+        } else if (url.contains('https://voz.vn/u/', 0)) {
+          GlobalController.i.sessionTag.add('profile${DateTime.now().toString()}');
+          Get.lazyPut<UserProfileController>(() => UserProfileController(), tag: GlobalController.i.sessionTag.last);
+          Get.toNamed('/UserProfile', arguments: [url.replaceFirst(GlobalController.i.url, '', 0)], preventDuplicates: false);
         } else
-          GlobalController.i.launchURL(url);
+          print(url.toString().split('?id=')[1]);
+
+            var i =  htmlData.firstWhere((element) => element['postID'] == url.toString().split('?id=')[1]);
+            print(htmlData.indexOf(i));
+          //GlobalController.i.launchURL(url);
       }
     },
   );

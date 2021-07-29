@@ -113,7 +113,7 @@ class NaviDrawerController extends GetxController {
   logout() async{
     GlobalController.i.dio.options.headers['cookie'] = '';
     GlobalController.i.xfUser = '';
-    GlobalController.i.isLogged.value = false;
+    GlobalController.i.isLogged = false;
     nameUser.value = '';
     titleUser.value = '';
     avatarUser.value = '';
@@ -123,6 +123,7 @@ class NaviDrawerController extends GetxController {
     await GlobalController.i.userStorage.remove("xf_session");
     await GlobalController.i.userStorage.remove("date_expire");
     update();
+    GlobalController.i.update();
   }
 
   navigateToThread(String title, String link, String prefix) {

@@ -67,6 +67,14 @@ class UserProfileUI extends StatelessWidget {
                       () {}),
                 ),
                 Align(
+                  child: Padding(
+                    padding: EdgeInsets.only(right: 5),
+                    child: displayAvatar(
+                        200, controller.data['avatarColor1'], controller.data['avatarColor2'], controller.data['userName'], controller.data['avatarLink']),
+                  ),
+                  alignment: Alignment.topCenter,
+                ), //Avatar
+                Align(
                   alignment: Alignment.centerRight,
                   child: customCupertinoButton(
                       Alignment.center,
@@ -82,14 +90,6 @@ class UserProfileUI extends StatelessWidget {
                 ),
               ],
             ),
-            Align(
-              child: Padding(
-                padding: EdgeInsets.only(right: 5),
-                child: displayAvatar(
-                    80, controller.data['avatarColor1'], controller.data['avatarColor2'], controller.data['userName'], controller.data['avatarLink']),
-              ),
-              alignment: Alignment.center,
-            ), //Avatar
             Align(
               child: RichText(
                 textAlign: TextAlign.center,

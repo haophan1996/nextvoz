@@ -58,11 +58,7 @@ class ThreadController extends GetxController {
     await GlobalController.i.getBody(url, false).then((value) async {
       lengthHtmlDataList = myThreadList.length;
       if (value!.getElementsByTagName('html')[0].attributes['data-logged-in'] == 'true') {
-        GlobalController.i.isLogged.value = true;
-        // NaviDrawerController.i.titleUser.value = GlobalController.i.userStorage.read('titleUser');
-        // NaviDrawerController.i.linkUser.value = GlobalController.i.userStorage.read('linkUser');
-        // NaviDrawerController.i.avatarUser.value = GlobalController.i.userStorage.read('avatarUser');
-        // NaviDrawerController.i.nameUser.value = GlobalController.i.userStorage.read('nameUser');
+        GlobalController.i.isLogged = true;
         GlobalController.i.inboxNotifications = value.getElementsByClassName('p-navgroup-link--conversations').length > 0
             ? int.parse(value.getElementsByClassName('p-navgroup-link--conversations')[0].attributes['data-badge'].toString())
             : 0;
@@ -71,7 +67,7 @@ class ThreadController extends GetxController {
             : 0;
         GlobalController.i.update();
       } else
-        GlobalController.i.isLogged.value = false;
+        GlobalController.i.isLogged = false;
 
       value.getElementsByClassName("p-body-content").forEach((element) async {
         lastP = element.getElementsByClassName("pageNavSimple");

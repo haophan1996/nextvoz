@@ -103,9 +103,9 @@ class ThreadUI extends GetView<ThreadController> {
                         style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, foreground: Paint()..shader = linearGradient),
                       ),
                     ),
-                    Obx(
-                      () => GlobalController.i.isLogged.value == false ? login(context) : logged(context),
-                    ),
+                    GetBuilder<GlobalController>(builder: (controller){
+                      return controller.isLogged == false ? login(context) : logged(context);
+                    }),
                   ],
                 ),
               ),

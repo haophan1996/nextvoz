@@ -27,7 +27,7 @@ class GlobalController extends GetxController {
   final userStorage = GetStorage();
   double percentDownload = 0.0;
   var dio = Dio(), xfCsrfLogin, dataCsrfLogin, xfCsrfPost, dataCsrfPost;
-  RxBool isLogged = false.obs;
+  bool isLogged = false;
   List alertList = [], inboxList = [], sessionTag = [];
   String xfSession = '', dateExpire = '', xfUser = '';
   int alertNotifications = 0, inboxNotifications = 0;
@@ -35,12 +35,6 @@ class GlobalController extends GetxController {
   @override
   onInit() async {
     super.onInit();
-    isLogged.stream.listen((event) {
-      if (event == false) {
-        alertNotifications = 0;
-        inboxNotifications = 0;
-      }
-    });
   }
 
   Future<dom.Document?> getBody(String url, bool isHomePage) async {
@@ -103,7 +97,7 @@ class GlobalController extends GetxController {
   getAlert() async {
     String username, threadName = '', prefix, reaction, time, status, link, key, unread;
     //String username = '', threadName = '', prefix = '', reaction = '', time = '', status = '', link = '', key = '';
-    if (isLogged.value == true) {
+    if (isLogged == true) {
       getBody(url + '/account/alerts?page=1', false).then((value) {
         inboxNotifications = value!.getElementsByClassName('p-navgroup-link--conversations').length > 0
             ? int.parse(value.getElementsByClassName('p-navgroup-link--conversations')[0].attributes['data-badge'].toString())
@@ -179,7 +173,7 @@ class GlobalController extends GetxController {
 
   getInboxAlert() async {
     String getName = '', title, link, rep, party, latestDay, latestRep, avatarLink, avatarColor1, avatarColor2, isUnread;
-    if (isLogged.value == true) {
+    if (isLogged == true) {
       getBody(url + '/conversations/', false).then((value) {
         inboxNotifications = value!.getElementsByClassName('p-navgroup-link--conversations').length > 0
             ? int.parse(value.getElementsByClassName('p-navgroup-link--conversations')[0].attributes['data-badge'].toString())
@@ -207,7 +201,10 @@ class GlobalController extends GetxController {
 
             var avatar = element.getElementsByClassName('avatar avatar--s').first;
             if (avatar.getElementsByTagName('img').length > 0) {
-              avatarLink = url + avatar.getElementsByTagName('img')[0].attributes['src'].toString();
+              avatarLink = avatar.getElementsByTagName('img')[0].attributes['src'].toString();
+              if (avatarLink.contains('https')== false){
+                avatarLink = GlobalController.i.url + avatarLink;
+              }
               avatarColor1 = '0x00000000';
               avatarColor2 = '0x00000000';
             } else {
@@ -267,7 +264,7 @@ class GlobalController extends GetxController {
       NaviDrawerController.i.shortcuts = await userStorage.read('shortcut');
     }
     if (userStorage.read('userLoggedIn') != null && userStorage.read('xf_user') != null && userStorage.read('xf_session') != null) {
-      isLogged.value = await userStorage.read('userLoggedIn');
+      isLogged = await userStorage.read('userLoggedIn');
       xfUser = await userStorage.read('xf_user');
       xfSession = await userStorage.read('xf_session');
       dio.options.headers['cookie'] = 'xf_user=${xfUser.toString()}; xf_session=${xfSession.toString()}';
@@ -275,7 +272,7 @@ class GlobalController extends GetxController {
   }
 
   Future<void> setAccountUser() async {
-    if (isLogged.value == true) {
+    if (isLogged == true) {
       NaviDrawerController.i.avatarUser.value = await userStorage.read('avatarUser');
       NaviDrawerController.i.nameUser.value = await userStorage.read('nameUser');
       NaviDrawerController.i.titleUser.value = await userStorage.read('titleUser');
@@ -418,6 +415,11 @@ class GlobalController extends GetxController {
     {'dir': "popopo/too_sad.png", 'symbol': ":too_sad:"},
     {'dir': "popopo/waaaht.png", 'symbol': ":waaaht:"},
     {'dir': "popopo/what.png", 'symbol': ":what:"}
+  ];
+
+  //https://raw.githubusercontent.com/haophan69/pogif/main/pogif1.gif
+  final List mapEmojiVozGif = [
+    {'dir' : '', 'symbol' : '' },
   ];
 
   final Map<String, String> mapEmojiVoz = {

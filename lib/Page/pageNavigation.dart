@@ -23,7 +23,7 @@ Widget pageNavigation(int currentPage, int totalPage, Function(int index) gotoPa
                 color: Get.theme.primaryColor,
               ),
               onPressed: () {
-                if (GlobalController.i.isLogged.value == false) {
+                if (GlobalController.i.isLogged == false) {
                   setDialogError('You must be logged-in to do that.');
                 } else
                   reply();

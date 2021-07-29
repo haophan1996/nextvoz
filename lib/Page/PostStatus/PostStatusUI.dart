@@ -12,8 +12,7 @@ import '/Page/PostStatus/PostStatusController.dart';
 
 class PostStatusUI extends GetView<PostStatusController> {
   @override
-
-   Widget build(BuildContext context) {
+  Widget build(BuildContext context) {
     return Scaffold(
         appBar: appBarOnly(
             controller.data['view'] == '0'
@@ -60,6 +59,7 @@ class PostStatusUI extends GetView<PostStatusController> {
                       break;
                     case 1:
                       await controller.keyEditor.currentState?.clear();
+                      await controller.keyEditor.currentState?.setHtml('</p>');
                       break;
                     case 2:
                       await SystemChannels.textInput.invokeMethod('TextInput.hide'); //controller.keyEditor.currentState?.unFocus();
@@ -123,7 +123,8 @@ class PostStatusUI extends GetView<PostStatusController> {
                   buttonToolHtml(Icons.image_outlined, 'Insert Image', () {
                     Get.bottomSheet(insertImage(context, controller));
                   }),
-                  buttonToolHtml(Icons.video_collection_outlined, 'Insert Youtube', () => Get.defaultDialog(content: insertYoutube(context, controller))),
+                  buttonToolHtml(
+                      Icons.video_collection_outlined, 'Insert Youtube', () => Get.defaultDialog(content: insertYoutube(context, controller))),
                   buttonToolHtml(Icons.undo_outlined, 'Undo', () => controller.undo()),
                   buttonToolHtml(Icons.redo_outlined, 'Redo', () => controller.redo()),
                   buttonToolHtml(Icons.format_underline_outlined, 'UnderLine', () => controller.underline()),
@@ -153,7 +154,7 @@ class PostStatusUI extends GetView<PostStatusController> {
             ),
           ],
         ));
-   }
+  }
 }
 
 Widget insertLink(BuildContext context, PostStatusController controller, Function onDone) {
@@ -242,10 +243,11 @@ Widget insertImage(BuildContext context, PostStatusController controller) {
             child: Text('Upload Image'),
           ),
           onPressed: () async {
-            final pickerFile = await controller.picker.getImage(
-                source: ImageSource.gallery, //imageQuality: 25,
-                maxHeight: 1200,
-                maxWidth: 1200);
+            final pickerFile = await controller.picker.pickImage(source: ImageSource.gallery, maxHeight: 1200, maxWidth: 1200, imageQuality: 25);
+            // .getImage(
+            // source: ImageSource.gallery, //imageQuality: 25,
+            // maxHeight: 1200,
+            // maxWidth: 1200);
             if (pickerFile != null) {
               controller.image = File(pickerFile.path);
               await controller.keyEditor.currentState!.javascriptExecutor.insertCustomImage(controller.image.path);

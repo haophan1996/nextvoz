@@ -52,7 +52,10 @@ class UserProfileController extends GetxController {
 
       var avatar = userProfile.getElementsByClassName('avatar avatar--l').first;
       if (avatar.getElementsByTagName('img').length > 0) {
-        data['avatarLink'] = GlobalController.i.url + avatar.attributes['href'].toString();
+        data['avatarLink'] = avatar.attributes['href'].toString();
+        if (data['avatarLink'].contains('https')== false){
+          data['avatarLink'] = GlobalController.i.url + data['avatarLink'];
+        }
         data['avatarColor1'] = '0x00000000';
         data['avatarColor2'] = '0x00000000';
       } else {

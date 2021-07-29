@@ -89,6 +89,7 @@ class PostStatusController extends GetxController{
     data['view'] = Get.arguments[5] ??= '';
     print(data['view']);
     data['value'] = Get.arguments[6] ??= '';
+    //data['value'] = '<p></p>';
   }
 
   @override
@@ -248,13 +249,16 @@ class PostStatusController extends GetxController{
     }
 
     for (var element in document.getElementsByTagName('img')) {
-      if (element.attributes['class']!.contains('smilie')) {
-        html = html!.replaceAll(
-            element.outerHtml, GlobalController.i.mapEmojiVoz[element.attributes['src']!.split('/').last.replaceAll('-', '/')].toString());
-      }else if (element.attributes['class']!.contains('bbImage')/*element.attributes['src']!.contains('com.example.vozforums') || */) {
-        print('hey im not');
-        html = html!.replaceAll(element.attributes['src'].toString(), await uploadImage(element.attributes['src'].toString()));
+      if (element.attributes['src']!.contains('https://', 0) == false){
+        if (element.attributes['class']!.contains('smilie')) {
+          html = html!.replaceAll(
+              element.outerHtml, GlobalController.i.mapEmojiVoz[element.attributes['src']!.split('/').last.replaceAll('-', '/')].toString());
+        }else if (element.attributes['class']!.contains('bbImage')/*element.attributes['src']!.contains('com.example.vozforums') || */) {
+          print('hey im not');
+          html = html!.replaceAll(element.attributes['src'].toString(), await uploadImage(element.attributes['src'].toString()));
+        }
       }
+
     }
 
 

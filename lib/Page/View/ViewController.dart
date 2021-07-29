@@ -92,15 +92,15 @@ class ViewController extends GetxController {
 
   final flagsReactions = [
     Reaction(
-      previewIcon: buildFlagsPreviewIcon('assets/reaction/0.png', 'unReact'.tr),
+      previewIcon: buildFlagsPreviewIcon('assets/reaction/0.png', 'unReact'),
       icon: buildIcon('assets/reaction/nil.png', 'react'),
     ),
     Reaction(
-      previewIcon: buildFlagsPreviewIcon('assets/reaction/1.png', 'sweet'.tr),
+      previewIcon: buildFlagsPreviewIcon('assets/reaction/1.png', 'sweet'),
       icon: buildIcon('assets/reaction/1.png', 'sweeted'),
     ),
     Reaction(
-      previewIcon: buildFlagsPreviewIcon('assets/reaction/2.png', 'brick'.tr),
+      previewIcon: buildFlagsPreviewIcon('assets/reaction/2.png', 'brick'),
       icon: buildIcon('assets/reaction/2.png', 'bricked'),
     ),
   ];
@@ -146,7 +146,7 @@ class ViewController extends GetxController {
       data['dataCsrfPost'] = value!.getElementsByTagName('html')[0].attributes['data-csrf'];
       data['xfCsrfPost'] = GlobalController.i.xfCsrfPost;
       if (value.getElementsByTagName('html')[0].attributes['data-logged-in'] == 'true') {
-        GlobalController.i.isLogged.value = true;
+        GlobalController.i.isLogged = true;
         GlobalController.i.inboxNotifications = value.getElementsByClassName('p-navgroup-link--conversations').length > 0
             ? int.parse(value.getElementsByClassName('p-navgroup-link--conversations')[0].attributes['data-badge'].toString())
             : 0;
@@ -154,7 +154,7 @@ class ViewController extends GetxController {
             ? int.parse(value.getElementsByClassName('p-navgroup-link--alerts')[0].attributes['data-badge'].toString())
             : 0;
       } else
-        GlobalController.i.isLogged.value = false;
+        GlobalController.i.isLogged = false;
 
       value.getElementsByClassName("block block--messages").forEach((element) {
         var lastP = element.getElementsByClassName("pageNavSimple");
@@ -186,9 +186,12 @@ class ViewController extends GetxController {
 
           //print(element.getElementsByClassName('avatar avatar--m')[0].outerHtml);
           if (element.getElementsByClassName('avatar avatar--m')[0].getElementsByTagName('img').length > 0){
-            data['_userAvatar'] = GlobalController.i.url + element.getElementsByClassName('avatar avatar--m')[0].getElementsByTagName('img')[0].attributes['src'].toString();
+            data['_userAvatar'] = element.getElementsByClassName('avatar avatar--m')[0].getElementsByTagName('img')[0].attributes['src'].toString();
             data['avatarColor1'] = '0x00000000';
             data['avatarColor2'] = '0x00000000';
+            if (data['_userAvatar'].contains('https')== false){
+              data['_userAvatar'] = GlobalController.i.url + data['_userAvatar'];
+            }
           } else {
             data['_userAvatar'] = 'no';
             data['avatarColor1'] = '0xFFF' + element.getElementsByClassName('avatar avatar--m')[0].attributes['style'].toString().split('#')[1].split(';')[0];
@@ -199,7 +202,7 @@ class ViewController extends GetxController {
 
           data['_orderPost'] = element
               .getElementsByClassName("message-attribution-opposite message-attribution-opposite--list")
-              .map((e) => e.getElementsByTagName("a")[GlobalController.i.isLogged.value == true ? 2 : 1].innerHtml)
+              .map((e) => e.getElementsByTagName("a")[GlobalController.i.isLogged == true ? 2 : 1].innerHtml)
               .first
               .trim();
 
@@ -262,7 +265,7 @@ class ViewController extends GetxController {
       data['dataCsrfPost'] = value!.getElementsByTagName('html')[0].attributes['data-csrf'];
       data['xfCsrfPost'] = GlobalController.i.xfCsrfPost;
       if (value.getElementsByTagName('html')[0].attributes['data-logged-in'] == 'true') {
-        GlobalController.i.isLogged.value = true;
+        GlobalController.i.isLogged = true;
         GlobalController.i.inboxNotifications = value.getElementsByClassName('p-navgroup-link--conversations').length > 0
             ? int.parse(value.getElementsByClassName('p-navgroup-link--conversations')[0].attributes['data-badge'].toString())
             : 0;
@@ -270,7 +273,7 @@ class ViewController extends GetxController {
             ? int.parse(value.getElementsByClassName('p-navgroup-link--alerts')[0].attributes['data-badge'].toString())
             : 0;
       } else
-        GlobalController.i.isLogged.value = false;
+        GlobalController.i.isLogged = false;
 
       var lastP = value.getElementsByClassName("pageNavSimple");
       if (lastP.length == 0) {
@@ -295,7 +298,10 @@ class ViewController extends GetxController {
         data['_userPostDate'] = element.getElementsByClassName('u-dt')[0].text;
 
         if (element.getElementsByClassName('avatar avatar--m')[0].getElementsByTagName('img').length > 0){
-          data['_userAvatar'] = GlobalController.i.url + element.getElementsByClassName('avatar avatar--m')[0].getElementsByTagName('img')[0].attributes['src'].toString();
+          data['_userAvatar'] = element.getElementsByClassName('avatar avatar--m')[0].getElementsByTagName('img')[0].attributes['src'].toString();
+          if (data['_userAvatar'].contains('https')== false){
+            data['_userAvatar'] = GlobalController.i.url + data['_userAvatar'];
+          }
           data['avatarColor1'] = '0x00000000';
           data['avatarColor2'] = '0x00000000';
         } else {

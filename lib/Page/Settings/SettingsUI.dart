@@ -43,16 +43,16 @@ class SettingsUI extends GetView<SettingsController> {
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                   Obx(() => Expanded(
-                        child: Slider(
-                            divisions: 25,
-                            label: controller.fontSizeView.string,
-                            value: controller.fontSizeView.value,
-                            max: 40.0,
-                            min: 15.0,
-                            onChanged: (value) {
-                              controller.fontSizeView.value = value;
-                            }),
-                      ))
+                    child: Slider(
+                        divisions: 25,
+                        label: controller.fontSizeView.string,
+                        value: controller.fontSizeView.value,
+                        max: 40.0,
+                        min: 15.0,
+                        onChanged: (value) {
+                          controller.fontSizeView.value = value;
+                        }),
+                  ))
                 ],
               ),//fontsize
               Row(

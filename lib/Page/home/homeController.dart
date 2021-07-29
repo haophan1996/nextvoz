@@ -32,11 +32,7 @@ class HomeController extends GetxController {
       //Set token
       GlobalController.i.dataCsrfLogin = doc!.getElementsByTagName('html')[0].attributes['data-csrf'];
       if (doc.getElementsByTagName('html')[0].attributes['data-logged-in'] == 'true') {
-        GlobalController.i.isLogged.value = true;
-        // NaviDrawerController.i.titleUser.value = GlobalController.i.userStorage.read('titleUser');
-        // NaviDrawerController.i.linkUser.value = GlobalController.i.userStorage.read('linkUser');
-        // NaviDrawerController.i.avatarUser.value = GlobalController.i.userStorage.read('avatarUser');
-        // NaviDrawerController.i.nameUser.value = GlobalController.i.userStorage.read('nameUser');
+        GlobalController.i.isLogged = true;
         GlobalController.i.inboxNotifications = doc.getElementsByClassName('p-navgroup-link--conversations').length > 0
             ? int.parse(doc.getElementsByClassName('p-navgroup-link--conversations')[0].attributes['data-badge'].toString())
             : 0;
@@ -45,7 +41,7 @@ class HomeController extends GetxController {
             : 0;
         GlobalController.i.update();
       } else
-        GlobalController.i.isLogged.value = false;
+        GlobalController.i.isLogged = false;
 
       doc.getElementsByClassName("block block--category block--category").forEach((value) {
         value.getElementsByClassName("node-body").forEach((element) {

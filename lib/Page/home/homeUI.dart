@@ -9,7 +9,6 @@ import '/Page/reuseWidget.dart';
 import '/GlobalController.dart';
 
 class HomePageUI extends GetView<HomeController> {
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -105,9 +104,10 @@ class HomePageUI extends GetView<HomeController> {
         padding: EdgeInsets.only(left: 6, right: 6),
         child: Column(
           children: [
-            Obx(
-              () => GlobalController.i.isLogged.value == false ? login(context) : logged(context),
-            ),
+
+            GetBuilder<GlobalController>(builder: (controller){
+              return controller.isLogged == false ? login(context) : logged(context);
+            }),
             whatNew(context),
             SizedBox(
               height: 10,

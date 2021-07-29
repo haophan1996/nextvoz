@@ -55,31 +55,6 @@ class InboxUI extends GetView<InboxController> {
                   globalController.inboxList.elementAt(index)['avatarColor2'],
                   globalController.inboxList.elementAt(index)['conservationWith'],
                   globalController.inboxList.elementAt(index)['avatarLink']),
-              // child: Container(
-              //   width: 50,
-              //   height: 50,
-              //   decoration: BoxDecoration(
-              //       color: Color(
-              //         int.parse(globalController.inboxList.elementAt(index)['avatarColor1']),
-              //       ),
-              //       shape: BoxShape.circle),
-              //   child: globalController.inboxList.elementAt(index)['avatarLink'] == 'no'
-              //       ? Center(
-              //     child: Text(
-              //       globalController.inboxList.elementAt(index)['conservationWith'].toString().toUpperCase()[0],
-              //       style: TextStyle(
-              //           color: Color(int.parse(globalController.inboxList.elementAt(index)['avatarColor2'])),
-              //           fontWeight: FontWeight.bold,
-              //           fontSize: Get.theme.textTheme.headline5!.fontSize
-              //       ),
-              //     ),
-              //   )
-              //       : ExtendedImage.network(
-              //     globalController.inboxList.elementAt(index)['avatarLink'],
-              //     shape: BoxShape.circle,
-              //     fit: BoxFit.fill,
-              //   ),
-              // ),
             ),
             RichText(
               text: TextSpan(

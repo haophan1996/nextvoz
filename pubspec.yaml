@@ -81,6 +81,7 @@ flutter:
   assets:
     - assets/popo/
     - assets/popopo/
+    - assets/pogif/
     - assets/reaction/
     - assets/languages/
     - NoAvata.png

@@ -8,7 +8,6 @@ import '/Page/pageNavigation.dart';
 import '/Page/reuseWidget.dart';
 import '/Page/View/ViewController.dart';
 import '/GlobalController.dart';
-
 import '../pageLoadNext.dart';
 
 class ViewUI extends StatelessWidget {
@@ -40,12 +39,12 @@ class ViewUI extends StatelessWidget {
                     controller.currentPage,
                     controller.totalPage,
                     (index) {
-                      if (index > controller.totalPage || index < 1){
+                      if (index > controller.totalPage || index < 1) {
                         HapticFeedback.lightImpact();
-                        if (index==0) index =1;
-                        if(index>controller.totalPage) index-=1;
+                        if (index == 0) index = 1;
+                        if (index > controller.totalPage) index -= 1;
                       }
-                      if (controller.totalPage!= 0 && controller.currentPage != 0){
+                      if (controller.totalPage != 0 && controller.currentPage != 0) {
                         setDialog('popMess'.tr, 'loading3'.tr);
                         controller.setPageOnClick(index);
                       }
@@ -66,9 +65,9 @@ class ViewUI extends StatelessWidget {
                         style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, foreground: Paint()..shader = linearGradient),
                       ),
                     ),
-                    Obx(
-                      () => GlobalController.i.isLogged.value == false ? login(context) : logged(context),
-                    ),
+                    GetBuilder<GlobalController>(builder: (controller) {
+                      return controller.isLogged == false ? login(context) : logged(context);
+                    }),
                   ],
                 ),
               ),
