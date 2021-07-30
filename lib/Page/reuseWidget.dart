@@ -4,16 +4,16 @@ import 'package:flutter/material.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:expandable/expandable.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:extended_image/extended_image.dart';
 import 'package:flutter_html/shims/dart_ui_real.dart';
 import 'package:loader_skeleton/loader_skeleton.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
-import 'package:pinch_zoom_image_last/pinch_zoom_image_last.dart';
+import 'package:zoom_pinch_overlay/zoom_pinch_overlay.dart';
 import 'package:flutter_reaction_button/flutter_reaction_button.dart';
 import '/GlobalController.dart';
 import '/Page/NavigationDrawer/NaviDrawerController.dart';
 import '/Page/View/ViewController.dart';
 import 'Profile/UserProfile/UserProfileController.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 ///  * Global appbar
 PreferredSize preferredSize(BuildContext context, String title, String prefix) => PreferredSize(
@@ -78,7 +78,7 @@ Widget blockItem(BuildContext context, FontWeight themeTitleWeight, FontWeight t
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    customTitle(titleWeight, Colors.blue, null, header11, header12),
+                    customTitle(titleWeight, Get.theme.primaryColor, null, header11, header12),
                     Text(
                       "$header21 \u2022 $header22",
                       style: TextStyle(color: Colors.grey, fontSize: 12),
@@ -340,7 +340,10 @@ Widget reactionChild(ViewController controller, int index) {
                         ? Image.asset(
                             "assets/NoAvata.png",
                           ).image
-                        : ExtendedNetworkImageProvider(GlobalController.i.url + controller.reactionList.elementAt(index)['rAvatar'], cache: true)),
+                        : CachedNetworkImageProvider(
+                            GlobalController.i.url + controller.reactionList.elementAt(index)['rAvatar'],
+                          )),
+                //ExtendedNetworkImageProvider(GlobalController.i.url + controller.reactionList.elementAt(index)['rAvatar'], cache: true)),
               ),
             ),
             Positioned(
@@ -411,12 +414,6 @@ Widget onTapUser(ViewController controller, int index) {
             child: Container(
               width: Get.width,
               child: Text('Start conversation'),
-            ),
-            onPressed: () {}),
-        CupertinoButton(
-            child: Container(
-              width: Get.width,
-              child: Text('Follow'),
             ),
             onPressed: () {}),
         CupertinoButton(
@@ -504,59 +501,57 @@ Widget dialogButtonYesNo(Function onDone) => Row(
     );
 
 Widget viewContent(BuildContext context, int index, ViewController controller) => Container(
-      color: Get.theme.backgroundColor,
+      //color: Get.theme.backgroundColor,
+      decoration: BoxDecoration(
+        border: Border(bottom: BorderSide(color: Get.theme.canvasColor)),
+        color: Get.theme.backgroundColor,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           CupertinoButton(
               padding: EdgeInsets.zero,
-              child: Padding(
-                padding: EdgeInsets.only(bottom: 5),
-                child: Card(
-                  elevation: 5,
-                  color: controller.htmlData.elementAt(index)['newPost'] == true ? Get.theme.shadowColor : Get.theme.canvasColor,
-                  child: Stack(
-                    children: [
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Padding(
-                            padding: EdgeInsets.only(top: 5, left: 5, bottom: 5),
-                            child: displayAvatar(
-                                48,
-                                controller.htmlData.elementAt(index)["avatarColor1"],
-                                controller.htmlData.elementAt(index)["avatarColor2"],
-                                controller.htmlData.elementAt(index)["userName"],
-                                controller.htmlData.elementAt(index)["userAvatar"]),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(top: 10, left: 10),
-                            child: RichText(
-                              text: TextSpan(children: <TextSpan>[
-                                TextSpan(
-                                    text: controller.htmlData.elementAt(index)['userName'] + "\n",
-                                    style: TextStyle(color: Colors.blue, fontWeight: FontWeight.bold, fontSize: 16)),
-                                TextSpan(
-                                    text: controller.htmlData.elementAt(index)['userTitle'],
-                                    style: TextStyle(color: Get.theme.primaryColor, fontSize: 13)),
-                              ]),
-                            ),
-                          ),
-                        ],
+              child: Stack(
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Padding(
+                        padding: EdgeInsets.only(top: 5, left: 5, bottom: 5),
+                        child: displayAvatar(
+                            48,
+                            controller.htmlData.elementAt(index)["avatarColor1"],
+                            controller.htmlData.elementAt(index)["avatarColor2"],
+                            controller.htmlData.elementAt(index)["userName"],
+                            controller.htmlData.elementAt(index)["userAvatar"]),
                       ),
                       Padding(
-                        padding: EdgeInsets.only(top: 10, right: 10),
-                        child: Align(
-                          alignment: Alignment.centerRight,
-                          child: Text(
-                              '${controller.htmlData.elementAt(index)['userPostDate']}\n ${controller.htmlData.elementAt(index)['orderPost']}',
-                              textAlign: TextAlign.right,
-                              style: TextStyle(color: Get.theme.primaryColor, fontSize: 13)),
+                        padding: EdgeInsets.only(top: 10, left: 10),
+                        child: RichText(
+                          text: TextSpan(children: <TextSpan>[
+                            TextSpan(
+                                text: controller.htmlData.elementAt(index)['userName'] + "\n",
+                                style: TextStyle(
+                                    color: controller.htmlData.elementAt(index)['newPost'] == true ? Color(0xFFFD6E00) : Colors.blue,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16)),
+                            TextSpan(
+                                text: controller.htmlData.elementAt(index)['userTitle'],
+                                style: TextStyle(color: Get.theme.primaryColor, fontSize: 13)),
+                          ]),
                         ),
                       ),
                     ],
                   ),
-                ),
+                  Padding(
+                    padding: EdgeInsets.only(top: 10, right: 10),
+                    child: Align(
+                      alignment: Alignment.centerRight,
+                      child: Text('${controller.htmlData.elementAt(index)['userPostDate']}\n ${controller.htmlData.elementAt(index)['orderPost']}',
+                          textAlign: TextAlign.right, style: TextStyle(color: Get.theme.primaryColor, fontSize: 13)),
+                    ),
+                  ),
+                ],
               ),
               onPressed: () {
                 Get.bottomSheet(
@@ -645,27 +640,19 @@ Widget viewContent(BuildContext context, int index, ViewController controller) =
 
 Widget displayAvatar(double sizeImage, String avatarColor1, String avatarColor2, String? userName, String imageLink) {
   return Container(
-    width: sizeImage,
-    height: sizeImage,
-    decoration: BoxDecoration(
-        color: Color(
-          int.parse(avatarColor1),
-        ),
-        shape: BoxShape.circle),
-    child: imageLink == 'no'
-        ? Center(
-            child: Text(
-              userName!.toUpperCase()[0],
-              style: TextStyle(color: Color(int.parse(avatarColor2)), fontWeight: FontWeight.bold, fontSize: Get.theme.textTheme.headline5!.fontSize),
-            ),
-          )
-        : ExtendedImage.network(
-            imageLink,
-            shape: BoxShape.circle,
-            fit: BoxFit.fill,
-            enableLoadState: false,
+      width: sizeImage,
+      height: sizeImage,
+      decoration: BoxDecoration(
+          color: Color(
+            int.parse(avatarColor1),
           ),
-  );
+          shape: BoxShape.circle),
+      child: Center(
+        child: imageLink == 'no' ? Text(
+          imageLink == 'no' ? userName!.toUpperCase()[0] : '',
+          style: TextStyle(color: Color(int.parse(avatarColor2)), fontWeight: FontWeight.bold, fontSize: Get.theme.textTheme.headline5!.fontSize),
+        ) : CachedNetworkImage(imageUrl: imageLink,fit: BoxFit.fill,),
+      ));
 }
 
 Widget customHtml(List htmlData, int index) {
@@ -674,8 +661,8 @@ Widget customHtml(List htmlData, int index) {
     tagsList: Html.tags..remove('noscript'),
     customRender: {
       "img": (renderContext, child) {
-         double? width = double.tryParse(renderContext.tree.element!.attributes['width'].toString());
-         double? height = double.tryParse(renderContext.tree.element!.attributes['height'].toString());
+        double? width = double.tryParse(renderContext.tree.element!.attributes['width'].toString());
+        double? height = double.tryParse(renderContext.tree.element!.attributes['height'].toString());
         //
         if (renderContext.tree.element!.attributes['src']!.contains("/styles/next/xenforo")) {
           return Image.asset(GlobalController.i.getEmoji(renderContext.tree.element!.attributes['src'].toString()));
@@ -686,47 +673,35 @@ Widget customHtml(List htmlData, int index) {
           );
         } else if (renderContext.tree.element!.attributes['data-url']!.contains(".gif")) {
         } else {
-          print('$width + ' ' + $height');
-          return Container(
-
-            child: PinchZoomImage(
-              image: ExtendedImage.network(
-                renderContext.tree.element!.attributes['src']!.contains('data:image/', 0) == true
-                    ? renderContext.tree.element!.attributes['data-src'].toString()
-                    : renderContext.tree.element!.attributes['src'].toString(),
-                width: Size.fromHeight(width!).shortestSide,
-                height: Size.fromHeight(height!).height,
-                filterQuality: FilterQuality.low,
-                cacheRawData: true,
-                enableLoadState: false,
-                // loadStateChanged: (value) {
-                //   switch (value.extendedImageLoadState) {
-                //     case LoadState.loading:
-                //       return Text('Loading Image');
-                //     case LoadState.completed:
-                //       return ExtendedRawImage(
-                //         image: value.extendedImageInfo?.image,
-                //         //width: ScreenUtil.instance.setWidth(600),
-                //         //height: ScreenUtil.instance.setWidth(400),
-                //       );
-                //     case LoadState.failed:
-                //       return InkWell(
-                //         child: Text('Load faill'),
-                //         onTap: () => value.reLoadImage(),
-                //       );
-                //   }
-                // },
-                cache: true,
-                clearMemoryCacheIfFailed: true,
-              ),
-              zoomedBackgroundColor: Color.fromRGBO(240, 240, 240, 1.0),
-              onZoomStart: () {
-                print('Zoom started');
+          return ZoomOverlay(
+            child: CachedNetworkImage(
+              imageUrl: renderContext.tree.element!.attributes['src']!.contains('data:image/', 0) == true
+                  ? renderContext.tree.element!.attributes['data-src'].toString()
+                  : renderContext.tree.element!.attributes['src'].toString(),
+              filterQuality: FilterQuality.low,
+              errorWidget: (context, url, dy) {
+                return AspectRatio(
+                  aspectRatio: 4 / 3,
+                  child: Container(
+                    width: width != null ? width : 100,
+                    height: height != null ? height : 100,
+                    child: customCupertinoButton(Alignment.center, EdgeInsets.zero, Text(url), () => GlobalController.i.launchURL(url)),
+                  ),
+                );
               },
-              onZoomEnd: () {
-                print('Zoom finished');
+              placeholder: (context, c) {
+                return AspectRatio(
+                  aspectRatio: 4 / 3,
+                  child: Container(
+                    width: width != null ? width : 100,
+                    height: height != null ? height : 100,
+                  ),
+                );
               },
             ),
+            twoTouchOnly: false,
+            //minScale: 0.5,
+            //maxScale: 3.0,
           );
         }
       },
@@ -810,14 +785,12 @@ Widget customHtml(List htmlData, int index) {
               child: Stack(
                 children: [
                   ClipRRect(
-                    borderRadius: BorderRadius.circular(6),
-                    child: ExtendedImage.network(
-                      'https://img.youtube.com/vi/$link/0.jpg',
-                      clearMemoryCacheWhenDispose: true,
-                      width: width,
-                      height: height,
-                    ),
-                  ),
+                      borderRadius: BorderRadius.circular(6),
+                      child: CachedNetworkImage(
+                        imageUrl: 'https://img.youtube.com/vi/$link/0.jpg',
+                        width: width,
+                        height: height,
+                      )),
                   Positioned.fill(
                     child: Align(
                       alignment: Alignment.center,

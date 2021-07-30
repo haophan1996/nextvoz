@@ -4,7 +4,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:html/parser.dart' as parser;
 import 'package:html/dom.dart' as dom;
-import 'package:extended_image/extended_image.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:flutter_reaction_button/flutter_reaction_button.dart';
@@ -56,7 +55,6 @@ class ViewController extends GetxController {
     refreshController.dispose();
     listViewScrollController.dispose();
     reactionList.close();
-    clearMemoryImageCache();
     GlobalController.i.percentDownload = -1.0;
   }
 
@@ -74,7 +72,7 @@ class ViewController extends GetxController {
   }
 
   getImage(String url) async {
-    return await getCachedImageFile(url);
+   // return await getCachedImageFile(url);
   }
 
   write(String text) async {
@@ -88,8 +86,8 @@ class ViewController extends GetxController {
   saveImage(String url) async {
     final Directory? directory = Directory("storage/emulated/0/Pictures/vozNext");
     await directory!.create();
-    final File file = File((await getCachedImageFilePath(url)).toString());
-    await file.copy(directory.path + "/${file.path.split("/").last}.jpg");
+   // final File file = File((await getCachedImageFilePath(url)).toString());
+   // await file.copy(directory.path + "/${file.path.split("/").last}.jpg");
   }
 
   final flagsReactions = [

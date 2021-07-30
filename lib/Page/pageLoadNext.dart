@@ -6,7 +6,7 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 Widget refreshIndicatorConfiguration(Widget widget) {
   return Container(
     width: double.infinity,
-    padding: EdgeInsets.only(bottom: Get.height * 0.14),
+    //padding: EdgeInsets.only(bottom: Get.height * 0.14),
     child: RefreshConfiguration(
         footerTriggerDistance: -80,
         footerBuilder: () => ClassicFooter(
@@ -14,7 +14,7 @@ Widget refreshIndicatorConfiguration(Widget widget) {
           loadingIcon: CupertinoActivityIndicator(),
           idleText: 'pullUp'.tr,
           canLoadingText: 'pullRes'.tr,
-          height: 105,
+          height:205,
           outerBuilder: (child) {
             return Container(
               child: Align(

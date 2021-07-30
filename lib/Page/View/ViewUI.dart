@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
-import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
+import 'package:sliding_up_panel/sliding_up_panel.dart';
 import '/Page/NavigationDrawer/NaviDrawerUI.dart';
 import '/Page/pageNavigation.dart';
 import '/Page/reuseWidget.dart';
@@ -21,63 +21,62 @@ class ViewUI extends StatelessWidget {
       appBar: preferredSize(context, Get.find<ViewController>(tag: GlobalController.i.sessionTag.last).data['subHeader'],
           Get.find<ViewController>(tag: GlobalController.i.sessionTag.last).data['subTypeHeader']),
       backgroundColor: Theme.of(context).backgroundColor,
-      body: slidingUp(
-        GetPlatform.isAndroid ? Get.height * (0.02) : 0,
-        Get.find<ViewController>(tag: GlobalController.i.sessionTag.last).panelController,
-        GetBuilder<ViewController>(
+      body: SlidingUpPanel(
+        boxShadow: <BoxShadow>[],
+        controller: Get.find<ViewController>(tag: GlobalController.i.sessionTag.last).panelController,
+        parallaxEnabled: true,
+        parallaxOffset: .5,
+        minHeight: kBottomNavigationBarHeight,
+        maxHeight: Get.height*0.5,
+        padding: EdgeInsets.only(left: 5, right: 5),
+        backdropEnabled: true,
+        backdropTapClosesPanel: true,
+        backdropColor: Colors.grey.shade700,
+        color: Colors.transparent,
+        panel: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Spacer(),
+            GetBuilder<GlobalController>(builder: (controller){
+              return controller.isLogged == false ? login(context) : logged(context);
+            }),
+            whatNew(context),
+            SizedBox(height: kBottomNavigationBarHeight+5,)
+          ],
+        ),
+        snapPoint: 0.5,
+        footer: Container(
+          color: Get.theme.backgroundColor,
+          height: kBottomNavigationBarHeight,
+          child: GetBuilder<ViewController>(
+            tag: GlobalController.i.sessionTag.last,
+            builder: (controller) {
+              return pageNavigation(
+                controller.currentPage,
+                controller.totalPage,
+                    (index) {
+                  if (index > controller.totalPage || index < 1) {
+                    HapticFeedback.lightImpact();
+                    if (index == 0) index = 1;
+                    if (index > controller.totalPage) index -= 1;
+                  }
+                  if (controller.totalPage != 0 && controller.currentPage != 0) {
+                    setDialog('popMess'.tr, 'loading3'.tr);
+                    controller.setPageOnClick(index);
+                  }
+                },
+                    () => controller.reply('', false),
+              );
+            },
+          ),
+          width: Get.width,
+        ),
+        body: GetBuilder<ViewController>(
           tag: GlobalController.i.sessionTag.last,
           builder: (controller) {
             return postContent(context, controller);
           },
-        ),
-        Container(
-          child: Column(
-            children: [
-              GetBuilder<ViewController>(
-                tag: GlobalController.i.sessionTag.last,
-                builder: (controller) {
-                  return pageNavigation(
-                    controller.currentPage,
-                    controller.totalPage,
-                    (index) {
-                      if (index > controller.totalPage || index < 1) {
-                        HapticFeedback.lightImpact();
-                        if (index == 0) index = 1;
-                        if (index > controller.totalPage) index -= 1;
-                      }
-                      if (controller.totalPage != 0 && controller.currentPage != 0) {
-                        setDialog('popMess'.tr, 'loading3'.tr);
-                        controller.setPageOnClick(index);
-                      }
-                    },
-                    () => controller.reply('', false),
-                  );
-                },
-              ),
-              Container(
-                padding: EdgeInsets.only(top: 5),
-                decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(6)), color: Theme.of(context).backgroundColor),
-                child: Column(
-                  children: [
-                    Container(
-                      child: Text(
-                        'TheNextVoz - Account',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, foreground: Paint()..shader = linearGradient),
-                      ),
-                    ),
-                    GetBuilder<GlobalController>(builder: (controller) {
-                      return controller.isLogged == false ? login(context) : logged(context);
-                    }),
-                  ],
-                ),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              Expanded(child: whatNew(context)),
-            ],
-          ),
         ),
       ),
     );

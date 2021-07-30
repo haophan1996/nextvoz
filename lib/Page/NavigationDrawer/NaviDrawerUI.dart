@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_html/shims/dart_ui_real.dart';
 import 'package:get/get.dart';
 import 'package:flutter/cupertino.dart';
@@ -7,7 +8,6 @@ import '/Page/NavigationDrawer/NaviDrawerController.dart';
 import '/Page/Profile/UserProfile/UserProfileController.dart';
 import '/Page/reuseWidget.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
-import 'package:extended_image/extended_image.dart';
 
 class NaviDrawerUI extends GetView<NaviDrawerController> {
   @override
@@ -141,7 +141,7 @@ Widget logged(BuildContext context) {
                               width: 48,
                             ).image
                           : NaviDrawerController.i.avatarUser.value.length > 5
-                              ? ExtendedNetworkImageProvider((NaviDrawerController.i.avatarUser.value), cache: true)
+                              ? CachedNetworkImageProvider((NaviDrawerController.i.avatarUser.value))
                               : Image.asset(
                                   "assets/NoAvata.png",
                                   height: 48,

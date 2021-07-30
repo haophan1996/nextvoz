@@ -7,68 +7,59 @@ import '/Page/reuseWidget.dart';
 import '/GlobalController.dart';
 
 Widget pageNavigation(int currentPage, int totalPage, Function(int index) gotoPage, Function reply) {
-  return Padding(
-    padding: EdgeInsets.only(bottom: 15, top: 1),//Get.theme.backgroundColor,
-    child: Container(
-      alignment: Alignment.topCenter,
-      decoration: BoxDecoration(color: Get.theme.backgroundColor, borderRadius: BorderRadius.all(Radius.circular(6))),
-      height: Get.size.height * 0.08, //0.066,
-      padding: EdgeInsets.only(bottom: 22),
-      child: Stack(
-        children: [
-          Align(
-            alignment: Alignment.centerLeft,
-            child: CupertinoButton(
-              padding: EdgeInsets.zero,
-              child: Icon(
-                Icons.reply_outlined,
-                color: Get.theme.primaryColor,
-              ),
-              onPressed: () {
-                if (GlobalController.i.isLogged == false) {
-                  setDialogError('You must be logged-in to do that.');
-                } else
-                  reply();
-              },
+  return Stack(
+    children: [
+      Align(
+        alignment: Alignment.topLeft,
+        child: CupertinoButton(
+          padding: EdgeInsets.zero,
+          child: Icon(
+            Icons.reply_outlined,
+            color: Get.theme.primaryColor,
+          ),
+          onPressed: () {
+            if (GlobalController.i.isLogged == false) {
+              setDialogError('You must be logged-in to do that.');
+            } else
+              reply();
+          },
+        ),
+      ),
+      GetBuilder<GlobalController>(builder: (controller) {
+        return Align(
+          alignment: Alignment.topRight,
+          child: Padding(
+            padding: EdgeInsets.only(right: 5),
+            child: Image.asset(
+              'assets/${controller.alertNotifications != 0 || controller.inboxNotifications != 0 ? 'alerts' : 'reaction/nil'}.png',
+              width: 10,
             ),
           ),
-          GetBuilder<GlobalController>(builder: (controller) {
-            return Align(
-              alignment: Alignment.centerRight,
-              child: Padding(
-                padding: EdgeInsets.only(right: 5),
-                child: Image.asset(
-                  'assets/${controller.alertNotifications != 0 || controller.inboxNotifications != 0 ? 'alerts' : 'reaction/nil'}.png',
-                  width: 10,
-                ),
-              ),
-            );
+        );
+      }),
+      Align(alignment: Alignment.topCenter,child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          customCupertinoButton(Alignment.center, EdgeInsets.zero, Icon(Icons.arrow_back, color: Get.theme.primaryColor), () {
+            gotoPage(1);
           }),
-          Align(alignment: Alignment.center,child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              customCupertinoButton(Alignment.center, EdgeInsets.zero, Icon(Icons.arrow_back, color: Get.theme.primaryColor), () {
-                gotoPage(1);
-              }),
-              customCupertinoButton(Alignment.center, EdgeInsets.zero, Icon(Icons.arrow_back_ios_rounded, color: Get.theme.primaryColor), () {
-                gotoPage(currentPage -= 1);
-              }),
-              Text(
-                '${currentPage.toString()} of ${totalPage.toString()}',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              customCupertinoButton(Alignment.center, EdgeInsets.zero, Icon(Icons.arrow_forward_ios_rounded, color: Get.theme.primaryColor), () {
-                gotoPage(currentPage += 1);
-              }),
-              customCupertinoButton(Alignment.center, EdgeInsets.zero, Icon(Icons.arrow_forward, color: Get.theme.primaryColor), () {
-                gotoPage(totalPage);
-              }),
-            ],
-          ),)
+          customCupertinoButton(Alignment.center, EdgeInsets.zero, Icon(Icons.arrow_back_ios_rounded, color: Get.theme.primaryColor), () {
+            gotoPage(currentPage -= 1);
+          }),
+          Text(
+            '${currentPage.toString()} of ${totalPage.toString()}',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          customCupertinoButton(Alignment.center, EdgeInsets.zero, Icon(Icons.arrow_forward_ios_rounded, color: Get.theme.primaryColor), () {
+            gotoPage(currentPage += 1);
+          }),
+          customCupertinoButton(Alignment.center, EdgeInsets.zero, Icon(Icons.arrow_forward, color: Get.theme.primaryColor), () {
+            gotoPage(totalPage);
+          }),
         ],
-      ),
-    ),
+      ),)
+    ],
   );
 }
 
