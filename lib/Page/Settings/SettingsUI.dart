@@ -73,29 +73,14 @@ class SettingsUI extends GetView<SettingsController> {
               Row(
                 children: [
                   Text(
-                    'showGifImageFromImgur'.tr,
+                    'showImage'.tr,
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                   Spacer(),
                   Obx(()=> CupertinoSwitch(
-                    value: controller.switchValuePost.value,
+                    value: controller.switchImage.value,
                     onChanged: (value) {
-                      controller.switchValuePost.value = value;
-                    },
-                  ),)
-                ],
-              ),//show gif
-              Row(
-                children: [
-                  Text(
-                    'showOtherImage'.tr,
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  Spacer(),
-                  Obx(()=> CupertinoSwitch(
-                    value: controller.switchValuePost.value,
-                    onChanged: (value) {
-                      controller.switchValuePost.value = value;
+                      controller.switchImage.value = value;
                     },
                   ),)
                 ],
@@ -108,9 +93,9 @@ class SettingsUI extends GetView<SettingsController> {
                   ),
                   Spacer(),
                   Obx(()=> CupertinoSwitch(
-                    value: controller.switchValuePost.value,
+                    value: controller.switchSignature.value,
                     onChanged: (value) {
-                      controller.switchValuePost.value = value;
+                      controller.switchSignature.value = value;
                     },
                   ),)
                 ],

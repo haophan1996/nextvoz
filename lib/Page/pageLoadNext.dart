@@ -14,7 +14,7 @@ Widget refreshIndicatorConfiguration(Widget widget) {
           loadingIcon: CupertinoActivityIndicator(),
           idleText: 'pullUp'.tr,
           canLoadingText: 'pullRes'.tr,
-          height:205,
+          height:100,
           outerBuilder: (child) {
             return Container(
               child: Align(

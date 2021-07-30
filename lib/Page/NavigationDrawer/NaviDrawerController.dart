@@ -22,7 +22,7 @@ class NaviDrawerController extends GetxController {
   String statusLogin = '';
   List shortcuts = [];
 
-  Future<void> loginFunction(BuildContext context) async {
+  Future<void> loginFunction() async {
     statusLogin = '';
     setDialog('popMess'.tr, 'popMess2'.tr);
     if (textEditingControllerLogin.text.length < 6 || textEditingControllerPassword.text.length <6){

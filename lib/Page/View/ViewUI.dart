@@ -21,34 +21,15 @@ class ViewUI extends StatelessWidget {
       appBar: preferredSize(context, Get.find<ViewController>(tag: GlobalController.i.sessionTag.last).data['subHeader'],
           Get.find<ViewController>(tag: GlobalController.i.sessionTag.last).data['subTypeHeader']),
       backgroundColor: Theme.of(context).backgroundColor,
-      body: SlidingUpPanel(
-        boxShadow: <BoxShadow>[],
-        controller: Get.find<ViewController>(tag: GlobalController.i.sessionTag.last).panelController,
-        parallaxEnabled: true,
-        parallaxOffset: .5,
-        minHeight: kBottomNavigationBarHeight,
-        maxHeight: Get.height*0.5,
-        padding: EdgeInsets.only(left: 5, right: 5),
-        backdropEnabled: true,
-        backdropTapClosesPanel: true,
-        backdropColor: Colors.grey.shade700,
-        color: Colors.transparent,
-        panel: Column(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Spacer(),
-            GetBuilder<GlobalController>(builder: (controller){
-              return controller.isLogged == false ? login(context) : logged(context);
-            }),
-            whatNew(context),
-            SizedBox(height: kBottomNavigationBarHeight+5,)
-          ],
+      body: Stack(children: [
+        GetBuilder<ViewController>(
+          tag: GlobalController.i.sessionTag.last,
+          builder: (controller) {
+            return postContent(context, controller);
+          },
         ),
-        snapPoint: 0.5,
-        footer: Container(
-          color: Get.theme.backgroundColor,
-          height: kBottomNavigationBarHeight,
+        Align(
+          alignment: Alignment.bottomCenter,
           child: GetBuilder<ViewController>(
             tag: GlobalController.i.sessionTag.last,
             builder: (controller) {
@@ -70,15 +51,9 @@ class ViewUI extends StatelessWidget {
               );
             },
           ),
-          width: Get.width,
-        ),
-        body: GetBuilder<ViewController>(
-          tag: GlobalController.i.sessionTag.last,
-          builder: (controller) {
-            return postContent(context, controller);
-          },
-        ),
-      ),
+        )
+
+      ]),
     );
   }
 
@@ -93,14 +68,16 @@ class ViewUI extends StatelessWidget {
           onLoading: () {
             if (controller.currentPage + 1 > controller.totalPage) {
               HapticFeedback.lightImpact();
+              controller.refreshController.loadComplete();
+            } else {
+              if (controller.totalPage != 0 && controller.currentPage != 0) {
+                controller.setPageOnClick(controller.currentPage + 1);
+              }
             }
-            if (controller.totalPage != 0 && controller.currentPage != 0) {
-              controller.setPageOnClick(controller.currentPage + 1);
-            }
+
           },
           child: ListView.builder(
-            cacheExtent: 999999999999999,
-            padding: EdgeInsets.only(top: 2),
+            cacheExtent: 999999999,
             physics: BouncingScrollPhysics(),
             scrollDirection: Axis.vertical,
             controller: controller.listViewScrollController,

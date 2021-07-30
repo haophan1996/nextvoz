@@ -106,9 +106,9 @@ class HomePageUI extends GetView<HomeController> {
           children: [
 
             GetBuilder<GlobalController>(builder: (controller){
-              return controller.isLogged == false ? login(context) : logged(context);
+              return controller.isLogged == false ? login() : logged();
             }),
-            whatNew(context),
+            whatNew(),
             SizedBox(
               height: 10,
             ),

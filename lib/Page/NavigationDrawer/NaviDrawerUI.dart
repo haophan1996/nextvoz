@@ -7,7 +7,6 @@ import '/GlobalController.dart';
 import '/Page/NavigationDrawer/NaviDrawerController.dart';
 import '/Page/Profile/UserProfile/UserProfileController.dart';
 import '/Page/reuseWidget.dart';
-import 'package:flutter_signin_button/flutter_signin_button.dart';
 
 class NaviDrawerUI extends GetView<NaviDrawerController> {
   @override
@@ -22,65 +21,65 @@ class NaviDrawerUI extends GetView<NaviDrawerController> {
                 'shortcuts',
                 style: TextStyle(color: Theme.of(context).primaryColor),
               ),
-              CupertinoButton(
-                  child: Container(
-                    width: Get.width,
-                    child: Text(
-                      'FeedBack',
-                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.red),
-                    ),
-                  ),
-                  onPressed: () {
-                    Get.defaultDialog(
-                        content: Container(
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              TextField(
-                                controller: controller.feedBackCNameController,
-                                decoration: InputDecoration(
-                                  hintText: 'Email của bạn',
-                                ),
-                              ),
-                              TextField(
-                                controller: controller.feedBackCTitleController,
-                                decoration: InputDecoration(
-                                  hintText: 'Chủ đề',
-                                ),
-                              ),
-                              Container(
-                                height: 120,
-                                child: TextField(
-                                  maxLines: 5,
-                                  controller: controller.feedBackContentController,
-                                  decoration: InputDecoration(
-                                    hintText: 'Diễn tã lỗi sản phẩm',
-                                  ),
-                                ),
-                              ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  CupertinoButton(child: Text('Hủy Bỏ'), onPressed: () => Get.back()),
-                                  CupertinoButton(
-                                      child: Text('Gửi'),
-                                      onPressed: () async {
-                                        if (controller.feedBackContentController.text.length < 2 ||
-                                            controller.feedBackCTitleController.text.length < 2 ||
-                                            controller.feedBackCNameController.text.length < 2) {
-                                          Get.snackbar('Thông Báo', 'Lỗi kí tự quá ngắn, it nhất 2 kí tự trở lên',
-                                              colorText: Colors.red, backgroundColor: Colors.black);
-                                        } else {
-                                          GlobalController.i.sendFeedBack(context, controller.feedBackContentController.text.toString(),
-                                              controller.feedBackCNameController.text.toString(), controller.feedBackCTitleController.text.toString());
-                                        }
-                                      }),
-                                ],
-                              )
-                            ],
-                          ),
-                        ));
-                  }),
+              // CupertinoButton(
+              //     child: Container(
+              //       width: Get.width,
+              //       child: Text(
+              //         'FeedBack',
+              //         style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.red),
+              //       ),
+              //     ),
+              //     onPressed: () {
+              //       Get.defaultDialog(
+              //           content: Container(
+              //             child: Column(
+              //               mainAxisSize: MainAxisSize.min,
+              //               children: [
+              //                 TextField(
+              //                   controller: controller.feedBackCNameController,
+              //                   decoration: InputDecoration(
+              //                     hintText: 'Email của bạn',
+              //                   ),
+              //                 ),
+              //                 TextField(
+              //                   controller: controller.feedBackCTitleController,
+              //                   decoration: InputDecoration(
+              //                     hintText: 'Chủ đề',
+              //                   ),
+              //                 ),
+              //                 Container(
+              //                   height: 120,
+              //                   child: TextField(
+              //                     maxLines: 5,
+              //                     controller: controller.feedBackContentController,
+              //                     decoration: InputDecoration(
+              //                       hintText: 'Diễn tã lỗi sản phẩm',
+              //                     ),
+              //                   ),
+              //                 ),
+              //                 Row(
+              //                   mainAxisAlignment: MainAxisAlignment.center,
+              //                   children: [
+              //                     CupertinoButton(child: Text('Hủy Bỏ'), onPressed: () => Get.back()),
+              //                     CupertinoButton(
+              //                         child: Text('Gửi'),
+              //                         onPressed: () async {
+              //                           if (controller.feedBackContentController.text.length < 2 ||
+              //                               controller.feedBackCTitleController.text.length < 2 ||
+              //                               controller.feedBackCNameController.text.length < 2) {
+              //                             Get.snackbar('Thông Báo', 'Lỗi kí tự quá ngắn, it nhất 2 kí tự trở lên',
+              //                                 colorText: Colors.red, backgroundColor: Colors.black);
+              //                           } else {
+              //                             GlobalController.i.sendFeedBack(context, controller.feedBackContentController.text.toString(),
+              //                                 controller.feedBackCNameController.text.toString(), controller.feedBackCTitleController.text.toString());
+              //                           }
+              //                         }),
+              //                   ],
+              //                 )
+              //               ],
+              //             ),
+              //           ));
+              //     }),
               Expanded(
                 child: GetBuilder<NaviDrawerController>(
                   builder: (controller) {
@@ -115,11 +114,11 @@ class NaviDrawerUI extends GetView<NaviDrawerController> {
   }
 }
 
-Widget logged(BuildContext context) {
+Widget logged() {
   return Padding(
     padding: EdgeInsets.only(bottom: 5),
     child: Container(
-      decoration: BoxDecoration(color: Theme.of(context).backgroundColor, borderRadius: BorderRadius.all(Radius.circular(6))),
+      decoration: BoxDecoration(color: Get.theme.backgroundColor, borderRadius: BorderRadius.all(Radius.circular(6))),
       child: Column(
         children: <Widget>[
           Row(
@@ -157,7 +156,7 @@ Widget logged(BuildContext context) {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     textDrawer(Color(0xFFFD6E00), Get.textTheme.headline6!.fontSize, NaviDrawerController.i.nameUser.value, FontWeight.bold),
-                    textDrawer(Theme.of(context).primaryColor, Get.textTheme.caption!.fontSize, NaviDrawerController.i.titleUser.value, FontWeight.normal),
+                    textDrawer(Get.theme.primaryColor, Get.textTheme.caption!.fontSize, NaviDrawerController.i.titleUser.value, FontWeight.normal),
                   ],
                 ), () async {
                   GlobalController.i.sessionTag.add('profile${DateTime.now().toString()}');
@@ -165,7 +164,7 @@ Widget logged(BuildContext context) {
                   Get.toNamed('/UserProfile',arguments: [NaviDrawerController.i.linkUser] ,preventDuplicates: false);
                 }),
               ), //Title and name user
-              settings(context),
+              settings(),
             ],
           ),
           Row(
@@ -175,7 +174,7 @@ Widget logged(BuildContext context) {
                 padding: EdgeInsets.only(right: 10, top: 10),
                 child: Icon(
                   Icons.refresh,
-                  color: Theme.of(context).primaryColor,
+                  color: Get.theme.primaryColor,
                 ),
                 onPressed: () async {
                   setDialog('popMess'.tr, 'popMess3'.tr);
@@ -197,11 +196,11 @@ Widget logged(BuildContext context) {
   );
 }
 
-Widget login(BuildContext context) {
+Widget login() {
   return Padding(
     padding: EdgeInsets.only(bottom: 10),
     child: Container(
-      decoration: BoxDecoration(color: Theme.of(context).backgroundColor, borderRadius: BorderRadius.all(Radius.circular(6))),
+      decoration: BoxDecoration(color: Get.theme.backgroundColor, borderRadius: BorderRadius.all(Radius.circular(6))),
       child: Column(
         children: [
           Row(
@@ -218,7 +217,7 @@ Widget login(BuildContext context) {
                           //height: Get.height - (Get.height * 0.2),
                           width: double.infinity,
                           decoration: BoxDecoration(
-                            color: Theme.of(context).backgroundColor,
+                            color: Get.theme.backgroundColor,
                             border: Border.all(color: Colors.grey),
                             borderRadius: BorderRadius.all(
                               Radius.circular(6),
@@ -241,7 +240,7 @@ Widget login(BuildContext context) {
                               Padding(
                                 padding: EdgeInsets.fromLTRB(15, 5, 15, 5),
                                 child: inputCustom(NaviDrawerController.i.textEditingControllerPassword, true, 'loginPassword',
-                                    () async => await NaviDrawerController.i.loginFunction(context)),
+                                    () async => await NaviDrawerController.i.loginFunction()),
                               ),
                               GetBuilder<NaviDrawerController>(builder: (controller) {
                                 return Text(controller.statusLogin, style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold));
@@ -249,10 +248,10 @@ Widget login(BuildContext context) {
                               TextButton(
                                   child: Text('login'.tr),
                                   onPressed: () async {
-                                    await NaviDrawerController.i.loginFunction(context);
+                                    await NaviDrawerController.i.loginFunction();
                                   }),
-                              SignInButton(Buttons.Google, onPressed: () {}),
-                              SignInButton(Buttons.Facebook, onPressed: () {})
+                              //SignInButton(Buttons.Google, onPressed: () {}),
+                              //SignInButton(Buttons.Facebook, onPressed: () {})
                             ],
                           ),
                         ),

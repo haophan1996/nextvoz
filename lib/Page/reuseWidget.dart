@@ -6,8 +6,7 @@ import 'package:expandable/expandable.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_html/shims/dart_ui_real.dart';
 import 'package:loader_skeleton/loader_skeleton.dart';
-import 'package:animated_text_kit/animated_text_kit.dart';
-import 'package:zoom_pinch_overlay/zoom_pinch_overlay.dart';
+import 'package:pinch_zoom_image_last/pinch_zoom_image_last.dart';
 import 'package:flutter_reaction_button/flutter_reaction_button.dart';
 import '/GlobalController.dart';
 import '/Page/NavigationDrawer/NaviDrawerController.dart';
@@ -148,7 +147,7 @@ TextSpan customTitleChild(FontWeight titleWeight, Color titleColor, String heade
   ]);
 }
 
-Widget settings(BuildContext context) => Row(
+Widget settings() => Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Stack(
@@ -156,7 +155,7 @@ Widget settings(BuildContext context) => Row(
             CupertinoButton(
                 child: Icon(
                   Icons.notifications_none_outlined,
-                  color: Theme.of(context).primaryColor,
+                  color: Get.theme.primaryColor,
                 ),
                 onPressed: () async {
                   if (GlobalController.i.alertList.isEmpty || GlobalController.i.alertNotifications != 0) {
@@ -186,7 +185,7 @@ Widget settings(BuildContext context) => Row(
             CupertinoButton(
                 child: Icon(
                   Icons.mail_outline,
-                  color: Theme.of(context).primaryColor,
+                  color: Get.theme.primaryColor,
                 ),
                 onPressed: () async {
                   if (GlobalController.i.inboxList.isEmpty == true || GlobalController.i.inboxNotifications != 0) {
@@ -213,7 +212,7 @@ Widget settings(BuildContext context) => Row(
         CupertinoButton(
             child: Icon(
               Icons.settings,
-              color: Theme.of(context).primaryColor,
+              color: Get.theme.primaryColor,
             ),
             onPressed: () => NaviDrawerController.i.navigateToSetting()),
       ],
@@ -231,11 +230,7 @@ Widget popUpWaiting(String one, String two) => Column(
         ),
         DefaultTextStyle(
           style: TextStyle(color: Get.theme.primaryColor),
-          child: AnimatedTextKit(
-            repeatForever: true,
-            isRepeatingAnimation: true,
-            animatedTexts: [WavyAnimatedText(one), WavyAnimatedText(two)],
-          ),
+          child: Text(one+'\n'+two),
         ),
       ],
     );
@@ -648,22 +643,28 @@ Widget displayAvatar(double sizeImage, String avatarColor1, String avatarColor2,
           ),
           shape: BoxShape.circle),
       child: Center(
-        child: imageLink == 'no' ? Text(
-          imageLink == 'no' ? userName!.toUpperCase()[0] : '',
-          style: TextStyle(color: Color(int.parse(avatarColor2)), fontWeight: FontWeight.bold, fontSize: Get.theme.textTheme.headline5!.fontSize),
-        ) : CachedNetworkImage(imageUrl: imageLink,fit: BoxFit.fill,),
+        child: imageLink == 'no'
+            ? Text(
+                imageLink == 'no' ? userName!.toUpperCase()[0] : '',
+                style:
+                    TextStyle(color: Color(int.parse(avatarColor2)), fontWeight: FontWeight.bold, fontSize: Get.theme.textTheme.headline5!.fontSize),
+              )
+            : CachedNetworkImage(
+                imageUrl: imageLink,
+                fit: BoxFit.fill,
+              ),
       ));
 }
 
 Widget customHtml(List htmlData, int index) {
   return Html(
     data: htmlData.elementAt(index)['postContent'],
-    tagsList: Html.tags..remove('noscript'),
+    tagsList: Html.tags..remove('noscript')..remove(GlobalController.i.userStorage.read('showImage') == true ? '':'img'),
     customRender: {
       "img": (renderContext, child) {
         double? width = double.tryParse(renderContext.tree.element!.attributes['width'].toString());
         double? height = double.tryParse(renderContext.tree.element!.attributes['height'].toString());
-        //
+
         if (renderContext.tree.element!.attributes['src']!.contains("/styles/next/xenforo")) {
           return Image.asset(GlobalController.i.getEmoji(renderContext.tree.element!.attributes['src'].toString()));
         } else if (renderContext.tree.element!.attributes['src']!.contains("twemoji.maxcdn.com")) {
@@ -673,8 +674,8 @@ Widget customHtml(List htmlData, int index) {
           );
         } else if (renderContext.tree.element!.attributes['data-url']!.contains(".gif")) {
         } else {
-          return ZoomOverlay(
-            child: CachedNetworkImage(
+          return PinchZoomImage(
+            image: CachedNetworkImage(
               imageUrl: renderContext.tree.element!.attributes['src']!.contains('data:image/', 0) == true
                   ? renderContext.tree.element!.attributes['data-src'].toString()
                   : renderContext.tree.element!.attributes['src'].toString(),
@@ -683,23 +684,30 @@ Widget customHtml(List htmlData, int index) {
                 return AspectRatio(
                   aspectRatio: 4 / 3,
                   child: Container(
-                    width: width != null ? width : 100,
-                    height: height != null ? height : 100,
+                    width: width != null ? width : 50,
+                    height: height != null ? height : 50,
                     child: customCupertinoButton(Alignment.center, EdgeInsets.zero, Text(url), () => GlobalController.i.launchURL(url)),
                   ),
                 );
               },
               placeholder: (context, c) {
-                return AspectRatio(
-                  aspectRatio: 4 / 3,
-                  child: Container(
-                    width: width != null ? width : 100,
-                    height: height != null ? height : 100,
-                  ),
-                );
+                if (width != null) {
+                  return Image.asset(
+                    'assets/reaction/nil.png',
+                    width: width,
+                    height: height,
+                  );
+                } else {
+                  return AspectRatio(
+                    aspectRatio: 4 / 3,
+                    child: Container(
+                      width: width != null ? width : 50,
+                      height: height != null ? height : 50,
+                    ),
+                  );
+                }
               },
             ),
-            twoTouchOnly: false,
             //minScale: 0.5,
             //maxScale: 3.0,
           );
@@ -766,57 +774,60 @@ Widget customHtml(List htmlData, int index) {
       },
       "iframe": (RenderContext context, Widget child) {
         final attrs = context.tree.element?.attributes;
-        final link = GlobalController.i.getIDYoutube(attrs!['src'].toString());
-        double? width = double.tryParse(attrs['width'] ?? "");
+
+        double? width = double.tryParse(attrs!['width'] ?? "");
         double? height = double.tryParse(attrs['height'] ?? "");
-        return Column(
-          children: [
-            CupertinoButton(
+        if (attrs['src'].toString().contains('youtube') == true) {
+          final link = GlobalController.i.getIDYoutube(attrs['src'].toString());
+          return Column(
+            children: [
+              CupertinoButton(
+                  minSize: 0,
+                  padding: EdgeInsets.zero,
+                  child: Text('https://www.youtube.com/watch?v=$link'),
+                  onPressed: () async => await GlobalController.i.launchURL('https://www.youtube.com/watch?v=$link')),
+              CupertinoButton(
                 minSize: 0,
                 padding: EdgeInsets.zero,
-                child: Text('https://www.youtube.com/watch?v=$link'),
-                onPressed: () async => await GlobalController.i.launchURL('https://www.youtube.com/watch?v=$link')),
-            CupertinoButton(
-              minSize: 0,
-              padding: EdgeInsets.zero,
-              onPressed: () {
-                Get.toNamed('/Youtube', arguments: [GlobalController.i.getIDYoutube(attrs['src'].toString())]);
-              },
-              child: Stack(
-                children: [
-                  ClipRRect(
-                      borderRadius: BorderRadius.circular(6),
-                      child: CachedNetworkImage(
-                        imageUrl: 'https://img.youtube.com/vi/$link/0.jpg',
-                        width: width,
-                        height: height,
-                      )),
-                  Positioned.fill(
-                    child: Align(
-                      alignment: Alignment.center,
-                      child: Icon(
-                        Icons.play_circle_fill,
-                        color: Colors.white,
+                onPressed: () {
+                  Get.toNamed('/Youtube', arguments: [GlobalController.i.getIDYoutube(attrs['src'].toString())]);
+                },
+                child: Stack(
+                  children: [
+                    ClipRRect(
+                        borderRadius: BorderRadius.circular(6),
+                        child: CachedNetworkImage(
+                          imageUrl: 'https://img.youtube.com/vi/$link/0.jpg',
+                          width: width,
+                          height: height,
+                        )),
+                    Positioned.fill(
+                      child: Align(
+                        alignment: Alignment.center,
+                        child: Icon(
+                          Icons.play_circle_fill,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
-                  ),
-                  Positioned(
-                    child: Text(
-                      'Nếu youtube không play được, vui lòng nhấn vô \nlink phía trên',
-                      style: TextStyle(
-                          fontSize: GlobalController.i.userStorage.read('fontSizeView'),
-                          color: Colors.white,
-                          background: Paint()..color = Colors.red),
-                      maxLines: 2,
+                    Positioned(
+                      child: Text(
+                        'Nếu youtube không play được, vui lòng nhấn vô \nlink phía trên',
+                        style: TextStyle(
+                            fontSize: GlobalController.i.userStorage.read('fontSizeView'),
+                            color: Colors.white,
+                            background: Paint()..color = Colors.red),
+                        maxLines: 2,
+                      ),
+                      top: 25,
+                      left: 5,
                     ),
-                    top: 25,
-                    left: 5,
-                  ),
-                ],
-              ),
-            )
-          ],
-        );
+                  ],
+                ),
+              )
+            ],
+          );
+        }
 
         // double? width = double.tryParse(attrs!['width'] ?? "");
         // double? height = double.tryParse(attrs['height'] ?? "");

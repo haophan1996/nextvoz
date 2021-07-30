@@ -184,7 +184,7 @@ class ViewController extends GetxController {
           data['_userLink'] = _user.map((e) => e.getElementsByTagName("a")[1].attributes['href']).first!;
           data['_userTitle'] = _user.map((e) => e.getElementsByClassName("userTitle message-userTitle")[0].innerHtml).first;
 
-          //print(element.getElementsByClassName('avatar avatar--m')[0].outerHtml);
+
           if (element.getElementsByClassName('avatar avatar--m')[0].getElementsByTagName('img').length > 0){
             data['_userAvatar'] = element.getElementsByClassName('avatar avatar--m')[0].getElementsByTagName('img')[0].attributes['src'].toString();
             data['avatarColor1'] = '0x00000000';

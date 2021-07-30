@@ -43,8 +43,7 @@ class Language extends Translations{
       'newConversation' : 'Start conversation',
       'newThread' : 'Post thread',
       'scrollToMyRepAfterPost' : 'Enable Scroll To My Post:',
-      'showGifImageFromImgur' : 'Show Gif Image From Imgur',
-      'showOtherImage' : 'Show Other Image',
+      'showImage' : 'Display Image',
       'appSignature' : 'App Signature',
     },
     'vi_VN' : {
@@ -85,8 +84,7 @@ class Language extends Translations{
       'newConversation' : 'Start conversation',
       'newThread' : 'Post thread',
       'scrollToMyRepAfterPost' : 'Tự Động Đến Trang Vừa Trả Lời :',
-      'showGifImageFromImgur' : 'Hiển Thị GIF Emoji Từ Imgur :',
-      'showOtherImage' : 'Hiển Thị Những Hình Ảnh Khác :',
+      'showImage' : 'Hiển Thị Hình Ảnh:',
       'appSignature' : 'Chữ Ký Ứng Dụng',
     }
   };

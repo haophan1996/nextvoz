@@ -9,8 +9,8 @@ import 'package:html/parser.dart' as parser;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:mailer/mailer.dart';
-import 'package:mailer/smtp_server.dart';
+//import 'package:mailer/mailer.dart';
+//import 'package:mailer/smtp_server.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -260,7 +260,6 @@ class GlobalController extends GetxController {
 
   Future<void> setDataUser() async {
     if (userStorage.read('shortcut') != null) {
-      NaviDrawerController.i.shortcuts.clear();
       NaviDrawerController.i.shortcuts = await userStorage.read('shortcut');
     }
     if (userStorage.read('userLoggedIn') != null && userStorage.read('xf_user') != null && userStorage.read('xf_session') != null) {
@@ -295,6 +294,12 @@ class GlobalController extends GetxController {
     }
     if (userStorage.read('scrollToMyRepAfterPost') == null) {
       await userStorage.write('scrollToMyRepAfterPost', true); // D
+    }
+    if (userStorage.read('showImage') == null) {
+      await userStorage.write('showImage', true); // D
+    }
+    if (userStorage.read('signature') == null) {
+      await userStorage.write('signature', true); // D
     }
   }
 
@@ -504,50 +509,50 @@ class GlobalController extends GetxController {
     "popopo/what.png": ":what:",
   };
 
-  sendFeedBack(BuildContext context, String content, String emailValue, String feedBackTitle) async {
-    setDialog('Xin Vui lòng Đợi', 'Loading');
-
-    String username = 'vozforumsfeedback@gmail.com';
-    String password = 'QkXgNhFvlrA#ehBbtd^^lUFK';
-
-    final smtpServer = gmail(username, password);
-    // Use the SmtpServer class to configure an SMTP server:
-    // final smtpServer = SmtpServer('smtp.domain.com');
-    // See the named arguments of SmtpServer for further configuration
-    // options.
-
-    // Create our message.
-    final message = Message()
-      ..from = Address(username, emailValue)
-      ..recipients.add('vozforumsfeedback@gmail.com')
-      //..ccRecipients.addAll(['destCc1@example.com', 'destCc2@example.com'])
-      //..bccRecipients.add(Address('bccAddress@example.com'))
-      ..subject = feedBackTitle
-      // ..text = 'This is the plain text.\nThis is line 2 of the text part.'
-      ..html = emailValue + '\n' + content;
-
-    try {
-      final sendReport = await send(message, smtpServer);
-      print('Message sent: ' + sendReport.toString());
-      Get.back();
-      Get.back();
-      NaviDrawerController.i.feedBackCNameController.clear();
-      NaviDrawerController.i.feedBackContentController.clear();
-      NaviDrawerController.i.feedBackCTitleController.clear();
-      Get.defaultDialog(
-          title: 'Thông báo',
-          content: Text('Đả Gửi'),
-          textConfirm: 'Ok',
-          onConfirm: () {
-            if (Get.isDialogOpen == true) Get.back();
-          });
-    } on MailerException catch (e) {
-      print('Message not sent.');
-      for (var p in e.problems) {
-        print('Problem: ${p.code}: ${p.msg}');
-      }
-    }
-  }
+  // sendFeedBack(BuildContext context, String content, String emailValue, String feedBackTitle) async {
+  //   setDialog('Xin Vui lòng Đợi', 'Loading');
+  //
+  //   String username = 'vozforumsfeedback@gmail.com';
+  //   String password = 'QkXgNhFvlrA#ehBbtd^^lUFK';
+  //
+  //   final smtpServer = gmail(username, password);
+  //   // Use the SmtpServer class to configure an SMTP server:
+  //   // final smtpServer = SmtpServer('smtp.domain.com');
+  //   // See the named arguments of SmtpServer for further configuration
+  //   // options.
+  //
+  //   // Create our message.
+  //   final message = Message()
+  //     ..from = Address(username, emailValue)
+  //     ..recipients.add('vozforumsfeedback@gmail.com')
+  //     //..ccRecipients.addAll(['destCc1@example.com', 'destCc2@example.com'])
+  //     //..bccRecipients.add(Address('bccAddress@example.com'))
+  //     ..subject = feedBackTitle
+  //     // ..text = 'This is the plain text.\nThis is line 2 of the text part.'
+  //     ..html = emailValue + '\n' + content;
+  //
+  //   try {
+  //     final sendReport = await send(message, smtpServer);
+  //     print('Message sent: ' + sendReport.toString());
+  //     Get.back();
+  //     Get.back();
+  //     NaviDrawerController.i.feedBackCNameController.clear();
+  //     NaviDrawerController.i.feedBackContentController.clear();
+  //     NaviDrawerController.i.feedBackCTitleController.clear();
+  //     Get.defaultDialog(
+  //         title: 'Thông báo',
+  //         content: Text('Đả Gửi'),
+  //         textConfirm: 'Ok',
+  //         onConfirm: () {
+  //           if (Get.isDialogOpen == true) Get.back();
+  //         });
+  //   } on MailerException catch (e) {
+  //     print('Message not sent.');
+  //     for (var p in e.problems) {
+  //       print('Problem: ${p.code}: ${p.msg}');
+  //     }
+  //   }
+  // }
 
   getIDYoutube(String link) {
     return link.split('embed/')[1].split('?')[0];
