@@ -672,7 +672,7 @@ Widget customHtml(List htmlData, int index) {
             renderContext.tree.element!.attributes['alt']!,
             style: TextStyle(fontSize: GlobalController.i.userStorage.read('fontSizeView')),
           );
-        } else if (renderContext.tree.element!.attributes['data-url'] != null &&
+        } else if (renderContext.tree.element!.attributes['src']!.contains(".gif") && renderContext.tree.element!.attributes['data-url'] != null &&
             renderContext.tree.element!.attributes['data-url']!.contains(".gif")) {
         } else {
           return PinchZoomImage(
@@ -685,27 +685,30 @@ Widget customHtml(List htmlData, int index) {
                 return AspectRatio(
                   aspectRatio: 4 / 3,
                   child: Container(
-                    width: width != null ? width : 50,
-                    height: height != null ? height : 50,
-                    child: customCupertinoButton(Alignment.center, EdgeInsets.zero, Text(url), () => GlobalController.i.launchURL(url)),
+                    width: width != null ? width : 30,
+                    height: height != null ? height : 30,
+                    child: customCupertinoButton(Alignment.center, EdgeInsets.zero, Text('image error'), () => GlobalController.i.launchURL(url)),
                   ),
                 );
               },
               placeholder: (context, c) {
-                if (width != null) {
-                  return Image.asset(
-                    'assets/reaction/nil.png',
-                    width: width,
-                    height: height,
-                  );
+                if (width != null && height != null) {
+                  return AspectRatio(aspectRatio: width/height);
+                  // return Image.asset(
+                  //   'assets/reaction/nil.png',
+                  //   width: width,
+                  //   height: height,
+                  // );
                 } else {
-                  return AspectRatio(
-                    aspectRatio: 4 / 3,
-                    child: Container(
-                      width: width != null ? width : 50,
-                      height: height != null ? height : 50,
-                    ),
-                  );
+                  return Container(height: 10, width: 10);
+                  // return AspectRatio(
+                  //   aspectRatio: 4 / 3,
+                  //   child: Container(
+                  //     constraints: BoxConstraints(maxWidth: Get.width, maxHeight: Get.height),
+                  //     width: width != null ? width : 50,
+                  //     height: height != null ? height : 50,
+                  //   ),
+                  // );
                 }
               },
             ),

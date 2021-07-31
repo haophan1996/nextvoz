@@ -113,22 +113,24 @@ class HomePageUI extends GetView<HomeController> {
         ),
         Align(
           alignment: Alignment.bottomCenter,
-          child: GetBuilder<GlobalController>(builder: (controller) {
-            return Container(
-              decoration: BoxDecoration(
-                  color: Get.theme.canvasColor, //Colors.black38,
-                  borderRadius: BorderRadius.all(Radius.circular(20))),
-              child: customCupertinoButton(
-                Alignment.center,
-                EdgeInsets.only(left: 5, right: 5),
-                Text(
-                  controller.isLogged == false ? 'Guest user' : 'Logged in as ${NaviDrawerController.i.nameUser}',
-                  style: TextStyle(color: controller.alertNotifications != 0 || controller.inboxNotifications != 0 ? Colors.redAccent : Colors.blue),
+          child: SafeArea(
+            child: GetBuilder<GlobalController>(builder: (controller) {
+              return Container(
+                decoration: BoxDecoration(
+                    color: Get.theme.canvasColor, //Colors.black38,
+                    borderRadius: BorderRadius.all(Radius.circular(20))),
+                child: customCupertinoButton(
+                  Alignment.center,
+                  EdgeInsets.only(left: 5, right: 5),
+                  Text(
+                    controller.isLogged == false ? 'Guest user' : 'Logged in as ${NaviDrawerController.i.nameUser}',
+                    style: TextStyle(color: controller.alertNotifications != 0 || controller.inboxNotifications != 0 ? Colors.redAccent : Colors.blue),
+                  ),
+                      () => Get.bottomSheet(userInformation()),
                 ),
-                () => Get.bottomSheet(userInformation()),
-              ),
-            );
-          }),
+              );
+            }),
+          ),
         )
       ],
     );
