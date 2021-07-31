@@ -31,6 +31,12 @@ class NaviDrawerController extends GetxController {
       Get.back();
       return;
     }
+    
+    if (GlobalController.i.dataCsrfLogin == null && GlobalController.i.xfCsrfLogin == null){
+      await GlobalController.i.getBody('https://voz.vn/login/login', true).then((value) {
+        GlobalController.i.dataCsrfLogin = value!.getElementsByTagName('html')[0].attributes['data-csrf'];
+      });
+    }
 
     final getMyData = await login(textEditingControllerLogin.text, textEditingControllerPassword.text, GlobalController.i.dataCsrfLogin,
         GlobalController.i.xfCsrfLogin, textEditingControllerLogin.text);
@@ -114,6 +120,8 @@ class NaviDrawerController extends GetxController {
     GlobalController.i.dio.options.headers['cookie'] = '';
     GlobalController.i.xfUser = '';
     GlobalController.i.isLogged = false;
+    GlobalController.i.inboxNotifications = 0;
+    GlobalController.i.alertNotifications = 0;
     nameUser.value = '';
     titleUser.value = '';
     avatarUser.value = '';

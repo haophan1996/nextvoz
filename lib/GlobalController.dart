@@ -9,8 +9,6 @@ import 'package:html/parser.dart' as parser;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-//import 'package:mailer/mailer.dart';
-//import 'package:mailer/smtp_server.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -77,7 +75,8 @@ class GlobalController extends GetxController {
       }
     });
     xfCsrfPost = cookXfCsrf(response.headers['set-cookie'].toString());
-    if (isHomePage == true) xfCsrfLogin = cookXfCsrf(response.headers['set-cookie'].toString());
+     // if (isHomePage == true) xfCsrfLogin = cookXfCsrf(response.headers['set-cookie'].toString());
+    xfCsrfLogin = cookXfCsrf(response.headers['set-cookie'].toString());
 
     return parser.parse(response.toString());
   }

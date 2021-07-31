@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'package:get/get.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:nextvoz/Page/NavigationDrawer/NaviDrawerController.dart';
 import '/Page/NavigationDrawer/NaviDrawerUI.dart';
 import '/Page/home/homeController.dart';
 import '/Page/pageNavigation.dart';
@@ -62,83 +63,74 @@ class HomePageUI extends GetView<HomeController> {
   }
 
   Widget loadSucceeded(BuildContext context) {
-    return slidingUp(
-      GetPlatform.isAndroid ? Get.height * (-0.09) : -100,
-      controller.panelController,
-      GetBuilder<HomeController>(
-        builder: (controller) {
-          return ListView.builder(
-            physics: BouncingScrollPhysics(),
-            padding: EdgeInsets.only(bottom: Get.height * 0.21),
-            shrinkWrap: false,
-            itemCount: controller.myHomePage.length,
-            itemBuilder: (BuildContext context, int index) {
-              return Column(
-                children: [
-                  (index != 0)
-                      ? (controller.myHomePage.elementAt(index - 1)["header"] != controller.myHomePage.elementAt(index)["header"]
-                          ? theme(controller.myHomePage.elementAt(index)["header"], context)
-                          : SizedBox.shrink())
-                      : theme(controller.myHomePage.elementAt(index)["header"], context),
-                  blockItem(
-                      context,
-                      FontWeight.bold,
-                      FontWeight.bold,
-                      index,
-                      "",
-                      controller.myHomePage.elementAt(index)["subHeader"],
-                      controller.myHomePage.elementAt(index)["threads"],
-                      controller.myHomePage.elementAt(index)["messages"],
-                      controller.myHomePage.elementAt(index)["title"],
-                      () => controller.navigateToThread(
-                          controller.myHomePage.elementAt(index)["subHeader"], controller.myHomePage.elementAt(index)["linkSubHeader"]),
-                      () {})
-                ],
-              );
-            },
-          );
-        },
-      ),
-      Container(
-        constraints: BoxConstraints.expand(),
-        padding: EdgeInsets.only(left: 6, right: 6),
-        child: Column(
-          children: [
-
-            GetBuilder<GlobalController>(builder: (controller){
-              return controller.isLogged == false ? login() : logged();
-            }),
-            whatNew(),
-            SizedBox(
-              height: 10,
-            ),
-            Expanded(
-              child: Container(
-                width: Get.width,
-                decoration: BoxDecoration(color: Theme.of(context).backgroundColor, borderRadius: BorderRadius.all(Radius.circular(6))),
-                //height: MediaQuery.of(context).size.height * 0.06, //0.066,
-                child: Column(
+    return Stack(
+      children: [
+        GetBuilder<HomeController>(
+          builder: (controller) {
+            return ListView.builder(
+              physics: BouncingScrollPhysics(),
+              padding: EdgeInsets.only(bottom: 40),
+              shrinkWrap: false,
+              itemCount: controller.myHomePage.length,
+              itemBuilder: (BuildContext context, int index) {
+                return Column(
                   children: [
-                    Container(
-                      padding: EdgeInsets.only(top: 15),
-                      child: Text(
-                        'Frequently asked questions\n',
-                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, foreground: Paint()..shader = linearGradient),
-                      ),
-                    ),
-                    Text(
-                      '1. Tại sao app bị lỗi khi vào một sô trang nhất định\nNếu bạn gặp trường hợp này,'
-                          ' hay report cho lập trinh viên biết bạn đang gặp lỗi ở trang nào và sẻ được support nhanh nhất có thể ',
-                      textAlign: TextAlign.center,
-                      overflow: TextOverflow.fade,
-                    ),
+                    (index != 0)
+                        ? (controller.myHomePage.elementAt(index - 1)["header"] != controller.myHomePage.elementAt(index)["header"]
+                            ? theme(controller.myHomePage.elementAt(index)["header"], context)
+                            : SizedBox.shrink())
+                        : theme(controller.myHomePage.elementAt(index)["header"], context),
+                    blockItem(
+                        context,
+                        FontWeight.bold,
+                        FontWeight.bold,
+                        index,
+                        "",
+                        controller.myHomePage.elementAt(index)["subHeader"],
+                        controller.myHomePage.elementAt(index)["threads"],
+                        controller.myHomePage.elementAt(index)["messages"],
+                        controller.myHomePage.elementAt(index)["title"],
+                        () => controller.navigateToThread(
+                            controller.myHomePage.elementAt(index)["subHeader"], controller.myHomePage.elementAt(index)["linkSubHeader"]), () {
+                      if (Get.isSnackbarOpen == true) Get.back();
+
+                      if (GlobalController.i.userStorage.read('defaultsPage_title') == controller.myHomePage.elementAt(index)['subHeader'] && GlobalController.i.userStorage.read('defaultsPage') == true) {
+                        GlobalController.i.userStorage.write('defaultsPage', false);
+                        Get.snackbar('Alert', 'Removed Defaults Page', forwardAnimationCurve: Curves.decelerate, colorText: Colors.redAccent);
+                      } else {
+                        GlobalController.i.userStorage.write('defaultsPage', true);
+                        GlobalController.i.userStorage.write('defaultsPage_title', controller.myHomePage.elementAt(index)['subHeader']);
+                        GlobalController.i.userStorage.write('defaultsPage_link', GlobalController.i.url+controller.myHomePage.elementAt(index)['linkSubHeader']);
+                        Get.snackbar('Alert', 'Default Page: ' + controller.myHomePage.elementAt(index)['subHeader'],
+                            forwardAnimationCurve: Curves.decelerate, colorText: Colors.blueAccent);
+                      }
+                    })
                   ],
-                ),
-              ),
-            ),
-          ],
+                );
+              },
+            );
+          },
         ),
-      ),
+        Align(
+          alignment: Alignment.bottomCenter,
+          child: GetBuilder<GlobalController>(builder: (controller) {
+            return Container(
+              decoration: BoxDecoration(
+                  color: Get.theme.canvasColor, //Colors.black38,
+                  borderRadius: BorderRadius.all(Radius.circular(20))),
+              child: customCupertinoButton(
+                Alignment.center,
+                EdgeInsets.only(left: 5, right: 5),
+                Text(
+                  controller.isLogged == false ? 'Guest user' : 'Logged in as ${NaviDrawerController.i.nameUser}',
+                  style: TextStyle(color: controller.alertNotifications != 0 || controller.inboxNotifications != 0 ? Colors.redAccent : Colors.blue),
+                ),
+                () => Get.bottomSheet(userInformation()),
+              ),
+            );
+          }),
+        )
+      ],
     );
   }
 }

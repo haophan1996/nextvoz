@@ -5,7 +5,7 @@ import '/Page/reuseWidget.dart';
 
 class SettingsController extends GetxController {
   RxDouble fontSizeView = 15.0.obs;
-  RxBool switchValuePost = true.obs, switchImage = true.obs, switchSignature = true.obs;
+  RxBool switchValuePost = true.obs, switchImage = true.obs, switchSignature = true.obs, switchDefaultsPage = true.obs;
   var langIndex ;
   getLang(){
     return GlobalController.i.userStorage.read('lang');
@@ -20,6 +20,9 @@ class SettingsController extends GetxController {
     switchValuePost.value = GlobalController.i.userStorage.read('scrollToMyRepAfterPost');
     switchImage.value = GlobalController.i.userStorage.read('showImage');
     switchSignature.value = GlobalController.i.userStorage.read('signature');
+
+    if (GlobalController.i.userStorage.read('defaultsPage') != null)
+    switchDefaultsPage.value = GlobalController.i.userStorage.read('defaultsPage');
   }
 
   @override
@@ -29,6 +32,7 @@ class SettingsController extends GetxController {
     switchValuePost.close();
     switchImage.close();
     switchSignature.close();
+    switchDefaultsPage.close();
   }
   
   saveButton() async {
@@ -36,10 +40,9 @@ class SettingsController extends GetxController {
     await GlobalController.i.userStorage.write('fontSizeView', fontSizeView.value);
     Get.updateLocale(GlobalController.i.langList.elementAt(langIndex));
     await GlobalController.i.userStorage.write('showImage', switchImage.value);
+    await GlobalController.i.userStorage.write('defaultsPage', switchDefaultsPage.value);
     await GlobalController.i.userStorage.write('signature', switchSignature.value);
     await GlobalController.i.userStorage.write('lang', langIndex).then((value) => Get.back());
-
-
   }
 
 

@@ -5,7 +5,7 @@ class HomeBinding extends Bindings{
   @override
   void dependencies() {
     // TODO: implement dependencies
-    Get.put<HomeController>(HomeController(),permanent: true);
+    Get.put<HomeController>(HomeController(),permanent: false);
   }
 
 }

@@ -2,7 +2,6 @@ import 'package:get/get.dart';
 import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:sliding_up_panel/sliding_up_panel.dart';
 import '/Page/reuseWidget.dart';
 import '/GlobalController.dart';
 import 'NavigationDrawer/NaviDrawerUI.dart';
@@ -38,28 +37,7 @@ Widget pageNavigation(int currentPage, int totalPage, Function(int index) gotoPa
               color: Get.theme.primaryColor,
             ),
             onPressed: () {
-              Get.bottomSheet(Container(
-                color: Colors.grey.shade700,
-                //constraints: BoxConstraints.expand(),
-                padding: EdgeInsets.only(left: 5, right: 5, top: 5),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    GetBuilder<GlobalController>(builder: (controller) {
-                      return controller.isLogged == false ? login() : logged();
-                    }),
-                    whatNew(),
-                    Padding(
-                      padding: EdgeInsets.only(top: 5, bottom: 10),
-                      child: Container(
-                        decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(6)), color: Get.theme.backgroundColor),
-                        width: Get.width,
-                        child: customCupertinoButton(Alignment.center, EdgeInsets.zero, Text('Copy Link'), () {}),
-                      ),
-                    )
-                  ],
-                ),
-              ));
+              Get.bottomSheet(userInformation());
             },
           ),
         ),
@@ -105,22 +83,27 @@ Widget pageNavigation(int currentPage, int totalPage, Function(int index) gotoPa
   );
 }
 
-Widget slidingUp(double maxHeight, PanelController panelController, Widget bodyWidget, Widget panelWidget) {
-  return SlidingUpPanel(
-    boxShadow: <BoxShadow>[],
-    controller: panelController,
-    parallaxEnabled: true,
-    parallaxOffset: .5,
-    minHeight: Get.height * 0.08,
-    maxHeight: Get.height / 2,
-    padding: EdgeInsets.only(left: 5, right: 5),
-    backdropEnabled: true,
-    backdropTapClosesPanel: true,
-    backdropColor: Colors.grey.shade700,
-    color: Colors.transparent,
-    panel: panelWidget,
-    //snapPoint: 0.2,
-    body: bodyWidget,
+Widget userInformation(){
+  return Container(
+    color: Colors.grey.shade700,
+    padding: EdgeInsets.only(left: 5, right: 5, top: 5),
+    child: Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        GetBuilder<GlobalController>(builder: (controller) {
+          return controller.isLogged == false ? login() : logged();
+        }),
+        whatNew(),
+        Padding(
+          padding: EdgeInsets.only(top: 5, bottom: 10),
+          child: Container(
+            decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(6)), color: Get.theme.backgroundColor),
+            width: Get.width,
+            child: customCupertinoButton(Alignment.center, EdgeInsets.zero, Text('Copy Link'), () {}),
+          ),
+        )
+      ],
+    ),
   );
 }
 

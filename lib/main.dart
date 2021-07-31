@@ -47,6 +47,7 @@ class MyPage extends StatelessWidget {
       theme: Themes().lightTheme,
       darkTheme: Themes().darkTheme,
       initialRoute: "/HomePage",
+
       getPages: [
         GetPage(name: "/HomePage", page: () => HomePageUI(), popGesture: true, binding: HomeBinding(), maintainState: false),
         GetPage(

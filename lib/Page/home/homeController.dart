@@ -1,11 +1,9 @@
 import 'package:get/get.dart';
-import 'package:sliding_up_panel/sliding_up_panel.dart';
 import '/GlobalController.dart';
 
 class HomeController extends GetxController {
   String loadingStatus = 'loading';
   List myHomePage = [];
-  late PanelController panelController = PanelController();
 
   @override
   Future<void> onInit() async {
@@ -13,7 +11,33 @@ class HomeController extends GetxController {
   }
 
   Future<void> onReady() async {
-    await loading();
+    super.onReady();
+    // Get.toNamed('/Settings');
+
+
+    if (GlobalController.i.userStorage.read('defaultsPage') == true){
+
+      Get.toNamed("/ThreadPage", arguments: [GlobalController.i.userStorage.read('defaultsPage_title'), GlobalController.i.userStorage.read('defaultsPage_link')]);
+
+      if (GlobalController.i.userStorage.read('homeList') == null){
+        await loading();
+      } else {
+        loadingStatus = 'loadSucceeded';
+        myHomePage = GlobalController.i.userStorage.read('homeList');
+        update();
+      }
+    } else await loading();
+
+
+
+
+
+    // if (Get.currentRoute != '/' && GlobalController.i.userStorage.read('homeList') != null) {
+    //   myHomePage = GlobalController.i.userStorage.read('homeList');
+    //   loadingStatus = 'loadSucceeded';
+    //   update();
+    // } else
+    //   await loading();
   }
 
   onLoadError() {
@@ -63,6 +87,7 @@ class HomeController extends GetxController {
     }).then((value) {
       loadingStatus = 'loadSucceeded';
       update();
+      GlobalController.i.userStorage.write('homeList', myHomePage);
     });
   }
 

@@ -230,7 +230,7 @@ Widget popUpWaiting(String one, String two) => Column(
         ),
         DefaultTextStyle(
           style: TextStyle(color: Get.theme.primaryColor),
-          child: Text(one+'\n'+two),
+          child: Text(one + '\n' + two),
         ),
       ],
     );
@@ -276,13 +276,13 @@ Widget loadingShimmer() {
   return Get.isDarkMode == false
       ? CardListSkeleton(
           isCircularImage: true,
-          isBottomLinesActive: false,
-          length: 1,
+          isBottomLinesActive: true,
+          length: 5,
         )
       : DarkCardListSkeleton(
           isCircularImage: true,
-          isBottomLinesActive: false,
-          length: 1,
+          isBottomLinesActive: true,
+          length: 5,
         );
 }
 
@@ -659,7 +659,7 @@ Widget displayAvatar(double sizeImage, String avatarColor1, String avatarColor2,
 Widget customHtml(List htmlData, int index) {
   return Html(
     data: htmlData.elementAt(index)['postContent'],
-    tagsList: Html.tags..remove('noscript')..remove(GlobalController.i.userStorage.read('showImage') == true ? '':'img'),
+    tagsList: Html.tags..remove('noscript')..remove(GlobalController.i.userStorage.read('showImage') == true ? '' : 'img'),
     customRender: {
       "img": (renderContext, child) {
         double? width = double.tryParse(renderContext.tree.element!.attributes['width'].toString());
@@ -672,7 +672,8 @@ Widget customHtml(List htmlData, int index) {
             renderContext.tree.element!.attributes['alt']!,
             style: TextStyle(fontSize: GlobalController.i.userStorage.read('fontSizeView')),
           );
-        } else if (renderContext.tree.element!.attributes['data-url']!.contains(".gif")) {
+        } else if (renderContext.tree.element!.attributes['data-url'] != null &&
+            renderContext.tree.element!.attributes['data-url']!.contains(".gif")) {
         } else {
           return PinchZoomImage(
             image: CachedNetworkImage(

@@ -1,8 +1,7 @@
-import 'package:get/get.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
-import 'package:sliding_up_panel/sliding_up_panel.dart';
 import '/GlobalController.dart';
 import '/Page/View/ViewController.dart';
 
@@ -11,7 +10,6 @@ class ThreadController extends GetxController {
   late String theme;
   late RefreshController refreshController = RefreshController(initialRefresh: false);
   late ScrollController listViewScrollController = ScrollController();
-  late PanelController panelController = PanelController();
   List myThreadList = [];
   int currentPage = 0;
   int totalPage = 0;
@@ -39,7 +37,8 @@ class ThreadController extends GetxController {
     Future.delayed(Duration(milliseconds: 100), () {
       GlobalController.i.sessionTag.add(myThreadList.elementAt(index)['title']);
       Get.lazyPut<ViewController>(() => ViewController(), tag: GlobalController.i.sessionTag.last);
-      Get.toNamed("/ViewPage", arguments: [myThreadList.elementAt(index)['title'], myThreadList.elementAt(index)['link'],myThreadList.elementAt(index)['prefix'], 0]);
+      Get.toNamed("/ViewPage",
+          arguments: [myThreadList.elementAt(index)['title'], myThreadList.elementAt(index)['link'], myThreadList.elementAt(index)['prefix'], 0]);
     });
   }
 
@@ -86,17 +85,18 @@ class ThreadController extends GetxController {
             title = _title.map((e) => e.getElementsByTagName("a")[0].innerHtml).first;
             linkThread = _title.map((e) => e.getElementsByTagName("a")[0].attributes['href']).first!;
           } else {
-            title = ' ' +_title.map((e) => e.getElementsByTagName("a")[1].innerHtml).first;
+            title = ' ' + _title.map((e) => e.getElementsByTagName("a")[1].innerHtml).first;
             themeTitle = _title.map((e) => e.getElementsByTagName("span")[0].innerHtml).first;
             linkThread = _title.map((e) => e.getElementsByTagName("a")[1].attributes['href']).first!;
           }
-           myThreadList.add({
+          myThreadList.add({
             "title": title,
             "prefix": themeTitle,
-            'isRead' : linkThread.contains('/unread') ? true : false,
+            'isRead': linkThread.contains('/unread') ? true : false,
             "authorName": element.attributes["data-author"],
             "link": linkThread,
-            "replies": "Replies " + element.getElementsByClassName("pairs pairs--justified").map((e) => e.getElementsByTagName("dd")[0].innerHtml).first,
+            "replies":
+                "Replies " + element.getElementsByClassName("pairs pairs--justified").map((e) => e.getElementsByTagName("dd")[0].innerHtml).first,
             "date": element.getElementsByClassName("structItem-latestDate u-dt").map((e) => e.innerHtml).first,
           });
         });

@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:loader_skeleton/loader_skeleton.dart';
 import '/GlobalController.dart';
 import '/Page/Profile/UserProfile/UserProfileController.dart';
 import '/Page/View/ViewController.dart';
@@ -35,17 +34,7 @@ class AlertsUI extends GetView<AlertsController> {
                       );
                     },
                   )
-                : Get.isDarkMode == false
-                    ? CardListSkeleton(
-                        isCircularImage: true,
-                        isBottomLinesActive: true,
-                        length: 5,
-                      )
-                    : DarkCardListSkeleton(
-                        isCircularImage: true,
-                        isBottomLinesActive: true,
-                        length: 5,
-                      );
+                : loadingShimmer();
           },
         ),
       ),

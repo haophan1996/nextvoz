@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
-import 'package:sliding_up_panel/sliding_up_panel.dart';
 import '/Page/NavigationDrawer/NaviDrawerUI.dart';
 import '/Page/pageNavigation.dart';
 import '/Page/reuseWidget.dart';
@@ -36,7 +35,7 @@ class ViewUI extends StatelessWidget {
               return pageNavigation(
                 controller.currentPage,
                 controller.totalPage,
-                    (index) {
+                (index) {
                   if (index > controller.totalPage || index < 1) {
                     HapticFeedback.lightImpact();
                     if (index == 0) index = 1;
@@ -47,12 +46,11 @@ class ViewUI extends StatelessWidget {
                     controller.setPageOnClick(index);
                   }
                 },
-                    () => controller.reply('', false),
+                () => controller.reply('', false),
               );
             },
           ),
-        )
-
+        ),
       ]),
     );
   }
@@ -74,7 +72,6 @@ class ViewUI extends StatelessWidget {
                 controller.setPageOnClick(controller.currentPage + 1);
               }
             }
-
           },
           child: ListView.builder(
             cacheExtent: 999999999,

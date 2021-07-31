@@ -7,7 +7,6 @@ import 'package:html/dom.dart' as dom;
 import 'package:path_provider/path_provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:flutter_reaction_button/flutter_reaction_button.dart';
-import 'package:sliding_up_panel/sliding_up_panel.dart';
 import '/GlobalController.dart';
 import '/Page/reuseWidget.dart';
 
@@ -22,7 +21,6 @@ class ViewController extends GetxController {
   late dom.Document res;
   late RefreshController refreshController = RefreshController(initialRefresh: false);
   late ScrollController listViewScrollController = ScrollController();
-  late PanelController panelController = PanelController();
   TextEditingController input = TextEditingController();
 
   @override

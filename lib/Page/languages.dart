@@ -45,6 +45,7 @@ class Language extends Translations{
       'scrollToMyRepAfterPost' : 'Enable Scroll To My Post:',
       'showImage' : 'Display Image',
       'appSignature' : 'App Signature',
+      'defaultsPage' : 'Default Forum',
     },
     'vi_VN' : {
       'lang'    : 'Ngôn ngữ :',
@@ -86,6 +87,7 @@ class Language extends Translations{
       'scrollToMyRepAfterPost' : 'Tự Động Đến Trang Vừa Trả Lời :',
       'showImage' : 'Hiển Thị Hình Ảnh:',
       'appSignature' : 'Chữ Ký Ứng Dụng',
+      'defaultsPage' : 'Mặc Định Forum',
     }
   };
 
