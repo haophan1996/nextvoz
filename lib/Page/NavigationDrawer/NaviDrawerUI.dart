@@ -119,7 +119,7 @@ Widget logged() {
                   color: Get.theme.primaryColor,
                 ),
                 onPressed: () async {
-                  setDialog('popMess'.tr, 'popMess3'.tr);
+                  setDialog();
                   await NaviDrawerController.i.getUserProfile();
                   Get.back();
                 },

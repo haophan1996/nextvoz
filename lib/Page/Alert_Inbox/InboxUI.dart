@@ -11,37 +11,52 @@ class InboxUI extends GetView<InboxController> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: appBarOnly('Inbox', [
-        IconButton(icon: Icon(Icons.refresh), onPressed: () async => await refresh()),
+        IconButton(icon: Icon(Icons.refresh), onPressed: () async => await controller.refreshList()),
         IconButton(icon: Icon(Icons.open_in_new), onPressed: () async => {})
       ]),
       body: Container(
         color: Get.theme.backgroundColor,
-        child: GetBuilder<GlobalController>(
-          builder: (globalController) {
-            return globalController.inboxList.length != 0
+        child: GetBuilder<InboxController>(
+          builder: (_) {
+            return GlobalController.i.inboxList.length != 0
                 ? ListView.builder(
                     physics: BouncingScrollPhysics(),
-                    itemCount: globalController.inboxList.length,
+                    itemCount: GlobalController.i.inboxList.length,
                     itemBuilder: (BuildContext context, int index) {
                       return Container(
                         decoration: BoxDecoration(
                             border: Border(
                           bottom: BorderSide(width: 0.5, color: Theme.of(context).primaryColor),
                         )),
-                        child: itemList(globalController, index),
+                        child: itemList(index),
                       );
                     },
                   )
-                : loadingShimmer();
+                : loading();
           },
         ),
       ),
     );
   }
 
-  Widget itemList(GlobalController globalController, int index) {
+  Widget loading() => Stack(
+    children: [
+      GetBuilder<InboxController>(
+          id: 'download',
+          builder: (controller) {
+            return LinearProgressIndicator(
+              value: controller.percentDownload,
+              valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF0CF301)),
+              backgroundColor: Get.theme.backgroundColor,
+            );
+          }),
+      loadingShimmer()
+    ],
+  );
+
+  Widget itemList(int index) {
     return Container(
-      color: globalController.inboxList.elementAt(index)['isUnread'] == 'true' ? Get.theme.canvasColor : Colors.transparent,
+      color: GlobalController.i.inboxList.elementAt(index)['isUnread'] == 'true' ? Get.theme.canvasColor : Colors.transparent,
       child: CupertinoButton(
         padding: EdgeInsets.only(bottom: 10, top: 10, left: 5, right: 5),
         alignment: Alignment.centerLeft,
@@ -51,41 +66,36 @@ class InboxUI extends GetView<InboxController> {
               padding: EdgeInsets.only(right: 5),
               child: displayAvatar(
                   50,
-                  globalController.inboxList.elementAt(index)['avatarColor1'],
-                  globalController.inboxList.elementAt(index)['avatarColor2'],
-                  globalController.inboxList.elementAt(index)['conservationWith'],
-                  globalController.inboxList.elementAt(index)['avatarLink']),
+                  GlobalController.i.inboxList.elementAt(index)['avatarColor1'],
+                  GlobalController.i.inboxList.elementAt(index)['avatarColor2'],
+                  GlobalController.i.inboxList.elementAt(index)['conservationWith'],
+                  GlobalController.i.inboxList.elementAt(index)['avatarLink']),
             ),
             RichText(
               text: TextSpan(
                 children: [
-                  TextSpan(text: globalController.inboxList.elementAt(index)['title'] + ' \u2022 ', style: TextStyle(color: Colors.blue)),
-                  TextSpan(text: globalController.inboxList.elementAt(index)['latestRep'] + ' \u2022 ', style: TextStyle(color: Colors.redAccent)),
-                  TextSpan(text: globalController.inboxList.elementAt(index)['latestDay'] + '\n', style: TextStyle(color: Colors.grey.shade600)),
+                  TextSpan(text: GlobalController.i.inboxList.elementAt(index)['title'] + ' \u2022 ', style: TextStyle(color: Colors.blue)),
+                  TextSpan(text: GlobalController.i.inboxList.elementAt(index)['latestRep'] + ' \u2022 ', style: TextStyle(color: Colors.redAccent)),
+                  TextSpan(text: GlobalController.i.inboxList.elementAt(index)['latestDay'] + '\n', style: TextStyle(color: Colors.grey.shade600)),
                   TextSpan(
-                      text: globalController.inboxList.elementAt(index)['conservationWith'] + '\n', style: TextStyle(color: Colors.grey.shade600)),
-                  TextSpan(text: globalController.inboxList.elementAt(index)['repAndParty'], style: TextStyle(color: Colors.grey.shade600)),
+                      text: GlobalController.i.inboxList.elementAt(index)['conservationWith'] + '\n', style: TextStyle(color: Colors.grey.shade600)),
+                  TextSpan(text: GlobalController.i.inboxList.elementAt(index)['repAndParty'], style: TextStyle(color: Colors.grey.shade600)),
                 ],
               ),
             ),
           ],
         ),
         onPressed: () {
-          if (globalController.inboxList.elementAt(index)['isUnread'] == 'true') {
-            globalController.inboxList.elementAt(index)['isUnread'] = 'false';
-            globalController.update();
+          if (GlobalController.i.inboxList.elementAt(index)['isUnread'] == 'true') {
+            GlobalController.i.inboxList.elementAt(index)['isUnread'] = 'false';
+            GlobalController.i.update();
           }
-          GlobalController.i.sessionTag.add(globalController.inboxList.elementAt(index)['title'] + DateTime.now().toString());
+          GlobalController.i.sessionTag.add(GlobalController.i.inboxList.elementAt(index)['title'] + DateTime.now().toString());
           Get.lazyPut<ViewController>(() => ViewController(), tag: GlobalController.i.sessionTag.last);
           Get.toNamed("/ViewPage",
-              arguments: [globalController.inboxList.elementAt(index)['title'], globalController.inboxList.elementAt(index)['linkInbox'], '', 1]);
+              arguments: [GlobalController.i.inboxList.elementAt(index)['title'], GlobalController.i.inboxList.elementAt(index)['linkInbox'], '', 1]);
         },
       ),
     );
-  }
-
-  refresh() async {
-    GlobalController.i.inboxList.clear();
-    await GlobalController.i.getInboxAlert();
   }
 }

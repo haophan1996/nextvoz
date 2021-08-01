@@ -1,8 +1,8 @@
+import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 import 'dart:convert';
 import 'dart:ui';
 import 'dart:io';
-import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
 import 'package:html/dom.dart' as dom;
 import 'package:html/parser.dart' as parser;
@@ -24,7 +24,7 @@ class GlobalController extends GetxController {
       viewReactLink = 'https://voz.vn/p/';
   final userStorage = GetStorage();
   double percentDownload = 0.0;
-  var dio = Dio(), xfCsrfLogin, dataCsrfLogin, xfCsrfPost, dataCsrfPost;
+  var xfCsrfLogin, dataCsrfLogin, xfCsrfPost, dataCsrfPost;
   bool isLogged = false;
   List alertList = [], inboxList = [], sessionTag = [];
   String xfSession = '', dateExpire = '', xfUser = '';
@@ -35,201 +35,23 @@ class GlobalController extends GetxController {
     super.onInit();
   }
 
-  Future<dom.Document?> getBody(String url, bool isHomePage) async {
-    percentDownload = 0.1;
-    update();
-    final response = await dio.get(url, onReceiveProgress: (actual, total) {
-      percentDownload = (actual.bitLength - 4) / total.bitLength;
-      update();
+  Future<dom.Document?> getBody(Function onError, Function(double) onDownload, Dio dios, String url, bool isHomePage) async {
+    if (isLogged == true) dios.options.headers['cookie'] = 'xf_user=${xfUser.toString()}; xf_session=${xfSession.toString()}';
+    onDownload(0.1);
+    final response = await dios.get(url, onReceiveProgress: (actual, total) {
+      onDownload((actual.bitLength - 4) / total.bitLength);
     }).whenComplete(() async {
-      percentDownload = -1.0;
-      update();
+      onDownload(0.0);
     }).catchError((err) {
-      if (CancelToken.isCancel(err)) {
-        print('Request canceled! ' + err.message);
+      if (err.type == DioErrorType.other) {
+        print('other');
       } else {
-        print('sac');
-      }
-    });
-    xfCsrfPost = cookXfCsrf(response.headers['set-cookie'].toString());
-    if (isHomePage == true) xfCsrfLogin = cookXfCsrf(response.headers['set-cookie'].toString());
-
-    return parser.parse(response.toString());
-  }
-
-  Future<dom.Document?> getBodyBeta(Function onError, String url, bool isHomePage) async {
-    percentDownload = 0.1;
-    update();
-    final response = await dio.get(url, onReceiveProgress: (actual, total) {
-      percentDownload = (actual.bitLength - 4) / total.bitLength;
-      update();
-    }).whenComplete(() async {
-      percentDownload = -1.0;
-      update();
-    }).catchError((err) {
-      if (CancelToken.isCancel(err)) {
-        print('Request canceled! ' + err.message);
-      } else {
-        print('sac');
         onError();
       }
     });
     xfCsrfPost = cookXfCsrf(response.headers['set-cookie'].toString());
-     // if (isHomePage == true) xfCsrfLogin = cookXfCsrf(response.headers['set-cookie'].toString());
-    xfCsrfLogin = cookXfCsrf(response.headers['set-cookie'].toString());
-
+    if (isHomePage == true) xfCsrfLogin = cookXfCsrf(response.headers['set-cookie'].toString());
     return parser.parse(response.toString());
-  }
-
-  String keyStatus(String status) {
-    return status.contains('the thread')
-        ? 'the thread'
-        : status.contains('a thread called')
-            ? 'a thread called'
-            : status.contains('reacted to your message in the conversation') // status
-                ? 'reacted to your message in the conversation'
-                : status.contains('reacted to your')
-                    ? 'reacted to your'
-                    : 'the conversation';
-  }
-
-  getAlert() async {
-    String username, threadName = '', prefix, reaction, time, status, link, key, unread;
-    //String username = '', threadName = '', prefix = '', reaction = '', time = '', status = '', link = '', key = '';
-    if (isLogged == true) {
-      getBody(url + '/account/alerts?page=1', false).then((value) {
-        inboxNotifications = value!.getElementsByClassName('p-navgroup-link--conversations').length > 0
-            ? int.parse(value.getElementsByClassName('p-navgroup-link--conversations')[0].attributes['data-badge'].toString())
-            : 0;
-        alertNotifications = value.getElementsByClassName('p-navgroup-link--alerts').length > 0
-            ? int.parse(value.getElementsByClassName('p-navgroup-link--alerts')[0].attributes['data-badge'].toString())
-            : 0;
-        //GlobalController.i.update();
-
-        value.getElementsByClassName('alert js-alert block-row block-row--separated').forEach((element) {
-          unread = element.attributes['class']!.contains('is-unread') ? 'true' : 'false';
-          time = element.getElementsByTagName('time')[0].innerHtml;
-          status = element.getElementsByClassName('contentRow-main contentRow-main--close')[0].text.replaceAll(time, '').trim();
-          link = element.getElementsByClassName('fauxBlockLink-blockLink')[0].attributes['href'].toString();
-          if (element.getElementsByClassName('username ').length > 0) {
-            username = element.getElementsByClassName('username ')[0].text;
-            status = status.replaceAll(username, '');
-            key = keyStatus(status);
-
-            if (status.contains('is now following you.')) {
-              threadName = '';
-            } else {
-              threadName = status.split(key)[1].replaceAll(' There may be more posts after this', '');
-              status = status.split('.')[0].split(key)[0] + key;
-            }
-          } else {
-            threadName = status.split(':')[1];
-            status = status.split(':')[0] + ":";
-            username = '';
-          }
-          if (threadName.contains('with  Ưng')) {
-            threadName = threadName.split('with  Ưng')[0];
-            reaction = '1';
-          } else if (threadName.contains('with  Gạch')) {
-            threadName = threadName.split('with  Gạch')[0];
-            reaction = '2';
-          } else
-            reaction = '';
-          if (element.getElementsByTagName('span')[0].attributes['dir'] == 'auto') {
-            threadName = threadName.replaceFirst(element.getElementsByTagName('span')[0].text, '', 0).trim();
-            threadName = ' ' + threadName + ' ';
-            prefix = element.getElementsByTagName('span')[0].text;
-          } else
-            prefix = '';
-
-          alertList.add({
-            'unread': unread,
-            'username': username,
-            'status': prefix.length > 1 ? status + ' ' : status,
-            'prefix': prefix,
-            'threadName': threadName,
-            'reaction': reaction,
-            'link': link,
-            'time': time,
-          });
-        });
-        if (alertList.length == 0) {
-          alertList.add({
-            'unread': 'true',
-            'username': '',
-            'status': 'No Alerts',
-            'threadName': '',
-            'reaction': '',
-            'link': '',
-            'time': '',
-          });
-        }
-      });
-
-      update();
-    }
-  }
-
-  getInboxAlert() async {
-    String getName = '', title, link, rep, party, latestDay, latestRep, avatarLink, avatarColor1, avatarColor2, isUnread;
-    if (isLogged == true) {
-      getBody(url + '/conversations/', false).then((value) {
-        inboxNotifications = value!.getElementsByClassName('p-navgroup-link--conversations').length > 0
-            ? int.parse(value.getElementsByClassName('p-navgroup-link--conversations')[0].attributes['data-badge'].toString())
-            : 0;
-        alertNotifications = value.getElementsByClassName('p-navgroup-link--alerts').length > 0
-            ? int.parse(value.getElementsByClassName('p-navgroup-link--alerts')[0].attributes['data-badge'].toString())
-            : 0;
-
-        var items = value.getElementsByClassName('structItem structItem--conversation  js-inlineModContainer');
-        if (items.length > 0) {
-          items.forEach((element) {
-            isUnread = element.attributes['class']!.contains('is-unread') == true ? 'true' : 'false';
-            title = element.getElementsByClassName('structItem-title')[0].text; //title
-            link = element.getElementsByClassName('structItem-title')[0].attributes['href'].toString(); //link
-            rep = element.getElementsByClassName('pairs pairs--justified')[0].getElementsByTagName('dd')[0].text; //replies
-            party = element.getElementsByClassName('pairs pairs--justified structItem-minor')[0].getElementsByTagName('dd')[0].text; // participants
-            latestDay = element.getElementsByClassName('structItem-latestDate u-dt')[0].text; //latestDate
-            latestRep = element.getElementsByClassName('username').last.text;
-
-            var getClassName =
-                element.getElementsByClassName('listInline listInline--comma listInline--selfInline')[0].getElementsByClassName('username ');
-            getClassName.forEach((element) {
-              getName += element.text + ', ';
-            });
-
-            var avatar = element.getElementsByClassName('avatar avatar--s').first;
-            if (avatar.getElementsByTagName('img').length > 0) {
-              avatarLink = avatar.getElementsByTagName('img')[0].attributes['src'].toString();
-              if (avatarLink.contains('https')== false){
-                avatarLink = GlobalController.i.url + avatarLink;
-              }
-              avatarColor1 = '0x00000000';
-              avatarColor2 = '0x00000000';
-            } else {
-              avatarLink = 'no';
-              avatarColor1 = '0xFFF' + avatar.attributes['style'].toString().split('#')[1].split(';')[0];
-              avatarColor2 = '0xFFF' + avatar.attributes['style'].toString().split('#')[2];
-            }
-
-            inboxList.add({
-              'isUnread': isUnread,
-              'title': title,
-              'linkInbox': link,
-              'repAndParty': 'Replies: $rep \u2022 Participants: $party',
-              'latestDay': latestDay,
-              'conservationWith': getName.replaceFirst(', ', '', getName.length - 2),
-              'latestRep': latestRep,
-              'avatarLink': avatarLink,
-              'avatarColor1': avatarColor1,
-              'avatarColor2': avatarColor2,
-            });
-            getName = '';
-          });
-        }
-      });
-      update();
-    }
   }
 
   Future getHttpPost(Map<String, String> header, Map<String, String> body, String link) async {
@@ -265,7 +87,6 @@ class GlobalController extends GetxController {
       isLogged = await userStorage.read('userLoggedIn');
       xfUser = await userStorage.read('xf_user');
       xfSession = await userStorage.read('xf_session');
-      dio.options.headers['cookie'] = 'xf_user=${xfUser.toString()}; xf_session=${xfSession.toString()}';
     }
   }
 
@@ -423,7 +244,7 @@ class GlobalController extends GetxController {
 
   //https://raw.githubusercontent.com/haophan69/pogif/main/pogif1.gif
   final List mapEmojiVozGif = [
-    {'dir' : '', 'symbol' : '' },
+    {'dir': '', 'symbol': ''},
   ];
 
   final Map<String, String> mapEmojiVoz = {

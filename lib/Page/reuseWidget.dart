@@ -17,22 +17,10 @@ import 'package:cached_network_image/cached_network_image.dart';
 ///  * Global appbar
 PreferredSize preferredSize(BuildContext context, String title, String prefix) => PreferredSize(
       preferredSize: Size.fromHeight(NaviDrawerController.i.heightAppbar),
-      child: /* Obx(()=>*/ AppBar(
+      child: AppBar(
         automaticallyImplyLeading: false,
         title: customTitle(FontWeight.normal, Get.theme.primaryColor, 2, prefix, title),
         leading: (ModalRoute.of(context)?.canPop ?? false) ? BackButton() : null,
-        bottom: PreferredSize(
-          child: GetBuilder<GlobalController>(
-            builder: (controller) {
-              return LinearProgressIndicator(
-                value: controller.percentDownload,
-                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF0CF301)),
-                backgroundColor: Theme.of(context).backgroundColor,
-              );
-            },
-          ),
-          preferredSize: Size.fromHeight(4.0),
-        ),
       ),
     );
 
@@ -158,12 +146,7 @@ Widget settings() => Row(
                   color: Get.theme.primaryColor,
                 ),
                 onPressed: () async {
-                  if (GlobalController.i.alertList.isEmpty || GlobalController.i.alertNotifications != 0) {
-                    GlobalController.i.alertList.clear();
-                    await GlobalController.i.getAlert();
-                  }
                   await Get.toNamed('/Alerts', preventDuplicates: false);
-                  //await Get.to(()=> Popup(), preventDuplicates: false, arguments: [0]);
                 }),
             GetBuilder<GlobalController>(builder: (controller) {
               return Positioned(
@@ -188,10 +171,6 @@ Widget settings() => Row(
                   color: Get.theme.primaryColor,
                 ),
                 onPressed: () async {
-                  if (GlobalController.i.inboxList.isEmpty == true || GlobalController.i.inboxNotifications != 0) {
-                    GlobalController.i.inboxList.clear();
-                    await GlobalController.i.getInboxAlert();
-                  }
                   await Get.toNamed('/AlertsInbox', preventDuplicates: false);
                 }),
             GetBuilder<GlobalController>(builder: (controller) {
@@ -221,20 +200,6 @@ Widget settings() => Row(
 Widget textDrawer(Color color, double? fontSize, String text, FontWeight fontWeight) =>
     Text(text, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(color: color, fontWeight: fontWeight, fontSize: fontSize));
 
-Widget popUpWaiting(String one, String two) => Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        CupertinoActivityIndicator(),
-        SizedBox(
-          height: 20,
-        ),
-        DefaultTextStyle(
-          style: TextStyle(color: Get.theme.primaryColor),
-          child: Text(one + '\n' + two),
-        ),
-      ],
-    );
-
 Widget inputCustom(TextEditingController controller, bool obscureText, String hint, Function onEditingComplete) {
   return TextField(
     onEditingComplete: () async => await onEditingComplete(),
@@ -255,12 +220,9 @@ Widget inputCustom(TextEditingController controller, bool obscureText, String hi
   );
 }
 
-setDialog(String textF, String textS) => Get.defaultDialog(
-    barrierDismissible: false,
-    radius: 6,
-    backgroundColor: Get.theme.canvasColor.withOpacity(0.8),
-    content: popUpWaiting(textF, textS),
-    title: 'status'.tr);
+setDialog() => Get.dialog(
+    CupertinoActivityIndicator(),
+    barrierDismissible: false);
 
 setDialogError(String text) => Get.defaultDialog(
       content: Text(text, textAlign: TextAlign.center),
@@ -672,7 +634,8 @@ Widget customHtml(List htmlData, int index) {
             renderContext.tree.element!.attributes['alt']!,
             style: TextStyle(fontSize: GlobalController.i.userStorage.read('fontSizeView')),
           );
-        } else if (renderContext.tree.element!.attributes['src']!.contains(".gif") && renderContext.tree.element!.attributes['data-url'] != null &&
+        } else if (renderContext.tree.element!.attributes['src']!.contains(".gif") &&
+            renderContext.tree.element!.attributes['data-url'] != null &&
             renderContext.tree.element!.attributes['data-url']!.contains(".gif")) {
         } else {
           return PinchZoomImage(
@@ -693,7 +656,8 @@ Widget customHtml(List htmlData, int index) {
               },
               placeholder: (context, c) {
                 if (width != null && height != null) {
-                  return AspectRatio(aspectRatio: width/height);
+                  print('Width: $width  Height: $height');
+                  return AspectRatio(aspectRatio: width / height);
                   // return Image.asset(
                   //   'assets/reaction/nil.png',
                   //   width: width,

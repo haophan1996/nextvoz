@@ -64,9 +64,7 @@ class MyPage extends StatelessWidget {
             page: () => ViewUI(),
             transition: Transition.rightToLeft,
             transitionDuration: Duration(milliseconds: 200),
-            gestureWidth: (context) => context.width * 0.8,
             popGesture: true,
-            //binding: ViewBinding(),
             maintainState: false),
         GetPage(name: '/Alerts', page: () => AlertsUI(), binding: PopBinding(), gestureWidth: (context) => context.width, popGesture: true),
         GetPage(

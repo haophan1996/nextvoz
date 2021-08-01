@@ -15,7 +15,6 @@ Widget pageNavigation(int currentPage, int totalPage, Function(int index) gotoPa
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
-          //alignment: AlignmentDirectional.bottomCenter,
           children: [
             Align(
               alignment: Alignment.bottomLeft,
@@ -33,18 +32,6 @@ Widget pageNavigation(int currentPage, int totalPage, Function(int index) gotoPa
                 },
               ),
             ),
-            // GetBuilder<GlobalController>(builder: (controller) {
-            //   return Align(
-            //     alignment: Alignment.bottomRight,
-            //     child: Padding(
-            //       padding: EdgeInsets.only(right: 5, top: 5),
-            //       child: Image.asset(
-            //         'assets/${controller.alertNotifications != 0 || controller.inboxNotifications != 0 ? 'alerts' : 'reaction/nil'}.png',
-            //         width: 10,
-            //       ),
-            //     ),
-            //   );
-            // }),
             Align(
               alignment: Alignment.bottomCenter,
               child: Row(
@@ -72,16 +59,18 @@ Widget pageNavigation(int currentPage, int totalPage, Function(int index) gotoPa
             ),
             Align(
               alignment: Alignment.bottomRight,
-              child: CupertinoButton(
-                padding: EdgeInsets.zero,
-                child: Icon(
-                  Icons.more_outlined,
-                  color: Get.theme.primaryColor,
-                ),
-                onPressed: () {
-                  Get.bottomSheet(userInformation());
-                },
-              ),
+              child: GetBuilder<GlobalController>(builder: (controller){
+                return CupertinoButton(
+                  padding: EdgeInsets.zero,
+                  child: Icon(
+                    Icons.more_rounded,
+                    color: controller.inboxNotifications != 0 || controller.alertNotifications != 0 ? Colors.red :Get.theme.primaryColor,
+                  ),
+                  onPressed: () {
+                    Get.bottomSheet(userInformation());
+                  },
+                );
+              }),
             ),
           ],
         ),
@@ -92,30 +81,31 @@ Widget pageNavigation(int currentPage, int totalPage, Function(int index) gotoPa
 
 Widget userInformation(){
   return Container(
-    color: Colors.grey.shade700,
+    decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(6)), color: Colors.grey.shade700),
     padding: EdgeInsets.only(left: 5, right: 5, top: 5),
-    child: Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        GetBuilder<GlobalController>(builder: (controller) {
-          return controller.isLogged == false ? login() : logged();
-        }),
-        whatNew(),
-        Padding(
-          padding: EdgeInsets.only(top: 5, bottom: 10),
-          child: Container(
-            decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(6)), color: Get.theme.backgroundColor),
-            width: Get.width,
-            child: customCupertinoButton(Alignment.center, EdgeInsets.zero, Text('Copy Link'), () {}),
-          ),
-        )
-      ],
+    child: SafeArea(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          GetBuilder<GlobalController>(builder: (controller) {
+            return controller.isLogged == false ? login() : logged();
+          }),
+          whatNew(),
+          Padding(
+            padding: EdgeInsets.only(top: 5),
+            child: Container(
+              decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(6)), color: Get.theme.backgroundColor),
+              width: Get.width,
+              child: customCupertinoButton(Alignment.center, EdgeInsets.zero, Text('Copy Link'), () {}),
+            ),
+          )
+        ],
+      ),
     ),
   );
 }
 
 Widget whatNew() => Container(
-      //constraints: BoxConstraints.expand(),
       decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(6)), color: Get.theme.backgroundColor),
       child: Column(
         mainAxisSize: MainAxisSize.min,

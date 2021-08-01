@@ -20,13 +20,28 @@ class HomePageUI extends GetView<HomeController> {
       appBar: preferredSize(context, "theNEXTvoz", ''),
       body: GetBuilder<HomeController>(builder: (controller) {
         return controller.loadingStatus == 'loading'
-            ? loadingShimmer()
+            ? loading()
             : controller.loadingStatus == 'loadFailed'
                 ? loadFailed()
                 : loadSucceeded(context);
       }),
     );
   }
+
+  Widget loading() => Stack(
+        children: [
+          GetBuilder<HomeController>(
+              id: 'download',
+              builder: (controller) {
+                return LinearProgressIndicator(
+                  value: controller.percentDownload,
+                  valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF0CF301)),
+                  backgroundColor: Get.theme.backgroundColor,
+                );
+              }),
+          loadingShimmer()
+        ],
+      );
 
   Widget loadFailed() {
     return Column(
@@ -68,7 +83,7 @@ class HomePageUI extends GetView<HomeController> {
         GetBuilder<HomeController>(
           builder: (controller) {
             return ListView.builder(
-              physics: BouncingScrollPhysics(),
+              //physics: BouncingScrollPhysics(),
               padding: EdgeInsets.only(bottom: 40),
               shrinkWrap: false,
               itemCount: controller.myHomePage.length,
@@ -94,13 +109,15 @@ class HomePageUI extends GetView<HomeController> {
                             controller.myHomePage.elementAt(index)["subHeader"], controller.myHomePage.elementAt(index)["linkSubHeader"]), () {
                       if (Get.isSnackbarOpen == true) Get.back();
 
-                      if (GlobalController.i.userStorage.read('defaultsPage_title') == controller.myHomePage.elementAt(index)['subHeader'] && GlobalController.i.userStorage.read('defaultsPage') == true) {
+                      if (GlobalController.i.userStorage.read('defaultsPage_title') == controller.myHomePage.elementAt(index)['subHeader'] &&
+                          GlobalController.i.userStorage.read('defaultsPage') == true) {
                         GlobalController.i.userStorage.write('defaultsPage', false);
                         Get.snackbar('Alert', 'Removed Defaults Page', forwardAnimationCurve: Curves.decelerate, colorText: Colors.redAccent);
                       } else {
                         GlobalController.i.userStorage.write('defaultsPage', true);
                         GlobalController.i.userStorage.write('defaultsPage_title', controller.myHomePage.elementAt(index)['subHeader']);
-                        GlobalController.i.userStorage.write('defaultsPage_link', GlobalController.i.url+controller.myHomePage.elementAt(index)['linkSubHeader']);
+                        GlobalController.i.userStorage
+                            .write('defaultsPage_link', GlobalController.i.url + controller.myHomePage.elementAt(index)['linkSubHeader']);
                         Get.snackbar('Alert', 'Default Page: ' + controller.myHomePage.elementAt(index)['subHeader'],
                             forwardAnimationCurve: Curves.decelerate, colorText: Colors.blueAccent);
                       }
@@ -124,9 +141,10 @@ class HomePageUI extends GetView<HomeController> {
                   EdgeInsets.only(left: 5, right: 5),
                   Text(
                     controller.isLogged == false ? 'Guest user' : 'Logged in as ${NaviDrawerController.i.nameUser}',
-                    style: TextStyle(color: controller.alertNotifications != 0 || controller.inboxNotifications != 0 ? Colors.redAccent : Colors.blue),
+                    style:
+                        TextStyle(color: controller.alertNotifications != 0 || controller.inboxNotifications != 0 ? Colors.redAccent : Colors.blue),
                   ),
-                      () => Get.bottomSheet(userInformation()),
+                  () => Get.bottomSheet(userInformation()),
                 ),
               );
             }),

@@ -17,80 +17,95 @@ class AlertsUI extends GetView<AlertsController> {
           borderRadius: BorderRadius.all(Radius.circular(7)),
           color: Theme.of(context).backgroundColor.withOpacity(0.9),
         ),
-        child: GetBuilder<GlobalController>(
-          builder: (globalController) {
-            return globalController.alertList.length != 0
+        child: GetBuilder<AlertsController>(
+          builder: (controller) {
+            return GlobalController.i.alertList.length != 0
                 ? ListView.builder(
                     physics: BouncingScrollPhysics(),
-                    itemCount: globalController.alertList.length,
+                    itemCount: GlobalController.i.alertList.length,
                     itemBuilder: (BuildContext context, int index) {
                       return Container(
                         decoration: BoxDecoration(
-                            color: globalController.alertList.elementAt(index)['unread'] == 'true' ? Get.theme.canvasColor : Colors.transparent,
+                            color: GlobalController.i.alertList.elementAt(index)['unread'] == 'true' ? Get.theme.canvasColor : Colors.transparent,
                             border: Border(
                               bottom: BorderSide(width: 0.5, color: Theme.of(context).primaryColor),
                             )),
-                        child: itemList(globalController, index),
+                        child: itemList(index),
                       );
                     },
                   )
-                : loadingShimmer();
+                : loading();
           },
         ),
       ),
     );
   }
 
-  Widget itemList(GlobalController globalController, int index) {
+  Widget loading() => Stack(
+    children: [
+      GetBuilder<AlertsController>(
+          id: 'download',
+          builder: (controller) {
+            return LinearProgressIndicator(
+              value: controller.percentDownload,
+              valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF0CF301)),
+              backgroundColor: Get.theme.backgroundColor,
+            );
+          }),
+      loadingShimmer()
+    ],
+  );
+
+  Widget itemList(int index) {
     return CupertinoButton(
       alignment: Alignment.centerLeft,
       child: RichText(
         text: TextSpan(
           children: [
-            TextSpan(text: globalController.alertList.elementAt(index)['username'], style: TextStyle(color: Colors.blue)),
-            TextSpan(text: globalController.alertList.elementAt(index)['status'], style: TextStyle(color: Get.theme.primaryColor)),
+            TextSpan(text: GlobalController.i.alertList.elementAt(index)['username'], style: TextStyle(color: Colors.blue)),
+            TextSpan(text: GlobalController.i.alertList.elementAt(index)['status'], style: TextStyle(color: Get.theme.primaryColor)),
             //TextSpan(text: globalController.alertList.elementAt(index)['threadName'], style: TextStyle(color: Colors.blue)),
-            customTitleChild(FontWeight.normal, Colors.blue, globalController.alertList.elementAt(index)['prefix'],
-                globalController.alertList.elementAt(index)['threadName']),
-            globalController.alertList.elementAt(index)['reaction'] == ''
+            customTitleChild(FontWeight.normal, Colors.blue, GlobalController.i.alertList.elementAt(index)['prefix'],
+                GlobalController.i.alertList.elementAt(index)['threadName']),
+            GlobalController.i.alertList.elementAt(index)['reaction'] == ''
                 ? TextSpan()
                 : TextSpan(
-                    text: 'with ${globalController.alertList.elementAt(index)['reaction'] == '1' ? 'Ưng ' : 'Gạch '}',
+                    text: 'with ${GlobalController.i.alertList.elementAt(index)['reaction'] == '1' ? 'Ưng ' : 'Gạch '}',
                     style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        color: globalController.alertList.elementAt(index)['reaction'] == '1' ? Colors.pinkAccent : Colors.red)),
-            globalController.alertList.elementAt(index)['reaction'] == ''
+                        color: GlobalController.i.alertList.elementAt(index)['reaction'] == '1' ? Colors.pinkAccent : Colors.red)),
+            GlobalController.i.alertList.elementAt(index)['reaction'] == ''
                 ? TextSpan()
                 : WidgetSpan(
                     child: Image.asset(
-                      'assets/reaction/${globalController.alertList.elementAt(index)['reaction']}.png',
+                      'assets/reaction/${GlobalController.i.alertList.elementAt(index)['reaction']}.png',
                       width: 18,
                     ),
                   ),
-            TextSpan(text: '\n' + globalController.alertList.elementAt(index)['time'], style: TextStyle(color: Get.theme.secondaryHeaderColor))
+            TextSpan(text: '\n' + GlobalController.i.alertList.elementAt(index)['time'], style: TextStyle(color: Get.theme.secondaryHeaderColor))
           ],
         ),
       ),
       onPressed: () {
-        if (globalController.alertList.elementAt(index)['unread'] == 'true') {
-          globalController.alertList.elementAt(index)['unread'] = 'false';
-          globalController.update();
+        if (GlobalController.i.alertList.elementAt(index)['unread'] == 'true') {
+          GlobalController.i.alertList.elementAt(index)['unread'] = 'false';
+          GlobalController.i.update();
         }
-        if (globalController.alertList.elementAt(index)['link'].contains('/u/', 0) == true) {
+        if (GlobalController.i.alertList.elementAt(index)['link'].contains('/u/', 0) == true) {
           GlobalController.i.sessionTag.add('profile${DateTime.now().toString()}');
           Get.lazyPut<UserProfileController>(() => UserProfileController(), tag: GlobalController.i.sessionTag.last);
-          Get.toNamed('/UserProfile', arguments: [globalController.alertList.elementAt(index)['link']], preventDuplicates: false);
-        } else if (globalController.alertList.elementAt(index)['link'].contains('/profile-posts/', 0) == true) {
+          Get.toNamed('/UserProfile', arguments: [GlobalController.i.alertList.elementAt(index)['link']], preventDuplicates: false);
+        } else if (GlobalController.i.alertList.elementAt(index)['link'].contains('/profile-posts/', 0) == true) {
           // Go to status
           print('status');
         } else {
-          GlobalController.i.sessionTag.add(globalController.alertList.elementAt(index)['threadName']);
+          GlobalController.i.sessionTag.add(GlobalController.i.alertList.elementAt(index)['threadName']);
           Get.lazyPut<ViewController>(() => ViewController(), tag: GlobalController.i.sessionTag.last);
           Get.toNamed("/ViewPage", arguments: [
-            globalController.alertList.elementAt(index)['threadName'],
-            globalController.alertList.elementAt(index)['link'],
-            globalController.alertList.elementAt(index)['prefix'],
-            globalController.alertList.elementAt(index)['link'].toString().contains('conversations/messages') ? 1 : 0
+            GlobalController.i.alertList.elementAt(index)['threadName'],
+            GlobalController.i.alertList.elementAt(index)['link'],
+            GlobalController.i.alertList.elementAt(index)['prefix'],
+            GlobalController.i.alertList.elementAt(index)['link'].toString().contains('conversations/messages') ? 1 : 0
           ]);
         }
       },

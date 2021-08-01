@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -11,20 +12,15 @@ class ThreadController extends GetxController {
   late RefreshController refreshController = RefreshController(initialRefresh: false);
   late ScrollController listViewScrollController = ScrollController();
   List myThreadList = [];
-  int currentPage = 0;
-  int totalPage = 0;
-  int lengthHtmlDataList = 0;
-  var _title;
-  var lastP;
-  var linkThread = '';
-  var themeTitle = "";
-  var title = "";
+  int currentPage = 0, totalPage = 0, lengthHtmlDataList = 0;
+  var _title, lastP, linkThread = '', themeTitle = "", title = "", dio = Dio(), percentDownload = 0.0;
 
   @override
   Future<void> onInit() async {
     super.onInit();
     theme = Get.arguments[0];
     _url = Get.arguments[1];
+    print('Width: ${Get.width}  Height: ${Get.height}');
   }
 
   @override
@@ -54,7 +50,10 @@ class ThreadController extends GetxController {
   }
 
   loadSubHeader(String url) async {
-    await GlobalController.i.getBody(url, false).then((value) async {
+    await GlobalController.i.getBody(() {}, (download) {
+      percentDownload = download;
+      update(['download'], true);
+    }, dio, url, false).then((value) async {
       lengthHtmlDataList = myThreadList.length;
       if (value!.getElementsByTagName('html')[0].attributes['data-logged-in'] == 'true') {
         GlobalController.i.isLogged = true;

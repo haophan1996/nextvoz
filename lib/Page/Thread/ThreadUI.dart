@@ -39,7 +39,7 @@ class ThreadUI extends GetView<ThreadController> {
                   },
                   controller: controller.refreshController,
                   child: ListView.builder(
-                    physics: BouncingScrollPhysics(),
+                    //physics: BouncingScrollPhysics(),
                     controller: controller.listViewScrollController,
                     cacheExtent: 500,
                     itemCount: controller.myThreadList.length,
@@ -69,6 +69,15 @@ class ThreadUI extends GetView<ThreadController> {
               ),
             );
           }),
+          GetBuilder<ThreadController>(
+              id: 'download',
+              builder: (controller) {
+                return LinearProgressIndicator(
+                  value: controller.percentDownload,
+                  valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF0CF301)),
+                  backgroundColor: Theme.of(context).backgroundColor,
+                );
+              }),
           Align(
             alignment: Alignment.bottomCenter,
             child: GetBuilder<ThreadController>(
@@ -80,7 +89,7 @@ class ThreadUI extends GetView<ThreadController> {
                     if (index > controller.totalPage) index -= 1;
                   }
                   if (controller.totalPage != 0 && controller.currentPage != 0) {
-                    setDialog('popMess'.tr, 'loading3'.tr);
+                    setDialog();
                     controller.setPageOnClick(index);
                   }
                 }, () {

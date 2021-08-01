@@ -27,6 +27,16 @@ class ViewUI extends StatelessWidget {
             return postContent(context, controller);
           },
         ),
+        GetBuilder<ViewController>(
+            id: 'download',
+            tag: GlobalController.i.sessionTag.last,
+            builder: (controller) {
+              return LinearProgressIndicator(
+                value: controller.percentDownload,
+                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF0CF301)),
+                backgroundColor: Theme.of(context).backgroundColor,
+              );
+            }),
         Align(
           alignment: Alignment.bottomCenter,
           child: GetBuilder<ViewController>(
@@ -42,7 +52,7 @@ class ViewUI extends StatelessWidget {
                     if (index > controller.totalPage) index -= 1;
                   }
                   if (controller.totalPage != 0 && controller.currentPage != 0) {
-                    setDialog('popMess'.tr, 'loading3'.tr);
+                    setDialog();
                     controller.setPageOnClick(index);
                   }
                 },
@@ -75,7 +85,7 @@ class ViewUI extends StatelessWidget {
           },
           child: ListView.builder(
             cacheExtent: 999999999,
-            physics: BouncingScrollPhysics(),
+            //physics: BouncingScrollPhysics(),
             scrollDirection: Axis.vertical,
             controller: controller.listViewScrollController,
             itemCount: controller.htmlData.length,

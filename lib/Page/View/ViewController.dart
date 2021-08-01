@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -18,6 +19,7 @@ class ViewController extends GetxController {
   int lengthHtmlDataList = 0;
   bool isEdit = false;
   late var _user;
+  var dio = Dio(), percentDownload = 0.0;
   late dom.Document res;
   late RefreshController refreshController = RefreshController(initialRefresh: false);
   late ScrollController listViewScrollController = ScrollController();
@@ -29,8 +31,6 @@ class ViewController extends GetxController {
     data['subHeader'] = Get.arguments[0];
     data['subTypeHeader'] = Get.arguments[2] ?? '';
     data['view'] = Get.arguments[3];
-
-
   }
 
   @override
@@ -49,6 +49,7 @@ class ViewController extends GetxController {
   @override
   onClose() {
     super.onClose();
+    dio.close(force: true);
     GlobalController.i.sessionTag.removeLast();
     refreshController.dispose();
     listViewScrollController.dispose();
@@ -70,7 +71,7 @@ class ViewController extends GetxController {
   }
 
   getImage(String url) async {
-   // return await getCachedImageFile(url);
+    // return await getCachedImageFile(url);
   }
 
   write(String text) async {
@@ -84,8 +85,8 @@ class ViewController extends GetxController {
   saveImage(String url) async {
     final Directory? directory = Directory("storage/emulated/0/Pictures/vozNext");
     await directory!.create();
-   // final File file = File((await getCachedImageFilePath(url)).toString());
-   // await file.copy(directory.path + "/${file.path.split("/").last}.jpg");
+    // final File file = File((await getCachedImageFilePath(url)).toString());
+    // await file.copy(directory.path + "/${file.path.split("/").last}.jpg");
   }
 
   final flagsReactions = [
@@ -106,7 +107,7 @@ class ViewController extends GetxController {
   getDataReactionList(int index) async {
     reactionList.clear();
     await GlobalController.i
-        .getBody(
+        .getBody((){}, (download){},dio,
             '${data['view'] == 0 ? GlobalController.i.viewReactLink : GlobalController.i.inboxReactLink}' +
                 htmlData.elementAt(index)['postID'] +
                 '/reactions',
@@ -139,7 +140,14 @@ class ViewController extends GetxController {
 
   Future<void> loadUserPost(String url) async {
     data['_commentImg'] = '';
-    await GlobalController.i.getBody(url, false).then((value) async {
+    await GlobalController.i.getBody(() {
+      ///error
+      print('eeeeeeee');
+    }, (download) {
+      ///download
+      percentDownload = download;
+      update(['download'], true);
+    }, dio, url, false).then((value) async {
       lengthHtmlDataList = htmlData.length;
       data['dataCsrfPost'] = value!.getElementsByTagName('html')[0].attributes['data-csrf'];
       data['xfCsrfPost'] = GlobalController.i.xfCsrfPost;
@@ -182,17 +190,17 @@ class ViewController extends GetxController {
           data['_userLink'] = _user.map((e) => e.getElementsByTagName("a")[1].attributes['href']).first!;
           data['_userTitle'] = _user.map((e) => e.getElementsByClassName("userTitle message-userTitle")[0].innerHtml).first;
 
-
-          if (element.getElementsByClassName('avatar avatar--m')[0].getElementsByTagName('img').length > 0){
+          if (element.getElementsByClassName('avatar avatar--m')[0].getElementsByTagName('img').length > 0) {
             data['_userAvatar'] = element.getElementsByClassName('avatar avatar--m')[0].getElementsByTagName('img')[0].attributes['src'].toString();
             data['avatarColor1'] = '0x00000000';
             data['avatarColor2'] = '0x00000000';
-            if (data['_userAvatar'].contains('https')== false){
+            if (data['_userAvatar'].contains('https') == false) {
               data['_userAvatar'] = GlobalController.i.url + data['_userAvatar'];
             }
           } else {
             data['_userAvatar'] = 'no';
-            data['avatarColor1'] = '0xFFF' + element.getElementsByClassName('avatar avatar--m')[0].attributes['style'].toString().split('#')[1].split(';')[0];
+            data['avatarColor1'] =
+                '0xFFF' + element.getElementsByClassName('avatar avatar--m')[0].attributes['style'].toString().split('#')[1].split(';')[0];
             data['avatarColor2'] = '0xFFF' + element.getElementsByClassName('avatar avatar--m')[0].attributes['style'].toString().split('#')[2];
           }
 
@@ -226,7 +234,6 @@ class ViewController extends GetxController {
             data['_commentByMe'] = '0';
           }
 
-
           htmlData.add({
             'newPost': element.getElementsByClassName('message-newIndicator').isNotEmpty == false ? false : true,
             "postContent": _removeTag(data['_postContent']),
@@ -235,8 +242,8 @@ class ViewController extends GetxController {
             "userLink": data['_userLink'],
             "userTitle": data['_userTitle'],
             "userAvatar": data['_userAvatar'],
-            'avatarColor1' : data['avatarColor1'],
-            'avatarColor2' : data['avatarColor2'],
+            'avatarColor1': data['avatarColor1'],
+            'avatarColor2': data['avatarColor2'],
             "orderPost": data['_orderPost'],
             "commentName": data['_commentName'],
             "commentImage": data['_commentImg'],
@@ -258,7 +265,10 @@ class ViewController extends GetxController {
 
   Future<void> loadInboxView(String link) async {
     data['_commentImg'] = '';
-    await GlobalController.i.getBody(link, false).then((value) {
+    await GlobalController.i.getBody(() {}, (download) {
+      percentDownload = download;
+      update(['download'], true);
+    }, dio, link, false).then((value) {
       lengthHtmlDataList = htmlData.length;
       data['dataCsrfPost'] = value!.getElementsByTagName('html')[0].attributes['data-csrf'];
       data['xfCsrfPost'] = GlobalController.i.xfCsrfPost;
@@ -295,16 +305,17 @@ class ViewController extends GetxController {
         data['_userTitle'] = element.getElementsByClassName('message-userTitle')[0].text;
         data['_userPostDate'] = element.getElementsByClassName('u-dt')[0].text;
 
-        if (element.getElementsByClassName('avatar avatar--m')[0].getElementsByTagName('img').length > 0){
+        if (element.getElementsByClassName('avatar avatar--m')[0].getElementsByTagName('img').length > 0) {
           data['_userAvatar'] = element.getElementsByClassName('avatar avatar--m')[0].getElementsByTagName('img')[0].attributes['src'].toString();
-          if (data['_userAvatar'].contains('https')== false){
+          if (data['_userAvatar'].contains('https') == false) {
             data['_userAvatar'] = GlobalController.i.url + data['_userAvatar'];
           }
           data['avatarColor1'] = '0x00000000';
           data['avatarColor2'] = '0x00000000';
         } else {
           data['_userAvatar'] = 'no';
-          data['avatarColor1'] = '0xFFF' + element.getElementsByClassName('avatar avatar--m')[0].attributes['style'].toString().split('#')[1].split(';')[0];
+          data['avatarColor1'] =
+              '0xFFF' + element.getElementsByClassName('avatar avatar--m')[0].attributes['style'].toString().split('#')[1].split(';')[0];
           data['avatarColor2'] = '0xFFF' + element.getElementsByClassName('avatar avatar--m')[0].attributes['style'].toString().split('#')[2];
         }
 
@@ -359,7 +370,7 @@ class ViewController extends GetxController {
 
   Future reactionPost(int index, String idPost, int idReact, BuildContext context) async {
     var status = {};
-    setDialog('popMess'.tr, 'popMess5'.tr);
+    setDialog();
     var headers = {
       'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
       'host': 'voz.vn',
@@ -418,7 +429,7 @@ class ViewController extends GetxController {
 
   editRep(int index) async {
     if (Get.isBottomSheetOpen == true) Get.back();
-    setDialog('loading3', 'loading3');
+    setDialog();
 
     String url =
         '${data['view'] == 0 ? GlobalController.i.viewReactLink : GlobalController.i.inboxReactLink}${htmlData.elementAt(index)['postID']}/edit?_xfToken=${data['dataCsrfPost']}&_xfResponseType=json';
@@ -440,7 +451,7 @@ class ViewController extends GetxController {
   }
 
   Future<void> quote(int index) async {
-    setDialog('popMess'.tr, 'popMess2'.tr);
+    setDialog();
     var headers = {
       'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
       'host': 'voz.vn',
@@ -533,7 +544,7 @@ class ViewController extends GetxController {
       setDialogError('Reason cannot be NULL');
       return;
     }
-    setDialog('popMess'.tr, 'popMess2'.tr);
+    setDialog();
     var headers = {
       'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
       'host': 'voz.vn',
@@ -547,7 +558,7 @@ class ViewController extends GetxController {
       if (value['status'] == 'ok') {
         if (Get.isDialogOpen == true) Get.back();
         if (Get.isDialogOpen == true) Get.back();
-        setDialog('Refreshing Page', 'Loading');
+        setDialog();
         await setPageOnClick(currentPage);
         input.clear();
       } else {

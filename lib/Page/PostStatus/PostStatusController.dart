@@ -245,7 +245,7 @@ class PostStatusController extends GetxController{
     String? html = await getHtml();
     final dom.Document document = parser.parse(html);
     if (document.getElementsByTagName('img').length > 0) {
-      setDialog('Checking Image', 'Hang tight');
+      setDialog();
     }
 
     for (var element in document.getElementsByTagName('img')) {
@@ -264,7 +264,7 @@ class PostStatusController extends GetxController{
 
 
     if (Get.isDialogOpen == true) Get.back();
-    setDialog('popMess'.tr, 'popMess2'.tr);
+    setDialog();
     return Future.value(html);
   }
 

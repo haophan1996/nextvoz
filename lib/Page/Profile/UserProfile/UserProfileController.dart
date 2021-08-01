@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import '/GlobalController.dart';
@@ -8,6 +9,7 @@ class UserProfileController extends GetxController {
   late var dataCsrfPost;
   Map<String, dynamic> data = {};
   List htmlData = [];
+  var dio = Dio();
 
   @override
   onInit() async {
@@ -44,7 +46,7 @@ class UserProfileController extends GetxController {
   }
 
   loadProfileUser() async {
-    await GlobalController.i.getBodyBeta(() => onErrorLoad(), GlobalController.i.url+data['linkProfileUser'], false).then((value) {
+    await GlobalController.i.getBody((){}, (double){}, dio,GlobalController.i.url+data['linkProfileUser'], false).then((value) {
       data['dataCsrfPost'] = value!.getElementsByTagName('html')[0].attributes['data-csrf']; //Current page token
       data['xfCsrfPost'] = GlobalController.i.xfCsrfPost; // Post token
 

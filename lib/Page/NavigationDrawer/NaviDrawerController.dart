@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/cupertino.dart';
@@ -14,7 +15,7 @@ class NaviDrawerController extends GetxController {
   TextEditingController feedBackContentController = TextEditingController();
   TextEditingController feedBackCNameController = TextEditingController();
   TextEditingController feedBackCTitleController = TextEditingController();
-
+  var dio = Dio();
   RxString nameUser = ''.obs;
   RxString titleUser = ''.obs;
   RxString avatarUser = ''.obs;
@@ -24,16 +25,16 @@ class NaviDrawerController extends GetxController {
 
   Future<void> loginFunction() async {
     statusLogin = '';
-    setDialog('popMess'.tr, 'popMess2'.tr);
-    if (textEditingControllerLogin.text.length < 6 || textEditingControllerPassword.text.length <6){
+    setDialog();
+    if (textEditingControllerLogin.text.length < 6 || textEditingControllerPassword.text.length < 6) {
       statusLogin = 'statusLoginInvalid'.tr;
       update();
       Get.back();
       return;
     }
-    
-    if (GlobalController.i.dataCsrfLogin == null && GlobalController.i.xfCsrfLogin == null){
-      await GlobalController.i.getBody('https://voz.vn/login/login', true).then((value) {
+
+    if (GlobalController.i.dataCsrfLogin == null && GlobalController.i.xfCsrfLogin == null) {
+      await GlobalController.i.getBody(() {}, (download) {}, dio, 'https://voz.vn/login/login', true).then((value) {
         GlobalController.i.dataCsrfLogin = value!.getElementsByTagName('html')[0].attributes['data-csrf'];
       });
     }
@@ -49,44 +50,40 @@ class NaviDrawerController extends GetxController {
       update();
     } else {
       statusLogin = 'statusLoginOK'.tr;
-      update();
-      statusLogin = '';
-      await GlobalController.i.userStorage.remove('userLoggedIn');
-      await GlobalController.i.userStorage.remove('xf_user');
-      await GlobalController.i.userStorage.remove('xf_session');
-      await GlobalController.i.userStorage.remove('date_expire');
-
       await GlobalController.i.userStorage.write("userLoggedIn", true);
       await GlobalController.i.userStorage.write("xf_user", getMyData['xf_user']);
       await GlobalController.i.userStorage.write("xf_session", getMyData['xf_session']);
       await GlobalController.i.userStorage.write("date_expire", getMyData['date_expire']);
       await GlobalController.i.setDataUser();
       await getUserProfile();
+      update();
+      GlobalController.i.update();
       await Future.delayed(Duration(milliseconds: 3000), () async {
         Get.back();
         Get.back();
       });
-
     }
   }
 
-  getUserProfile() async{
-    await GlobalController.i.getBody(GlobalController.i.url, false).then((res) async {
+  getUserProfile() async {
+    await GlobalController.i.getBody(() {}, (download) {}, dio, GlobalController.i.url, false).then((res) async {
       GlobalController.i.inboxNotifications = res!.getElementsByClassName('p-navgroup-link--conversations').length > 0
           ? int.parse(res.getElementsByClassName('p-navgroup-link--conversations')[0].attributes['data-badge'].toString())
           : 0;
       GlobalController.i.alertNotifications = res.getElementsByClassName('p-navgroup-link--alerts').length > 0
           ? int.parse(res.getElementsByClassName('p-navgroup-link--alerts')[0].attributes['data-badge'].toString())
-          : 0;      GlobalController.i.update();
+          : 0;
+      GlobalController.i.update();
       String linkProfile = res.getElementsByTagName('form')[1].attributes['action']!.split('/post')[0];
       linkUser = linkProfile;
-       await GlobalController.i.getBody(GlobalController.i.url+linkProfile, false).then((value) {
+      await GlobalController.i.getBody(() {}, (download) {}, dio, GlobalController.i.url + linkProfile, false).then((value) {
         nameUser.value = value!.documentElement!.getElementsByClassName(' is-stroked')[0].getElementsByTagName('span')[0].innerHtml;
         titleUser.value = value.documentElement!.getElementsByClassName('userTitle')[0].innerHtml;
-        if (value.documentElement!.getElementsByClassName('avatar avatar--l').map((e)=>e.innerHtml).first.contains('span') == true){
+        if (value.documentElement!.getElementsByClassName('avatar avatar--l').map((e) => e.innerHtml).first.contains('span') == true) {
           avatarUser.value = 'no';
         } else {
-          final url = GlobalController.i.url+value.documentElement!.getElementsByClassName('avatarWrapper')[0].getElementsByTagName('img')[0].attributes['src'].toString();
+          final url = GlobalController.i.url +
+              value.documentElement!.getElementsByClassName('avatarWrapper')[0].getElementsByTagName('img')[0].attributes['src'].toString();
           print(url);
           avatarUser.value = url;
         }
@@ -97,7 +94,6 @@ class NaviDrawerController extends GetxController {
       await GlobalController.i.userStorage.write("titleUser", titleUser.value);
       await GlobalController.i.userStorage.write("avatarUser", avatarUser.value);
     });
-
   }
 
   login(String login, String pass, String token, String cookie, String userAgent) async {
@@ -116,12 +112,14 @@ class NaviDrawerController extends GetxController {
     }
   }
 
-  logout() async{
-    GlobalController.i.dio.options.headers['cookie'] = '';
+  logout() async {
+    // GlobalController.i.dio.options.headers['cookie'] = '';
     GlobalController.i.xfUser = '';
     GlobalController.i.isLogged = false;
     GlobalController.i.inboxNotifications = 0;
     GlobalController.i.alertNotifications = 0;
+    GlobalController.i.alertList.clear();
+    GlobalController.i.inboxList.clear();
     nameUser.value = '';
     titleUser.value = '';
     avatarUser.value = '';
@@ -143,7 +141,7 @@ class NaviDrawerController extends GetxController {
     });
   }
 
-  navigateToSetting(){ 
+  navigateToSetting() {
     Get.toNamed('/Settings');
   }
 }

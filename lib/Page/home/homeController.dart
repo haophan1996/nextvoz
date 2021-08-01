@@ -1,9 +1,12 @@
+import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 import '/GlobalController.dart';
 
 class HomeController extends GetxController {
   String loadingStatus = 'loading';
   List myHomePage = [];
+  double percentDownload = 0.0;
+  var dio = Dio();
 
   @override
   Future<void> onInit() async {
@@ -12,13 +15,8 @@ class HomeController extends GetxController {
 
   Future<void> onReady() async {
     super.onReady();
-    // Get.toNamed('/Settings');
-
-
     if (GlobalController.i.userStorage.read('defaultsPage') == true){
-
       Get.toNamed("/ThreadPage", arguments: [GlobalController.i.userStorage.read('defaultsPage_title'), GlobalController.i.userStorage.read('defaultsPage_link')]);
-
       if (GlobalController.i.userStorage.read('homeList') == null){
         await loading();
       } else {
@@ -27,17 +25,6 @@ class HomeController extends GetxController {
         update();
       }
     } else await loading();
-
-
-
-
-
-    // if (Get.currentRoute != '/' && GlobalController.i.userStorage.read('homeList') != null) {
-    //   myHomePage = GlobalController.i.userStorage.read('homeList');
-    //   loadingStatus = 'loadSucceeded';
-    //   update();
-    // } else
-    //   await loading();
   }
 
   onLoadError() {
@@ -52,7 +39,10 @@ class HomeController extends GetxController {
 
   loading() async {
     loadingStatus = 'loading';
-    await GlobalController.i.getBodyBeta(() => onLoadError(), GlobalController.i.url, true).then((doc) async {
+    await GlobalController.i.getBody(() => onLoadError(), (download){
+      percentDownload = download;
+      update(['download'], true);
+    }, dio, GlobalController.i.url, true).then((doc) async {
       //Set token
       GlobalController.i.dataCsrfLogin = doc!.getElementsByTagName('html')[0].attributes['data-csrf'];
       if (doc.getElementsByTagName('html')[0].attributes['data-logged-in'] == 'true') {
@@ -97,6 +87,3 @@ class HomeController extends GetxController {
     });
   }
 }
-// doc = await GlobalController.i.getBody(GlobalController.i.url);
-// late dom.Document doc;
-// doc.getElementsByClassName("block block--category block--category")
