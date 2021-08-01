@@ -20,7 +20,6 @@ class ThreadController extends GetxController {
     super.onInit();
     theme = Get.arguments[0];
     _url = Get.arguments[1];
-    print('Width: ${Get.width}  Height: ${Get.height}');
   }
 
   @override

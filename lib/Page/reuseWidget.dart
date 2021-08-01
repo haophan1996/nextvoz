@@ -220,9 +220,7 @@ Widget inputCustom(TextEditingController controller, bool obscureText, String hi
   );
 }
 
-setDialog() => Get.dialog(
-    CupertinoActivityIndicator(),
-    barrierDismissible: false);
+setDialog() => Get.dialog(CupertinoActivityIndicator(), barrierDismissible: false);
 
 setDialogError(String text) => Get.defaultDialog(
       content: Text(text, textAlign: TextAlign.center),
@@ -638,33 +636,24 @@ Widget customHtml(List htmlData, int index) {
             renderContext.tree.element!.attributes['data-url'] != null &&
             renderContext.tree.element!.attributes['data-url']!.contains(".gif")) {
         } else {
+
           return PinchZoomImage(
             image: CachedNetworkImage(
+              httpHeaders:  {
+
+              },
               imageUrl: renderContext.tree.element!.attributes['src']!.contains('data:image/', 0) == true
                   ? renderContext.tree.element!.attributes['data-src'].toString()
                   : renderContext.tree.element!.attributes['src'].toString(),
               filterQuality: FilterQuality.low,
               errorWidget: (context, url, dy) {
-                return AspectRatio(
-                  aspectRatio: 4 / 3,
-                  child: Container(
-                    width: width != null ? width : 30,
-                    height: height != null ? height : 30,
-                    child: customCupertinoButton(Alignment.center, EdgeInsets.zero, Text('image error'), () => GlobalController.i.launchURL(url)),
-                  ),
-                );
+                return Text('Image Error');
               },
               placeholder: (context, c) {
                 if (width != null && height != null) {
-                  print('Width: $width  Height: $height');
                   return AspectRatio(aspectRatio: width / height);
-                  // return Image.asset(
-                  //   'assets/reaction/nil.png',
-                  //   width: width,
-                  //   height: height,
-                  // );
                 } else {
-                  return Container(height: 10, width: 10);
+                  return Container(height: 50, width: 50);
                   // return AspectRatio(
                   //   aspectRatio: 4 / 3,
                   //   child: Container(
@@ -685,7 +674,7 @@ Widget customHtml(List htmlData, int index) {
         return ExpandableNotifier(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.max,
+            //mainAxisSize: MainAxisSize.max,
             children: <Widget>[
               Expandable(
                 expanded: ExpandableButton(

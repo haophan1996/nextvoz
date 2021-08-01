@@ -36,7 +36,10 @@ class GlobalController extends GetxController {
   }
 
   Future<dom.Document?> getBody(Function onError, Function(double) onDownload, Dio dios, String url, bool isHomePage) async {
-    if (isLogged == true) dios.options.headers['cookie'] = 'xf_user=${xfUser.toString()}; xf_session=${xfSession.toString()}';
+    if (isLogged == true) {
+      dios.options.headers['cookie'] = 'xf_user=${xfUser.toString()}; xf_session=${xfSession.toString()}';
+    } else dios.options.headers['cookie'] = '';
+
     onDownload(0.1);
     final response = await dios.get(url, onReceiveProgress: (actual, total) {
       onDownload((actual.bitLength - 4) / total.bitLength);

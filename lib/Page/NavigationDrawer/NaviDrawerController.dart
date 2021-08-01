@@ -113,7 +113,7 @@ class NaviDrawerController extends GetxController {
   }
 
   logout() async {
-    // GlobalController.i.dio.options.headers['cookie'] = '';
+    setDialog();
     GlobalController.i.xfUser = '';
     GlobalController.i.isLogged = false;
     GlobalController.i.inboxNotifications = 0;
@@ -130,6 +130,7 @@ class NaviDrawerController extends GetxController {
     await GlobalController.i.userStorage.remove("date_expire");
     update();
     GlobalController.i.update();
+    if(Get.isDialogOpen==true) Get.back();
   }
 
   navigateToThread(String title, String link, String prefix) {
