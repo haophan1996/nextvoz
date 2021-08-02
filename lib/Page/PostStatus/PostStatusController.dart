@@ -7,9 +7,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:rich_editor/rich_editor.dart';
+import 'package:image_picker/image_picker.dart';
+import '/utils/emoji.dart';
 import '/GlobalController.dart';
 import '/Page/reuseWidget.dart';
-import 'package:image_picker/image_picker.dart';
 
 class PostStatusController extends GetxController{
   static PostStatusController get i => Get.find();
@@ -219,7 +220,7 @@ class PostStatusController extends GetxController{
   getIDYt() async {
     if (link.text.length < 4) return;
     await keyEditor.currentState!.javascriptExecutor
-        .insertHtml('[MEDIA=youtube]${link.text.split("?v=")[1]}[/MEDIA] ');
+        .insertHtml('[MEDIA=youtube]${GlobalController.i.getIDYoutube(link.text)}[/MEDIA] ');
     link.clear();
     Get.back();
 
@@ -252,7 +253,7 @@ class PostStatusController extends GetxController{
       if (element.attributes['src']!.contains('https://', 0) == false){
         if (element.attributes['class']!.contains('smilie')) {
           html = html!.replaceAll(
-              element.outerHtml, GlobalController.i.mapEmojiVoz[element.attributes['src']!.split('/').last.replaceAll('-', '/')].toString());
+              element.outerHtml, mapEmojiVoz[element.attributes['src']!.split('/').last.replaceAll('-', '/')].toString());
         }else if (element.attributes['class']!.contains('bbImage')/*element.attributes['src']!.contains('com.example.vozforums') || */) {
           print('hey im not');
           html = html!.replaceAll(element.attributes['src'].toString(), await uploadImage(element.attributes['src'].toString()));

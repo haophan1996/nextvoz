@@ -115,7 +115,7 @@ class SettingsUI extends GetView<SettingsController> {
                         text: 'defaultsPage'.tr,style: TextStyle(color: Get.theme.primaryColor, fontWeight: FontWeight.bold)
                       ),
                       TextSpan(
-                          text: '\n${GlobalController.i.userStorage.read('defaultsPage_title')}'.tr,style: TextStyle(color: Colors.grey, )
+                          text: '\n${GlobalController.i.userStorage.read('defaultsPage_title') ?? 'Home'}'.tr,style: TextStyle(color: Colors.grey, )
                       )
                     ]),
                   ),

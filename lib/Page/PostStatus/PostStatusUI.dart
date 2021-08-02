@@ -6,8 +6,8 @@ import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:rich_editor/rich_editor.dart';
 import 'package:flutter_html/flutter_html.dart';
+import '/utils/emoji.dart';
 import '/Page/reuseWidget.dart';
-import '/GlobalController.dart';
 import '/Page/PostStatus/PostStatusController.dart';
 
 class PostStatusUI extends GetView<PostStatusController> {
@@ -296,23 +296,23 @@ Widget emoji(BuildContext context, PostStatusController controller) {
               children: [
                 GridView.builder(
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 6),
-                    itemCount: GlobalController.i.smallVozEmoji.length,
+                    itemCount: smallVozEmoji.length,
                     itemBuilder: (BuildContext context, int index) {
                       return CupertinoButton(
-                          child: Image.asset('assets/${GlobalController.i.smallVozEmoji.elementAt(index)['dir']}'),
+                          child: Image.asset('assets/${smallVozEmoji.elementAt(index)['dir']}'),
                           onPressed: () async {
-                            controller.insertEmojiVozOnly(GlobalController.i.smallVozEmoji.elementAt(index)['dir']);
+                            controller.insertEmojiVozOnly(smallVozEmoji.elementAt(index)['dir']);
                           });
                     }),
                 GridView.builder(
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 6),
-                  itemCount: GlobalController.i.bigVozEmoji.length,
+                  itemCount: bigVozEmoji.length,
                   itemBuilder: (BuildContext context, int index) {
                     return CupertinoButton(
                         padding: EdgeInsets.zero,
-                        child: Image.asset('assets/${GlobalController.i.bigVozEmoji.elementAt(index)['dir']}'),
+                        child: Image.asset('assets/${bigVozEmoji.elementAt(index)['dir']}'),
                         onPressed: () async {
-                          controller.insertEmojiVozOnly(GlobalController.i.bigVozEmoji.elementAt(index)['dir']);
+                          controller.insertEmojiVozOnly(bigVozEmoji.elementAt(index)['dir']);
                         });
                   },
                 ),

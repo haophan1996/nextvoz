@@ -4,8 +4,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '/Page/Alert_Inbox/InboxBindings.dart';
 import '/Page/Alert_Inbox/InboxUI.dart';
-import '/theme.dart';
-import '/Page/languages.dart';
+import 'Utils/theme.dart';
+import 'Utils/languages.dart';
 import '/Page/home/homeUI.dart';
 import '/GlobalController.dart';
 import '/Page/View/ViewUI.dart';
@@ -79,7 +79,7 @@ class MyPage extends StatelessWidget {
         GetPage(
             name: "/PostStatus",
             page: () => PostStatusUI(),
-            popGesture: true,
+            popGesture: false,
             binding: PostStatusBindings(),
             transition: Transition.downToUp,
             transitionDuration: Duration(milliseconds: 200),

@@ -6,13 +6,13 @@ import 'package:expandable/expandable.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_html/shims/dart_ui_real.dart';
 import 'package:loader_skeleton/loader_skeleton.dart';
-import 'package:pinch_zoom_image_last/pinch_zoom_image_last.dart';
 import 'package:flutter_reaction_button/flutter_reaction_button.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import '/utils/color.dart';
 import '/GlobalController.dart';
 import '/Page/NavigationDrawer/NaviDrawerController.dart';
 import '/Page/View/ViewController.dart';
-import 'Profile/UserProfile/UserProfileController.dart';
-import 'package:cached_network_image/cached_network_image.dart';
+import '/Page/Profile/UserProfile/UserProfileController.dart';
 
 ///  * Global appbar
 PreferredSize preferredSize(BuildContext context, String title, String prefix) => PreferredSize(
@@ -117,13 +117,13 @@ TextSpan customTitleChild(FontWeight titleWeight, Color titleColor, String heade
     WidgetSpan(
       child: Container(
         padding: EdgeInsets.only(left: header11 == '' ? 0 : 4, right: header11 == '' ? 0 : 4),
-        decoration: BoxDecoration(color: GlobalController.i.mapColor[header11], borderRadius: BorderRadius.all(Radius.circular(6))),
+        decoration: BoxDecoration(color: mapColor[header11], borderRadius: BorderRadius.all(Radius.circular(6))),
         child: Text(
           header11,
           style: TextStyle(
             fontSize: 14,
             fontWeight: titleWeight,
-            color: GlobalController.i.mapInvertColor[GlobalController.i.getColorInvert(header11)],
+            color: getColorInvert(header11),
           ),
         ),
       ),
@@ -595,25 +595,22 @@ Widget viewContent(BuildContext context, int index, ViewController controller) =
 
 Widget displayAvatar(double sizeImage, String avatarColor1, String avatarColor2, String? userName, String imageLink) {
   return Container(
-      width: sizeImage,
-      height: sizeImage,
-      decoration: BoxDecoration(
-          color: Color(
-            int.parse(avatarColor1),
-          ),
-          shape: BoxShape.circle),
-      child: Center(
-        child: imageLink == 'no'
-            ? Text(
-                imageLink == 'no' ? userName!.toUpperCase()[0] : '',
-                style:
-                    TextStyle(color: Color(int.parse(avatarColor2)), fontWeight: FontWeight.bold, fontSize: Get.theme.textTheme.headline5!.fontSize),
-              )
-            : CachedNetworkImage(
-                imageUrl: imageLink,
-                fit: BoxFit.fill,
-              ),
-      ));
+    width: sizeImage,
+    height: sizeImage,
+    alignment: Alignment.center,
+    decoration: BoxDecoration(
+        image: imageLink == 'no' ? null : DecorationImage(
+          image: CachedNetworkImageProvider(imageLink),
+        ),
+        color: Color(
+          int.parse(avatarColor1),
+        ),
+        shape: BoxShape.circle),
+    child: imageLink != 'no' ? null : Text(
+      userName!.toUpperCase()[0],
+      style: TextStyle(color: Color(int.parse(avatarColor2)), fontWeight: FontWeight.bold, fontSize: Get.theme.textTheme.headline5!.fontSize),
+    ),
+  );
 }
 
 Widget customHtml(List htmlData, int index) {
@@ -636,37 +633,21 @@ Widget customHtml(List htmlData, int index) {
             renderContext.tree.element!.attributes['data-url'] != null &&
             renderContext.tree.element!.attributes['data-url']!.contains(".gif")) {
         } else {
-
-          return PinchZoomImage(
-            image: CachedNetworkImage(
-              httpHeaders:  {
-
-              },
-              imageUrl: renderContext.tree.element!.attributes['src']!.contains('data:image/', 0) == true
-                  ? renderContext.tree.element!.attributes['data-src'].toString()
-                  : renderContext.tree.element!.attributes['src'].toString(),
-              filterQuality: FilterQuality.low,
-              errorWidget: (context, url, dy) {
-                return Text('Image Error');
-              },
-              placeholder: (context, c) {
-                if (width != null && height != null) {
-                  return AspectRatio(aspectRatio: width / height);
-                } else {
-                  return Container(height: 50, width: 50);
-                  // return AspectRatio(
-                  //   aspectRatio: 4 / 3,
-                  //   child: Container(
-                  //     constraints: BoxConstraints(maxWidth: Get.width, maxHeight: Get.height),
-                  //     width: width != null ? width : 50,
-                  //     height: height != null ? height : 50,
-                  //   ),
-                  // );
-                }
-              },
-            ),
-            //minScale: 0.5,
-            //maxScale: 3.0,
+          return CachedNetworkImage(
+            imageUrl: renderContext.tree.element!.attributes['src']!.contains('data:image/', 0) == true
+                ? renderContext.tree.element!.attributes['data-src'].toString()
+                : renderContext.tree.element!.attributes['src'].toString(),
+            filterQuality: FilterQuality.low,
+            errorWidget: (context, url, dy) {
+              return Text('Image Error');
+            },
+            placeholder: (context, c) {
+              if (width != null && height != null) {
+                return AspectRatio(aspectRatio: width / height);
+              } else {
+                return Container(height: 50, width: 50);
+              }
+            },
           );
         }
       },
@@ -785,28 +766,6 @@ Widget customHtml(List htmlData, int index) {
             ],
           );
         }
-
-        // double? width = double.tryParse(attrs!['width'] ?? "");
-        // double? height = double.tryParse(attrs['height'] ?? "");
-        // return Container(
-        //   width: width,
-        //   height: height,
-        //   child: WebView(
-        //     javascriptMode: JavascriptMode.unrestricted,
-        //     initialUrl: attrs['src'],
-        //     navigationDelegate: (NavigationRequest request) async {
-        //       if (attrs['src'] != null && attrs['src']!.contains("youtube.com/embed")) {
-        //         if (!request.url.contains("youtube.com/embed")) {
-        //           return NavigationDecision.prevent;
-        //         } else {
-        //           return NavigationDecision.navigate;
-        //         }
-        //       } else {
-        //         return NavigationDecision.navigate;
-        //       }
-        //     },
-        //   ),
-        // );
       }
     },
     style: {
@@ -821,9 +780,36 @@ Widget customHtml(List htmlData, int index) {
         ..margin = EdgeInsets.only(left: 5.0, right: 5.0, bottom: 10.0)
         ..display = Display.BLOCK,
     },
+    customImageRenders: {networkSourceMatcher(): networkImageRender(loadingWidget: () => CupertinoActivityIndicator())},
     onLinkTap: (String? url, RenderContext context, Map<String, String> attributes, dom.Element? element) async {
       if (url != null) {
-        if (url.contains('https://voz.vn/t/', 0)) {
+        if (url.contains(RegExp(r'voz.vn/t/.*?/post-'))) {
+          ///Check is current page contain this post
+          final postNumber = url.split('post-')[1];
+          var i = htmlData.firstWhere((element) => element['postID'] == postNumber, orElse: () => 'noElement');
+          if (i != 'noElement') {
+            Get.bottomSheet(
+                Container(
+                  height: Get.height * 0.8,
+                  child: DraggableScrollableSheet(
+                    initialChildSize: 1,
+                    minChildSize: 0.85,
+                    builder: (_, controller) {
+                      return SingleChildScrollView(
+                        controller: controller,
+                        child: Container(
+                          decoration: BoxDecoration(color: Colors.grey.shade800, borderRadius: BorderRadius.all(Radius.circular(6))),
+                          padding: EdgeInsets.only(bottom: 20),
+                          child: customHtml([i], 0),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                elevation: 122,
+                isScrollControlled: true);
+          }
+        } else if (url.contains('https://voz.vn/t/', 0)) {
           GlobalController.i.sessionTag.add('ViewController at $url');
           Get.lazyPut<ViewController>(() => ViewController(), tag: GlobalController.i.sessionTag.last);
           Get.toNamed("/ViewPage", arguments: [url.replaceFirst(GlobalController.i.url + '/t/', '', 0), url, '', 0], preventDuplicates: false);

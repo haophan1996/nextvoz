@@ -12,11 +12,9 @@ import '/GlobalController.dart';
 import '/Page/reuseWidget.dart';
 
 class ViewController extends GetxController {
-  List htmlData = [];
-  RxList reactionList = [].obs;
-  int currentPage = 0, totalPage = 0;
+  List htmlData = [],reactionList = [];
+  int currentPage = 0, totalPage = 0, lengthHtmlDataList = 0;
   Map<String, dynamic> data = {};
-  int lengthHtmlDataList = 0;
   bool isEdit = false;
   late var _user;
   var dio = Dio(), percentDownload = 0.0;
@@ -53,8 +51,8 @@ class ViewController extends GetxController {
     GlobalController.i.sessionTag.removeLast();
     refreshController.dispose();
     listViewScrollController.dispose();
-    reactionList.close();
-    GlobalController.i.percentDownload = -1.0;
+    htmlData.clear();
+    data.clear();
   }
 
   _removeTag(String content) {
@@ -63,7 +61,6 @@ class ViewController extends GetxController {
   }
 
   setPageOnClick(int toPage) async {
-    GlobalController.i.percentDownload = 0.01;
     data['view'] == 0
         ? await loadUserPost(data['fullUrl'] + GlobalController.i.pageLink + toPage.toString())
         : await loadInboxView(data['fullUrl'] + GlobalController.i.pageLink + toPage.toString());
@@ -177,13 +174,14 @@ class ViewController extends GetxController {
 
         //Get post
         element.getElementsByClassName("message message--post js-post js-inlineModContainer").forEach((element) {
-          data['_postContent'] = element.getElementsByClassName("message-body js-selectToQuote")[0].outerHtml;
+          data['_postContent'] = element.getElementsByClassName("message-body js-selectToQuote")[0].outerHtml;//.replaceAll('color: #000000', '');
 
           if (element.getElementsByClassName('message-lastEdit').length > 0) {
             data['_postContent'] = data['_postContent'] + fixLastEditPost(element.getElementsByClassName('message-lastEdit')[0].text);
           }
 
           data['_userPostDate'] = element.getElementsByClassName("u-concealed")[0].text.trim();
+
 
           _user = element.getElementsByClassName("message-cell message-cell--user");
           data['postID'] = element.attributes['id']!.split('t-')[1];

@@ -26,6 +26,7 @@ class ThreadUI extends GetView<ThreadController> {
           GetBuilder<ThreadController>(builder: (controller) {
             return refreshIndicatorConfiguration(
               Scrollbar(
+                controller: controller.listViewScrollController,
                 child: SmartRefresher(
                   enablePullDown: false,
                   enablePullUp: true,

@@ -9,7 +9,7 @@ class YoutubeController extends GetxController implements YouTubePlayerListener{
   @override
   void onCurrentSecond(double second) {
     // TODO: implement onCurrentSecond
-    print("onCurrentSecond second = $second");
+    //print("onCurrentSecond second = $second");
     currentVideoSecond = second;
   }
 
@@ -55,10 +55,11 @@ class YoutubeController extends GetxController implements YouTubePlayerListener{
   @override
   void onVideoDuration(double duration) {
     // TODO: implement onVideoDuration
-    print("onVideoDuration duration = $duration");
+    //print("onVideoDuration duration = $duration");
   }
 
   void onYoutubeCreated(FlutterYoutubeViewController controller) {
     this.controller = controller;
+
   }
 }

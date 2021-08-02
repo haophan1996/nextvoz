@@ -143,6 +143,6 @@ class NaviDrawerController extends GetxController {
   }
 
   navigateToSetting() {
-    Get.toNamed('/Settings');
+    Get.toNamed('/Settings', preventDuplicates: false);
   }
 }
