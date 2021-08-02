@@ -148,19 +148,21 @@ Widget settings() => Row(
                 onPressed: () async {
                   await Get.toNamed('/Alerts', preventDuplicates: false);
                 }),
-            GetBuilder<GlobalController>(builder: (controller) {
-              return Positioned(
-                right: 0,
-                top: 3,
-                child: Container(
-                  width: 30,
-                  decoration: BoxDecoration(shape: BoxShape.circle, color: controller.alertNotifications == 0 ? Colors.transparent : Colors.red),
-                  child: Center(
-                    child: Text(controller.alertNotifications == 0 ? '' : controller.alertNotifications.toString()),
-                  ),
-                ),
-              );
-            })
+            GetBuilder<GlobalController>(
+                id: 'alertNotification',
+                builder: (controller) {
+                  return Positioned(
+                    right: 0,
+                    top: 3,
+                    child: Container(
+                      width: 30,
+                      decoration: BoxDecoration(shape: BoxShape.circle, color: controller.alertNotifications == 0 ? Colors.transparent : Colors.red),
+                      child: Center(
+                        child: Text(controller.alertNotifications == 0 ? '' : controller.alertNotifications.toString()),
+                      ),
+                    ),
+                  );
+                })
           ],
         ),
         Stack(
@@ -173,19 +175,21 @@ Widget settings() => Row(
                 onPressed: () async {
                   await Get.toNamed('/AlertsInbox', preventDuplicates: false);
                 }),
-            GetBuilder<GlobalController>(builder: (controller) {
-              return Positioned(
-                right: 0,
-                top: 3,
-                child: Container(
-                  width: 30,
-                  decoration: BoxDecoration(shape: BoxShape.circle, color: controller.inboxNotifications == 0 ? Colors.transparent : Colors.red),
-                  child: Center(
-                    child: Text(controller.inboxNotifications == 0 ? '' : controller.inboxNotifications.toString()),
-                  ),
-                ),
-              );
-            })
+            GetBuilder<GlobalController>(
+                id: 'inboxNotification',
+                builder: (controller) {
+                  return Positioned(
+                    right: 0,
+                    top: 3,
+                    child: Container(
+                      width: 30,
+                      decoration: BoxDecoration(shape: BoxShape.circle, color: controller.inboxNotifications == 0 ? Colors.transparent : Colors.red),
+                      child: Center(
+                        child: Text(controller.inboxNotifications == 0 ? '' : controller.inboxNotifications.toString()),
+                      ),
+                    ),
+                  );
+                })
           ],
         ),
         CupertinoButton(
@@ -599,17 +603,21 @@ Widget displayAvatar(double sizeImage, String avatarColor1, String avatarColor2,
     height: sizeImage,
     alignment: Alignment.center,
     decoration: BoxDecoration(
-        image: imageLink == 'no' ? null : DecorationImage(
-          image: CachedNetworkImageProvider(imageLink),
-        ),
+        image: imageLink == 'no'
+            ? null
+            : DecorationImage(
+                image: CachedNetworkImageProvider(imageLink),
+              ),
         color: Color(
           int.parse(avatarColor1),
         ),
         shape: BoxShape.circle),
-    child: imageLink != 'no' ? null : Text(
-      userName!.toUpperCase()[0],
-      style: TextStyle(color: Color(int.parse(avatarColor2)), fontWeight: FontWeight.bold, fontSize: Get.theme.textTheme.headline5!.fontSize),
-    ),
+    child: imageLink != 'no'
+        ? null
+        : Text(
+            userName!.toUpperCase()[0],
+            style: TextStyle(color: Color(int.parse(avatarColor2)), fontWeight: FontWeight.bold, fontSize: Get.theme.textTheme.headline5!.fontSize),
+          ),
   );
 }
 

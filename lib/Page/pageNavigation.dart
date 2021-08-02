@@ -59,18 +59,20 @@ Widget pageNavigation(int currentPage, int totalPage, Function(int index) gotoPa
             ),
             Align(
               alignment: Alignment.bottomRight,
-              child: GetBuilder<GlobalController>(builder: (controller){
-                return CupertinoButton(
-                  padding: EdgeInsets.zero,
-                  child: Icon(
-                    Icons.more_rounded,
-                    color: controller.inboxNotifications != 0 || controller.alertNotifications != 0 ? Colors.red :Get.theme.primaryColor,
-                  ),
-                  onPressed: () {
-                    Get.bottomSheet(userInformation());
-                  },
-                );
-              }),
+              child: GetBuilder<GlobalController>(
+                  id: 'Notification',
+                  builder: (controller) {
+                    return CupertinoButton(
+                      padding: EdgeInsets.zero,
+                      child: Icon(
+                        Icons.more_rounded,
+                        color: controller.inboxNotifications != 0 || controller.alertNotifications != 0 ? Colors.red : Get.theme.primaryColor,
+                      ),
+                      onPressed: () {
+                        Get.bottomSheet(userInformation());
+                      },
+                    );
+                  }),
             ),
           ],
         ),
@@ -79,7 +81,7 @@ Widget pageNavigation(int currentPage, int totalPage, Function(int index) gotoPa
   );
 }
 
-Widget userInformation(){
+Widget userInformation() {
   return Container(
     decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(6)), color: Colors.grey.shade700),
     padding: EdgeInsets.only(left: 5, right: 5, top: 5),
@@ -87,7 +89,9 @@ Widget userInformation(){
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          GetBuilder<GlobalController>(builder: (controller) {
+          GetBuilder<GlobalController>(
+              id: 'Notification',
+              builder: (controller) {
             return controller.isLogged == false ? login() : logged();
           }),
           whatNew(),

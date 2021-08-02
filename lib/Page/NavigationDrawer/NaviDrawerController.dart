@@ -57,7 +57,7 @@ class NaviDrawerController extends GetxController {
       await GlobalController.i.setDataUser();
       await getUserProfile();
       update();
-      GlobalController.i.update();
+      GlobalController.i.update(['Notification'], true);
       await Future.delayed(Duration(milliseconds: 3000), () async {
         Get.back();
         Get.back();
@@ -67,13 +67,15 @@ class NaviDrawerController extends GetxController {
 
   getUserProfile() async {
     await GlobalController.i.getBody(() {}, (download) {}, dio, GlobalController.i.url, false).then((res) async {
-      GlobalController.i.inboxNotifications = res!.getElementsByClassName('p-navgroup-link--conversations').length > 0
-          ? int.parse(res.getElementsByClassName('p-navgroup-link--conversations')[0].attributes['data-badge'].toString())
-          : 0;
-      GlobalController.i.alertNotifications = res.getElementsByClassName('p-navgroup-link--alerts').length > 0
-          ? int.parse(res.getElementsByClassName('p-navgroup-link--alerts')[0].attributes['data-badge'].toString())
-          : 0;
-      GlobalController.i.update();
+
+      if (res!.getElementsByTagName('html')[0].attributes['data-logged-in'] == 'true'){
+        GlobalController.i.controlNotification(
+            int.parse(res.getElementsByClassName('p-navgroup-link--alerts')[0].attributes['data-badge'].toString()),
+            int.parse(res.getElementsByClassName('p-navgroup-link--conversations')[0].attributes['data-badge'].toString()),
+            res.getElementsByTagName('html')[0].attributes['data-logged-in'].toString()
+        );
+      } else GlobalController.i.controlNotification(0, 0, 'false');
+
       String linkProfile = res.getElementsByTagName('form')[1].attributes['action']!.split('/post')[0];
       linkUser = linkProfile;
       await GlobalController.i.getBody(() {}, (download) {}, dio, GlobalController.i.url + linkProfile, false).then((value) {
@@ -129,7 +131,7 @@ class NaviDrawerController extends GetxController {
     await GlobalController.i.userStorage.remove("xf_session");
     await GlobalController.i.userStorage.remove("date_expire");
     update();
-    GlobalController.i.update();
+    GlobalController.i.update(['Notification'], true);
     if(Get.isDialogOpen==true) Get.back();
   }
 

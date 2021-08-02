@@ -34,6 +34,38 @@ class GlobalController extends GetxController {
     super.onInit();
   }
 
+  controlNotification(int alt, int ib, String login){
+    if (login =='false'){
+      if (login != isLogged.toString()){
+        print('checkkkkk logggout');
+        isLogged = false;
+        update();
+      }
+
+    } else {
+      print(login);
+      if (login != isLogged.toString()){
+        print('checkkkkk');
+        isLogged = true;
+        update(['Notification'], true);
+        update();
+      }
+
+      if (alt != alertNotifications || ib != inboxNotifications){
+        print('checkkkkk notiiii');
+        if (alt != alertNotifications){
+          alertNotifications = alt;
+          update(['alertNotification'], true);
+        }
+        if (ib != inboxNotifications) {
+          inboxNotifications = ib;
+          update(['inboxNotification'], true);
+        }
+        update(['Notification'], true);
+      }
+    }
+  }
+
   Future<dom.Document?> getBody(Function onError, Function(double) onDownload, Dio dios, String url, bool isHomePage) async {
     if (isLogged == true) {
       dios.options.headers['cookie'] = 'xf_user=${xfUser.toString()}; xf_session=${xfSession.toString()}';

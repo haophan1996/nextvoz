@@ -54,17 +54,14 @@ class ThreadController extends GetxController {
       update(['download'], true);
     }, dio, url, false).then((value) async {
       lengthHtmlDataList = myThreadList.length;
-      if (value!.getElementsByTagName('html')[0].attributes['data-logged-in'] == 'true') {
-        GlobalController.i.isLogged = true;
-        GlobalController.i.inboxNotifications = value.getElementsByClassName('p-navgroup-link--conversations').length > 0
-            ? int.parse(value.getElementsByClassName('p-navgroup-link--conversations')[0].attributes['data-badge'].toString())
-            : 0;
-        GlobalController.i.alertNotifications = value.getElementsByClassName('p-navgroup-link--alerts').length > 0
-            ? int.parse(value.getElementsByClassName('p-navgroup-link--alerts')[0].attributes['data-badge'].toString())
-            : 0;
-        GlobalController.i.update();
-      } else
-        GlobalController.i.isLogged = false;
+
+      if (value!.getElementsByTagName('html')[0].attributes['data-logged-in'] == 'true'){
+        GlobalController.i.controlNotification(
+            int.parse(value.getElementsByClassName('p-navgroup-link--alerts')[0].attributes['data-badge'].toString()),
+            int.parse(value.getElementsByClassName('p-navgroup-link--conversations')[0].attributes['data-badge'].toString()),
+            value.getElementsByTagName('html')[0].attributes['data-logged-in'].toString()
+        );
+      } else GlobalController.i.controlNotification(0, 0, 'false');
 
       value.getElementsByClassName("p-body-content").forEach((element) async {
         lastP = element.getElementsByClassName("pageNavSimple");

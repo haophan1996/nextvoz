@@ -18,29 +18,28 @@ class AlertsUI extends GetView<AlertsController> {
           color: Theme.of(context).backgroundColor.withOpacity(0.9),
         ),
         child: GetBuilder<AlertsController>(
+          id: 'loadingState',
           builder: (controller) {
-            return GlobalController.i.alertList.length != 0
-                ? ListView.builder(
-                    physics: BouncingScrollPhysics(),
-                    itemCount: GlobalController.i.alertList.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      return Container(
-                        decoration: BoxDecoration(
-                            color: GlobalController.i.alertList.elementAt(index)['unread'] == 'true' ? Get.theme.canvasColor : Colors.transparent,
-                            border: Border(
-                              bottom: BorderSide(width: 0.5, color: Theme.of(context).primaryColor),
-                            )),
-                        child: itemList(index),
-                      );
-                    },
-                  )
-                : loading();
+            return controller.data['loadingStatus'] == 'loading' ? loading() : ListView.builder(
+              physics: BouncingScrollPhysics(),
+              itemCount: GlobalController.i.alertList.length,
+              itemBuilder: (BuildContext context, int index) {
+                return Container(
+                  decoration: BoxDecoration(
+                      color: GlobalController.i.alertList.elementAt(index)['unread'] == 'true' ? Get.theme.canvasColor : Colors.transparent,
+                      border: Border(
+                        bottom: BorderSide(width: 0.5, color: Theme.of(context).primaryColor),
+                      )),
+                  child: itemList(index),
+                );
+              },
+            );
           },
         ),
       ),
     );
-  }
 
+  }
   Widget loading() => Stack(
     children: [
       GetBuilder<AlertsController>(
@@ -70,18 +69,18 @@ class AlertsUI extends GetView<AlertsController> {
             GlobalController.i.alertList.elementAt(index)['reaction'] == ''
                 ? TextSpan()
                 : TextSpan(
-                    text: 'with ${GlobalController.i.alertList.elementAt(index)['reaction'] == '1' ? 'Ưng ' : 'Gạch '}',
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: GlobalController.i.alertList.elementAt(index)['reaction'] == '1' ? Colors.pinkAccent : Colors.red)),
+                text: 'with ${GlobalController.i.alertList.elementAt(index)['reaction'] == '1' ? 'Ưng ' : 'Gạch '}',
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: GlobalController.i.alertList.elementAt(index)['reaction'] == '1' ? Colors.pinkAccent : Colors.red)),
             GlobalController.i.alertList.elementAt(index)['reaction'] == ''
                 ? TextSpan()
                 : WidgetSpan(
-                    child: Image.asset(
-                      'assets/reaction/${GlobalController.i.alertList.elementAt(index)['reaction']}.png',
-                      width: 18,
-                    ),
-                  ),
+              child: Image.asset(
+                'assets/reaction/${GlobalController.i.alertList.elementAt(index)['reaction']}.png',
+                width: 18,
+              ),
+            ),
             TextSpan(text: '\n' + GlobalController.i.alertList.elementAt(index)['time'], style: TextStyle(color: Get.theme.secondaryHeaderColor))
           ],
         ),
@@ -89,7 +88,7 @@ class AlertsUI extends GetView<AlertsController> {
       onPressed: () {
         if (GlobalController.i.alertList.elementAt(index)['unread'] == 'true') {
           GlobalController.i.alertList.elementAt(index)['unread'] = 'false';
-          GlobalController.i.update();
+          controller.update();
         }
         if (GlobalController.i.alertList.elementAt(index)['link'].contains('/u/', 0) == true) {
           GlobalController.i.sessionTag.add('profile${DateTime.now().toString()}');
@@ -111,4 +110,5 @@ class AlertsUI extends GetView<AlertsController> {
       },
     );
   }
+
 }
