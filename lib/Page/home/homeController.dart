@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
+import 'package:nextvoz/Routes/routes.dart';
 import '/GlobalController.dart';
 
 class HomeController extends GetxController {
@@ -16,7 +17,7 @@ class HomeController extends GetxController {
   Future<void> onReady() async {
     super.onReady();
     if (GlobalController.i.userStorage.read('defaultsPage') == true) {
-      Get.toNamed("/ThreadPage",
+      Get.toNamed(Routes.Thread,
           arguments: [GlobalController.i.userStorage.read('defaultsPage_title'), GlobalController.i.userStorage.read('defaultsPage_link')]);
       if (GlobalController.i.userStorage.read('homeList') == null) {
         await loading();
@@ -81,7 +82,7 @@ class HomeController extends GetxController {
 
   navigateToThread(String title, String link) async {
     Future.delayed(Duration(milliseconds: 200), () {
-      Get.toNamed("/ThreadPage", arguments: [title, GlobalController.i.url + link]);
+      Get.toNamed(Routes.Thread, arguments: [title, GlobalController.i.url + link]);
     });
   }
 }

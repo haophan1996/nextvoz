@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:html/parser.dart' as parser;
 import 'package:html/dom.dart' as dom;
+import 'package:nextvoz/Routes/routes.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:flutter_reaction_button/flutter_reaction_button.dart';
@@ -12,7 +13,7 @@ import '/GlobalController.dart';
 import '/Page/reuseWidget.dart';
 
 class ViewController extends GetxController {
-  List htmlData = [],reactionList = [];
+  List htmlData = [], reactionList = [];
   int currentPage = 0, totalPage = 0, lengthHtmlDataList = 0;
   Map<String, dynamic> data = {};
   bool isEdit = false;
@@ -39,9 +40,11 @@ class ViewController extends GetxController {
     data['view'] == 0
         ? await loadUserPost(data['fullUrl'] = GlobalController.i.url + data['subLink'])
         : await loadInboxView(data['fullUrl'] = GlobalController.i.url + data['subLink']);
-    if (data['fullUrl'].contains("/unread") == true) {
-      data['fullUrl'] = data['fullUrl'].split("unread")[0];
-    }
+
+    update(['firstLoading']);
+    // if (data['fullUrl'].contains("/unread") == true) {
+    //   data['fullUrl'] = data['fullUrl'].split("unread")[0];
+    // }
   }
 
   @override
@@ -104,7 +107,10 @@ class ViewController extends GetxController {
   getDataReactionList(int index) async {
     reactionList.clear();
     await GlobalController.i
-        .getBody((){}, (download){},dio,
+        .getBody(
+            () {},
+            (download) {},
+            dio,
             '${data['view'] == 0 ? GlobalController.i.viewReactLink : GlobalController.i.inboxReactLink}' +
                 htmlData.elementAt(index)['postID'] +
                 '/reactions',
@@ -132,6 +138,7 @@ class ViewController extends GetxController {
           'rAvatar': data['avatar'],
         });
       });
+      update(['reactionState'], true);
     });
   }
 
@@ -148,14 +155,22 @@ class ViewController extends GetxController {
       lengthHtmlDataList = htmlData.length;
       data['dataCsrfPost'] = value!.getElementsByTagName('html')[0].attributes['data-csrf'];
       data['xfCsrfPost'] = GlobalController.i.xfCsrfPost;
-
-      if (value.getElementsByTagName('html')[0].attributes['data-logged-in'] == 'true'){
+      data['fullUrl'] = value.getElementsByTagName('head')[0].getElementsByTagName('link')[2].attributes['href'];
+      if (data['fullUrl'].contains('page-') == true) {
+        data['fullUrl'] = data['fullUrl']
+            .toString()
+            .split(
+              'page-',
+            )
+            .first;
+      }
+      if (value.getElementsByTagName('html')[0].attributes['data-logged-in'] == 'true') {
         GlobalController.i.controlNotification(
             int.parse(value.getElementsByClassName('p-navgroup-link--alerts')[0].attributes['data-badge'].toString()),
             int.parse(value.getElementsByClassName('p-navgroup-link--conversations')[0].attributes['data-badge'].toString()),
-            value.getElementsByTagName('html')[0].attributes['data-logged-in'].toString()
-        );
-      } else GlobalController.i.controlNotification(0, 0, 'false');
+            value.getElementsByTagName('html')[0].attributes['data-logged-in'].toString());
+      } else
+        GlobalController.i.controlNotification(0, 0, 'false');
 
       value.getElementsByClassName("block block--messages").forEach((element) {
         var lastP = element.getElementsByClassName("pageNavSimple");
@@ -163,8 +178,6 @@ class ViewController extends GetxController {
           currentPage = 1;
           totalPage = 1;
         } else {
-          data['fullUrl'] =
-              GlobalController.i.url + element.getElementsByClassName('pageNav-page ')[0].getElementsByTagName('a')[0].attributes['href'].toString();
           var naviPage = element.getElementsByClassName("pageNavSimple-el pageNavSimple-el--current").first.innerHtml.trim();
           currentPage = int.parse(naviPage.replaceAll(RegExp(r'[^0-9]\S*'), ""));
           totalPage = int.parse(naviPage.replaceAll(RegExp(r'\S*[^0-9]'), ""));
@@ -172,14 +185,13 @@ class ViewController extends GetxController {
 
         //Get post
         element.getElementsByClassName("message message--post js-post js-inlineModContainer").forEach((element) {
-          data['_postContent'] = element.getElementsByClassName("message-body js-selectToQuote")[0].outerHtml;//.replaceAll('color: #000000', '');
+          data['_postContent'] = element.getElementsByClassName("message-body js-selectToQuote")[0].outerHtml; //.replaceAll('color: #000000', '');
 
           if (element.getElementsByClassName('message-lastEdit').length > 0) {
             data['_postContent'] = data['_postContent'] + fixLastEditPost(element.getElementsByClassName('message-lastEdit')[0].text);
           }
 
           data['_userPostDate'] = element.getElementsByClassName("u-concealed")[0].text.trim();
-
 
           _user = element.getElementsByClassName("message-cell message-cell--user");
           data['postID'] = element.attributes['id']!.split('t-')[1];
@@ -269,22 +281,29 @@ class ViewController extends GetxController {
       data['dataCsrfPost'] = value!.getElementsByTagName('html')[0].attributes['data-csrf'];
       data['xfCsrfPost'] = GlobalController.i.xfCsrfPost;
 
-      if (value.getElementsByTagName('html')[0].attributes['data-logged-in'] == 'true'){
+      data['fullUrl'] = GlobalController.i.url + value.getElementsByTagName('head')[0].getElementsByTagName('link')[2].attributes['href'].toString();
+      if (data['fullUrl'].contains('page-') == true) {
+        data['fullUrl'] = data['fullUrl']
+            .toString()
+            .split(
+              'page-',
+            )
+            .first;
+      }
+
+      if (value.getElementsByTagName('html')[0].attributes['data-logged-in'] == 'true') {
         GlobalController.i.controlNotification(
             int.parse(value.getElementsByClassName('p-navgroup-link--alerts')[0].attributes['data-badge'].toString()),
             int.parse(value.getElementsByClassName('p-navgroup-link--conversations')[0].attributes['data-badge'].toString()),
-            value.getElementsByTagName('html')[0].attributes['data-logged-in'].toString()
-        );
-      } else GlobalController.i.controlNotification(0, 0, 'false');
-
+            value.getElementsByTagName('html')[0].attributes['data-logged-in'].toString());
+      } else
+        GlobalController.i.controlNotification(0, 0, 'false');
 
       var lastP = value.getElementsByClassName("pageNavSimple");
       if (lastP.length == 0) {
         currentPage = 1;
         totalPage = 1;
       } else {
-        data['fullUrl'] =
-            GlobalController.i.url + value.getElementsByClassName('pageNav-page ')[0].getElementsByTagName('a')[0].attributes['href'].toString();
         var naviPage = value.getElementsByClassName("pageNavSimple-el pageNavSimple-el--current").first.innerHtml.trim();
         currentPage = int.parse(naviPage.replaceAll(RegExp(r'[^0-9]\S*'), ""));
         totalPage = int.parse(naviPage.replaceAll(RegExp(r'\S*[^0-9]'), ""));
@@ -406,7 +425,8 @@ class ViewController extends GetxController {
 
   reply(String message, bool isEditPost) async {
     //                                            token               xf_csrf             link
-    var x = await Get.toNamed('/PostStatus',
+    print(data['fullUrl']);
+    var x = await Get.toNamed(Routes.AddReply,
         arguments: [data['xfCsrfPost'], data['dataCsrfPost'], data['fullUrl'], data['postID'], isEditPost, data['view'], message]);
     if (x?[0] == 'ok') {
       if (await GlobalController.i.userStorage.read('scrollToMyRepAfterPost') == true) {

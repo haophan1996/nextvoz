@@ -6,7 +6,7 @@ import '/Page/reuseWidget.dart';
 import '/GlobalController.dart';
 import 'NavigationDrawer/NaviDrawerUI.dart';
 
-Widget pageNavigation(int currentPage, int totalPage, Function(int index) gotoPage, Function reply) {
+Widget pageNavigation(Function(String index) gotoPage, Function reply, Widget child) {
   return FittedBox(
     child: Container(
       color: Get.theme.backgroundColor.withOpacity(0.7),
@@ -39,20 +39,17 @@ Widget pageNavigation(int currentPage, int totalPage, Function(int index) gotoPa
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   customCupertinoButton(Alignment.center, EdgeInsets.zero, Icon(Icons.arrow_back, color: Get.theme.primaryColor), () {
-                    gotoPage(1);
+                    gotoPage('F');
                   }),
                   customCupertinoButton(Alignment.center, EdgeInsets.zero, Icon(Icons.arrow_back_ios_rounded, color: Get.theme.primaryColor), () {
-                    gotoPage(currentPage -= 1);
+                    gotoPage('P');
                   }),
-                  Text(
-                    '${currentPage.toString()} of ${totalPage.toString()}',
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
+                  child,
                   customCupertinoButton(Alignment.center, EdgeInsets.zero, Icon(Icons.arrow_forward_ios_rounded, color: Get.theme.primaryColor), () {
-                    gotoPage(currentPage += 1);
+                    gotoPage('N');
                   }),
                   customCupertinoButton(Alignment.center, EdgeInsets.zero, Icon(Icons.arrow_forward, color: Get.theme.primaryColor), () {
-                    gotoPage(totalPage);
+                    gotoPage('L');
                   }),
                 ],
               ),
@@ -82,7 +79,7 @@ Widget pageNavigation(int currentPage, int totalPage, Function(int index) gotoPa
 }
 
 Widget userInformation() {
-  return Container(
+  return SafeArea(child: Container(
     decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(6)), color: Colors.grey.shade700),
     padding: EdgeInsets.only(left: 5, right: 5, top: 5),
     child: SafeArea(
@@ -92,21 +89,13 @@ Widget userInformation() {
           GetBuilder<GlobalController>(
               id: 'Notification',
               builder: (controller) {
-            return controller.isLogged == false ? login() : logged();
-          }),
+                return controller.isLogged == false ? login() : logged();
+              }),
           whatNew(),
-          Padding(
-            padding: EdgeInsets.only(top: 5),
-            child: Container(
-              decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(6)), color: Get.theme.backgroundColor),
-              width: Get.width,
-              child: customCupertinoButton(Alignment.center, EdgeInsets.zero, Text('Copy Link'), () {}),
-            ),
-          )
         ],
       ),
     ),
-  );
+  ));
 }
 
 Widget whatNew() => Container(

@@ -2,6 +2,9 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:nextvoz/Page/Login/LoginBindings.dart';
+import 'package:nextvoz/Page/Login/LoginUI.dart';
+import 'package:nextvoz/Routes/routes.dart';
 import '/Page/Alert_Inbox/InboxBindings.dart';
 import '/Page/Alert_Inbox/InboxUI.dart';
 import 'Utils/theme.dart';
@@ -46,12 +49,11 @@ class MyPage extends StatelessWidget {
       locale: GlobalController.i.langList.elementAt(GlobalController.i.userStorage.read('lang')),
       theme: Themes().lightTheme,
       darkTheme: Themes().darkTheme,
-      initialRoute: "/HomePage",
-
+      initialRoute: Routes.Home,
       getPages: [
-        GetPage(name: "/HomePage", page: () => HomePageUI(), popGesture: true, binding: HomeBinding(), maintainState: false),
+        GetPage(name: Routes.Home, page: () => HomePageUI(), popGesture: true, binding: HomeBinding(), maintainState: false),
         GetPage(
-            name: "/ThreadPage",
+            name: Routes.Thread,
             page: () => ThreadUI(),
             popGesture: true,
             binding: ThreadBinding(),
@@ -60,24 +62,19 @@ class MyPage extends StatelessWidget {
             },
             maintainState: false),
         GetPage(
-            name: "/ViewPage",
+            name: Routes.View,
             page: () => ViewUI(),
             transition: Transition.rightToLeft,
             transitionDuration: Duration(milliseconds: 200),
             popGesture: true,
             maintainState: false),
-        GetPage(name: '/Alerts', page: () => AlertsUI(), binding: PopBinding(), gestureWidth: (context) => context.width, popGesture: true),
+        GetPage(name: Routes.Alerts, page: () => AlertsUI(), binding: PopBinding(), gestureWidth: (context) => context.width, popGesture: true),
         GetPage(
-            name: '/AlertsInbox', page: () => InboxUI(), binding: InboxBindings(), gestureWidth: (context) => context.width, popGesture: true),
+            name: Routes.Conversation, page: () => InboxUI(), binding: InboxBindings(), gestureWidth: (context) => context.width, popGesture: true),
+        GetPage(name: Routes.Profile, page: () => UserProfileUI(), gestureWidth: (context) => context.width, popGesture: true, maintainState: false),
+        GetPage(name: Routes.Youtube, page: () => YoutubeView(), binding: YoutubeBinding(), popGesture: true),
         GetPage(
-            name: "/UserProfile",
-            page: () => UserProfileUI(),
-            gestureWidth: (context) => context.width,
-            popGesture: true /*, binding: UserProfileBinding()*/,
-            maintainState: false),
-        GetPage(name: '/Youtube', page: () => YoutubeView(), binding: YoutubeBinding(), popGesture: true),
-        GetPage(
-            name: "/PostStatus",
+            name: Routes.AddReply,
             page: () => PostStatusUI(),
             popGesture: false,
             binding: PostStatusBindings(),
@@ -85,13 +82,22 @@ class MyPage extends StatelessWidget {
             transitionDuration: Duration(milliseconds: 200),
             maintainState: false),
         GetPage(
-            name: "/Settings",
+            name: Routes.Settings,
             page: () => SettingsUI(),
             popGesture: true,
             binding: SettingsBinding(),
             transition: Transition.rightToLeft,
             transitionDuration: Duration(milliseconds: 200),
             maintainState: false),
+        GetPage(
+          name: Routes.Login,
+          page: () => LoginUI(),
+          binding: LoginBindings(),
+          transition: Transition.topLevel,
+          transitionDuration: Duration(milliseconds: 200),
+          gestureWidth: (context)=> context.width,
+          popGesture: true,
+        )
       ],
     );
   }

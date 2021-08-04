@@ -16,16 +16,33 @@ class UserProfileUI extends StatelessWidget {
       ]),
       backgroundColor: Theme.of(context).backgroundColor,
       body: GetBuilder<UserProfileController>(
+          id: 'loadingState',
           tag: GlobalController.i.sessionTag.last,
           builder: (controller) {
             return controller.data['loadingStatus'] == 'loadFailed'
                 ? loadFailed(controller)
                 : controller.data['loadingStatus'] == 'loading'
-                    ? loadingShimmer()
+                    ? loading()
                     : profile(controller);
           }),
     );
   }
+
+  Widget loading() => Stack(
+    children: [
+      GetBuilder<UserProfileController>(
+          id: 'download',
+          tag: GlobalController.i.sessionTag.last,
+          builder: (controller) {
+            return LinearProgressIndicator(
+              value: controller.percentDownload,
+              valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF0CF301)),
+              backgroundColor: Get.theme.backgroundColor,
+            );
+          }),
+      loadingShimmer()
+    ],
+  );
 
   Widget loadFailed(UserProfileController controller) {
     return Center(

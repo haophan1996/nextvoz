@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:nextvoz/Routes/routes.dart';
 import '/GlobalController.dart';
 import '/Page/Profile/UserProfile/UserProfileController.dart';
 import '/Page/View/ViewController.dart';
@@ -88,19 +89,19 @@ class AlertsUI extends GetView<AlertsController> {
       onPressed: () {
         if (GlobalController.i.alertList.elementAt(index)['unread'] == 'true') {
           GlobalController.i.alertList.elementAt(index)['unread'] = 'false';
-          controller.update();
+          controller.update(['loadingState']);
         }
         if (GlobalController.i.alertList.elementAt(index)['link'].contains('/u/', 0) == true) {
           GlobalController.i.sessionTag.add('profile${DateTime.now().toString()}');
           Get.lazyPut<UserProfileController>(() => UserProfileController(), tag: GlobalController.i.sessionTag.last);
-          Get.toNamed('/UserProfile', arguments: [GlobalController.i.alertList.elementAt(index)['link']], preventDuplicates: false);
+          Get.toNamed(Routes.Profile, arguments: [GlobalController.i.alertList.elementAt(index)['link']], preventDuplicates: false);
         } else if (GlobalController.i.alertList.elementAt(index)['link'].contains('/profile-posts/', 0) == true) {
           // Go to status
           print('status');
         } else {
           GlobalController.i.sessionTag.add(GlobalController.i.alertList.elementAt(index)['threadName']);
           Get.lazyPut<ViewController>(() => ViewController(), tag: GlobalController.i.sessionTag.last);
-          Get.toNamed("/ViewPage", arguments: [
+          Get.toNamed(Routes.View, arguments: [
             GlobalController.i.alertList.elementAt(index)['threadName'],
             GlobalController.i.alertList.elementAt(index)['link'],
             GlobalController.i.alertList.elementAt(index)['prefix'],

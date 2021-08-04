@@ -142,7 +142,7 @@ class HomePageUI extends GetView<HomeController> {
                     Alignment.center,
                     EdgeInsets.only(left: 10, right: 10),
                     Text(
-                      controller.isLogged == false ? 'Guest user' : 'Logged in as ${NaviDrawerController.i.nameUser}',
+                      controller.isLogged == false ? 'Guest user' : 'Logged in as ${NaviDrawerController.i.data['nameUser']}',
                       style:
                           TextStyle(color: controller.alertNotifications != 0 || controller.inboxNotifications != 0 ? Colors.redAccent : Colors.blue),
                     ),

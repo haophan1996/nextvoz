@@ -11,61 +11,76 @@ import '/GlobalController.dart';
 import '../pageLoadNext.dart';
 
 class ViewUI extends StatelessWidget {
+  final controller = Get.find<ViewController>(tag: GlobalController.i.sessionTag.last);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       endDrawer: NaviDrawerUI(),
       endDrawerEnableOpenDragGesture: true,
       drawerEdgeDragWidth: MediaQuery.of(context).size.width * 0.2,
-      appBar: preferredSize(context, Get.find<ViewController>(tag: GlobalController.i.sessionTag.last).data['subHeader'],
-          Get.find<ViewController>(tag: GlobalController.i.sessionTag.last).data['subTypeHeader']),
+      appBar: preferredSize(context, controller.data['subHeader'], controller.data['subTypeHeader']),
       backgroundColor: Theme.of(context).backgroundColor,
-      body: Stack(children: [
-        GetBuilder<ViewController>(
-          tag: GlobalController.i.sessionTag.last,
-          builder: (controller) {
-            return postContent(context, controller);
-          },
-        ),
-        GetBuilder<ViewController>(
-            id: 'download',
-            tag: GlobalController.i.sessionTag.last,
-            builder: (controller) {
-              return LinearProgressIndicator(
-                value: controller.percentDownload,
-                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF0CF301)),
-                backgroundColor: Theme.of(context).backgroundColor,
-              );
-            }),
-        Align(
-          alignment: Alignment.bottomCenter,
-          child: GetBuilder<ViewController>(
-            tag: GlobalController.i.sessionTag.last,
-            builder: (controller) {
-              return pageNavigation(
-                controller.currentPage,
-                controller.totalPage,
-                (index) {
-                  if (index > controller.totalPage || index < 1) {
-                    HapticFeedback.lightImpact();
-                    if (index == 0) index = 1;
-                    if (index > controller.totalPage) index -= 1;
-                  }
-                  if (controller.totalPage != 0 && controller.currentPage != 0) {
-                    setDialog();
-                    controller.setPageOnClick(index);
-                  }
-                },
-                () => controller.reply('', false),
-              );
-            },
-          ),
-        ),
-      ]),
+      body: GetBuilder<ViewController>(
+        id: 'firstLoading',
+        tag: GlobalController.i.sessionTag.last,
+        builder: (controller) {
+          return controller.htmlData.length == 0
+              ? loading()
+              : loadSuccess();
+        },
+      ),
     );
   }
 
-  Widget postContent(BuildContext context, ViewController controller) {
+  Widget loading() {
+    return GetBuilder<ViewController>(
+        id: 'download',
+        tag: GlobalController.i.sessionTag.last,
+        builder: (controller) {
+          return LinearProgressIndicator(
+            value: controller.percentDownload,
+            valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF0CF301)),
+            backgroundColor: Get.theme.backgroundColor,
+          );
+        });
+  }
+
+  Widget loadSuccess() => Stack(children: [
+        GetBuilder<ViewController>(
+          tag: GlobalController.i.sessionTag.last,
+          builder: (controller) {
+            return postContent(controller);
+          },
+        ),
+        loading(),
+        Align(
+          alignment: Alignment.bottomCenter,
+          child: pageNavigation((String symbol) {
+            setDialog();
+            switch (symbol) {
+              case 'F':
+                controller.setPageOnClick(1);
+                break;
+              case 'P':
+                controller.setPageOnClick(controller.currentPage - 1);
+                break;
+              case 'N':
+                controller.setPageOnClick(controller.currentPage + 1);
+                break;
+              case 'L':
+                controller.setPageOnClick(controller.totalPage);
+                break;
+            }
+          },
+              () => controller.currentPage == 0 ? setDialogError('Wait') : controller.reply('', false),
+              GetBuilder<ViewController>(
+                  tag: GlobalController.i.sessionTag.last,
+                  builder: (controller) => Text('${controller.currentPage.toString()} of ${controller.totalPage.toString()}'))),
+        )
+      ]);
+
+  Widget postContent(ViewController controller) {
     return refreshIndicatorConfiguration(
       Scrollbar(
         controller: controller.listViewScrollController,
@@ -85,7 +100,8 @@ class ViewUI extends StatelessWidget {
           },
           child: ListView.builder(
             cacheExtent: 999999999,
-            //physics: BouncingScrollPhysics(),
+            physics: BouncingScrollPhysics(),
+            padding: EdgeInsets.only(bottom: 20),
             scrollDirection: Axis.vertical,
             controller: controller.listViewScrollController,
             itemCount: controller.htmlData.length,

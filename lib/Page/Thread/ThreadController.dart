@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:nextvoz/Routes/routes.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import '/GlobalController.dart';
 import '/Page/View/ViewController.dart';
@@ -32,7 +33,7 @@ class ThreadController extends GetxController {
     Future.delayed(Duration(milliseconds: 100), () {
       GlobalController.i.sessionTag.add(myThreadList.elementAt(index)['title']);
       Get.lazyPut<ViewController>(() => ViewController(), tag: GlobalController.i.sessionTag.last);
-      Get.toNamed("/ViewPage",
+      Get.toNamed(Routes.View,
           arguments: [myThreadList.elementAt(index)['title'], myThreadList.elementAt(index)['link'], myThreadList.elementAt(index)['prefix'], 0]);
     });
   }

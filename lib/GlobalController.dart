@@ -37,22 +37,18 @@ class GlobalController extends GetxController {
   controlNotification(int alt, int ib, String login){
     if (login =='false'){
       if (login != isLogged.toString()){
-        print('checkkkkk logggout');
         isLogged = false;
         update();
       }
 
     } else {
-      print(login);
       if (login != isLogged.toString()){
-        print('checkkkkk');
         isLogged = true;
         update(['Notification'], true);
         update();
       }
 
       if (alt != alertNotifications || ib != inboxNotifications){
-        print('checkkkkk notiiii');
         if (alt != alertNotifications){
           alertNotifications = alt;
           update(['alertNotification'], true);
@@ -88,7 +84,7 @@ class GlobalController extends GetxController {
     return parser.parse(response.toString());
   }
 
-  Future getHttpPost(Map<String, String> header, Map<String, String> body, String link) async {
+  Future getHttpPost(Map<String, String> header, dynamic body, String link) async {
     final response = await http.post(Uri.parse(link), headers: header, body: body).catchError((err) {
       print('get http post error: $header \n$body \n$link');
       Get.back();
@@ -127,10 +123,10 @@ class GlobalController extends GetxController {
 
   Future<void> setAccountUser() async {
     if (isLogged == true) {
-      NaviDrawerController.i.avatarUser.value = await userStorage.read('avatarUser');
-      NaviDrawerController.i.nameUser.value = await userStorage.read('nameUser');
-      NaviDrawerController.i.titleUser.value = await userStorage.read('titleUser');
-      NaviDrawerController.i.linkUser = await userStorage.read('linkUser');
+      NaviDrawerController.i.data['avatarUser'] = await userStorage.read('avatarUser');
+      NaviDrawerController.i.data['nameUser'] = await userStorage.read('nameUser');
+      NaviDrawerController.i.data['titleUser'] = await userStorage.read('titleUser');
+      NaviDrawerController.i.data['linkUser'] = await userStorage.read('linkUser');
     }
   }
 

@@ -1,12 +1,11 @@
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
-import 'package:http/http.dart' as http;
 import '/GlobalController.dart';
-import '/Page/NavigationDrawer/NaviDrawerController.dart';
 
 class UserProfileController extends GetxController {
-  late var xfCsrfPost;
-  late var dataCsrfPost;
+  late var xfCsrfPost,dataCsrfPost;
+
+  double percentDownload = 0.0;
   Map<String, dynamic> data = {};
   List htmlData = [];
   var dio = Dio();
@@ -32,21 +31,30 @@ class UserProfileController extends GetxController {
   onClose() {
     super.onClose();
     GlobalController.i.sessionTag.removeLast();
+    data.clear();
+    htmlData.clear();
+    dio.close(force: true);
   }
 
   onErrorLoad() {
     data['loadingStatus'] = 'loadFailed';
-    update();
+    update(['loadingState']);
   }
 
   onRefresh() async {
     data['loadingStatus'] = 'loading';
-    update();
+    update(['loadingState']);
     await loadProfileUser();
   }
 
   loadProfileUser() async {
-    await GlobalController.i.getBody((){}, (double){}, dio,GlobalController.i.url+data['linkProfileUser'], false).then((value) {
+    percentDownload = 0.1;
+    await GlobalController.i.getBody((){
+      onErrorLoad();
+    }, (download){
+      percentDownload = download;
+      update(['download']);
+    }, dio,GlobalController.i.url+data['linkProfileUser'], false).then((value) {
       data['dataCsrfPost'] = value!.getElementsByTagName('html')[0].attributes['data-csrf']; //Current page token
       data['xfCsrfPost'] = GlobalController.i.xfCsrfPost; // Post token
 
@@ -132,29 +140,29 @@ class UserProfileController extends GetxController {
         //}
         );
     data['loadingStatus'] = 'loadSucceeded';
-    update();
+    update(['loadingState']);
   }
 
-  uploadStatus() async {
-    var header = {
-      'cookie': 'xf_user=${GlobalController.i.xfUser.toString()}; $xfCsrfPost',
-      'referer': GlobalController.i.url + NaviDrawerController.i.linkUser,
-      'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
-      'User-Agent': NaviDrawerController.i.nameUser.value,
-      'Host': 'voz.vn'
-    };
-    var body = {
-      'message_html': 'post tu app flutter',
-      'load_extra': '1',
-      '_xfToken': dataCsrfPost,
-      '_xfRequestUri': NaviDrawerController.i.linkUser,
-      '_xfResponseType': 'json'
-    };
-
-    await http.post(Uri.parse(GlobalController.i.url + NaviDrawerController.i.linkUser + "/post"), headers: header, body: body).then((value) {
-      print(value.statusCode);
-      print(value.headers);
-      print(value.body);
-    });
-  }
+  // uploadStatus() async {
+  //   var header = {
+  //     'cookie': 'xf_user=${GlobalController.i.xfUser.toString()}; $xfCsrfPost',
+  //     'referer': GlobalController.i.url + NaviDrawerController.i.linkUser,
+  //     'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
+  //     'User-Agent': NaviDrawerController.i.nameUser,
+  //     'Host': 'voz.vn'
+  //   };
+  //   var body = {
+  //     'message_html': 'post tu app flutter',
+  //     'load_extra': '1',
+  //     '_xfToken': dataCsrfPost,
+  //     '_xfRequestUri': NaviDrawerController.i.linkUser,
+  //     '_xfResponseType': 'json'
+  //   };
+  //
+  //   await http.post(Uri.parse(GlobalController.i.url + NaviDrawerController.i.linkUser + "/post"), headers: header, body: body).then((value) {
+  //     print(value.statusCode);
+  //     print(value.headers);
+  //     print(value.body);
+  //   });
+  // }
 }

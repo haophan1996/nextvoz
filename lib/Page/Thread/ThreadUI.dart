@@ -40,7 +40,7 @@ class ThreadUI extends GetView<ThreadController> {
                   },
                   controller: controller.refreshController,
                   child: ListView.builder(
-                    //physics: BouncingScrollPhysics(),
+                    physics: BouncingScrollPhysics(),
                     controller: controller.listViewScrollController,
                     cacheExtent: 500,
                     itemCount: controller.myThreadList.length,
@@ -81,23 +81,27 @@ class ThreadUI extends GetView<ThreadController> {
               }),
           Align(
             alignment: Alignment.bottomCenter,
-            child: GetBuilder<ThreadController>(
-              builder: (controller) {
-                return pageNavigation(controller.currentPage, controller.totalPage, (index) {
-                  if (index > controller.totalPage || index < 1) {
-                    HapticFeedback.lightImpact();
-                    if (index == 0) index = 1;
-                    if (index > controller.totalPage) index -= 1;
-                  }
-                  if (controller.totalPage != 0 && controller.currentPage != 0) {
-                    setDialog();
-                    controller.setPageOnClick(index);
-                  }
-                }, () {
-                  print('reply ');
-                });
-              },
-            ),
+            child: pageNavigation((String symbol) {
+              setDialog();
+              switch (symbol) {
+                case 'F':
+                  controller.setPageOnClick(1);
+                  break;
+                case 'P':
+                  controller.setPageOnClick(controller.currentPage - 1);
+                  break;
+                case 'N':
+                  controller.setPageOnClick(controller.currentPage + 1);
+                  break;
+                case 'L':
+                  controller.setPageOnClick(controller.totalPage);
+                  break;
+              }
+            }, () {
+              print('reply');
+            }, GetBuilder<ThreadController>(builder: (controller) {
+              return Text('${controller.currentPage.toString()} of ${controller.totalPage.toString()}');
+            })),
           )
         ],
       ),

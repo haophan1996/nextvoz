@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:nextvoz/Routes/routes.dart';
 import '/GlobalController.dart';
 import '/Page/Alert_Inbox/InboxController.dart';
 import '/Page/View/ViewController.dart';
@@ -92,7 +93,7 @@ class InboxUI extends GetView<InboxController> {
           }
           GlobalController.i.sessionTag.add(GlobalController.i.inboxList.elementAt(index)['title'] + DateTime.now().toString());
           Get.lazyPut<ViewController>(() => ViewController(), tag: GlobalController.i.sessionTag.last);
-          Get.toNamed("/ViewPage",
+          Get.toNamed(Routes.View,
               arguments: [GlobalController.i.inboxList.elementAt(index)['title'], GlobalController.i.inboxList.elementAt(index)['linkInbox'], '', 1]);
         },
       ),

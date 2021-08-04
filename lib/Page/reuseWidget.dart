@@ -8,6 +8,7 @@ import 'package:flutter_html/shims/dart_ui_real.dart';
 import 'package:loader_skeleton/loader_skeleton.dart';
 import 'package:flutter_reaction_button/flutter_reaction_button.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:nextvoz/Routes/routes.dart';
 import '/utils/color.dart';
 import '/GlobalController.dart';
 import '/Page/NavigationDrawer/NaviDrawerController.dart';
@@ -146,7 +147,7 @@ Widget settings() => Row(
                   color: Get.theme.primaryColor,
                 ),
                 onPressed: () async {
-                  await Get.toNamed('/Alerts', preventDuplicates: false);
+                  await Get.toNamed(Routes.Alerts, preventDuplicates: false);
                 }),
             GetBuilder<GlobalController>(
                 id: 'alertNotification',
@@ -173,7 +174,7 @@ Widget settings() => Row(
                   color: Get.theme.primaryColor,
                 ),
                 onPressed: () async {
-                  await Get.toNamed('/AlertsInbox', preventDuplicates: false);
+                  await Get.toNamed(Routes.Conversation, preventDuplicates: false);
                 }),
             GetBuilder<GlobalController>(
                 id: 'inboxNotification',
@@ -346,20 +347,27 @@ Widget listReactionUI(BuildContext context, ViewController controller) {
   return DraggableScrollableSheet(
     initialChildSize: 1,
     builder: (_, dragController) => Container(
-        padding: EdgeInsets.only(left: 5, top: 5),
-        decoration: BoxDecoration(
-            color: Theme.of(context).backgroundColor, borderRadius: BorderRadius.only(topLeft: Radius.circular(6), topRight: Radius.circular(6))),
-        child: Obx(() => controller.reactionList.length > 0
-            ? ListView.builder(
-                physics: BouncingScrollPhysics(),
-                controller: dragController,
-                itemCount: controller.reactionList.length,
-                itemBuilder: (context, index) {
-                  return reactionChild(controller, index);
-                })
-            : Center(
-                child: Text('No reaction'),
-              ))),
+      padding: EdgeInsets.only(left: 5, top: 5),
+      decoration: BoxDecoration(
+          color: Theme.of(context).backgroundColor, borderRadius: BorderRadius.only(topLeft: Radius.circular(6), topRight: Radius.circular(6))),
+      child: GetBuilder<ViewController>(
+        id: 'reactionState',
+        tag: GlobalController.i.sessionTag.last,
+        builder: (controller) {
+          return controller.reactionList.length > 0
+              ? ListView.builder(
+                  physics: BouncingScrollPhysics(),
+                  controller: dragController,
+                  itemCount: controller.reactionList.length,
+                  itemBuilder: (context, index) {
+                    return reactionChild(controller, index);
+                  })
+              : Center(
+                  child: Text('No reaction'),
+                );
+        },
+      ),
+    ),
   );
 }
 
@@ -390,7 +398,7 @@ Widget onTapUser(ViewController controller, int index) {
               if (Get.isBottomSheetOpen == true) Get.back();
               GlobalController.i.sessionTag.add('profile${DateTime.now().toString()}');
               Get.lazyPut<UserProfileController>(() => UserProfileController(), tag: GlobalController.i.sessionTag.last);
-              Get.toNamed('/UserProfile', arguments: [controller.htmlData.elementAt(index)['userLink']], preventDuplicates: false);
+              Get.toNamed(Routes.Profile, arguments: [controller.htmlData.elementAt(index)['userLink']], preventDuplicates: false);
             }),
         CupertinoButton(
             child: Container(
@@ -516,7 +524,7 @@ Widget viewContent(BuildContext context, int index, ViewController controller) =
                 Get.bottomSheet(
                     Card(
                       color: Get.theme.canvasColor,
-                      child: controller.htmlData.elementAt(index)['userName'] == NaviDrawerController.i.nameUser.value
+                      child: controller.htmlData.elementAt(index)['userName'] == NaviDrawerController.i.data['nameUser']
                           ? onTapMine(context, controller, index)
                           : onTapUser(controller, index),
                     ),
@@ -736,7 +744,7 @@ Widget customHtml(List htmlData, int index) {
                 minSize: 0,
                 padding: EdgeInsets.zero,
                 onPressed: () {
-                  Get.toNamed('/Youtube', arguments: [GlobalController.i.getIDYoutube(attrs['src'].toString())]);
+                  Get.toNamed(Routes.Youtube, arguments: [GlobalController.i.getIDYoutube(attrs['src'].toString())]);
                 },
                 child: Stack(
                   children: [
@@ -820,11 +828,11 @@ Widget customHtml(List htmlData, int index) {
         } else if (url.contains('https://voz.vn/t/', 0)) {
           GlobalController.i.sessionTag.add('ViewController at $url');
           Get.lazyPut<ViewController>(() => ViewController(), tag: GlobalController.i.sessionTag.last);
-          Get.toNamed("/ViewPage", arguments: [url.replaceFirst(GlobalController.i.url + '/t/', '', 0), url, '', 0], preventDuplicates: false);
+          Get.toNamed(Routes.View, arguments: [url.replaceFirst(GlobalController.i.url + '/t/', '', 0), url, '', 0], preventDuplicates: false);
         } else if (url.contains('https://voz.vn/u/', 0)) {
           GlobalController.i.sessionTag.add('profile${DateTime.now().toString()}');
           Get.lazyPut<UserProfileController>(() => UserProfileController(), tag: GlobalController.i.sessionTag.last);
-          Get.toNamed('/UserProfile', arguments: [url.replaceFirst(GlobalController.i.url, '', 0)], preventDuplicates: false);
+          Get.toNamed(Routes.Profile, arguments: [url.replaceFirst(GlobalController.i.url, '', 0)], preventDuplicates: false);
         } else
           // print(url.toString().split('?id=')[1]);
           //
