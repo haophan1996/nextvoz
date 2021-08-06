@@ -6,7 +6,6 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 Widget refreshIndicatorConfiguration(Widget widget) {
   return Container(
     width: double.infinity,
-    //padding: EdgeInsets.only(bottom: Get.height * 0.14),
     child: RefreshConfiguration(
         footerTriggerDistance: -80,
         footerBuilder: () => ClassicFooter(

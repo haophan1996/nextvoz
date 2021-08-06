@@ -27,12 +27,8 @@ dependencies:
   #UI support
   pull_to_refresh: ^2.0.0
   url_launcher: ^6.0.6
-  expandable: ^5.0.1
   flutter_reaction_button: ^1.0.8
-  pinch_zoom_image_last: ^0.4.1
   cached_network_image: ^3.1.0
-  loader_skeleton: ^0.0.4
-  quick_actions: ^0.6.0+3
   flutter_signin_button: ^2.0.0
 
   #Editor

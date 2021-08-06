@@ -25,6 +25,7 @@ class InboxController extends GetxController {
   void onClose() {
     // TODO: implement onClose
     super.onClose();
+    dio.close(force: true);
   }
 
   refreshList() async {

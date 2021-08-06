@@ -25,9 +25,7 @@ class ViewUI extends StatelessWidget {
         id: 'firstLoading',
         tag: GlobalController.i.sessionTag.last,
         builder: (controller) {
-          return controller.htmlData.length == 0
-              ? loading()
-              : loadSuccess();
+          return controller.htmlData.length == 0 ? loading() : loadSuccess();
         },
       ),
     );
@@ -46,45 +44,45 @@ class ViewUI extends StatelessWidget {
         });
   }
 
-  Widget loadSuccess() => Stack(children: [
-        GetBuilder<ViewController>(
-          tag: GlobalController.i.sessionTag.last,
-          builder: (controller) {
-            return postContent(controller);
-          },
-        ),
-        loading(),
-        Align(
-          alignment: Alignment.bottomCenter,
-          child: pageNavigation((String symbol) {
-            setDialog();
-            switch (symbol) {
-              case 'F':
-                controller.setPageOnClick(1);
-                break;
-              case 'P':
-                controller.setPageOnClick(controller.currentPage - 1);
-                break;
-              case 'N':
-                controller.setPageOnClick(controller.currentPage + 1);
-                break;
-              case 'L':
-                controller.setPageOnClick(controller.totalPage);
-                break;
-            }
-          },
-              () => controller.currentPage == 0 ? setDialogError('Wait') : controller.reply('', false),
-              GetBuilder<ViewController>(
-                  tag: GlobalController.i.sessionTag.last,
-                  builder: (controller) => Text('${controller.currentPage.toString()} of ${controller.totalPage.toString()}'))),
-        )
-      ]);
+  Widget loadSuccess() {
+    return Stack(children: [
+      SafeArea(child: refreshIndicatorConfiguration(postContent())),
+      loading(),
+      Align(
+        alignment: Alignment.bottomCenter,
+        child: pageNavigation((String symbol) {
+          setDialog();
+          switch (symbol) {
+            case 'F':
+              controller.setPageOnClick(1);
+              break;
+            case 'P':
+              controller.setPageOnClick(controller.currentPage - 1);
+              break;
+            case 'N':
+              controller.setPageOnClick(controller.currentPage + 1);
+              break;
+            case 'L':
+              controller.setPageOnClick(controller.totalPage);
+              break;
+          }
+        },
+                () => controller.currentPage == 0 ? setDialogError('Wait') : controller.reply('', false),
+            GetBuilder<ViewController>(
+              tag: GlobalController.i.sessionTag.last,
+              builder: (controller) {
+                return Text('${controller.currentPage.toString()} of ${controller.totalPage.toString()}');
+              },
+            )),
+      )
+    ]);
+  }
 
-  Widget postContent(ViewController controller) {
-    return refreshIndicatorConfiguration(
-      Scrollbar(
-        controller: controller.listViewScrollController,
-        child: SmartRefresher(
+  Widget postContent() {
+    return GetBuilder<ViewController>(
+      tag: GlobalController.i.sessionTag.last,
+      builder: (controller) {
+        return SmartRefresher(
           enablePullDown: false,
           enablePullUp: true,
           controller: controller.refreshController,
@@ -101,16 +99,16 @@ class ViewUI extends StatelessWidget {
           child: ListView.builder(
             cacheExtent: 999999999,
             physics: BouncingScrollPhysics(),
-            padding: EdgeInsets.only(bottom: 20),
+            // padding: EdgeInsets.only(bottom: 20),
             scrollDirection: Axis.vertical,
             controller: controller.listViewScrollController,
             itemCount: controller.htmlData.length,
             itemBuilder: (context, index) {
-              return viewContent(context, index, controller);
+              return viewContent(index, controller);
             },
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

@@ -8,8 +8,7 @@ class Themes {
     backgroundColor: Colors.white,
     canvasColor: Color(0xFFEEE3E3),
     shadowColor: Color(0xFFC7F1C9),
-    cardColor: Colors.grey.shade400,
-    //hintColor: Color(0xff5c7099),
+    cardColor: Colors.grey.shade300,
     dividerColor: Colors.grey,
     secondaryHeaderColor: Colors.grey.shade700,
     appBarTheme: AppBarTheme(
@@ -28,7 +27,7 @@ class Themes {
   final darkTheme = ThemeData.dark().copyWith(
     primaryColor: Colors.grey.shade300,
     backgroundColor: Colors.black,
-    cardColor: Colors.grey.shade900,
+    cardColor: Color(0xFF171616),
     canvasColor: Color(0xFF343030),
     shadowColor: Color(0xFF2A2F2A),
     dividerColor: Colors.grey,

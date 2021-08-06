@@ -52,7 +52,6 @@ class AlertsUI extends GetView<AlertsController> {
               backgroundColor: Get.theme.backgroundColor,
             );
           }),
-      loadingShimmer()
     ],
   );
 

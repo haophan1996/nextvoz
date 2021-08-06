@@ -51,7 +51,6 @@ class InboxUI extends GetView<InboxController> {
               backgroundColor: Get.theme.backgroundColor,
             );
           }),
-      loadingShimmer()
     ],
   );
 

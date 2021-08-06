@@ -2,10 +2,8 @@ import 'package:get/get.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:html/dom.dart' as dom;
-import 'package:expandable/expandable.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_html/shims/dart_ui_real.dart';
-import 'package:loader_skeleton/loader_skeleton.dart';
 import 'package:flutter_reaction_button/flutter_reaction_button.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:nextvoz/Routes/routes.dart';
@@ -237,20 +235,6 @@ setDialogError(String text) => Get.defaultDialog(
       backgroundColor: Get.theme.canvasColor,
     );
 
-Widget loadingShimmer() {
-  return Get.isDarkMode == false
-      ? CardListSkeleton(
-          isCircularImage: true,
-          isBottomLinesActive: true,
-          length: 5,
-        )
-      : DarkCardListSkeleton(
-          isCircularImage: true,
-          isBottomLinesActive: true,
-          length: 5,
-        );
-}
-
 Widget buildFlagsPreviewIcon(String path, String text) => Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       child: Column(
@@ -343,13 +327,13 @@ Widget reactionChild(ViewController controller, int index) {
   );
 }
 
-Widget listReactionUI(BuildContext context, ViewController controller) {
+Widget listReactionUI(ViewController controller) {
   return DraggableScrollableSheet(
     initialChildSize: 1,
     builder: (_, dragController) => Container(
       padding: EdgeInsets.only(left: 5, top: 5),
       decoration: BoxDecoration(
-          color: Theme.of(context).backgroundColor, borderRadius: BorderRadius.only(topLeft: Radius.circular(6), topRight: Radius.circular(6))),
+          color: Get.theme.backgroundColor, borderRadius: BorderRadius.only(topLeft: Radius.circular(6), topRight: Radius.circular(6))),
       child: GetBuilder<ViewController>(
         id: 'reactionState',
         tag: GlobalController.i.sessionTag.last,
@@ -411,7 +395,7 @@ Widget onTapUser(ViewController controller, int index) {
   );
 }
 
-Widget onTapMine(context, ViewController controller, int index) {
+Widget onTapMine(ViewController controller, int index) {
   return Padding(
       padding: EdgeInsets.only(bottom: 30),
       child: Column(
@@ -467,8 +451,7 @@ Widget dialogButtonYesNo(Function onDone) => Row(
       ],
     );
 
-Widget viewContent(BuildContext context, int index, ViewController controller) => Container(
-      //color: Get.theme.backgroundColor,
+Widget viewContent(int index, ViewController controller) => Container(
       decoration: BoxDecoration(
         border: Border(bottom: BorderSide(color: Get.theme.canvasColor)),
         color: Get.theme.backgroundColor,
@@ -525,7 +508,7 @@ Widget viewContent(BuildContext context, int index, ViewController controller) =
                     Card(
                       color: Get.theme.canvasColor,
                       child: controller.htmlData.elementAt(index)['userName'] == NaviDrawerController.i.data['nameUser']
-                          ? onTapMine(context, controller, index)
+                          ? onTapMine(controller, index)
                           : onTapUser(controller, index),
                     ),
                     ignoreSafeArea: false);
@@ -547,7 +530,7 @@ Widget viewContent(BuildContext context, int index, ViewController controller) =
                     style: ButtonStyle(alignment: Alignment.centerLeft),
                     onPressed: () {
                       controller.getDataReactionList(index);
-                      Get.bottomSheet(listReactionUI(context, controller), isScrollControlled: false, ignoreSafeArea: true);
+                      Get.bottomSheet(listReactionUI(controller), isScrollControlled: false, ignoreSafeArea: true);
                     },
                     child: Text(controller.htmlData.elementAt(index)['commentName'],
                         style: TextStyle(color: Colors.blue), overflow: TextOverflow.ellipsis, maxLines: 1),
@@ -563,7 +546,7 @@ Widget viewContent(BuildContext context, int index, ViewController controller) =
                         if (i == 0) {
                           controller
                               .reactionPost(
-                                  index, controller.htmlData.elementAt(index)['postID'], controller.htmlData.elementAt(index)['commentByMe'], context)
+                                  index, controller.htmlData.elementAt(index)['postID'], controller.htmlData.elementAt(index)['commentByMe'])
                               .then((value) {
                             if (value['status'] != 'error') {
                               controller.htmlData.elementAt(index)['commentByMe'] = 0;
@@ -572,7 +555,7 @@ Widget viewContent(BuildContext context, int index, ViewController controller) =
                             }
                           });
                         } else {
-                          controller.reactionPost(index, controller.htmlData.elementAt(index)['postID'], i, context).then((value) {
+                          controller.reactionPost(index, controller.htmlData.elementAt(index)['postID'], i).then((value) {
                             if (value['status'] != 'error') {
                               controller.htmlData.elementAt(index)['commentByMe'] = i;
                             } else {
@@ -611,6 +594,7 @@ Widget displayAvatar(double sizeImage, String avatarColor1, String avatarColor2,
     height: sizeImage,
     alignment: Alignment.center,
     decoration: BoxDecoration(
+      border: Border.all(color: Colors.green, width: 2),
         image: imageLink == 'no'
             ? null
             : DecorationImage(
@@ -645,10 +629,11 @@ Widget customHtml(List htmlData, int index) {
             renderContext.tree.element!.attributes['alt']!,
             style: TextStyle(fontSize: GlobalController.i.userStorage.read('fontSizeView')),
           );
-        } else if (renderContext.tree.element!.attributes['src']!.contains(".gif") &&
-            renderContext.tree.element!.attributes['data-url'] != null &&
-            renderContext.tree.element!.attributes['data-url']!.contains(".gif")) {
-        } else {
+        } //else if (//renderContext.tree.element!.attributes['src']!.contains(".gif") &&
+            //renderContext.tree.element!.attributes['data-url'] != null ||
+            //renderContext.tree.element!.attributes['data-url']!.contains(".gif")) {
+       // }
+        else {
           return CachedNetworkImage(
             imageUrl: renderContext.tree.element!.attributes['src']!.contains('data:image/', 0) == true
                 ? renderContext.tree.element!.attributes['data-src'].toString()
@@ -666,46 +651,6 @@ Widget customHtml(List htmlData, int index) {
             },
           );
         }
-      },
-      "blockquote": (renderContext, child) {
-        return ExpandableNotifier(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            //mainAxisSize: MainAxisSize.max,
-            children: <Widget>[
-              Expandable(
-                expanded: ExpandableButton(
-                  child: Container(
-                    padding: EdgeInsets.all(10),
-                    child: Text(
-                        'blockQuote'.tr +
-                            (renderContext.tree.element!.getElementsByClassName("bbCodeBlock-title").length > 0
-                                ? renderContext.tree.element!.getElementsByClassName("bbCodeBlock-title")[0].text.trim()
-                                : ""),
-                        style: TextStyle(fontWeight: FontWeight.bold)),
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: Get.theme.secondaryHeaderColor,
-                      borderRadius: BorderRadius.all(Radius.circular(5)),
-                    ),
-                  ),
-                ),
-                collapsed: ExpandableButton(
-                  child: Container(
-                      constraints: BoxConstraints(minHeight: 30),
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: Get.theme.cardColor,
-                        borderRadius: BorderRadius.all(Radius.circular(5)),
-                      ),
-                      child: Center(
-                        child: child,
-                      )),
-                ),
-              ),
-            ],
-          ),
-        );
       },
       "table": (context, child) {
         if (context.tree.element!.getElementsByTagName("td").length > 2)
@@ -789,14 +734,12 @@ Widget customHtml(List htmlData, int index) {
       "table": Style(backgroundColor: Get.theme.cardColor),
       "body": Style(
         fontSize: FontSize(GlobalController.i.userStorage.read('fontSizeView')),
-      ), //..margin = EdgeInsets.only(bottom: 0, left: 4, right: 3),
-      "div": Style()..display = Display.INLINE,
-      // "span": Style(color: Theme.of(context).primaryColor),
-      "blockquote": Style(width: double.infinity)
-        ..margin = EdgeInsets.only(left: 5.0, right: 5.0, bottom: 10.0)
-        ..display = Display.BLOCK,
+        margin: EdgeInsets.only(left: 3, right: 3)
+      ),
+      "div": Style(display: Display.INLINE, margin: EdgeInsets.zero),
+      "blockquote": Style(width: double.infinity, backgroundColor: Get.theme.cardColor,margin: EdgeInsets.only(left: 5.0, right: 5.0), display: Display.BLOCK)
+
     },
-    customImageRenders: {networkSourceMatcher(): networkImageRender(loadingWidget: () => CupertinoActivityIndicator())},
     onLinkTap: (String? url, RenderContext context, Map<String, String> attributes, dom.Element? element) async {
       if (url != null) {
         if (url.contains(RegExp(r'voz.vn/t/.*?/post-'))) {
@@ -844,6 +787,3 @@ Widget customHtml(List htmlData, int index) {
   );
 }
 
-final Shader linearGradient = LinearGradient(
-  colors: <Color>[Colors.red, Colors.blue],
-).createShader(Rect.fromLTWH(0.0, 0.0, 200.0, 70.0));

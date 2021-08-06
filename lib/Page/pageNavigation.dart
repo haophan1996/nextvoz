@@ -9,7 +9,7 @@ import 'NavigationDrawer/NaviDrawerUI.dart';
 Widget pageNavigation(Function(String index) gotoPage, Function reply, Widget child) {
   return FittedBox(
     child: Container(
-      color: Get.theme.backgroundColor.withOpacity(0.7),
+      color: Get.theme.backgroundColor,
       width: Get.width,
       child: SafeArea(
         child: Row(
@@ -55,22 +55,21 @@ Widget pageNavigation(Function(String index) gotoPage, Function reply, Widget ch
               ),
             ),
             Align(
-              alignment: Alignment.bottomRight,
-              child: GetBuilder<GlobalController>(
-                  id: 'Notification',
-                  builder: (controller) {
-                    return CupertinoButton(
-                      padding: EdgeInsets.zero,
-                      child: Icon(
+                alignment: Alignment.bottomRight,
+                child: CupertinoButton(
+                  padding: EdgeInsets.zero,
+                  child: GetBuilder<GlobalController>(
+                    builder: (controller) {
+                      return Icon(
                         Icons.more_rounded,
                         color: controller.inboxNotifications != 0 || controller.alertNotifications != 0 ? Colors.red : Get.theme.primaryColor,
-                      ),
-                      onPressed: () {
-                        Get.bottomSheet(userInformation());
-                      },
-                    );
-                  }),
-            ),
+                      );
+                    },
+                  ),
+                  onPressed: () {
+                    Get.bottomSheet(userInformation());
+                  },
+                )),
           ],
         ),
       ),
@@ -79,7 +78,8 @@ Widget pageNavigation(Function(String index) gotoPage, Function reply, Widget ch
 }
 
 Widget userInformation() {
-  return SafeArea(child: Container(
+  return SafeArea(
+      child: Container(
     decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(6)), color: Colors.grey.shade700),
     padding: EdgeInsets.only(left: 5, right: 5, top: 5),
     child: SafeArea(
@@ -107,7 +107,7 @@ Widget whatNew() => Container(
             padding: EdgeInsets.only(top: 5),
             child: Text(
               'Latest',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, foreground: Paint()..shader = linearGradient),
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
             ),
           ),
           Row(

@@ -39,7 +39,6 @@ class HomePageUI extends GetView<HomeController> {
                   backgroundColor: Get.theme.backgroundColor,
                 );
               }),
-          loadingShimmer()
         ],
       );
 
@@ -135,20 +134,19 @@ class HomePageUI extends GetView<HomeController> {
               decoration: BoxDecoration(
                   color: Get.theme.canvasColor, //Colors.black38,
                   borderRadius: BorderRadius.all(Radius.circular(20))),
-              child: GetBuilder<GlobalController>(
-                id: 'Notification',
-                builder: (controller) {
-                  return customCupertinoButton(
-                    Alignment.center,
-                    EdgeInsets.only(left: 10, right: 10),
-                    Text(
-                      controller.isLogged == false ? 'Guest user' : 'Logged in as ${NaviDrawerController.i.data['nameUser']}',
-                      style:
-                          TextStyle(color: controller.alertNotifications != 0 || controller.inboxNotifications != 0 ? Colors.redAccent : Colors.blue),
-                    ),
-                    () => Get.bottomSheet(userInformation()),
-                  );
-                },
+              child: customCupertinoButton(
+                Alignment.center,
+                EdgeInsets.only(left: 10, right: 10),
+                GetBuilder<GlobalController>(
+                    id: 'Notification',
+                    builder: (controller) {
+                      return Text(
+                        controller.isLogged == false ? 'Guest user' : 'Logged in as ${NaviDrawerController.i.data['nameUser']}',
+                        style: TextStyle(
+                            color: controller.alertNotifications != 0 || controller.inboxNotifications != 0 ? Colors.redAccent : Colors.blue),
+                      );
+                    }),
+                () => Get.bottomSheet(userInformation()),
               ),
             ),
           ),

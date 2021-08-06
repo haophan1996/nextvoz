@@ -23,53 +23,49 @@ class ThreadUI extends GetView<ThreadController> {
       appBar: preferredSize(context, controller.theme, ''),
       body: Stack(
         children: [
-          GetBuilder<ThreadController>(builder: (controller) {
-            return refreshIndicatorConfiguration(
-              Scrollbar(
-                controller: controller.listViewScrollController,
-                child: SmartRefresher(
-                  enablePullDown: false,
-                  enablePullUp: true,
-                  onLoading: () {
-                    if (controller.currentPage + 1 > controller.totalPage) {
-                      HapticFeedback.lightImpact();
-                    }
-                    if (controller.totalPage != 0 && controller.currentPage != 0) {
-                      controller.setPageOnClick(controller.currentPage + 1);
-                    }
-                  },
-                  controller: controller.refreshController,
-                  child: ListView.builder(
-                    physics: BouncingScrollPhysics(),
-                    controller: controller.listViewScrollController,
-                    cacheExtent: 500,
-                    itemCount: controller.myThreadList.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      return blockItem(
-                          context,
-                          controller.myThreadList.elementAt(index)['isRead'] == true ? FontWeight.bold : FontWeight.normal,
-                          controller.myThreadList.elementAt(index)['isRead'] == true ? FontWeight.bold : FontWeight.normal,
-                          index,
-                          controller.myThreadList.elementAt(index)['prefix'],
-                          controller.myThreadList.elementAt(index)['title'],
-                          controller.myThreadList.elementAt(index)['replies'],
-                          controller.myThreadList.elementAt(index)['date'],
-                          controller.myThreadList.elementAt(index)['authorName'],
-                          () => controller.navigateToThread(index), () {
-                        NaviDrawerController.i.shortcuts.insert(0, {
-                          'title': controller.myThreadList.elementAt(index)['title'],
-                          'typeTitle': controller.myThreadList.elementAt(index)['prefix'],
-                          'link': controller.myThreadList.elementAt(index)['link']
-                        });
-                        NaviDrawerController.i.update();
-                        GlobalController.i.userStorage.write('shortcut', NaviDrawerController.i.shortcuts);
+          refreshIndicatorConfiguration(
+            GetBuilder<ThreadController>(builder: (controller) {
+              return SmartRefresher(
+                enablePullDown: false,
+                enablePullUp: true,
+                onLoading: () {
+                  if (controller.currentPage + 1 > controller.totalPage) {
+                    HapticFeedback.lightImpact();
+                  }
+                  if (controller.totalPage != 0 && controller.currentPage != 0) {
+                    controller.setPageOnClick(controller.currentPage + 1);
+                  }
+                },
+                controller: controller.refreshController,
+                child: ListView.builder(
+                  physics: BouncingScrollPhysics(),
+                  controller: controller.listViewScrollController,
+                  itemCount: controller.myThreadList.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return blockItem(
+                        context,
+                        controller.myThreadList.elementAt(index)['isRead'] == true ? FontWeight.bold : FontWeight.normal,
+                        controller.myThreadList.elementAt(index)['isRead'] == true ? FontWeight.bold : FontWeight.normal,
+                        index,
+                        controller.myThreadList.elementAt(index)['prefix'],
+                        controller.myThreadList.elementAt(index)['title'],
+                        controller.myThreadList.elementAt(index)['replies'],
+                        controller.myThreadList.elementAt(index)['date'],
+                        controller.myThreadList.elementAt(index)['authorName'],
+                        () => controller.navigateToThread(index), () {
+                      NaviDrawerController.i.shortcuts.insert(0, {
+                        'title': controller.myThreadList.elementAt(index)['title'],
+                        'typeTitle': controller.myThreadList.elementAt(index)['prefix'],
+                        'link': controller.myThreadList.elementAt(index)['link']
                       });
-                    },
-                  ),
+                      NaviDrawerController.i.update();
+                      GlobalController.i.userStorage.write('shortcut', NaviDrawerController.i.shortcuts);
+                    });
+                  },
                 ),
-              ),
-            );
-          }),
+              );
+            }),
+          ),
           GetBuilder<ThreadController>(
               id: 'download',
               builder: (controller) {

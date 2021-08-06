@@ -40,22 +40,22 @@ class ViewController extends GetxController {
     data['view'] == 0
         ? await loadUserPost(data['fullUrl'] = GlobalController.i.url + data['subLink'])
         : await loadInboxView(data['fullUrl'] = GlobalController.i.url + data['subLink']);
-
     update(['firstLoading']);
-    // if (data['fullUrl'].contains("/unread") == true) {
-    //   data['fullUrl'] = data['fullUrl'].split("unread")[0];
-    // }
   }
 
   @override
   onClose() {
     super.onClose();
     dio.close(force: true);
+    input.dispose();
     GlobalController.i.sessionTag.removeLast();
     refreshController.dispose();
     listViewScrollController.dispose();
     htmlData.clear();
     data.clear();
+    reactionList.clear();
+    PaintingBinding.instance!.imageCache!.clear();
+    PaintingBinding.instance!.imageCache!.clearLiveImages();
   }
 
   _removeTag(String content) {
@@ -138,6 +138,8 @@ class ViewController extends GetxController {
           'rAvatar': data['avatar'],
         });
       });
+      PaintingBinding.instance!.imageCache!.clear();
+      PaintingBinding.instance!.imageCache!.clearLiveImages();
       update(['reactionState'], true);
     });
   }
@@ -382,7 +384,7 @@ class ViewController extends GetxController {
     });
   }
 
-  Future reactionPost(int index, String idPost, int idReact, BuildContext context) async {
+  Future reactionPost(int index, String idPost, int idReact) async {
     var status = {};
     setDialog();
     var headers = {

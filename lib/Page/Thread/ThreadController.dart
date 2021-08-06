@@ -43,6 +43,9 @@ class ThreadController extends GetxController {
     super.onClose();
     refreshController.dispose();
     listViewScrollController.dispose();
+    myThreadList.clear();
+    dio.clear();
+    dio.close(force: true);
   }
 
   setPageOnClick(int toPage) async {

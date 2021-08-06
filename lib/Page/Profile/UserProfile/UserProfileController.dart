@@ -4,7 +4,6 @@ import '/GlobalController.dart';
 
 class UserProfileController extends GetxController {
   late var xfCsrfPost,dataCsrfPost;
-
   double percentDownload = 0.0;
   Map<String, dynamic> data = {};
   List htmlData = [];

@@ -19,8 +19,8 @@ class LoginController extends GetxController {
     isShowPass.close();
     statusLogin.close();
     data.clear();
-    dio.close(force: true);
     dio.clear();
+    dio.close(force: true);
     textEditingControllerPassword.dispose();
     textEditingControllerLogin.dispose();
   }

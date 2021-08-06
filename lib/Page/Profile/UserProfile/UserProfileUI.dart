@@ -40,7 +40,6 @@ class UserProfileUI extends StatelessWidget {
               backgroundColor: Get.theme.backgroundColor,
             );
           }),
-      loadingShimmer()
     ],
   );
 

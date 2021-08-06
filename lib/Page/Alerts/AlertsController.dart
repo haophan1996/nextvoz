@@ -14,6 +14,13 @@ class AlertsController extends GetxController {
   }
 
   @override
+  void onClose() {
+    // TODO: implement onClose
+    super.onClose();
+    data.clear();
+  }
+
+  @override
   Future<void> onReady() async {
     // TODO: implement onReady
     super.onReady();

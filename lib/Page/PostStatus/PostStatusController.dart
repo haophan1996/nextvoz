@@ -18,7 +18,6 @@ class PostStatusController extends GetxController{
   int currentTab = 0;
   Map<String, dynamic> data = {};
   RxBool isToolClicked = false.obs;
-  late List toolData;
   double heightToolbar = Get.height * 0.07, heightEditor = Get.height*0.3;
   TextEditingController link = TextEditingController(), label = TextEditingController();
   final picker = ImagePicker();
@@ -88,7 +87,7 @@ class PostStatusController extends GetxController{
     data['postID'] = Get.arguments[3] ??= '';
     data['isEditPost'] = Get.arguments[4] ??= '';
     data['view'] = Get.arguments[5] ??= '';
-    data['value'] = Get.arguments[6] ??= '';
+    data['value'] = Get.arguments[6] ??= null;
   }
 
   @override
@@ -101,6 +100,12 @@ class PostStatusController extends GetxController{
     super.onClose();
     print('onClose');
     isToolClicked.close();
+    data.clear();
+    keyEditor.currentState!.dispose();
+    link.dispose();
+    label.dispose();
+    formats.clear();
+    textColor.clear();
   }
 
 
