@@ -13,7 +13,7 @@ import '/GlobalController.dart';
 import '/Page/reuseWidget.dart';
 
 class ViewController extends GetxController {
-  List htmlData = [], reactionList = [], image = [];
+  List htmlData = [], reactionList = [], imageList = [];
   int currentPage = 0, totalPage = 0, lengthHtmlDataList = 0;
   Map<String, dynamic> data = {};
   bool isEdit = false;
@@ -54,6 +54,8 @@ class ViewController extends GetxController {
     htmlData.clear();
     data.clear();
     reactionList.clear();
+    imageList.clear();
+    this.dispose();
     PaintingBinding.instance!.imageCache!.clear();
     PaintingBinding.instance!.imageCache!.clearLiveImages();
   }
@@ -68,7 +70,6 @@ class ViewController extends GetxController {
     data['view'] == 0
         ? await loadUserPost(data['fullUrl'] + GlobalController.i.pageLink + toPage.toString())
         : await loadInboxView(data['fullUrl'] + GlobalController.i.pageLink + toPage.toString());
-    //await loadUserPost(data['fullUrl'] + GlobalController.i.pageLink + toPage);
   }
 
   getImage(String url) async {
@@ -264,6 +265,7 @@ class ViewController extends GetxController {
           data['_commentImg'] = '';
         });
       });
+      imageList.clear();
       update();
       if (Get.isDialogOpen == true || refreshController.isLoading || isEdit == true) {
         if (Get.isDialogOpen == true) Get.back();
@@ -375,6 +377,7 @@ class ViewController extends GetxController {
         });
         data['_commentImg'] = '';
       });
+      imageList.clear();
       update();
       if (Get.isDialogOpen == true || refreshController.isLoading || isEdit == true) {
         if (Get.isDialogOpen == true) Get.back();
@@ -421,6 +424,7 @@ class ViewController extends GetxController {
         status['mess'] = '';
       }
     });
+    imageList.clear();
     update();
     Get.back();
     return status;
@@ -428,7 +432,7 @@ class ViewController extends GetxController {
 
   reply(String message, bool isEditPost) async {
     //                                            token               xf_csrf             link
-    print(data['fullUrl']);
+
     var x = await Get.toNamed(Routes.AddReply,
         arguments: [data['xfCsrfPost'], data['dataCsrfPost'], data['fullUrl'], data['postID'], isEditPost, data['view'], message]);
     if (x?[0] == 'ok') {

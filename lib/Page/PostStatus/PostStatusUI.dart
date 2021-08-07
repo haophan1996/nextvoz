@@ -77,28 +77,6 @@ class PostStatusUI extends GetView<PostStatusController> {
             ]),
         body: Column(
           children: [
-            // Visibility(
-            //   //visible: controller.data['view'] != '1' || controller.data['view'] != '2'? false : true,
-            //   child: Padding(
-            //     padding: EdgeInsets.only(top: 5, bottom: 5),
-            //     child: SingleChildScrollView(
-            //       child: Column(
-            //         children: [
-            //           Row(
-            //             children: [
-            //               customCupertinoButton(Alignment.topLeft, EdgeInsets.zero, Text('Recipients'), () {}),
-            //             ],
-            //           ),
-            //           Row(
-            //             children: [
-            //               customCupertinoButton(Alignment.topLeft, EdgeInsets.zero, Text('Title'), () {}),
-            //             ],
-            //           ),
-            //         ],
-            //       ),
-            //     ),
-            //   ),
-            // ),
             Container(
                 decoration: BoxDecoration(
                   border: Border(bottom: BorderSide(width: 0.5, color: Theme.of(context).primaryColor)),

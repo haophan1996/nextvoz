@@ -29,7 +29,7 @@ dependencies:
   url_launcher: ^6.0.6
   flutter_reaction_button: ^1.0.8
   extended_image: ^4.1.0
-  #cached_network_image: ^3.1.0
+  interactiveviewer_gallery: ^0.6.0
   flutter_signin_button: ^2.0.0
 
   #Editor

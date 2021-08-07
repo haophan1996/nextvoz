@@ -87,7 +87,8 @@ class PostStatusController extends GetxController{
     data['postID'] = Get.arguments[3] ??= '';
     data['isEditPost'] = Get.arguments[4] ??= '';
     data['view'] = Get.arguments[5] ??= '';
-    data['value'] = Get.arguments[6] ??= null;
+    data['value'] = Get.arguments[6] ??= '';
+
   }
 
   @override
@@ -98,10 +99,8 @@ class PostStatusController extends GetxController{
   @override
   onClose() {
     super.onClose();
-    print('onClose');
     isToolClicked.close();
     data.clear();
-    keyEditor.currentState!.dispose();
     link.dispose();
     label.dispose();
     formats.clear();

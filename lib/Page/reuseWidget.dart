@@ -5,6 +5,7 @@ import 'package:html/dom.dart' as dom;
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_html/shims/dart_ui_real.dart';
 import 'package:flutter_reaction_button/flutter_reaction_button.dart';
+import 'package:interactiveviewer_gallery/interactiveviewer_gallery.dart';
 import 'package:nextvoz/Routes/routes.dart';
 import '/utils/color.dart';
 import 'package:extended_image/extended_image.dart';
@@ -15,13 +16,13 @@ import '/Page/Profile/UserProfile/UserProfileController.dart';
 
 ///  * Global appbar
 PreferredSize preferredSize(BuildContext context, String title, String prefix) => PreferredSize(
-      preferredSize: Size.fromHeight(NaviDrawerController.i.heightAppbar),
-      child: AppBar(
-        automaticallyImplyLeading: false,
-        title: customTitle(FontWeight.normal, Get.theme.primaryColor, 2, prefix, title),
-        leading: (ModalRoute.of(context)?.canPop ?? false) ? BackButton() : null,
-      ),
-    );
+  preferredSize: Size.fromHeight(NaviDrawerController.i.heightAppbar),
+  child: AppBar(
+    automaticallyImplyLeading: false,
+    title: customTitle(FontWeight.normal, Get.theme.primaryColor, 2, prefix, title),
+    leading: (ModalRoute.of(context)?.canPop ?? false) ? BackButton() : null,
+  ),
+);
 
 /// * Appbar only for PostStatus and Pop
 PreferredSize appBarOnly(String title, List<Widget> action) {
@@ -43,7 +44,7 @@ PreferredSize appBarOnly(String title, List<Widget> action) {
 /// * [header21] - [header22] grey color default.
 /// * [header3] orange color default.
 Widget blockItem(BuildContext context, FontWeight themeTitleWeight, FontWeight titleWeight, int index, String header11, String header12,
-        String header21, String header22, String header3, Function onTap, Function onLongPress) =>
+    String header21, String header22, String header3, Function onTap, Function onLongPress) =>
     Padding(
       padding: EdgeInsets.only(top: 1, left: 8, right: 8),
       child: InkWell(
@@ -86,11 +87,11 @@ Widget blockItem(BuildContext context, FontWeight themeTitleWeight, FontWeight t
     );
 
 Widget customCupertinoButton(Alignment alignment, EdgeInsets edgeInsets, Widget child, Function onTap) => CupertinoButton(
-      alignment: alignment,
-      padding: edgeInsets,
-      child: child,
-      onPressed: () => onTap(),
-    );
+  alignment: alignment,
+  padding: edgeInsets,
+  child: child,
+  onPressed: () => onTap(),
+);
 
 Widget buttonToolHtml(IconData iconData, String message, Function onPressed) => customCupertinoButton(
     Alignment.center,
@@ -100,7 +101,7 @@ Widget buttonToolHtml(IconData iconData, String message, Function onPressed) => 
       preferBelow: false,
       child: Icon(iconData, color: Get.theme.primaryColor),
     ),
-    () => onPressed());
+        () => onPressed());
 
 Widget customTitle(FontWeight titleWeight, Color titleColor, int? maxLines, String header11, String header12) {
   return RichText(
@@ -135,70 +136,70 @@ TextSpan customTitleChild(FontWeight titleWeight, Color titleColor, String heade
 }
 
 Widget settings() => Row(
-      mainAxisAlignment: MainAxisAlignment.center,
+  mainAxisAlignment: MainAxisAlignment.center,
+  children: [
+    Stack(
       children: [
-        Stack(
-          children: [
-            CupertinoButton(
-                child: Icon(
-                  Icons.notifications_none_outlined,
-                  color: Get.theme.primaryColor,
-                ),
-                onPressed: () async {
-                  await Get.toNamed(Routes.Alerts, preventDuplicates: false);
-                }),
-            GetBuilder<GlobalController>(
-                id: 'alertNotification',
-                builder: (controller) {
-                  return Positioned(
-                    right: 0,
-                    top: 3,
-                    child: Container(
-                      width: 30,
-                      decoration: BoxDecoration(shape: BoxShape.circle, color: controller.alertNotifications == 0 ? Colors.transparent : Colors.red),
-                      child: Center(
-                        child: Text(controller.alertNotifications == 0 ? '' : controller.alertNotifications.toString()),
-                      ),
-                    ),
-                  );
-                })
-          ],
-        ),
-        Stack(
-          children: [
-            CupertinoButton(
-                child: Icon(
-                  Icons.mail_outline,
-                  color: Get.theme.primaryColor,
-                ),
-                onPressed: () async {
-                  await Get.toNamed(Routes.Conversation, preventDuplicates: false);
-                }),
-            GetBuilder<GlobalController>(
-                id: 'inboxNotification',
-                builder: (controller) {
-                  return Positioned(
-                    right: 0,
-                    top: 3,
-                    child: Container(
-                      width: 30,
-                      decoration: BoxDecoration(shape: BoxShape.circle, color: controller.inboxNotifications == 0 ? Colors.transparent : Colors.red),
-                      child: Center(
-                        child: Text(controller.inboxNotifications == 0 ? '' : controller.inboxNotifications.toString()),
-                      ),
-                    ),
-                  );
-                })
-          ],
-        ),
         CupertinoButton(
             child: Icon(
-              Icons.settings,
+              Icons.notifications_none_outlined,
               color: Get.theme.primaryColor,
             ),
-            onPressed: () => NaviDrawerController.i.navigateToSetting()),
+            onPressed: () async {
+              await Get.toNamed(Routes.Alerts, preventDuplicates: false);
+            }),
+        GetBuilder<GlobalController>(
+            id: 'alertNotification',
+            builder: (controller) {
+              return Positioned(
+                right: 0,
+                top: 3,
+                child: Container(
+                  width: 30,
+                  decoration: BoxDecoration(shape: BoxShape.circle, color: controller.alertNotifications == 0 ? Colors.transparent : Colors.red),
+                  child: Center(
+                    child: Text(controller.alertNotifications == 0 ? '' : controller.alertNotifications.toString()),
+                  ),
+                ),
+              );
+            })
       ],
-    );
+    ),
+    Stack(
+      children: [
+        CupertinoButton(
+            child: Icon(
+              Icons.mail_outline,
+              color: Get.theme.primaryColor,
+            ),
+            onPressed: () async {
+              await Get.toNamed(Routes.Conversation, preventDuplicates: false);
+            }),
+        GetBuilder<GlobalController>(
+            id: 'inboxNotification',
+            builder: (controller) {
+              return Positioned(
+                right: 0,
+                top: 3,
+                child: Container(
+                  width: 30,
+                  decoration: BoxDecoration(shape: BoxShape.circle, color: controller.inboxNotifications == 0 ? Colors.transparent : Colors.red),
+                  child: Center(
+                    child: Text(controller.inboxNotifications == 0 ? '' : controller.inboxNotifications.toString()),
+                  ),
+                ),
+              );
+            })
+      ],
+    ),
+    CupertinoButton(
+        child: Icon(
+          Icons.settings,
+          color: Get.theme.primaryColor,
+        ),
+        onPressed: () => NaviDrawerController.i.navigateToSetting()),
+  ],
+);
 
 Widget textDrawer(Color color, double? fontSize, String text, FontWeight fontWeight) =>
     Text(text, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(color: color, fontWeight: fontWeight, fontSize: fontSize));
@@ -226,43 +227,43 @@ Widget inputCustom(TextEditingController controller, bool obscureText, String hi
 setDialog() => Get.dialog(CupertinoActivityIndicator(), barrierDismissible: false);
 
 setDialogError(String text) => Get.defaultDialog(
-      content: Text(text, textAlign: TextAlign.center),
-      textConfirm: 'Ok',
-      title: 'Error',
-      confirmTextColor: Colors.white,
-      onConfirm: () => Get.back(),
-      buttonColor: Colors.red,
-      backgroundColor: Get.theme.canvasColor,
-    );
+  content: Text(text, textAlign: TextAlign.center),
+  textConfirm: 'Ok',
+  title: 'Error',
+  confirmTextColor: Colors.white,
+  onConfirm: () => Get.back(),
+  buttonColor: Colors.red,
+  backgroundColor: Get.theme.canvasColor,
+);
 
 Widget buildFlagsPreviewIcon(String path, String text) => Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-      child: Column(
-        children: [
-          Text(
-            text.tr,
-            style: TextStyle(
-              fontSize: 10,
-              fontWeight: FontWeight.w300,
-              color: Colors.blue,
-            ),
-          ),
-          const SizedBox(height: 7.5),
-          Image.asset(path, height: 30),
-        ],
+  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+  child: Column(
+    children: [
+      Text(
+        text.tr,
+        style: TextStyle(
+          fontSize: 10,
+          fontWeight: FontWeight.w300,
+          color: Colors.blue,
+        ),
       ),
-    );
+      const SizedBox(height: 7.5),
+      Image.asset(path, height: 30),
+    ],
+  ),
+);
 
 Widget buildIcon(String path, String text) => Row(
-      children: [
-        Image.asset(
-          path,
-          height: 17,
-          width: 17,
-        ),
-        Text(' ' + text.tr)
-      ],
-    );
+  children: [
+    Image.asset(
+      path,
+      height: 17,
+      width: 17,
+    ),
+    Text(' ' + text.tr)
+  ],
+);
 
 Widget reactionChild(ViewController controller, int index) {
   return Row(
@@ -282,11 +283,11 @@ Widget reactionChild(ViewController controller, int index) {
                 image: DecorationImage(
                     image: controller.reactionList.elementAt(index)['rAvatar'] == 'no'
                         ? Image.asset(
-                            "assets/NoAvata.png",
-                          ).image
+                      "assets/NoAvata.png",
+                    ).image
                         : ExtendedNetworkImageProvider(
-                            GlobalController.i.url + controller.reactionList.elementAt(index)['rAvatar'],
-                          )),
+                      GlobalController.i.url + controller.reactionList.elementAt(index)['rAvatar'],
+                    )),
                 //ExtendedNetworkImageProvider(GlobalController.i.url + controller.reactionList.elementAt(index)['rAvatar'], cache: true)),
               ),
             ),
@@ -306,23 +307,23 @@ Widget reactionChild(ViewController controller, int index) {
       ),
       Expanded(
           child: Padding(
-        padding: EdgeInsets.only(left: 5),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              controller.reactionList.elementAt(index)['rName'],
-              style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xFFFD6E00)),
+            padding: EdgeInsets.only(left: 5),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  controller.reactionList.elementAt(index)['rName'],
+                  style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xFFFD6E00)),
+                ),
+                Text(controller.reactionList.elementAt(index)['rTitle']),
+                Text(
+                    'Mess: ${controller.reactionList.elementAt(index)['rMessage']} • React score: ${controller.reactionList.elementAt(index)['rMessage2']} • Points: ${controller.reactionList.elementAt(index)['rMessage3']}'),
+                Text(controller.reactionList.elementAt(index)['rTime']),
+                Divider()
+              ],
             ),
-            Text(controller.reactionList.elementAt(index)['rTitle']),
-            Text(
-                'Mess: ${controller.reactionList.elementAt(index)['rMessage']} • React score: ${controller.reactionList.elementAt(index)['rMessage2']} • Points: ${controller.reactionList.elementAt(index)['rMessage3']}'),
-            Text(controller.reactionList.elementAt(index)['rTime']),
-            Divider()
-          ],
-        ),
-      ))
+          ))
     ],
   );
 }
@@ -333,22 +334,22 @@ Widget listReactionUI(ViewController controller) {
     builder: (_, dragController) => Container(
       padding: EdgeInsets.only(left: 5, top: 5),
       decoration:
-          BoxDecoration(color: Get.theme.backgroundColor, borderRadius: BorderRadius.only(topLeft: Radius.circular(6), topRight: Radius.circular(6))),
+      BoxDecoration(color: Get.theme.backgroundColor, borderRadius: BorderRadius.only(topLeft: Radius.circular(6), topRight: Radius.circular(6))),
       child: GetBuilder<ViewController>(
         id: 'reactionState',
         tag: GlobalController.i.sessionTag.last,
         builder: (controller) {
           return controller.reactionList.length > 0
               ? ListView.builder(
-                  physics: BouncingScrollPhysics(),
-                  controller: dragController,
-                  itemCount: controller.reactionList.length,
-                  itemBuilder: (context, index) {
-                    return reactionChild(controller, index);
-                  })
+              physics: BouncingScrollPhysics(),
+              controller: dragController,
+              itemCount: controller.reactionList.length,
+              itemBuilder: (context, index) {
+                return reactionChild(controller, index);
+              })
               : Center(
-                  child: Text('No reaction'),
-                );
+            child: Text('No reaction'),
+          );
         },
       ),
     ),
@@ -413,177 +414,177 @@ Widget onTapMine(ViewController controller, int index) {
           controller.htmlData.elementAt(index)['orderPost'] == ''
               ? Text('')
               : CupertinoButton(
-                  child: Container(
-                    width: Get.width,
-                    child: Text('Delete'),
-                  ),
-                  onPressed: () {
-                    if (Get.isBottomSheetOpen == true) Get.back();
-                    Get.defaultDialog(
-                      title: 'Delete post',
-                      content: Container(
-                          width: Get.width,
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              inputCustom(controller.input, false, 'Reason for deletion', () => controller.deletePost(controller.input.text, index)),
-                              dialogButtonYesNo(() {
-                                controller.deletePost(controller.input.text, index);
-                              })
-                            ],
-                          )),
-                    );
-                  })
+              child: Container(
+                width: Get.width,
+                child: Text('Delete'),
+              ),
+              onPressed: () {
+                if (Get.isBottomSheetOpen == true) Get.back();
+                Get.defaultDialog(
+                  title: 'Delete post',
+                  content: Container(
+                      width: Get.width,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          inputCustom(controller.input, false, 'Reason for deletion', () => controller.deletePost(controller.input.text, index)),
+                          dialogButtonYesNo(() {
+                            controller.deletePost(controller.input.text, index);
+                          })
+                        ],
+                      )),
+                );
+              })
         ],
       ));
 }
 
 Widget dialogButtonYesNo(Function onDone) => Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        CupertinoButton(child: Text('Cancel'), onPressed: () => Get.back()),
-        CupertinoButton(
-            child: Text('Done'),
-            onPressed: () {
-              onDone();
-            }),
-      ],
-    );
+  mainAxisAlignment: MainAxisAlignment.center,
+  crossAxisAlignment: CrossAxisAlignment.center,
+  children: [
+    CupertinoButton(child: Text('Cancel'), onPressed: () => Get.back()),
+    CupertinoButton(
+        child: Text('Done'),
+        onPressed: () {
+          onDone();
+        }),
+  ],
+);
 
 Widget viewContent(int index, ViewController controller) => Container(
-      decoration: BoxDecoration(
-        border: Border(bottom: BorderSide(color: Get.theme.canvasColor)),
-        color: Get.theme.backgroundColor,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          CupertinoButton(
-              padding: EdgeInsets.zero,
-              child: Stack(
-                children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Padding(
-                        padding: EdgeInsets.only(top: 5, left: 5, bottom: 5),
-                        child: displayAvatar(
-                            48,
-                            controller.htmlData.elementAt(index)["avatarColor1"],
-                            controller.htmlData.elementAt(index)["avatarColor2"],
-                            controller.htmlData.elementAt(index)["userName"],
-                            controller.htmlData.elementAt(index)["userAvatar"]),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(top: 10, left: 10),
-                        child: RichText(
-                          text: TextSpan(children: <TextSpan>[
-                            TextSpan(
-                                text: controller.htmlData.elementAt(index)['userName'] + "\n",
-                                style: TextStyle(
-                                    color: controller.htmlData.elementAt(index)['newPost'] == true ? Color(0xFFFD6E00) : Colors.blue,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 16)),
-                            TextSpan(
-                                text: controller.htmlData.elementAt(index)['userTitle'],
-                                style: TextStyle(color: Get.theme.primaryColor, fontSize: 13)),
-                          ]),
-                        ),
-                      ),
-                    ],
+  decoration: BoxDecoration(
+    border: Border(bottom: BorderSide(color: Get.theme.canvasColor)),
+    color: Get.theme.backgroundColor,
+  ),
+  child: Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: <Widget>[
+      CupertinoButton(
+          padding: EdgeInsets.zero,
+          child: Stack(
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Padding(
+                    padding: EdgeInsets.only(top: 5, left: 5, bottom: 5),
+                    child: displayAvatar(
+                        48,
+                        controller.htmlData.elementAt(index)["avatarColor1"],
+                        controller.htmlData.elementAt(index)["avatarColor2"],
+                        controller.htmlData.elementAt(index)["userName"],
+                        controller.htmlData.elementAt(index)["userAvatar"]),
                   ),
                   Padding(
-                    padding: EdgeInsets.only(top: 10, right: 10),
-                    child: Align(
-                      alignment: Alignment.centerRight,
-                      child: Text('${controller.htmlData.elementAt(index)['userPostDate']}\n ${controller.htmlData.elementAt(index)['orderPost']}',
-                          textAlign: TextAlign.right, style: TextStyle(color: Get.theme.primaryColor, fontSize: 13)),
+                    padding: EdgeInsets.only(top: 10, left: 10),
+                    child: RichText(
+                      text: TextSpan(children: <TextSpan>[
+                        TextSpan(
+                            text: controller.htmlData.elementAt(index)['userName'] + "\n",
+                            style: TextStyle(
+                                color: controller.htmlData.elementAt(index)['newPost'] == true ? Color(0xFFFD6E00) : Colors.blue,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16)),
+                        TextSpan(
+                            text: controller.htmlData.elementAt(index)['userTitle'],
+                            style: TextStyle(color: Get.theme.primaryColor, fontSize: 13)),
+                      ]),
                     ),
                   ),
                 ],
               ),
-              onPressed: () {
-                Get.bottomSheet(
-                    Card(
-                      color: Get.theme.canvasColor,
-                      child: controller.htmlData.elementAt(index)['userName'] == NaviDrawerController.i.data['nameUser']
-                          ? onTapMine(controller, index)
-                          : onTapUser(controller, index),
-                    ),
-                    ignoreSafeArea: false);
-              }),
-          customHtml(controller.htmlData, index, controller.image),
-          Padding(
-            padding: EdgeInsets.only(left: 5),
-            child: Row(
-              children: [
+              Padding(
+                padding: EdgeInsets.only(top: 10, right: 10),
+                child: Align(
+                  alignment: Alignment.centerRight,
+                  child: Text('${controller.htmlData.elementAt(index)['userPostDate']}\n ${controller.htmlData.elementAt(index)['orderPost']}',
+                      textAlign: TextAlign.right, style: TextStyle(color: Get.theme.primaryColor, fontSize: 13)),
+                ),
+              ),
+            ],
+          ),
+          onPressed: () {
+            Get.bottomSheet(
+                Card(
+                  color: Get.theme.canvasColor,
+                  child: controller.htmlData.elementAt(index)['userName'] == NaviDrawerController.i.data['nameUser']
+                      ? onTapMine(controller, index)
+                      : onTapUser(controller, index),
+                ),
+                ignoreSafeArea: false);
+          }),
+      customHtml(controller.htmlData, index, controller.imageList),
+      Padding(
+        padding: EdgeInsets.only(left: 5),
+        child: Row(
+          children: [
+            controller.htmlData.elementAt(index)['commentImage'].toString() != 'no'
+                ? Image.asset('assets/reaction/' + controller.htmlData.elementAt(index)['commentImage'][0] + '.png', width: 17, height: 17)
+                : Container(),
+            controller.htmlData.elementAt(index)['commentImage'].toString().length > 1 &&
                 controller.htmlData.elementAt(index)['commentImage'].toString() != 'no'
-                    ? Image.asset('assets/reaction/' + controller.htmlData.elementAt(index)['commentImage'][0] + '.png', width: 17, height: 17)
-                    : Container(),
-                controller.htmlData.elementAt(index)['commentImage'].toString().length > 1 &&
-                        controller.htmlData.elementAt(index)['commentImage'].toString() != 'no'
-                    ? Image.asset('assets/reaction/' + controller.htmlData.elementAt(index)['commentImage'][1] + '.png', width: 17, height: 17)
-                    : Container(),
-                Expanded(
-                  child: TextButton(
-                    style: ButtonStyle(alignment: Alignment.centerLeft),
-                    onPressed: () {
-                      controller.getDataReactionList(index);
-                      Get.bottomSheet(listReactionUI(controller), isScrollControlled: false, ignoreSafeArea: true);
-                    },
-                    child: Text(controller.htmlData.elementAt(index)['commentName'],
-                        style: TextStyle(color: Colors.blue), overflow: TextOverflow.ellipsis, maxLines: 1),
-                  ),
-                ),
-                FlutterReactionButton(
-                  onReactionChanged: (reaction, i) {
-                    if (GlobalController.i.isLogged == false) {
-                      controller.update();
-                      setDialogError('popMess4'.tr);
-                    } else {
-                      if (controller.htmlData.elementAt(index)['commentByMe'] != i) {
-                        if (i == 0) {
-                          controller
-                              .reactionPost(
-                                  index, controller.htmlData.elementAt(index)['postID'], controller.htmlData.elementAt(index)['commentByMe'])
-                              .then((value) {
-                            if (value['status'] != 'error') {
-                              controller.htmlData.elementAt(index)['commentByMe'] = 0;
-                            } else {
-                              setDialogError(value['mess']);
-                            }
-                          });
-                        } else {
-                          controller.reactionPost(index, controller.htmlData.elementAt(index)['postID'], i).then((value) {
-                            if (value['status'] != 'error') {
-                              controller.htmlData.elementAt(index)['commentByMe'] = i;
-                            } else {
-                              setDialogError(value['mess']);
-                            }
-                          });
-                        }
-                      }
-                    }
-                  },
-                  reactions: controller.flagsReactions,
-                  initialReaction: controller.htmlData.elementAt(index)['commentByMe'] == -1
-                      ? controller.flagsReactions[0]
-                      : controller.flagsReactions[controller.htmlData.elementAt(index)['commentByMe']],
-                  boxRadius: 10,
-                  boxAlignment: AlignmentDirectional.bottomEnd,
-                ),
-                TextButton(
-                    onPressed: () {
-                      controller.quote(index);
-                    },
-                    child: Text('rep'.tr))
-              ],
+                ? Image.asset('assets/reaction/' + controller.htmlData.elementAt(index)['commentImage'][1] + '.png', width: 17, height: 17)
+                : Container(),
+            Expanded(
+              child: TextButton(
+                style: ButtonStyle(alignment: Alignment.centerLeft),
+                onPressed: () {
+                  controller.getDataReactionList(index);
+                  Get.bottomSheet(listReactionUI(controller), isScrollControlled: false, ignoreSafeArea: true);
+                },
+                child: Text(controller.htmlData.elementAt(index)['commentName'],
+                    style: TextStyle(color: Colors.blue), overflow: TextOverflow.ellipsis, maxLines: 1),
+              ),
             ),
-          )
-        ],
-      ),
-    );
+            FlutterReactionButton(
+              onReactionChanged: (reaction, i) {
+                if (GlobalController.i.isLogged == false) {
+                  controller.update();
+                  setDialogError('popMess4'.tr);
+                } else {
+                  if (controller.htmlData.elementAt(index)['commentByMe'] != i) {
+                    if (i == 0) {
+                      controller
+                          .reactionPost(
+                          index, controller.htmlData.elementAt(index)['postID'], controller.htmlData.elementAt(index)['commentByMe'])
+                          .then((value) {
+                        if (value['status'] != 'error') {
+                          controller.htmlData.elementAt(index)['commentByMe'] = 0;
+                        } else {
+                          setDialogError(value['mess']);
+                        }
+                      });
+                    } else {
+                      controller.reactionPost(index, controller.htmlData.elementAt(index)['postID'], i).then((value) {
+                        if (value['status'] != 'error') {
+                          controller.htmlData.elementAt(index)['commentByMe'] = i;
+                        } else {
+                          setDialogError(value['mess']);
+                        }
+                      });
+                    }
+                  }
+                }
+              },
+              reactions: controller.flagsReactions,
+              initialReaction: controller.htmlData.elementAt(index)['commentByMe'] == -1
+                  ? controller.flagsReactions[0]
+                  : controller.flagsReactions[controller.htmlData.elementAt(index)['commentByMe']],
+              boxRadius: 10,
+              boxAlignment: AlignmentDirectional.bottomEnd,
+            ),
+            TextButton(
+                onPressed: () {
+                  controller.quote(index);
+                },
+                child: Text('rep'.tr))
+          ],
+        ),
+      )
+    ],
+  ),
+);
 
 Widget displayAvatar(double sizeImage, String avatarColor1, String avatarColor2, String? userName, String imageLink) {
   return Container(
@@ -595,8 +596,8 @@ Widget displayAvatar(double sizeImage, String avatarColor1, String avatarColor2,
         image: imageLink == 'no'
             ? null
             : DecorationImage(
-                image: ExtendedNetworkImageProvider(imageLink),
-              ),
+          image: ExtendedNetworkImageProvider(imageLink),
+        ),
         color: Color(
           int.parse(avatarColor1),
         ),
@@ -604,10 +605,36 @@ Widget displayAvatar(double sizeImage, String avatarColor1, String avatarColor2,
     child: imageLink != 'no'
         ? null
         : Text(
-            userName!.toUpperCase()[0],
-            style: TextStyle(color: Color(int.parse(avatarColor2)), fontWeight: FontWeight.bold, fontSize: Get.theme.textTheme.headline5!.fontSize),
-          ),
+      userName!.toUpperCase()[0],
+      style: TextStyle(color: Color(int.parse(avatarColor2)), fontWeight: FontWeight.bold, fontSize: Get.theme.textTheme.headline5!.fontSize),
+    ),
   );
+}
+
+displayGallery(List imageList, int index) {
+  Get.bottomSheet(
+      SafeArea(child: InteractiveviewerGallery(
+        itemBuilder: (BuildContext context, int index, bool isFocus) {
+          return Stack(
+            alignment: Alignment.center,
+            children: [
+              ExtendedImage.network(
+                imageList.elementAt(index),
+                clearMemoryCacheWhenDispose: true,
+                clearMemoryCacheIfFailed: true,
+              ),
+              Align(
+                alignment: Alignment.topCenter,
+                child: Text('${index+1} of ${imageList.length}'),
+              )
+            ],
+          );
+        },
+        sources: imageList,
+        initIndex: index,
+      )),
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent, ignoreSafeArea: false , enableDrag: false);
 }
 
 Widget customHtml(List htmlData, int index, List imageList) {
@@ -629,93 +656,71 @@ Widget customHtml(List htmlData, int index, List imageList) {
             style: TextStyle(fontSize: GlobalController.i.userStorage.read('fontSizeView')),
           );
         } else if ((renderContext.tree.element!.attributes['data-url'] != null &&
-                renderContext.tree.element!.attributes['data-url']!.contains(".gif") == true) ||
+            renderContext.tree.element!.attributes['data-url']!.contains(".gif") == true) ||
             renderContext.tree.element!.attributes['alt']!.contains(".gif") == true) {
-          // imageList.add(renderContext.tree.element!.attributes['src']!.contains('data:image/', 0) == true
-          //     ? renderContext.tree.element!.attributes['data-src'].toString()
-          //     : renderContext.tree.element!.attributes['src'].toString());
-          // return Image.network(
-          //   renderContext.tree.element!.attributes['src']!.contains('data:image/', 0) == true
-          //       ? renderContext.tree.element!.attributes['data-src'].toString()
-          //       : renderContext.tree.element!.attributes['src'].toString(),
-          //   width: 100,
-          //   height: 100,
-          //   filterQuality: FilterQuality.low,
-          // );
-
+          imageList.add(renderContext.tree.element!.attributes['src']!.contains('data:image/', 0) == true
+              ? renderContext.tree.element!.attributes['data-src'].toString()
+              : renderContext.tree.element!.attributes['src'].toString());
           return IconButton(
               onPressed: () {
-                Get.bottomSheet(Container(
-                  color: Colors.black,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      ExtendedImage.network(
-                        renderContext.tree.element!.attributes['src']!.contains('data:image/', 0) == true
-                            ? renderContext.tree.element!.attributes['data-src'].toString()
-                            : renderContext.tree.element!.attributes['src'].toString(),
-                        clearMemoryCacheWhenDispose: true,
-                      )
-                    ],
-                  ),
-                ), isScrollControlled: true);
+                displayGallery(
+                    imageList,
+                    imageList.indexOf(renderContext.tree.element!.attributes['src']!.contains('data:image/', 0) == true
+                        ? renderContext.tree.element!.attributes['data-src'].toString()
+                        : renderContext.tree.element!.attributes['src'].toString()));
               },
               icon: Icon(
                 Icons.image,
                 size: 50,
               ));
         } else {
-          return ExtendedImage.network(
-            renderContext.tree.element!.attributes['src']!.contains('data:image/', 0) == true
-                ? renderContext.tree.element!.attributes['data-src'].toString()
-                : renderContext.tree.element!.attributes['src'].toString(),
-            clearMemoryCacheWhenDispose: true,
-            cache: true,
-            constraints: BoxConstraints(maxWidth: Get.width, maxHeight: Get.height),
-            clearMemoryCacheIfFailed: true,
-            enableMemoryCache: false,
-            loadStateChanged: (states) {
-              switch (states.extendedImageLoadState) {
-                case LoadState.loading:
-                  if (width != null && height != null) {
-                    return AspectRatio(aspectRatio: width / height);
-                  } else
-                    return Container(height: 50, width: 50);
-                case LoadState.completed:
-                  // TODO: Handle this case.
-                  break;
-                case LoadState.failed:
-                  // TODO: Handle this case.
-                  break;
-              }
-            },
-          );
-          // return ExtendedImage.network(
-          //   url: renderContext.tree.element!.attributes['src']!.contains('data:image/', 0) == true
-          //       ? renderContext.tree.element!.attributes['data-src'].toString()
-          //       : renderContext.tree.element!.attributes['src'].toString(),
-          //   filterQuality: FilterQuality.low,
-          //   errorWidget: (context, url, dy) {
-          //     return Text('Image Error');
-          //   },
-          //   placeholder: (context, c) {
-          //     if (width != null && height != null) {
-          //       return AspectRatio(aspectRatio: width / height);
-          //     } else {
-          //       return Container(height: 50, width: 50);
-          //     }
-          //   },
-          // );
+          imageList.add(renderContext.tree.element!.attributes['src']!.contains('data:image/', 0) == true
+              ? renderContext.tree.element!.attributes['data-src'].toString()
+              : renderContext.tree.element!.attributes['src'].toString());
+          return customCupertinoButton(
+              Alignment.center,
+              EdgeInsets.zero,
+              ExtendedImage.network(
+                renderContext.tree.element!.attributes['src']!.contains('data:image/', 0) == true
+                    ? renderContext.tree.element!.attributes['data-src'].toString()
+                    : renderContext.tree.element!.attributes['src'].toString(),
+                clearMemoryCacheWhenDispose: true,
+                cache: true,
+                constraints: BoxConstraints(maxWidth: Get.width, maxHeight: Get.height),
+                clearMemoryCacheIfFailed: true,
+                enableMemoryCache: false,
+                cacheMaxAge: Duration(days: 7),
+                loadStateChanged: (states) {
+                  switch (states.extendedImageLoadState) {
+                    case LoadState.loading:
+                      if (width != null && height != null) {
+                        return AspectRatio(aspectRatio: width / height);
+                      } else
+                        return Container(height: 50, width: 50);
+                    case LoadState.completed:
+                    // TODO: Handle this case.
+                      break;
+                    case LoadState.failed:
+                    // TODO: Handle this case.
+                      break;
+                  }
+                },
+              ), () {
+            displayGallery(
+                imageList,
+                imageList.indexOf(renderContext.tree.element!.attributes['src']!.contains('data:image/', 0) == true
+                    ? renderContext.tree.element!.attributes['data-src'].toString()
+                    : renderContext.tree.element!.attributes['src'].toString()));
+          });
         }
       },
       "table": (context, child) {
         if (context.tree.element!.getElementsByTagName("td").length > 2)
           return SingleChildScrollView(
             scrollDirection:
-                (context.tree.element!.getElementsByTagName("tr").length > 1) || (context.tree.element!.getElementsByTagName("a")[0].text.length > 25)
-                    ? Axis.horizontal
-                    : Axis.vertical,
+            (context.tree.element!.getElementsByTagName("tr").length > 1) || (context.tree.element!.getElementsByTagName("a")[0].text.length > 25)
+                ? Axis.horizontal
+                : Axis.vertical,
             padding: EdgeInsets.all(2),
             physics: BouncingScrollPhysics(),
             child: (context.tree as TableLayoutElement).toWidget(context),
@@ -786,18 +791,13 @@ Widget customHtml(List htmlData, int index, List imageList) {
         }
       }
     },
-    onImageTap: (String? url, RenderContext context, Map<String, String> attributes, dom.Element? element) {
-      print(url);
-      print(attributes);
-      print(element);
-    },
     style: {
       "code": Style(color: Colors.blue),
       "table": Style(backgroundColor: Get.theme.cardColor),
       "body": Style(fontSize: FontSize(GlobalController.i.userStorage.read('fontSizeView')), margin: EdgeInsets.only(left: 3, right: 3)),
       "div": Style(display: Display.INLINE, margin: EdgeInsets.zero),
       "blockquote":
-          Style(width: double.infinity, backgroundColor: Get.theme.cardColor, margin: EdgeInsets.only(left: 5.0, right: 5.0), display: Display.BLOCK)
+      Style(width: double.infinity, backgroundColor: Get.theme.cardColor, margin: EdgeInsets.only(left: 5.0, right: 5.0), display: Display.BLOCK)
     },
     onLinkTap: (String? url, RenderContext context, Map<String, String> attributes, dom.Element? element) async {
       if (url != null) {

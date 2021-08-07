@@ -32,6 +32,7 @@ class YoutubeController extends GetxController implements YouTubePlayerListener{
   void onClose() {
     // TODO: implement onClose
     super.onClose();
+    controller.pause();
     //SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
   }
 
