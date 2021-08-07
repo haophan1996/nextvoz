@@ -1,4 +1,4 @@
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:extended_image/extended_image.dart';
 import 'package:flutter_html/shims/dart_ui_real.dart';
 import 'package:get/get.dart';
 import 'package:flutter/cupertino.dart';
@@ -82,7 +82,7 @@ Widget logged() {
                               width: 48,
                             ).image
                           : NaviDrawerController.i.data['avatarUser'].length > 5
-                              ? CachedNetworkImageProvider((NaviDrawerController.i.data['avatarUser']))
+                              ? ExtendedNetworkImageProvider((NaviDrawerController.i.data['avatarUser']))
                               : Image.asset(
                                   "assets/NoAvata.png",
                                   height: 48,

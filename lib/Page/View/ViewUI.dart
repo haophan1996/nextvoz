@@ -99,7 +99,6 @@ class ViewUI extends StatelessWidget {
           child: ListView.builder(
             cacheExtent: 999999999,
             physics: BouncingScrollPhysics(),
-            // padding: EdgeInsets.only(bottom: 20),
             scrollDirection: Axis.vertical,
             controller: controller.listViewScrollController,
             itemCount: controller.htmlData.length,

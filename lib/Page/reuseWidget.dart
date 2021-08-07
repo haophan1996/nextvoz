@@ -5,9 +5,9 @@ import 'package:html/dom.dart' as dom;
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_html/shims/dart_ui_real.dart';
 import 'package:flutter_reaction_button/flutter_reaction_button.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:nextvoz/Routes/routes.dart';
 import '/utils/color.dart';
+import 'package:extended_image/extended_image.dart';
 import '/GlobalController.dart';
 import '/Page/NavigationDrawer/NaviDrawerController.dart';
 import '/Page/View/ViewController.dart';
@@ -284,7 +284,7 @@ Widget reactionChild(ViewController controller, int index) {
                         ? Image.asset(
                             "assets/NoAvata.png",
                           ).image
-                        : CachedNetworkImageProvider(
+                        : ExtendedNetworkImageProvider(
                             GlobalController.i.url + controller.reactionList.elementAt(index)['rAvatar'],
                           )),
                 //ExtendedNetworkImageProvider(GlobalController.i.url + controller.reactionList.elementAt(index)['rAvatar'], cache: true)),
@@ -332,8 +332,8 @@ Widget listReactionUI(ViewController controller) {
     initialChildSize: 1,
     builder: (_, dragController) => Container(
       padding: EdgeInsets.only(left: 5, top: 5),
-      decoration: BoxDecoration(
-          color: Get.theme.backgroundColor, borderRadius: BorderRadius.only(topLeft: Radius.circular(6), topRight: Radius.circular(6))),
+      decoration:
+          BoxDecoration(color: Get.theme.backgroundColor, borderRadius: BorderRadius.only(topLeft: Radius.circular(6), topRight: Radius.circular(6))),
       child: GetBuilder<ViewController>(
         id: 'reactionState',
         tag: GlobalController.i.sessionTag.last,
@@ -513,7 +513,7 @@ Widget viewContent(int index, ViewController controller) => Container(
                     ),
                     ignoreSafeArea: false);
               }),
-          customHtml(controller.htmlData, index),
+          customHtml(controller.htmlData, index, controller.image),
           Padding(
             padding: EdgeInsets.only(left: 5),
             child: Row(
@@ -575,10 +575,7 @@ Widget viewContent(int index, ViewController controller) => Container(
                 ),
                 TextButton(
                     onPressed: () {
-                      Future.delayed(Duration(milliseconds: 100), () {
-                        // controller.reply();
-                        controller.quote(index);
-                      });
+                      controller.quote(index);
                     },
                     child: Text('rep'.tr))
               ],
@@ -594,11 +591,11 @@ Widget displayAvatar(double sizeImage, String avatarColor1, String avatarColor2,
     height: sizeImage,
     alignment: Alignment.center,
     decoration: BoxDecoration(
-      border: Border.all(color: Colors.green, width: 2),
+        border: Border.all(color: Colors.green, width: 2),
         image: imageLink == 'no'
             ? null
             : DecorationImage(
-                image: CachedNetworkImageProvider(imageLink),
+                image: ExtendedNetworkImageProvider(imageLink),
               ),
         color: Color(
           int.parse(avatarColor1),
@@ -613,10 +610,12 @@ Widget displayAvatar(double sizeImage, String avatarColor1, String avatarColor2,
   );
 }
 
-Widget customHtml(List htmlData, int index) {
+Widget customHtml(List htmlData, int index, List imageList) {
   return Html(
     data: htmlData.elementAt(index)['postContent'],
-    tagsList: Html.tags..remove('noscript')..remove(GlobalController.i.userStorage.read('showImage') == true ? '' : 'img'),
+    tagsList: Html.tags
+      ..remove('noscript')
+      ..remove(GlobalController.i.userStorage.read('showImage') == true ? '' : 'img'),
     customRender: {
       "img": (renderContext, child) {
         double? width = double.tryParse(renderContext.tree.element!.attributes['width'].toString());
@@ -629,27 +628,85 @@ Widget customHtml(List htmlData, int index) {
             renderContext.tree.element!.attributes['alt']!,
             style: TextStyle(fontSize: GlobalController.i.userStorage.read('fontSizeView')),
           );
-        } //else if (//renderContext.tree.element!.attributes['src']!.contains(".gif") &&
-            //renderContext.tree.element!.attributes['data-url'] != null ||
-            //renderContext.tree.element!.attributes['data-url']!.contains(".gif")) {
-       // }
-        else {
-          return CachedNetworkImage(
-            imageUrl: renderContext.tree.element!.attributes['src']!.contains('data:image/', 0) == true
+        } else if ((renderContext.tree.element!.attributes['data-url'] != null &&
+                renderContext.tree.element!.attributes['data-url']!.contains(".gif") == true) ||
+            renderContext.tree.element!.attributes['alt']!.contains(".gif") == true) {
+          // imageList.add(renderContext.tree.element!.attributes['src']!.contains('data:image/', 0) == true
+          //     ? renderContext.tree.element!.attributes['data-src'].toString()
+          //     : renderContext.tree.element!.attributes['src'].toString());
+          // return Image.network(
+          //   renderContext.tree.element!.attributes['src']!.contains('data:image/', 0) == true
+          //       ? renderContext.tree.element!.attributes['data-src'].toString()
+          //       : renderContext.tree.element!.attributes['src'].toString(),
+          //   width: 100,
+          //   height: 100,
+          //   filterQuality: FilterQuality.low,
+          // );
+
+          return IconButton(
+              onPressed: () {
+                Get.bottomSheet(Container(
+                  color: Colors.black,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      ExtendedImage.network(
+                        renderContext.tree.element!.attributes['src']!.contains('data:image/', 0) == true
+                            ? renderContext.tree.element!.attributes['data-src'].toString()
+                            : renderContext.tree.element!.attributes['src'].toString(),
+                        clearMemoryCacheWhenDispose: true,
+                      )
+                    ],
+                  ),
+                ), isScrollControlled: true);
+              },
+              icon: Icon(
+                Icons.image,
+                size: 50,
+              ));
+        } else {
+          return ExtendedImage.network(
+            renderContext.tree.element!.attributes['src']!.contains('data:image/', 0) == true
                 ? renderContext.tree.element!.attributes['data-src'].toString()
                 : renderContext.tree.element!.attributes['src'].toString(),
-            filterQuality: FilterQuality.low,
-            errorWidget: (context, url, dy) {
-              return Text('Image Error');
-            },
-            placeholder: (context, c) {
-              if (width != null && height != null) {
-                return AspectRatio(aspectRatio: width / height);
-              } else {
-                return Container(height: 50, width: 50);
+            clearMemoryCacheWhenDispose: true,
+            cache: true,
+            constraints: BoxConstraints(maxWidth: Get.width, maxHeight: Get.height),
+            clearMemoryCacheIfFailed: true,
+            enableMemoryCache: false,
+            loadStateChanged: (states) {
+              switch (states.extendedImageLoadState) {
+                case LoadState.loading:
+                  if (width != null && height != null) {
+                    return AspectRatio(aspectRatio: width / height);
+                  } else
+                    return Container(height: 50, width: 50);
+                case LoadState.completed:
+                  // TODO: Handle this case.
+                  break;
+                case LoadState.failed:
+                  // TODO: Handle this case.
+                  break;
               }
             },
           );
+          // return ExtendedImage.network(
+          //   url: renderContext.tree.element!.attributes['src']!.contains('data:image/', 0) == true
+          //       ? renderContext.tree.element!.attributes['data-src'].toString()
+          //       : renderContext.tree.element!.attributes['src'].toString(),
+          //   filterQuality: FilterQuality.low,
+          //   errorWidget: (context, url, dy) {
+          //     return Text('Image Error');
+          //   },
+          //   placeholder: (context, c) {
+          //     if (width != null && height != null) {
+          //       return AspectRatio(aspectRatio: width / height);
+          //     } else {
+          //       return Container(height: 50, width: 50);
+          //     }
+          //   },
+          // );
         }
       },
       "table": (context, child) {
@@ -695,8 +752,8 @@ Widget customHtml(List htmlData, int index) {
                   children: [
                     ClipRRect(
                         borderRadius: BorderRadius.circular(6),
-                        child: CachedNetworkImage(
-                          imageUrl: 'https://img.youtube.com/vi/$link/0.jpg',
+                        child: ExtendedImage.network(
+                          'https://img.youtube.com/vi/$link/0.jpg',
                           width: width,
                           height: height,
                         )),
@@ -729,16 +786,18 @@ Widget customHtml(List htmlData, int index) {
         }
       }
     },
+    onImageTap: (String? url, RenderContext context, Map<String, String> attributes, dom.Element? element) {
+      print(url);
+      print(attributes);
+      print(element);
+    },
     style: {
       "code": Style(color: Colors.blue),
       "table": Style(backgroundColor: Get.theme.cardColor),
-      "body": Style(
-        fontSize: FontSize(GlobalController.i.userStorage.read('fontSizeView')),
-        margin: EdgeInsets.only(left: 3, right: 3)
-      ),
+      "body": Style(fontSize: FontSize(GlobalController.i.userStorage.read('fontSizeView')), margin: EdgeInsets.only(left: 3, right: 3)),
       "div": Style(display: Display.INLINE, margin: EdgeInsets.zero),
-      "blockquote": Style(width: double.infinity, backgroundColor: Get.theme.cardColor,margin: EdgeInsets.only(left: 5.0, right: 5.0), display: Display.BLOCK)
-
+      "blockquote":
+          Style(width: double.infinity, backgroundColor: Get.theme.cardColor, margin: EdgeInsets.only(left: 5.0, right: 5.0), display: Display.BLOCK)
     },
     onLinkTap: (String? url, RenderContext context, Map<String, String> attributes, dom.Element? element) async {
       if (url != null) {
@@ -759,7 +818,7 @@ Widget customHtml(List htmlData, int index) {
                         child: Container(
                           decoration: BoxDecoration(color: Colors.grey.shade800, borderRadius: BorderRadius.all(Radius.circular(6))),
                           padding: EdgeInsets.only(bottom: 20),
-                          child: customHtml([i], 0),
+                          child: customHtml([i], 0, []),
                         ),
                       );
                     },
@@ -786,4 +845,3 @@ Widget customHtml(List htmlData, int index) {
     },
   );
 }
-

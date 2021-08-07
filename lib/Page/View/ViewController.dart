@@ -13,7 +13,7 @@ import '/GlobalController.dart';
 import '/Page/reuseWidget.dart';
 
 class ViewController extends GetxController {
-  List htmlData = [], reactionList = [];
+  List htmlData = [], reactionList = [], image = [];
   int currentPage = 0, totalPage = 0, lengthHtmlDataList = 0;
   Map<String, dynamic> data = {};
   bool isEdit = false;
@@ -57,6 +57,7 @@ class ViewController extends GetxController {
     PaintingBinding.instance!.imageCache!.clear();
     PaintingBinding.instance!.imageCache!.clearLiveImages();
   }
+
 
   _removeTag(String content) {
     return content.replaceAll(
