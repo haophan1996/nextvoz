@@ -102,7 +102,7 @@ class HomePageUI extends GetView<HomeController> {
                         controller.myHomePage.elementAt(index)["subHeader"],
                         controller.myHomePage.elementAt(index)["threads"],
                         controller.myHomePage.elementAt(index)["messages"],
-                        controller.myHomePage.elementAt(index)["title"],
+                        '',
                         () => controller.navigateToThread(
                             controller.myHomePage.elementAt(index)["subHeader"], controller.myHomePage.elementAt(index)["linkSubHeader"]), () {
                       if (Get.isSnackbarOpen == true) Get.back();
@@ -115,7 +115,7 @@ class HomePageUI extends GetView<HomeController> {
                         GlobalController.i.userStorage.write('defaultsPage', true);
                         GlobalController.i.userStorage.write('defaultsPage_title', controller.myHomePage.elementAt(index)['subHeader']);
                         GlobalController.i.userStorage
-                            .write('defaultsPage_link', GlobalController.i.url + controller.myHomePage.elementAt(index)['linkSubHeader']);
+                            .write('defaultsPage_link', controller.myHomePage.elementAt(index)['linkSubHeader']);
                         Get.snackbar('Alert', 'Default Page: ' + controller.myHomePage.elementAt(index)['subHeader'],
                             forwardAnimationCurve: Curves.decelerate, colorText: Colors.blueAccent);
                       }

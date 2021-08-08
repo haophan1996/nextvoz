@@ -67,15 +67,9 @@ Widget blockItem(BuildContext context, FontWeight themeTitleWeight, FontWeight t
                   children: <Widget>[
                     customTitle(titleWeight, Get.theme.primaryColor, null, header11, header12),
                     Text(
-                      "$header21 \u2022 $header22",
+                      "$header21 \u2022 $header22 \u2022 $header3",
                       style: TextStyle(color: Colors.grey, fontSize: 12),
                     ),
-                    Text(
-                      header3,
-                      style: TextStyle(color: Colors.grey /**/),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    )
                   ],
                 ),
                 //flex: 1,

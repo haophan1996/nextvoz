@@ -59,10 +59,6 @@ class HomeController extends GetxController {
         value.getElementsByClassName("node-body").forEach((element) {
           myHomePage.add({
             "header": value.getElementsByTagName("a")[0].innerHtml.replaceAll("&amp;", "&"),
-            "title": (element.getElementsByClassName("label label").length > 0
-                    ? (element.getElementsByClassName("label label")[0].innerHtml + ": ")
-                    : "") +
-                element.getElementsByClassName("node-extra-row").map((e) => e.getElementsByTagName("a")[0].attributes["title"]).first!.trim(),
             "subHeader": element.getElementsByTagName("a")[0].innerHtml.trim().replaceAll("&amp;", "&"),
             "linkSubHeader": element.getElementsByTagName("a")[0].attributes['href'].toString(),
             "threads": "Threads: " +
@@ -79,7 +75,7 @@ class HomeController extends GetxController {
     });
   }
 
-  navigateToThread(String title, String link) async {
+  navigateToThread(String title, String link) {
     Get.toNamed(Routes.Thread, arguments: [title, GlobalController.i.url + link]);
   }
 }
