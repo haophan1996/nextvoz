@@ -15,7 +15,6 @@ class HomePageUI extends GetView<HomeController> {
     return Scaffold(
       endDrawer: NaviDrawerUI(),
       endDrawerEnableOpenDragGesture: true,
-      drawerEdgeDragWidth: MediaQuery.of(context).size.width * 0.2,
       backgroundColor: Theme.of(context).backgroundColor,
       appBar: preferredSize(context, "theNEXTvoz", ''),
       body: GetBuilder<HomeController>(builder: (controller) {

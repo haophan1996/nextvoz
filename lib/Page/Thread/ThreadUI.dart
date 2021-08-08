@@ -18,7 +18,6 @@ class ThreadUI extends GetView<ThreadController> {
     return Scaffold(
       endDrawer: NaviDrawerUI(),
       endDrawerEnableOpenDragGesture: true,
-      drawerEdgeDragWidth: MediaQuery.of(context).size.width * 0.2,
       backgroundColor: Theme.of(context).backgroundColor,
       appBar: preferredSize(context, controller.theme, ''),
       body: Stack(

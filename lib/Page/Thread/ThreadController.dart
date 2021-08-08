@@ -30,12 +30,10 @@ class ThreadController extends GetxController {
   }
 
   navigateToThread(int index) {
-    Future.delayed(Duration(milliseconds: 100), () {
-      GlobalController.i.sessionTag.add(myThreadList.elementAt(index)['title']);
-      Get.lazyPut<ViewController>(() => ViewController(), tag: GlobalController.i.sessionTag.last);
-      Get.toNamed(Routes.View,
-          arguments: [myThreadList.elementAt(index)['title'], myThreadList.elementAt(index)['link'], myThreadList.elementAt(index)['prefix'], 0]);
-    });
+    GlobalController.i.sessionTag.add(myThreadList.elementAt(index)['title']);
+    Get.lazyPut<ViewController>(() => ViewController(), tag: GlobalController.i.sessionTag.last);
+    Get.toNamed(Routes.View,
+        arguments: [myThreadList.elementAt(index)['title'], myThreadList.elementAt(index)['link'], myThreadList.elementAt(index)['prefix'], 0]);
   }
 
   @override
@@ -59,13 +57,13 @@ class ThreadController extends GetxController {
     }, dio, url, false).then((value) async {
       lengthHtmlDataList = myThreadList.length;
 
-      if (value!.getElementsByTagName('html')[0].attributes['data-logged-in'] == 'true'){
+      if (value!.getElementsByTagName('html')[0].attributes['data-logged-in'] == 'true') {
         GlobalController.i.controlNotification(
             int.parse(value.getElementsByClassName('p-navgroup-link--alerts')[0].attributes['data-badge'].toString()),
             int.parse(value.getElementsByClassName('p-navgroup-link--conversations')[0].attributes['data-badge'].toString()),
-            value.getElementsByTagName('html')[0].attributes['data-logged-in'].toString()
-        );
-      } else GlobalController.i.controlNotification(0, 0, 'false');
+            value.getElementsByTagName('html')[0].attributes['data-logged-in'].toString());
+      } else
+        GlobalController.i.controlNotification(0, 0, 'false');
 
       value.getElementsByClassName("p-body-content").forEach((element) async {
         lastP = element.getElementsByClassName("pageNavSimple");

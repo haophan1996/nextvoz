@@ -25,7 +25,8 @@ class ViewUI extends StatelessWidget {
         id: 'firstLoading',
         tag: GlobalController.i.sessionTag.last,
         builder: (controller) {
-          return controller.htmlData.length == 0 ? loading() : loadSuccess();
+          print('first build');
+          return controller.htmlData.length != 0 ? loadSuccess() : controller.data['loading'] == 'error' ? loadFailed() : loading();
         },
       ),
     );
@@ -46,7 +47,7 @@ class ViewUI extends StatelessWidget {
 
   Widget loadSuccess() {
     return Stack(children: [
-      SafeArea(child: refreshIndicatorConfiguration(postContent())),
+      refreshIndicatorConfiguration(postContent()),
       loading(),
       Align(
         alignment: Alignment.bottomCenter,
@@ -78,6 +79,21 @@ class ViewUI extends StatelessWidget {
     ]);
   }
 
+  Widget loadFailed() {
+    return Center(
+      child: RichText(
+        textAlign: TextAlign.center,
+        text: TextSpan(
+          children: <TextSpan>[
+            TextSpan(
+                text: 'Oops! We ran into some problems.\n', style: TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold, fontSize: 16)),
+            TextSpan(text: 'The requested thread could not be found.', style: TextStyle(color: Get.theme.primaryColor, fontSize: 16)),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget postContent() {
     return GetBuilder<ViewController>(
       tag: GlobalController.i.sessionTag.last,
@@ -98,7 +114,7 @@ class ViewUI extends StatelessWidget {
           },
           child: ListView.builder(
             cacheExtent: 999999999,
-            physics: BouncingScrollPhysics(),
+            //physics: BouncingScrollPhysics(),
             scrollDirection: Axis.vertical,
             controller: controller.listViewScrollController,
             itemCount: controller.htmlData.length,

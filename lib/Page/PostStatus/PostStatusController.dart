@@ -123,7 +123,7 @@ class PostStatusController extends GetxController{
       if (value['status'] == 'ok') {
         Get.back(result: ['ok']);
       } else {
-        setDialogError(value['errors'][0].toString());
+        setDialogError(value['errors'].toString());
       }
     });
   }

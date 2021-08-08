@@ -17,8 +17,7 @@ class HomeController extends GetxController {
   Future<void> onReady() async {
     super.onReady();
     if (GlobalController.i.userStorage.read('defaultsPage') == true) {
-      Get.toNamed(Routes.Thread,
-          arguments: [GlobalController.i.userStorage.read('defaultsPage_title'), GlobalController.i.userStorage.read('defaultsPage_link')]);
+      navigateToThread(GlobalController.i.userStorage.read('defaultsPage_title'), GlobalController.i.userStorage.read('defaultsPage_link'));
       if (GlobalController.i.userStorage.read('homeList') == null) {
         await loading();
       } else {
@@ -81,8 +80,6 @@ class HomeController extends GetxController {
   }
 
   navigateToThread(String title, String link) async {
-    Future.delayed(Duration(milliseconds: 200), () {
-      Get.toNamed(Routes.Thread, arguments: [title, GlobalController.i.url + link]);
-    });
+    Get.toNamed(Routes.Thread, arguments: [title, GlobalController.i.url + link]);
   }
 }

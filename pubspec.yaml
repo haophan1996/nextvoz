@@ -68,12 +68,12 @@ flutter:
   assets:
     - assets/popo/
     - assets/popopo/
-    - assets/pogif/
+    #- assets/pogif/
     - assets/reaction/
     - assets/languages/
     - NoAvata.png
-    - newPost.png
-    - alerts.png
+    #- newPost.png
+    #- alerts.png
     - assets/
     - modify_package/rich_editor/assets/editor/
 

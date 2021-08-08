@@ -40,6 +40,7 @@ class ViewController extends GetxController {
     data['view'] == 0
         ? await loadUserPost(data['fullUrl'] = GlobalController.i.url + data['subLink'])
         : await loadInboxView(data['fullUrl'] = GlobalController.i.url + data['subLink']);
+    data['loading'] = 'loading';
     update(['firstLoading']);
   }
 
@@ -150,7 +151,9 @@ class ViewController extends GetxController {
     data['_commentImg'] = '';
     await GlobalController.i.getBody(() {
       ///error
-      print('eeeeeeee');
+      data['loading'] = 'error';
+      print(data['loading']);
+      update(['firstLoading']);
     }, (download) {
       ///download
       percentDownload = download;
@@ -266,6 +269,9 @@ class ViewController extends GetxController {
         });
       });
       imageList.clear();
+      PaintingBinding.instance!.imageCache!.clear();
+      PaintingBinding.instance!.imageCache!.clearLiveImages();
+      data['loading'] = 'ok';
       update();
       if (Get.isDialogOpen == true || refreshController.isLoading || isEdit == true) {
         if (Get.isDialogOpen == true) Get.back();

@@ -17,7 +17,6 @@ import '/Page/NavigationDrawer/NaviDrawerController.dart';
 
 class GlobalController extends GetxController {
   static GlobalController get i => Get.find();
-  late dom.Document doc;
   final String url = "https://voz.vn",
       pageLink = "page-",
       inboxReactLink = 'https://voz.vn/conversations/messages/',
