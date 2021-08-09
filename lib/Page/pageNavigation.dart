@@ -59,6 +59,7 @@ Widget pageNavigation(Function(String index) gotoPage, Function reply, Widget ch
                 child: CupertinoButton(
                   padding: EdgeInsets.zero,
                   child: GetBuilder<GlobalController>(
+                    id: 'Notification',
                     builder: (controller) {
                       return Icon(
                         Icons.more_rounded,
@@ -118,16 +119,7 @@ Widget whatNew() => Container(
                 child: CupertinoButton(
                     padding: EdgeInsets.zero,
                     child: Text(
-                      'What\'s new',
-                      maxLines: 1,
-                    ),
-                    onPressed: () {}),
-              ),
-              Expanded(
-                child: CupertinoButton(
-                    padding: EdgeInsets.zero,
-                    child: Text(
-                      'New posts',
+                      'Posts',
                       maxLines: 1,
                     ),
                     onPressed: () {}),
@@ -136,7 +128,7 @@ Widget whatNew() => Container(
                 child: CupertinoButton(
                     //padding: EdgeInsets.zero,
                     child: Text(
-                      'New profile posts',
+                      'Profile',
                       overflow: TextOverflow.ellipsis,
                       maxLines: 1,
                     ),

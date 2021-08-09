@@ -61,7 +61,6 @@ class ViewController extends GetxController {
     PaintingBinding.instance!.imageCache!.clearLiveImages();
   }
 
-
   _removeTag(String content) {
     return content.replaceAll(
         RegExp(r'<div class="bbCodeBlock-expandLink js-expandLink"><a role="button" tabindex="0">Click to expand...</a></div>'), "");
@@ -152,7 +151,6 @@ class ViewController extends GetxController {
     await GlobalController.i.getBody(() {
       ///error
       data['loading'] = 'error';
-      print(data['loading']);
       update(['firstLoading']);
     }, (download) {
       ///download
@@ -162,7 +160,12 @@ class ViewController extends GetxController {
       lengthHtmlDataList = htmlData.length;
       data['dataCsrfPost'] = value!.getElementsByTagName('html')[0].attributes['data-csrf'];
       data['xfCsrfPost'] = GlobalController.i.xfCsrfPost;
-      data['fullUrl'] = value.getElementsByTagName('head')[0].getElementsByTagName('link')[2].attributes['href'];
+      data['fullUrl'] = value
+          .getElementsByTagName('head')[0]
+          .getElementsByTagName('meta')
+          .where((element) => element.attributes['property'] == 'og:url')
+          .first
+          .attributes['content'];
       if (data['fullUrl'].contains('page-') == true) {
         data['fullUrl'] = data['fullUrl']
             .toString()
@@ -292,7 +295,12 @@ class ViewController extends GetxController {
       data['dataCsrfPost'] = value!.getElementsByTagName('html')[0].attributes['data-csrf'];
       data['xfCsrfPost'] = GlobalController.i.xfCsrfPost;
 
-      data['fullUrl'] = GlobalController.i.url + value.getElementsByTagName('head')[0].getElementsByTagName('link')[2].attributes['href'].toString();
+      data['fullUrl'] = value
+          .getElementsByTagName('head')[0]
+          .getElementsByTagName('meta')
+          .where((element) => element.attributes['property'] == 'og:url')
+          .first
+          .attributes['content'];
       if (data['fullUrl'].contains('page-') == true) {
         data['fullUrl'] = data['fullUrl']
             .toString()
@@ -438,7 +446,6 @@ class ViewController extends GetxController {
 
   reply(String message, bool isEditPost) async {
     //                                            token               xf_csrf             link
-
     var x = await Get.toNamed(Routes.AddReply,
         arguments: [data['xfCsrfPost'], data['dataCsrfPost'], data['fullUrl'], data['postID'], isEditPost, data['view'], message]);
     if (x?[0] == 'ok') {
@@ -450,7 +457,8 @@ class ViewController extends GetxController {
           await setPageOnClick(totalPage);
         }
         isEdit = false;
-        listViewScrollController.jumpTo(listViewScrollController.position.maxScrollExtent);
+        listViewScrollController.animateTo(listViewScrollController.position.maxScrollExtent + 200,
+            duration: Duration(milliseconds: 200), curve: Curves.slowMiddle);
       }
     }
   }

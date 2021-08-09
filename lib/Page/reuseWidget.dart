@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -67,7 +68,7 @@ Widget blockItem(BuildContext context, FontWeight themeTitleWeight, FontWeight t
                   children: <Widget>[
                     customTitle(titleWeight, Get.theme.primaryColor, null, header11, header12),
                     Text(
-                      "$header21 \u2022 $header22 \u2022 $header3",
+                      "$header21 \u2022 $header22 ${header3 == '' ? '' : '\u2022'} $header3",
                       style: TextStyle(color: Colors.grey, fontSize: 12),
                     ),
                   ],
@@ -161,14 +162,14 @@ Widget settings() => Row(
         ),
         Stack(
           children: [
-            CupertinoButton(
-                child: Icon(
+            customCupertinoButton(
+                Alignment.center,
+                EdgeInsets.zero,
+                Icon(
                   Icons.mail_outline,
                   color: Get.theme.primaryColor,
                 ),
-                onPressed: () async {
-                  await Get.toNamed(Routes.Conversation, preventDuplicates: false);
-                }),
+                () async => await Get.toNamed(Routes.Conversation, preventDuplicates: false)),
             GetBuilder<GlobalController>(
                 id: 'inboxNotification',
                 builder: (controller) {
@@ -186,12 +187,14 @@ Widget settings() => Row(
                 })
           ],
         ),
-        CupertinoButton(
-            child: Icon(
+        customCupertinoButton(
+            Alignment.center,
+            EdgeInsets.zero,
+            Icon(
               Icons.settings,
               color: Get.theme.primaryColor,
             ),
-            onPressed: () => NaviDrawerController.i.navigateToSetting()),
+            () => NaviDrawerController.i.navigateToSetting())
       ],
     );
 
@@ -231,18 +234,17 @@ setDialogError(String text) => Get.defaultDialog(
     );
 
 Widget buildFlagsPreviewIcon(String path, String text) => Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       child: Column(
         children: [
           Text(
             text.tr,
             style: TextStyle(
               fontSize: 10,
-              fontWeight: FontWeight.w300,
+              fontWeight: FontWeight.bold,
               color: Colors.blue,
             ),
           ),
-          const SizedBox(height: 7.5),
           Image.asset(path, height: 30),
         ],
       ),
@@ -255,7 +257,10 @@ Widget buildIcon(String path, String text) => Row(
           height: 17,
           width: 17,
         ),
-        Text(' ' + text.tr)
+        Text(
+          text.tr,
+          style: TextStyle(color: Colors.blue),
+        )
       ],
     );
 
@@ -620,8 +625,11 @@ displayGallery(List imageList, int index) {
               ),
               Align(
                 alignment: Alignment.topCenter,
-                child: Text('${index + 1} of ${imageList.length}'),
-              )
+                child: Text(
+                  '${index + 1} of ${imageList.length}',
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
             ],
           );
         },

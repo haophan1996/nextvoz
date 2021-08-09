@@ -13,30 +13,25 @@ class AlertsUI extends GetView<AlertsController> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: appBarOnly('Alerts', [IconButton(icon: Icon(Icons.refresh), onPressed: () async => controller.refreshList())]),
-      body: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(7)),
-          color: Theme.of(context).backgroundColor.withOpacity(0.9),
-        ),
-        child: GetBuilder<AlertsController>(
-          id: 'loadingState',
-          builder: (controller) {
-            return controller.data['loadingStatus'] == 'loading' ? loading() : ListView.builder(
-              physics: BouncingScrollPhysics(),
-              itemCount: GlobalController.i.alertList.length,
-              itemBuilder: (BuildContext context, int index) {
-                return Container(
-                  decoration: BoxDecoration(
-                      color: GlobalController.i.alertList.elementAt(index)['unread'] == 'true' ? Get.theme.canvasColor : Colors.transparent,
-                      border: Border(
-                        bottom: BorderSide(width: 0.5, color: Theme.of(context).primaryColor),
-                      )),
-                  child: itemList(index),
-                );
-              },
-            );
-          },
-        ),
+      backgroundColor: Theme.of(context).backgroundColor,
+      body: GetBuilder<AlertsController>(
+        id: 'loadingState',
+        builder: (controller) {
+          return controller.data['loadingStatus'] == 'loading' ? loading() : ListView.builder(
+            physics: BouncingScrollPhysics(),
+            itemCount: GlobalController.i.alertList.length,
+            itemBuilder: (BuildContext context, int index) {
+              return Container(
+                decoration: BoxDecoration(
+                    color: GlobalController.i.alertList.elementAt(index)['unread'] == 'true' ? Get.theme.canvasColor : Colors.transparent,
+                    border: Border(
+                      bottom: BorderSide(width: 0.5, color: Theme.of(context).primaryColor),
+                    )),
+                child: itemList(index),
+              );
+            },
+          );
+        },
       ),
     );
 
@@ -63,7 +58,6 @@ class AlertsUI extends GetView<AlertsController> {
           children: [
             TextSpan(text: GlobalController.i.alertList.elementAt(index)['username'], style: TextStyle(color: Colors.blue)),
             TextSpan(text: GlobalController.i.alertList.elementAt(index)['status'], style: TextStyle(color: Get.theme.primaryColor)),
-            //TextSpan(text: globalController.alertList.elementAt(index)['threadName'], style: TextStyle(color: Colors.blue)),
             customTitleChild(FontWeight.normal, Colors.blue, GlobalController.i.alertList.elementAt(index)['prefix'],
                 GlobalController.i.alertList.elementAt(index)['threadName']),
             GlobalController.i.alertList.elementAt(index)['reaction'] == ''

@@ -88,7 +88,7 @@ class PostStatusController extends GetxController{
     data['isEditPost'] = Get.arguments[4] ??= '';
     data['view'] = Get.arguments[5] ??= '';
     data['value'] = Get.arguments[6] ??= '';
-
+    print(data['link']);
   }
 
   @override

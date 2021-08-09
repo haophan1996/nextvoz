@@ -25,7 +25,6 @@ class ViewUI extends StatelessWidget {
         id: 'firstLoading',
         tag: GlobalController.i.sessionTag.last,
         builder: (controller) {
-          print('first build');
           return controller.htmlData.length != 0 ? loadSuccess() : controller.data['loading'] == 'error' ? loadFailed() : loading();
         },
       ),

@@ -15,27 +15,25 @@ class InboxUI extends GetView<InboxController> {
         IconButton(icon: Icon(Icons.refresh), onPressed: () async => await controller.refreshList()),
         IconButton(icon: Icon(Icons.open_in_new), onPressed: () async => {})
       ]),
-      body: Container(
-        color: Get.theme.backgroundColor,
-        child: GetBuilder<InboxController>(
-          builder: (_) {
-            return GlobalController.i.inboxList.length != 0
-                ? ListView.builder(
-                    physics: BouncingScrollPhysics(),
-                    itemCount: GlobalController.i.inboxList.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      return Container(
-                        decoration: BoxDecoration(
-                            border: Border(
-                          bottom: BorderSide(width: 0.5, color: Theme.of(context).primaryColor),
-                        )),
-                        child: itemList(index),
-                      );
-                    },
-                  )
-                : loading();
-          },
-        ),
+      backgroundColor: Theme.of(context).backgroundColor,
+      body: GetBuilder<InboxController>(
+        builder: (_) {
+          return GlobalController.i.inboxList.length != 0
+              ? ListView.builder(
+            physics: BouncingScrollPhysics(),
+            itemCount: GlobalController.i.inboxList.length,
+            itemBuilder: (BuildContext context, int index) {
+              return Container(
+                decoration: BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide(width: 0.5, color: Theme.of(context).primaryColor, style: BorderStyle.solid),
+                    )),
+                child: itemList(index),
+              );
+            },
+          )
+              : loading();
+        },
       ),
     );
   }
