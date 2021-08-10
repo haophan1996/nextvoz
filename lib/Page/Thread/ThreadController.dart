@@ -3,17 +3,16 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:nextvoz/Routes/routes.dart';
-import 'package:pull_to_refresh/pull_to_refresh.dart';
 import '/GlobalController.dart';
 import '/Page/View/ViewController.dart';
 
 class ThreadController extends GetxController {
   late String _url;
   late String theme;
-  late RefreshController refreshController = RefreshController(initialRefresh: false);
   late ScrollController listViewScrollController = ScrollController();
   List myThreadList = [];
   int currentPage = 0, totalPage = 0, lengthHtmlDataList = 0;
+  String isScroll = 'idle';
   var _title, lastP, linkThread = '', themeTitle = "", title = "", dio = Dio(), percentDownload = 0.0;
 
   @override
@@ -39,15 +38,22 @@ class ThreadController extends GetxController {
   @override
   onClose() async {
     super.onClose();
-    refreshController.dispose();
     listViewScrollController.dispose();
     myThreadList.clear();
-    dio.clear();
     dio.close(force: true);
+    dio.clear();
   }
 
   setPageOnClick(int toPage) async {
     await loadSubHeader(_url + GlobalController.i.pageLink + toPage.toString());
+    await updateLastItemScroll();
+  }
+
+  updateLastItemScroll() async {
+    if (isScroll != 'idle') {
+      isScroll = 'idle';
+      update(['lastItemList']);
+    }
   }
 
   loadSubHeader(String url) async {
@@ -98,12 +104,12 @@ class ThreadController extends GetxController {
           });
         });
       });
-      if (Get.isDialogOpen == true || refreshController.isLoading) {
+      if (Get.isDialogOpen == true || isScroll == 'Release') {
         if (Get.isDialogOpen == true) Get.back();
         myThreadList.removeRange(0, lengthHtmlDataList);
         listViewScrollController.jumpTo(-10.0);
       }
-      refreshController.loadComplete();
+      myThreadList.add(null);
     }).then((value) => update());
   }
 }

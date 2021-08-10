@@ -7,7 +7,6 @@ import 'package:html/parser.dart' as parser;
 import 'package:html/dom.dart' as dom;
 import 'package:nextvoz/Routes/routes.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:flutter_reaction_button/flutter_reaction_button.dart';
 import '/GlobalController.dart';
 import '/Page/reuseWidget.dart';
@@ -20,10 +19,9 @@ class ViewController extends GetxController {
   late var _user;
   var dio = Dio(), percentDownload = 0.0;
   late dom.Document res;
-  late RefreshController refreshController = RefreshController(initialRefresh: false);
   late ScrollController listViewScrollController = ScrollController();
   TextEditingController input = TextEditingController();
-
+  String isScroll = 'idle';
   @override
   Future<void> onInit() async {
     super.onInit();
@@ -50,7 +48,6 @@ class ViewController extends GetxController {
     dio.close(force: true);
     input.dispose();
     GlobalController.i.sessionTag.removeLast();
-    refreshController.dispose();
     listViewScrollController.dispose();
     htmlData.clear();
     data.clear();
@@ -70,6 +67,15 @@ class ViewController extends GetxController {
     data['view'] == 0
         ? await loadUserPost(data['fullUrl'] + GlobalController.i.pageLink + toPage.toString())
         : await loadInboxView(data['fullUrl'] + GlobalController.i.pageLink + toPage.toString());
+
+    await updateLastItemScroll();
+  }
+
+  updateLastItemScroll() async{
+    if (isScroll != 'idle'){
+      isScroll = 'idle';
+      update(['lastItemList']);
+    }
   }
 
   getImage(String url) async {
@@ -148,10 +154,15 @@ class ViewController extends GetxController {
 
   Future<void> loadUserPost(String url) async {
     data['_commentImg'] = '';
-    await GlobalController.i.getBody(() {
+    await GlobalController.i.getBodyBeta(() async {
       ///error
-      data['loading'] = 'error';
-      update(['firstLoading']);
+      //data['loading'] = 'error';
+      //update(['firstLoading']);
+      await loadUserPost(url);
+      if (htmlData.length < 0) update(['firstLoading']);
+        else update();
+      await updateLastItemScroll();
+
     }, (download) {
       ///download
       percentDownload = download;
@@ -275,13 +286,14 @@ class ViewController extends GetxController {
       PaintingBinding.instance!.imageCache!.clear();
       PaintingBinding.instance!.imageCache!.clearLiveImages();
       data['loading'] = 'ok';
-      update();
-      if (Get.isDialogOpen == true || refreshController.isLoading || isEdit == true) {
+
+      if (Get.isDialogOpen == true || isScroll == 'Release' || isEdit == true) {
         if (Get.isDialogOpen == true) Get.back();
         htmlData.removeRange(0, lengthHtmlDataList);
         listViewScrollController.jumpTo(-10.0);
       }
-      refreshController.loadComplete();
+      htmlData.add(null);
+      update();
     });
   }
 
@@ -392,13 +404,13 @@ class ViewController extends GetxController {
         data['_commentImg'] = '';
       });
       imageList.clear();
-      update();
-      if (Get.isDialogOpen == true || refreshController.isLoading || isEdit == true) {
+      if (Get.isDialogOpen == true || isScroll == 'Release' || isEdit == true) {
         if (Get.isDialogOpen == true) Get.back();
         htmlData.removeRange(0, lengthHtmlDataList);
         listViewScrollController.jumpTo(-10.0);
       }
-      refreshController.loadComplete();
+      htmlData.add({'asc' : 'asc'});
+      update();
     });
   }
 

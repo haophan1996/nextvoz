@@ -33,22 +33,20 @@ class GlobalController extends GetxController {
     super.onInit();
   }
 
-  controlNotification(int alt, int ib, String login){
-    if (login =='false'){
-      if (login != isLogged.toString()){
+  controlNotification(int alt, int ib, String login) {
+    if (login == 'false') {
+      if (login != isLogged.toString()) {
         isLogged = false;
         update();
       }
-
     } else {
-      if (login != isLogged.toString()){
+      if (login != isLogged.toString()) {
         isLogged = true;
         update(['Notification'], true);
         update();
       }
-
-      if (alt != alertNotifications || ib != inboxNotifications){
-        if (alt != alertNotifications){
+      if (alt != alertNotifications || ib != inboxNotifications) {
+        if (alt != alertNotifications) {
           alertNotifications = alt;
           update(['alertNotification'], true);
         }
@@ -64,18 +62,42 @@ class GlobalController extends GetxController {
   Future<dom.Document?> getBody(Function onError, Function(double) onDownload, Dio dios, String url, bool isHomePage) async {
     if (isLogged == true) {
       dios.options.headers['cookie'] = 'xf_user=${xfUser.toString()}; xf_session=${xfSession.toString()}';
-    } else dios.options.headers['cookie'] = '';
+    } else
+      dios.options.headers['cookie'] = '';
 
     onDownload(0.1);
-    final response = await dios.get(url, onReceiveProgress: (actual, total) {
+    final response = await dios.get(url,options: Options(receiveTimeout: 5000, sendTimeout: 5000,),onReceiveProgress: (actual, total) {
       onDownload((actual.bitLength - 4) / total.bitLength);
     }).whenComplete(() async {
       onDownload(0.0);
-    }).catchError((err) {
+    }).catchError((err) async {
       if (err.type == DioErrorType.other) {
-        print('other');
+
       } else {
         onError();
+      }
+    });
+    xfCsrfPost = cookXfCsrf(response.headers['set-cookie'].toString());
+    if (isHomePage == true) xfCsrfLogin = cookXfCsrf(response.headers['set-cookie'].toString());
+    return parser.parse(response.toString());
+  }
+
+  Future<dom.Document?> getBodyBeta(Function onError, Function(double) onDownload, Dio dios, String url, bool isHomePage) async {
+    if (isLogged == true) {
+      dios.options.headers['cookie'] = 'xf_user=${xfUser.toString()}; xf_session=${xfSession.toString()}';
+    } else
+      dios.options.headers['cookie'] = '';
+
+    onDownload(0.1);
+    final response = await dios.get(url,options: Options(receiveTimeout: 5000, sendTimeout: 5000,),onReceiveProgress: (actual, total) {
+      onDownload((actual.bitLength - 4) / total.bitLength);
+    }).whenComplete(() async {
+      onDownload(0.0);
+    }).catchError((err) async {
+      if (err.type == DioErrorType.other) {
+        onError();
+      } else {
+        //onError();
       }
     });
     xfCsrfPost = cookXfCsrf(response.headers['set-cookie'].toString());
@@ -100,7 +122,6 @@ class GlobalController extends GetxController {
     });
     return jsonDecode(response.body);
   }
-
 
   Future<File> getImageFileFromAssets(String path) async {
     final byteData = await rootBundle.load('assets/$path');
@@ -158,13 +179,14 @@ class GlobalController extends GetxController {
   }
 
   getIDYoutube(String link) {
-    if (link.contains('embed/')== true){
+    if (link.contains('embed/') == true) {
       return link.split('embed/')[1].split('?')[0];
-    } else if (link.contains('watch?v=')==true){
+    } else if (link.contains('watch?v=') == true) {
       return link.split("?v=")[1];
-    } else if (link.contains('youtu.be/') == true){
+    } else if (link.contains('youtu.be/') == true) {
       return link.split('youtu.be/')[1];
-    } else return null;
+    } else
+      return null;
   }
 
   launchURL(String url) async {

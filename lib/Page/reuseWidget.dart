@@ -642,6 +642,31 @@ displayGallery(List imageList, int index) {
       enableDrag: false);
 }
 
+Widget loadingBottom(String type) {
+  return Container(
+    alignment: Alignment.topCenter,
+    height: 70,
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        type == 'idle'
+            ? Icon(Icons.arrow_upward)
+            : type == 'Holding'
+                ? Icon(Icons.sync_outlined)
+                : CupertinoActivityIndicator(),
+        Text(
+          '\t${type == 'idle'
+              ? 'Pull up to loading'
+              : type == 'Holding'
+              ? 'Release to load'
+              : 'Loading'}',
+          style: TextStyle(color: Colors.grey),
+        )
+      ],
+    ),
+  );
+}
+
 Widget customHtml(List htmlData, int index, List imageList) {
   return Html(
     data: htmlData.elementAt(index)['postContent'],
