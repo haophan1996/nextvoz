@@ -157,23 +157,6 @@ class GlobalController extends GetxController {
 
   final langList = {Locale('en', 'US'), Locale('vi', 'VN')};
 
-  Future<void> checkUserSetting() async {
-    if (userStorage.read('lang') == null) {
-      await userStorage.write('lang', 1); // Default Vietnamese
-    }
-    if (userStorage.read('fontSizeView') == null) {
-      await userStorage.write('fontSizeView', 18.0); // Default fontSize 18
-    }
-    if (userStorage.read('scrollToMyRepAfterPost') == null) {
-      await userStorage.write('scrollToMyRepAfterPost', true); // D
-    }
-    if (userStorage.read('showImage') == null) {
-      await userStorage.write('showImage', true); // D
-    }
-    if (userStorage.read('signature') == null) {
-      await userStorage.write('signature', true); // D
-    }
-  }
 
   getEmoji(String s) {
     return "assets/" + s.replaceAll(RegExp(r"\S*smilies\S"), "").replaceAll(RegExp(r'\?[^]*'), "");

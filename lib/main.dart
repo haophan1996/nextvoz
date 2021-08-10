@@ -31,7 +31,6 @@ Future<void> main() async {
   Get.put<GlobalController>(GlobalController());
   Get.put<NaviDrawerController>(NaviDrawerController(), permanent: true);
   await GetStorage.init().then((value) async {
-    await GlobalController.i.checkUserSetting();
     await GlobalController.i.setDataUser();
     await GlobalController.i.setAccountUser();
   });
@@ -46,7 +45,7 @@ class MyPage extends StatelessWidget {
       defaultTransition: Transition.cupertino,
       transitionDuration: Duration(milliseconds: 200),
       translations: Language(),
-      locale: GlobalController.i.langList.elementAt(GlobalController.i.userStorage.read('lang')),
+      locale: GlobalController.i.langList.elementAt(GlobalController.i.userStorage.read('lang') ?? 1),
       theme: Themes().lightTheme,
       darkTheme: Themes().darkTheme,
       initialRoute: Routes.Home,

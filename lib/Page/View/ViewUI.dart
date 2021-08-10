@@ -100,7 +100,7 @@ class ViewUI extends StatelessWidget {
               break;
           }
         },
-            () => controller.currentPage == 0 ? setDialogError('Wait') : controller.reply('', false),
+            () => controller.reply('', false),
             GetBuilder<ViewController>(
               tag: GlobalController.i.sessionTag.last,
               builder: (controller) {
@@ -135,7 +135,8 @@ class ViewUI extends StatelessWidget {
             return ListView.builder(
               cacheExtent: 999999999,
               physics: BouncingScrollPhysics(),
-              scrollDirection: Axis.vertical,
+              //scrollDirection: Axis.vertical,
+              clipBehavior: Clip.none,
               controller: controller.listViewScrollController,
               itemCount: controller.htmlData.length,
               itemBuilder: (context, index) {

@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 import 'package:nextvoz/Routes/routes.dart';
 import '/Page/View/ViewController.dart';
@@ -7,6 +8,7 @@ import '/Page/reuseWidget.dart';
 class NaviDrawerController extends GetxController {
   static NaviDrawerController get i => Get.find();
   List shortcuts = [];
+  var dio = Dio();
   Map<String, dynamic> data = {};
 
 
@@ -39,5 +41,42 @@ class NaviDrawerController extends GetxController {
 
   navigateToSetting() {
     Get.toNamed(Routes.Settings, preventDuplicates: false);
+  }
+
+
+  Future<void> getUserProfile() async {
+    await GlobalController.i.getBody(() {}, (download) {}, dio, GlobalController.i.url, false).then((res) async {
+      if (res!.getElementsByTagName('html')[0].attributes['data-logged-in'] == 'true') {
+        GlobalController.i.controlNotification(
+            int.parse(res.getElementsByClassName('p-navgroup-link--alerts')[0].attributes['data-badge'].toString()),
+            int.parse(res.getElementsByClassName('p-navgroup-link--conversations')[0].attributes['data-badge'].toString()),
+            res.getElementsByTagName('html')[0].attributes['data-logged-in'].toString());
+      } else
+        GlobalController.i.controlNotification(0, 0, 'false');
+
+      String linkProfile = res.getElementsByTagName('form')[1].attributes['action']!.split('/post')[0];
+      data['linkUser'] = linkProfile;
+      await GlobalController.i.getBody(() {}, (download) {}, dio, GlobalController.i.url + linkProfile, false).then((value) {
+        data['nameUser'] = value!.documentElement!.getElementsByClassName(' is-stroked')[0].getElementsByTagName('span')[0].innerHtml;
+        data['titleUser'] = value.documentElement!.getElementsByClassName('userTitle')[0].innerHtml;
+        if (value.documentElement!.getElementsByClassName('avatar avatar--l').map((e) => e.innerHtml).first.contains('span') == true) {
+          data['avatarUser'] = 'no';
+        } else {
+          final url = GlobalController.i.url +
+              value.documentElement!.getElementsByClassName('avatarWrapper')[0].getElementsByTagName('img')[0].attributes['src'].toString();
+          data['avatarUser'] = url;
+        }
+      });
+    }).then((value) async {
+      await GlobalController.i.userStorage.write("linkUser", data['linkUser']);
+      await GlobalController.i.userStorage.write("nameUser", data['nameUser']);
+      await GlobalController.i.userStorage.write("titleUser", data['titleUser']);
+      await GlobalController.i.userStorage.write("avatarUser", data['avatarUser']);
+      NaviDrawerController.i.data['linkUser'] = data['linkUser'];
+      NaviDrawerController.i.data['nameUser'] = data['nameUser'];
+      NaviDrawerController.i.data['titleUser'] = data['titleUser'];
+      NaviDrawerController.i.data['avatarUser'] = data['avatarUser'];
+      GlobalController.i.update(['Notification'], true);
+    });
   }
 }

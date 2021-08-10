@@ -8,21 +8,19 @@ class SettingsController extends GetxController {
   RxBool switchValuePost = true.obs, switchImage = true.obs, switchSignature = true.obs, switchDefaultsPage = true.obs;
   var langIndex ;
   getLang(){
-    return GlobalController.i.userStorage.read('lang');
+    return GlobalController.i.userStorage.read('lang') ?? 1;
   }
 
   @override
   void onInit() {
     // TODO: implement onInit
     super.onInit();
-    langIndex = GlobalController.i.userStorage.read('lang');
-    fontSizeView.value = GlobalController.i.userStorage.read('fontSizeView');
-    switchValuePost.value = GlobalController.i.userStorage.read('scrollToMyRepAfterPost');
-    switchImage.value = GlobalController.i.userStorage.read('showImage');
-    switchSignature.value = GlobalController.i.userStorage.read('signature');
-
-    if (GlobalController.i.userStorage.read('defaultsPage') != null)
-    switchDefaultsPage.value = GlobalController.i.userStorage.read('defaultsPage');
+    langIndex = GlobalController.i.userStorage.read('lang') ?? 1;
+    fontSizeView.value = GlobalController.i.userStorage.read('fontSizeView') ?? 20;
+    switchValuePost.value = GlobalController.i.userStorage.read('scrollToMyRepAfterPost') ?? true;
+    switchImage.value = GlobalController.i.userStorage.read('showImage') ?? true;
+    switchSignature.value = GlobalController.i.userStorage.read('signature') ?? true;
+    switchDefaultsPage.value = GlobalController.i.userStorage.read('defaultsPage') ?? false;
   }
 
   @override

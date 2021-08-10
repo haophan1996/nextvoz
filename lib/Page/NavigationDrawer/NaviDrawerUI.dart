@@ -124,7 +124,7 @@ Widget logged() {
                 ),
                 onPressed: () async {
                   setDialog();
-                  //await NaviDrawerController.i.getUserProfile();
+                  await NaviDrawerController.i.getUserProfile();
                   Get.back();
                 },
               ), //Refresh user data

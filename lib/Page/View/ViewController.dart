@@ -22,6 +22,7 @@ class ViewController extends GetxController {
   late ScrollController listViewScrollController = ScrollController();
   TextEditingController input = TextEditingController();
   String isScroll = 'idle';
+
   @override
   Future<void> onInit() async {
     super.onInit();
@@ -71,8 +72,8 @@ class ViewController extends GetxController {
     await updateLastItemScroll();
   }
 
-  updateLastItemScroll() async{
-    if (isScroll != 'idle'){
+  updateLastItemScroll() async {
+    if (isScroll != 'idle') {
       isScroll = 'idle';
       update(['lastItemList']);
     }
@@ -159,10 +160,11 @@ class ViewController extends GetxController {
       //data['loading'] = 'error';
       //update(['firstLoading']);
       await loadUserPost(url);
-      if (currentPage <= 0) update(['firstLoading']);
-        else update();
+      if (currentPage <= 0)
+        update(['firstLoading']);
+      else
+        update();
       await updateLastItemScroll();
-
     }, (download) {
       ///download
       percentDownload = download;
@@ -409,7 +411,8 @@ class ViewController extends GetxController {
         htmlData.removeRange(0, lengthHtmlDataList);
         listViewScrollController.jumpTo(-10.0);
       }
-      htmlData.add({'asc' : 'asc'});
+      data['loading'] = 'ok';
+      htmlData.add(null);
       update();
     });
   }
@@ -461,7 +464,7 @@ class ViewController extends GetxController {
     var x = await Get.toNamed(Routes.AddReply,
         arguments: [data['xfCsrfPost'], data['dataCsrfPost'], data['fullUrl'], data['postID'], isEditPost, data['view'], message]);
     if (x?[0] == 'ok') {
-      if (await GlobalController.i.userStorage.read('scrollToMyRepAfterPost') == true) {
+      if (GlobalController.i.userStorage.read('scrollToMyRepAfterPost') ?? true /* == true*/) {
         isEdit = true;
         int lastPage = totalPage;
         await setPageOnClick(lastPage);

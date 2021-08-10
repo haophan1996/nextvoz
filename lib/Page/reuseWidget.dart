@@ -221,7 +221,8 @@ Widget inputCustom(TextEditingController controller, bool obscureText, String hi
   );
 }
 
-setDialog() => Get.dialog(CupertinoActivityIndicator(), barrierDismissible: false);
+setDialog() => Get.dialog(CupertinoActivityIndicator(),
+  barrierDismissible: false);
 
 setDialogError(String text) => Get.defaultDialog(
       content: Text(text, textAlign: TextAlign.center),
@@ -592,17 +593,12 @@ Widget displayAvatar(double sizeImage, String avatarColor1, String avatarColor2,
     alignment: Alignment.center,
     decoration: BoxDecoration(
         border: Border.all(color: Colors.green, width: 2),
-        image: imageLink == 'no'
-            ? null
-            : DecorationImage(
-                image: ExtendedNetworkImageProvider(imageLink),
-              ),
         color: Color(
           int.parse(avatarColor1),
         ),
         shape: BoxShape.circle),
     child: imageLink != 'no'
-        ? null
+        ? ExtendedImage.network(imageLink,clearMemoryCacheWhenDispose: true,shape: BoxShape.circle,filterQuality: FilterQuality.low,maxBytes: 2,)
         : Text(
             userName!.toUpperCase()[0],
             style: TextStyle(color: Color(int.parse(avatarColor2)), fontWeight: FontWeight.bold, fontSize: Get.theme.textTheme.headline5!.fontSize),
@@ -670,7 +666,7 @@ Widget loadingBottom(String type) {
 Widget customHtml(List htmlData, int index, List imageList) {
   return Html(
     data: htmlData.elementAt(index)['postContent'],
-    tagsList: Html.tags..remove('noscript')..remove(GlobalController.i.userStorage.read('showImage') == true ? '' : 'img'),
+    tagsList: Html.tags..remove('noscript')..remove(GlobalController.i.userStorage.read('showImage') ?? true ? '' : 'img'),
     customRender: {
       "img": (renderContext, child) {
         double? width = double.tryParse(renderContext.tree.element!.attributes['width'].toString());
@@ -678,7 +674,7 @@ Widget customHtml(List htmlData, int index, List imageList) {
 
         if (renderContext.tree.element!.attributes['src']!.contains("/styles/next/xenforo")) {
           return ExtendedImage.asset(GlobalController.i.getEmoji(renderContext.tree.element!.attributes['src'].toString()),
-              clearMemoryCacheWhenDispose: true);
+              clearMemoryCacheWhenDispose: true,);
         } else if (renderContext.tree.element!.attributes['src']!.contains("twemoji.maxcdn.com")) {
           return Text(
             renderContext.tree.element!.attributes['alt']!,
@@ -714,6 +710,7 @@ Widget customHtml(List htmlData, int index, List imageList) {
                     : renderContext.tree.element!.attributes['src'].toString(),
                 clearMemoryCacheWhenDispose: true,
                 cache: true,
+                scale: 2,
                 constraints: BoxConstraints(maxWidth: Get.width, maxHeight: Get.height),
                 clearMemoryCacheIfFailed: true,
                 enableMemoryCache: false,
@@ -827,7 +824,7 @@ Widget customHtml(List htmlData, int index, List imageList) {
     style: {
       "code": Style(color: Colors.blue),
       "table": Style(backgroundColor: Get.theme.cardColor),
-      "body": Style(fontSize: FontSize(GlobalController.i.userStorage.read('fontSizeView')), margin: EdgeInsets.only(left: 3, right: 3)),
+      "body": Style(fontSize: FontSize(GlobalController.i.userStorage.read('fontSizeView') ?? 20), margin: EdgeInsets.only(left: 3, right: 3)),
       "div": Style(display: Display.INLINE, margin: EdgeInsets.zero),
       "blockquote":
           Style(width: double.infinity, backgroundColor: Get.theme.cardColor, margin: EdgeInsets.only(left: 5.0, right: 5.0), display: Display.BLOCK)
