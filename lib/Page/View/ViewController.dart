@@ -159,7 +159,7 @@ class ViewController extends GetxController {
       //data['loading'] = 'error';
       //update(['firstLoading']);
       await loadUserPost(url);
-      if (htmlData.length < 0) update(['firstLoading']);
+      if (currentPage <= 0) update(['firstLoading']);
         else update();
       await updateLastItemScroll();
 

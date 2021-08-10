@@ -13,14 +13,43 @@ class ViewUI extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return NotificationListener(
-      child: Scaffold(
-        endDrawer: NaviDrawerUI(),
-        endDrawerEnableOpenDragGesture: true,
-        drawerEdgeDragWidth: MediaQuery.of(context).size.width * 0.2,
-        appBar: preferredSize(context, controller.data['subHeader'], controller.data['subTypeHeader']),
-        backgroundColor: Theme.of(context).backgroundColor,
-        body: GetBuilder<ViewController>(
+    return Scaffold(
+      endDrawer: NaviDrawerUI(),
+      endDrawerEnableOpenDragGesture: true,
+      appBar: preferredSize(context, controller.data['subHeader'], controller.data['subTypeHeader']),
+      backgroundColor: Theme.of(context).backgroundColor,
+      body: NotificationListener(
+        onNotification: (Notification notification) {
+          if (notification is ScrollUpdateNotification && controller.isScroll != 'Release') {
+            if (((notification).metrics.pixels > (notification).metrics.maxScrollExtent + GlobalController.i.overScroll) &&
+                (notification).dragDetails != null &&
+                controller.isScroll != 'Holding') {
+              ///detect user overScroll
+              controller.isScroll = "Holding";
+              controller.update(['lastItemList']);
+            } else if (((notification).metrics.pixels > (notification).metrics.maxScrollExtent + GlobalController.i.overScroll) &&
+                (notification).dragDetails == null &&
+                controller.isScroll != 'Release') {
+              ///User overScroll and release finger
+              controller.isScroll = 'Release';
+              if (controller.currentPage + 1 > controller.totalPage) {
+                HapticFeedback.lightImpact();
+              } else {
+                controller.update(['lastItemList']);
+                controller.setPageOnClick(controller.currentPage + 1);
+              }
+            }
+          }
+          if (notification is ScrollEndNotification && controller.isScroll != 'idle') {
+            if (controller.isScroll != 'Release' || (controller.currentPage + 1) > controller.totalPage) {
+              ///return to idle
+              controller.isScroll = 'idle';
+              controller.update(['lastItemList']);
+            }
+          }
+          return false;
+        },
+        child: GetBuilder<ViewController>(
           id: 'firstLoading',
           tag: GlobalController.i.sessionTag.last,
           builder: (controller) {
@@ -32,36 +61,6 @@ class ViewUI extends StatelessWidget {
           },
         ),
       ),
-      onNotification: (Notification notification) {
-        if (notification is ScrollUpdateNotification && controller.isScroll != 'Release') {
-          if (((notification).metrics.pixels > (notification).metrics.maxScrollExtent + GlobalController.i.overScroll) &&
-              (notification).dragDetails != null &&
-              controller.isScroll != 'Holding') {
-            ///detect user overScroll
-            controller.isScroll = "Holding";
-            controller.update(['lastItemList']);
-          } else if (((notification).metrics.pixels > (notification).metrics.maxScrollExtent + GlobalController.i.overScroll) &&
-              (notification).dragDetails == null &&
-              controller.isScroll != 'Release') {
-            ///User overScroll and release finger
-            controller.isScroll = 'Release';
-            if (controller.currentPage + 1 > controller.totalPage) {
-              HapticFeedback.lightImpact();
-            } else {
-              controller.update(['lastItemList']);
-              controller.setPageOnClick(controller.currentPage + 1);
-            }
-          }
-        }
-        if (notification is ScrollEndNotification && controller.isScroll != 'idle') {
-          if (controller.isScroll != 'Release' || (controller.currentPage+1)>controller.totalPage) {
-            ///return to idle
-            controller.isScroll = 'idle';
-            controller.update(['lastItemList']);
-          }
-        }
-        return false;
-      },
     );
   }
 
@@ -128,27 +127,29 @@ class ViewUI extends StatelessWidget {
   }
 
   Widget postContent() {
-    return GetBuilder<ViewController>(
-      tag: GlobalController.i.sessionTag.last,
-      builder: (controller) {
-        return ListView.builder(
-          cacheExtent: 999999999,
-          physics: BouncingScrollPhysics(),
-          scrollDirection: Axis.vertical,
-          controller: controller.listViewScrollController,
-          itemCount: controller.htmlData.length,
-          itemBuilder: (context, index) {
-            return controller.htmlData.length == index + 1
-                ? GetBuilder<ViewController>(
-                    id: 'lastItemList',
-                    tag: GlobalController.i.sessionTag.last,
-                    builder: (controller) {
-                      return loadingBottom(controller.isScroll);
-                    })
-                : viewContent(index, controller);
+    return CupertinoScrollbar(
+        controller: controller.listViewScrollController,
+        child: GetBuilder<ViewController>(
+          tag: GlobalController.i.sessionTag.last,
+          builder: (controller) {
+            return ListView.builder(
+              cacheExtent: 999999999,
+              physics: BouncingScrollPhysics(),
+              scrollDirection: Axis.vertical,
+              controller: controller.listViewScrollController,
+              itemCount: controller.htmlData.length,
+              itemBuilder: (context, index) {
+                return controller.htmlData.length == index + 1
+                    ? GetBuilder<ViewController>(
+                        id: 'lastItemList',
+                        tag: GlobalController.i.sessionTag.last,
+                        builder: (controller) {
+                          return loadingBottom(controller.isScroll);
+                        })
+                    : viewContent(index, controller);
+              },
+            );
           },
-        );
-      },
-    );
+        ));
   }
 }
