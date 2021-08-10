@@ -27,6 +27,7 @@ class GlobalController extends GetxController {
   List alertList = [], inboxList = [], sessionTag = [];
   String xfSession = '', dateExpire = '', xfUser = '';
   int alertNotifications = 0, inboxNotifications = 0;
+  double heightAppbar = 45, overScroll = 100;
 
   @override
   onInit() async {

@@ -17,7 +17,7 @@ import '/Page/Profile/UserProfile/UserProfileController.dart';
 
 ///  * Global appbar
 PreferredSize preferredSize(BuildContext context, String title, String prefix) => PreferredSize(
-      preferredSize: Size.fromHeight(NaviDrawerController.i.heightAppbar),
+      preferredSize: Size.fromHeight(GlobalController.i.heightAppbar),
       child: AppBar(
         automaticallyImplyLeading: false,
         title: customTitle(FontWeight.normal, Get.theme.primaryColor, 2, prefix, title),
@@ -28,7 +28,7 @@ PreferredSize preferredSize(BuildContext context, String title, String prefix) =
 /// * Appbar only for PostStatus and Pop
 PreferredSize appBarOnly(String title, List<Widget> action) {
   return PreferredSize(
-    preferredSize: Size.fromHeight(NaviDrawerController.i.heightAppbar),
+    preferredSize: Size.fromHeight(GlobalController.i.heightAppbar),
     child: AppBar(
       automaticallyImplyLeading: false,
       title: Text(title.tr),
@@ -650,16 +650,16 @@ Widget loadingBottom(String type) {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         type == 'idle'
-            ? Icon(Icons.arrow_upward)
+            ? Icon(Icons.arrow_upward,color: Colors.grey)
             : type == 'Holding'
-                ? Icon(Icons.sync_outlined)
+                ? Icon(Icons.sync_outlined,color: Colors.grey)
                 : CupertinoActivityIndicator(),
         Text(
           '\t${type == 'idle'
-              ? 'Pull up to loading'
+              ? 'pullUp'.tr
               : type == 'Holding'
-              ? 'Release to load'
-              : 'Loading'}',
+              ? 'pullRes'.tr
+              : 'loading'.tr}',
           style: TextStyle(color: Colors.grey),
         )
       ],

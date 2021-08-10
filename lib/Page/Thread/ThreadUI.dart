@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -15,24 +16,29 @@ class ThreadUI extends GetView<ThreadController> {
     return NotificationListener(
         onNotification: (Notification notification) {
           if (notification is ScrollUpdateNotification && controller.isScroll != 'Release') {
-            if (((notification).metrics.pixels > (notification).metrics.maxScrollExtent + 100) &&
+            if (((notification).metrics.pixels > (notification).metrics.maxScrollExtent + GlobalController.i.overScroll) &&
                 (notification).dragDetails != null &&
                 controller.isScroll != 'Holding') {
               ///detect user overScroll
               controller.isScroll = "Holding";
               controller.update(['lastItemList']);
-            } else if (((notification).metrics.pixels > (notification).metrics.maxScrollExtent + 100) &&
+            } else if (((notification).metrics.pixels > (notification).metrics.maxScrollExtent + GlobalController.i.overScroll) &&
                 (notification).dragDetails == null &&
                 controller.isScroll != 'Release') {
-
               ///User overScroll and release finger
               controller.isScroll = 'Release';
               controller.update(['lastItemList']);
-              controller.setPageOnClick(controller.currentPage + 1);
+
+              if (controller.currentPage + 1 > controller.totalPage) {
+                HapticFeedback.lightImpact();
+              } else {
+                controller.setPageOnClick(controller.currentPage + 1);
+                print('load');
+              }
             }
           }
           if (notification is ScrollEndNotification && controller.isScroll != 'idle') {
-            if (controller.isScroll != 'Release') {
+            if (controller.isScroll != 'Release' || (controller.currentPage+1)>controller.totalPage) {
               ///return to idle
               controller.isScroll = 'idle';
               controller.update(['lastItemList']);

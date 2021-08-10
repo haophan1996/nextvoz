@@ -6,7 +6,6 @@ import '/Page/reuseWidget.dart';
 
 class NaviDrawerController extends GetxController {
   static NaviDrawerController get i => Get.find();
-  double heightAppbar = 45;
   List shortcuts = [];
   Map<String, dynamic> data = {};
 
