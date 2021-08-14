@@ -118,7 +118,7 @@ class PostStatusController extends GetxController{
 
     var body = {'_xfWithData': '1', '_xfToken': '${data['token']}', '_xfResponseType': 'json', 'message_html': '$html'};
 
-    await GlobalController.i.getHttpPost(headers, body, "${data['link']}add-reply").then((value) {
+    await GlobalController.i.getHttpPost(true,headers, body, "${data['link']}add-reply").then((value) {
       if (Get.isDialogOpen == true) Get.back();
       if (value['status'] == 'ok') {
         Get.back(result: ['ok']);
@@ -137,7 +137,7 @@ class PostStatusController extends GetxController{
       'cookie': '${data['xf_csrf']}; xf_user=${GlobalController.i.xfUser};',
     };
     await GlobalController.i
-        .getHttpPost(
+        .getHttpPost(true,
             headers, body, '${data['view'] == 1 ? GlobalController.i.inboxReactLink : GlobalController.i.viewReactLink}${data['postID']}/edit')
         .then((value) {
           print(value);
@@ -239,7 +239,7 @@ class PostStatusController extends GetxController{
       'image': 'data:image/$type;base64,' + base64Encode(File(src).readAsBytesSync()),
     };
 
-    var response = await GlobalController.i.getHttpPost(headers, body, 'https://2.pik.vn/');
+    var response = await GlobalController.i.getHttpPost(true,headers, body, 'https://2.pik.vn/');
 
     return 'https://3.pik.vn/' + response['saved'];
   }

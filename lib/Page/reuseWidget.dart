@@ -201,11 +201,12 @@ Widget settings() => Row(
 Widget textDrawer(Color color, double? fontSize, String text, FontWeight fontWeight) =>
     Text(text, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(color: color, fontWeight: fontWeight, fontSize: fontSize));
 
-Widget inputCustom(TextEditingController controller, bool obscureText, String hint, Function onEditingComplete) {
+Widget inputCustom(TextInputType keyboardType, TextEditingController controller, bool obscureText, String hint, Function onEditingComplete) {
   return TextField(
     onEditingComplete: () async => await onEditingComplete(),
     textInputAction: TextInputAction.next,
     controller: controller,
+    keyboardType: keyboardType,
     style: TextStyle(fontSize: 18, color: Get.theme.primaryColor),
     obscureText: obscureText,
     autocorrect: false,
@@ -221,8 +222,7 @@ Widget inputCustom(TextEditingController controller, bool obscureText, String hi
   );
 }
 
-setDialog() => Get.dialog(CupertinoActivityIndicator(),
-  barrierDismissible: false);
+setDialog() => Get.dialog(CupertinoActivityIndicator(), barrierDismissible: false);
 
 setDialogError(String text) => Get.defaultDialog(
       content: Text(text, textAlign: TextAlign.center),
@@ -427,7 +427,8 @@ Widget onTapMine(ViewController controller, int index) {
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              inputCustom(controller.input, false, 'Reason for deletion', () => controller.deletePost(controller.input.text, index)),
+                              inputCustom(TextInputType.text, controller.input, false, 'Reason for deletion',
+                                  () => controller.deletePost(controller.input.text, index)),
                               dialogButtonYesNo(() {
                                 controller.deletePost(controller.input.text, index);
                               })
@@ -598,7 +599,16 @@ Widget displayAvatar(double sizeImage, String avatarColor1, String avatarColor2,
         ),
         shape: BoxShape.circle),
     child: imageLink != 'no'
-        ? ExtendedImage.network(imageLink,clearMemoryCacheWhenDispose: true,shape: BoxShape.circle,filterQuality: FilterQuality.low,maxBytes: 2,)
+        ? ExtendedImage.network(
+            imageLink,
+            clearMemoryCacheWhenDispose: true,
+            shape: BoxShape.circle,
+            filterQuality: FilterQuality.low,
+            fit: BoxFit.fill,
+            width: sizeImage,
+            height: sizeImage,
+            //maxBytes: 2,
+          )
         : Text(
             userName!.toUpperCase()[0],
             style: TextStyle(color: Color(int.parse(avatarColor2)), fontWeight: FontWeight.bold, fontSize: Get.theme.textTheme.headline5!.fontSize),
@@ -646,16 +656,12 @@ Widget loadingBottom(String type) {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         type == 'idle'
-            ? Icon(Icons.arrow_upward,color: Colors.grey)
+            ? Icon(Icons.arrow_upward, color: Colors.grey)
             : type == 'Holding'
-                ? Icon(Icons.sync_outlined,color: Colors.grey)
+                ? Icon(Icons.sync_outlined, color: Colors.grey)
                 : CupertinoActivityIndicator(),
         Text(
-          '\t${type == 'idle'
-              ? 'pullUp'.tr
-              : type == 'Holding'
-              ? 'pullRes'.tr
-              : 'loading'.tr}',
+          '\t${type == 'idle' ? 'pullUp'.tr : type == 'Holding' ? 'pullRes'.tr : 'loading'.tr}',
           style: TextStyle(color: Colors.grey),
         )
       ],
@@ -673,8 +679,10 @@ Widget customHtml(List htmlData, int index, List imageList) {
         double? height = double.tryParse(renderContext.tree.element!.attributes['height'].toString());
 
         if (renderContext.tree.element!.attributes['src']!.contains("/styles/next/xenforo")) {
-          return ExtendedImage.asset(GlobalController.i.getEmoji(renderContext.tree.element!.attributes['src'].toString()),
-              clearMemoryCacheWhenDispose: true,);
+          return ExtendedImage.asset(
+            GlobalController.i.getEmoji(renderContext.tree.element!.attributes['src'].toString()),
+            clearMemoryCacheWhenDispose: true,
+          );
         } else if (renderContext.tree.element!.attributes['src']!.contains("twemoji.maxcdn.com")) {
           return Text(
             renderContext.tree.element!.attributes['alt']!,
@@ -690,23 +698,27 @@ Widget customHtml(List htmlData, int index, List imageList) {
               onPressed: () {
                 displayGallery(
                     imageList,
-                    imageList.indexOf(renderContext.tree.element!.attributes['src']!.contains('data:image/', 0) == true
-                        ? renderContext.tree.element!.attributes['data-src'].toString()
-                        : renderContext.tree.element!.attributes['src'].toString()));
+                    imageList.indexOf(renderContext.tree.element!.attributes['data-url'] != ''
+                        ? renderContext.tree.element!.attributes['data-url'].toString()
+                        : renderContext.tree.element!.attributes['data-src'] != ''
+                            ? renderContext.tree.element!.attributes['data-src'].toString()
+                            : renderContext.tree.element!.attributes['src'].toString()));
               },
               icon: Icon(
                 Icons.image,
               ));
         } else {
-          imageList.add(renderContext.tree.element!.attributes['src']!.contains('data:image/', 0) == true
-              ? renderContext.tree.element!.attributes['data-src'].toString()
-              : renderContext.tree.element!.attributes['src'].toString());
+          imageList.add(renderContext.tree.element!.attributes['data-url'] != ''
+              ? renderContext.tree.element!.attributes['data-url'].toString()
+              : renderContext.tree.element!.attributes['data-src'] != ''
+                  ? renderContext.tree.element!.attributes['data-src'].toString()
+                  : renderContext.tree.element!.attributes['src'].toString());
           return customCupertinoButton(
               Alignment.center,
               EdgeInsets.zero,
               ExtendedImage.network(
-                renderContext.tree.element!.attributes['src']!.contains('data:image/', 0) == true
-                    ? renderContext.tree.element!.attributes['data-src'].toString()
+                renderContext.tree.element!.attributes['data-url'] != ''
+                    ? renderContext.tree.element!.attributes['data-url'].toString()
                     : renderContext.tree.element!.attributes['src'].toString(),
                 clearMemoryCacheWhenDispose: true,
                 cache: true,
@@ -714,14 +726,21 @@ Widget customHtml(List htmlData, int index, List imageList) {
                 constraints: BoxConstraints(maxWidth: Get.width, maxHeight: Get.height),
                 clearMemoryCacheIfFailed: true,
                 enableMemoryCache: false,
-                cacheMaxAge: Duration(days: 7),
+                cacheMaxAge: Duration(days: 2),
                 loadStateChanged: (states) {
                   switch (states.extendedImageLoadState) {
                     case LoadState.loading:
                       if (width != null && height != null) {
-                        return AspectRatio(aspectRatio: width / height);
+                        return AspectRatio(
+                          aspectRatio: width / height,
+                          child: Text('Loading'),
+                        );
                       } else
-                        return Container(height: 100, width: Get.width);
+                        return Container(
+                          height: 100,
+                          width: Get.width,
+                          child: Text('Loading'),
+                        );
                     case LoadState.completed:
                       // TODO: Handle this case.
                       break;

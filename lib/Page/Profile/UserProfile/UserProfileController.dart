@@ -56,6 +56,7 @@ class UserProfileController extends GetxController {
     }, dio,GlobalController.i.url+data['linkProfileUser'], false).then((value) {
       data['dataCsrfPost'] = value!.getElementsByTagName('html')[0].attributes['data-csrf']; //Current page token
       data['xfCsrfPost'] = GlobalController.i.xfCsrfPost; // Post token
+      GlobalController.i.token = value.getElementsByTagName('html')[0].attributes['data-csrf'];
 
       var userProfile = value.getElementsByClassName('memberHeader ')[0];
 

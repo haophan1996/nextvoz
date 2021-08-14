@@ -43,6 +43,7 @@ class Language extends Translations{
       'showImage' : 'Display Image',
       'appSignature' : 'App Signature',
       'defaultsPage' : 'Default Forum',
+      'search' : 'Search',
     },
     'vi_VN' : {
       'lang'    : 'Ngôn ngữ :',
@@ -82,6 +83,7 @@ class Language extends Translations{
       'showImage' : 'Hiển Thị Hình Ảnh:',
       'appSignature' : 'Chữ Ký Ứng Dụng',
       'defaultsPage' : 'Mặc Định Forum',
+      'search' : 'Tìm Kiếm',
     }
   };
 

@@ -57,13 +57,17 @@ class ThreadController extends GetxController {
   }
 
   loadSubHeader(String url) async {
-    await GlobalController.i.getBody(() {}, (download) {
+    await GlobalController.i.getBodyBeta(() async {
+      ///onError
+      if (currentPage == 0) await loadSubHeader(url);
+
+    }, (download) {
       percentDownload = download;
       update(['download'], true);
     }, dio, url, false).then((value) async {
       lengthHtmlDataList = myThreadList.length;
-
-      if (value!.getElementsByTagName('html')[0].attributes['data-logged-in'] == 'true') {
+      GlobalController.i.token = value!.getElementsByTagName('html')[0].attributes['data-csrf'];
+      if (value.getElementsByTagName('html')[0].attributes['data-logged-in'] == 'true') {
         GlobalController.i.controlNotification(
             int.parse(value.getElementsByClassName('p-navgroup-link--alerts')[0].attributes['data-badge'].toString()),
             int.parse(value.getElementsByClassName('p-navgroup-link--conversations')[0].attributes['data-badge'].toString()),

@@ -14,13 +14,17 @@ class NaviDrawerUI extends GetView<NaviDrawerController> {
   Widget build(BuildContext context) {
     return Drawer(
       child: Container(
-        color: Theme.of(context).backgroundColor,
+        color: Theme
+            .of(context)
+            .backgroundColor,
         child: SafeArea(
           child: Column(
             children: [
               Text(
                 'shortcuts',
-                style: TextStyle(color: Theme.of(context).primaryColor),
+                style: TextStyle(color: Theme
+                    .of(context)
+                    .primaryColor),
               ),
               Expanded(
                 child: GetBuilder<NaviDrawerController>(
@@ -28,23 +32,23 @@ class NaviDrawerUI extends GetView<NaviDrawerController> {
                     return controller.shortcuts.length == 0
                         ? Container()
                         : ListView.builder(
-                            itemCount: controller.shortcuts.length,
-                            itemBuilder: (BuildContext context, int index) {
-                              return ListTile(
-                                title: customTitle(FontWeight.normal, Get.theme.primaryColor, 1, controller.shortcuts.elementAt(index)['typeTitle'],
-                                    controller.shortcuts.elementAt(index)['title']),
-                                onTap: () {
-                                  controller.navigateToThread(controller.shortcuts.elementAt(index)['title'],
-                                      controller.shortcuts.elementAt(index)['link'], controller.shortcuts.elementAt(index)['typeTitle']);
-                                },
-                                onLongPress: () async {
-                                  controller.shortcuts.removeAt(index);
-                                  controller.update();
-                                  await GlobalController.i.userStorage.remove('shortcut');
-                                  await GlobalController.i.userStorage.write('shortcut', controller.shortcuts);
-                                },
-                              );
-                            });
+                        itemCount: controller.shortcuts.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          return ListTile(
+                            title: customTitle(FontWeight.normal, Get.theme.primaryColor, 1, controller.shortcuts.elementAt(index)['typeTitle'],
+                                controller.shortcuts.elementAt(index)['title']),
+                            onTap: () {
+                              controller.navigateToThread(controller.shortcuts.elementAt(index)['title'],
+                                  controller.shortcuts.elementAt(index)['link'], controller.shortcuts.elementAt(index)['typeTitle']);
+                            },
+                            onLongPress: () async {
+                              controller.shortcuts.removeAt(index);
+                              controller.update();
+                              await GlobalController.i.userStorage.remove('shortcut');
+                              await GlobalController.i.userStorage.write('shortcut', controller.shortcuts);
+                            },
+                          );
+                        });
                   },
                 ),
               ),
@@ -68,29 +72,8 @@ Widget logged() {
             children: <Widget>[
               Padding(
                 padding: EdgeInsets.only(top: 5, left: 15, right: 15),
-                child: Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    border: Border.all(width: 0.5, color: Colors.black),
-                    shape: BoxShape.circle,
-                    image: DecorationImage(
-                      image: NaviDrawerController.i.data['avatarUser'] == "no"
-                          ? Image.asset(
-                              "assets/NoAvata.png",
-                              height: 48,
-                              width: 48,
-                            ).image
-                          : NaviDrawerController.i.data['avatarUser'].length > 5
-                              ? ExtendedNetworkImageProvider((NaviDrawerController.i.data['avatarUser']))
-                              : Image.asset(
-                                  "assets/NoAvata.png",
-                                  height: 48,
-                                  width: 48,
-                                ).image,
-                    ),
-                  ),
-                ),
+                child: displayAvatar(40, NaviDrawerController.i.data['avatarColor1'], NaviDrawerController.i.data['avatarColor2'],
+                    NaviDrawerController.i.data['nameUser'], NaviDrawerController.i.data['avatarUser']),
               ), //Show avatar
               Expanded(
                 child: customCupertinoButton(
@@ -132,6 +115,7 @@ Widget logged() {
                   padding: EdgeInsets.only(right: 10, top: 10),
                   child: Text('logout'.tr),
                   onPressed: () async {
+                    if (Get.isBottomSheetOpen == true) Get.back();
                     await NaviDrawerController.i.logout();
                   }),
             ],
@@ -155,15 +139,19 @@ Widget login() {
                 child: ListTile(
                   title: Text('login'.tr),
                   onTap: () {
-                    Get.toNamed(Routes.Login, preventDuplicates: false);
+                    if (Get.isBottomSheetOpen == true) Get.back();
+                    Get.toNamed(Routes.Login);
                   },
                 ),
               ),
-              CupertinoButton(child: Icon(Icons.settings), onPressed: () => NaviDrawerController.i.navigateToSetting())
+              CupertinoButton(child: Icon(Icons.settings), onPressed: () {
+                if (Get.isBottomSheetOpen == true) Get.back();
+                NaviDrawerController.i.navigateToSetting();
+              })
             ],
           ),
           Text(
-            'version 1.0',
+            'version 6.0',
             style: TextStyle(height: 3),
           )
         ],

@@ -166,9 +166,9 @@ Widget insertLink(BuildContext context, PostStatusController controller, Functio
       children: [
         Padding(
           padding: EdgeInsets.only(bottom: 10),
-          child: inputCustom(controller.link, false, 'Link', () {}),
+          child: inputCustom(TextInputType.text,controller.link, false, 'Link', () {}),
         ),
-        inputCustom(controller.label, false, 'Label', () {}),
+        inputCustom(TextInputType.text,controller.label, false, 'Label', () {}),
         dialogButtonYesNo(() => onDone()),
       ],
     ),
@@ -181,7 +181,7 @@ Widget insertYoutube(BuildContext context, PostStatusController controller) {
       padding: EdgeInsets.only(left: 15, right: 15),
       color: Colors.transparent,
       child: Column(children: [
-        inputCustom(controller.link, false, 'Link', () async {
+        inputCustom(TextInputType.text,controller.link, false, 'Link', () async {
           await controller.getIDYt();
         }),
         dialogButtonYesNo(() async {
@@ -214,7 +214,7 @@ Widget insertImage(BuildContext context, PostStatusController controller) {
                 color: Colors.transparent,
                 child: Column(
                   children: [
-                    inputCustom(controller.link, false, 'Image link', () async {
+                    inputCustom(TextInputType.text,controller.link, false, 'Image link', () async {
                       if (controller.link.text.isURL) {
                         await controller.keyEditor.currentState!.javascriptExecutor.insertCustomImage(controller.link.text);
                         controller.link.clear();

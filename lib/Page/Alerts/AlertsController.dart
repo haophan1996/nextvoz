@@ -51,7 +51,8 @@ class AlertsController extends GetxController {
         percentDownload = download;
         update(['download'], true);
       }, dio, GlobalController.i.url + '/account/alerts?page=1', false).then((value) {
-        if (value!.getElementsByTagName('html')[0].attributes['data-logged-in'] == 'true') {
+        GlobalController.i.token = value!.getElementsByTagName('html')[0].attributes['data-csrf'];
+        if (value.getElementsByTagName('html')[0].attributes['data-logged-in'] == 'true') {
           GlobalController.i.controlNotification(
               int.parse(value.getElementsByClassName('p-navgroup-link--alerts')[0].attributes['data-badge'].toString()),
               int.parse(value.getElementsByClassName('p-navgroup-link--conversations')[0].attributes['data-badge'].toString()),

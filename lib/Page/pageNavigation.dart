@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:nextvoz/Routes/routes.dart';
 import '/Page/reuseWidget.dart';
 import '/GlobalController.dart';
 import 'NavigationDrawer/NaviDrawerUI.dart';
@@ -93,6 +94,14 @@ Widget userInformation() {
                 return controller.isLogged == false ? login() : logged();
               }),
           whatNew(),
+          GlobalController.i.isLogged == true
+              ? Padding(
+                  padding: EdgeInsets.only(top: 5, bottom: 5),
+                  child: search(),
+                )
+              : Padding(
+                  padding: EdgeInsets.only(top: 5),
+                ),
         ],
       ),
     ),
@@ -148,4 +157,23 @@ Widget whatNew() => Container(
           ),
         ],
       ),
+    );
+
+Widget search() => Container(
+      width: Get.width,
+      decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(6)), color: Get.theme.backgroundColor),
+      child: customCupertinoButton(
+          Alignment.center,
+          EdgeInsets.zero,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.search_outlined,
+                color: Get.theme.primaryColor,
+              ),
+              Text('\t${'search'.tr}')
+            ],
+          ),
+          () => Get.toNamed(Routes.SearchPage, preventDuplicates: false)),
     );

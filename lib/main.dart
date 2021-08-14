@@ -4,9 +4,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:nextvoz/Page/Login/LoginBindings.dart';
 import 'package:nextvoz/Page/Login/LoginUI.dart';
+import 'package:nextvoz/Page/Search/Search/SearchBinding.dart';
 import 'package:nextvoz/Routes/routes.dart';
 import '/Page/Alert_Inbox/InboxBindings.dart';
 import '/Page/Alert_Inbox/InboxUI.dart';
+import 'Page/Search/Search/SearchUI.dart';
+import 'Page/Search/SearchResult/SearchResultBindings.dart';
+import 'Page/Search/SearchResult/SearchResultUI.dart';
 import 'Utils/theme.dart';
 import 'Utils/languages.dart';
 import '/Page/home/homeUI.dart';
@@ -94,9 +98,27 @@ class MyPage extends StatelessWidget {
           binding: LoginBindings(),
           transition: Transition.topLevel,
           transitionDuration: Duration(milliseconds: 200),
-          gestureWidth: (context)=> context.width,
+          gestureWidth: (context) => context.width,
           popGesture: true,
-        )
+        ),
+        GetPage(
+          name: Routes.SearchPage,
+          page: () => SearchUI(),
+          binding: SearchBindings(),
+          transition: Transition.topLevel,
+          transitionDuration: Duration(milliseconds: 200),
+          gestureWidth: (context) => context.width,
+          popGesture: true,
+        ),
+        GetPage(
+          name: Routes.SearchResult,
+          page: () => SearchResultUI(),
+          binding: SearchResultBindings(),
+          //transition: Transition.topLevel,
+          //transitionDuration: Duration(milliseconds: 200),
+          gestureWidth: (context) => context.width,
+          popGesture: true,
+        ),
       ],
     );
   }

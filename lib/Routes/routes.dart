@@ -9,4 +9,7 @@ abstract class Routes{
   static const AddReply = '/PostStatus';
   static const Settings = '/Settings';
   static const Login = '/Login';
+  static const SearchPage = "/searchPage";
+  static const SearchResult = "/searchResult";
 }
+

@@ -41,7 +41,8 @@ class InboxController extends GetxController {
         percentDownload = download;
         update(['download'], true);
       }, dio, GlobalController.i.url + '/conversations/', false).then((value) {
-        GlobalController.i.inboxNotifications = value!.getElementsByClassName('p-navgroup-link--conversations').length > 0
+        GlobalController.i.token = value!.getElementsByTagName('html')[0].attributes['data-csrf'];
+        GlobalController.i.inboxNotifications = value.getElementsByClassName('p-navgroup-link--conversations').length > 0
             ? int.parse(value.getElementsByClassName('p-navgroup-link--conversations')[0].attributes['data-badge'].toString())
             : 0;
         GlobalController.i.alertNotifications = value.getElementsByClassName('p-navgroup-link--alerts').length > 0

@@ -47,6 +47,8 @@ class HomeController extends GetxController {
     }, dio, GlobalController.i.url, true).then((doc) async {
       //Set token
       GlobalController.i.dataCsrfLogin = doc!.getElementsByTagName('html')[0].attributes['data-csrf'];
+      GlobalController.i.token = doc.getElementsByTagName('html')[0].attributes['data-csrf'];
+
       if (doc.getElementsByTagName('html')[0].attributes['data-logged-in'] == 'true') {
         GlobalController.i.controlNotification(
             int.parse(doc.getElementsByClassName('p-navgroup-link--alerts')[0].attributes['data-badge'].toString()),

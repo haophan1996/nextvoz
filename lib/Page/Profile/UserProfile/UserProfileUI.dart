@@ -29,19 +29,19 @@ class UserProfileUI extends StatelessWidget {
   }
 
   Widget loading() => Stack(
-    children: [
-      GetBuilder<UserProfileController>(
-          id: 'download',
-          tag: GlobalController.i.sessionTag.last,
-          builder: (controller) {
-            return LinearProgressIndicator(
-              value: controller.percentDownload,
-              valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF0CF301)),
-              backgroundColor: Get.theme.backgroundColor,
-            );
-          }),
-    ],
-  );
+        children: [
+          GetBuilder<UserProfileController>(
+              id: 'download',
+              tag: GlobalController.i.sessionTag.last,
+              builder: (controller) {
+                return LinearProgressIndicator(
+                  value: controller.percentDownload,
+                  valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF0CF301)),
+                  backgroundColor: Get.theme.backgroundColor,
+                );
+              }),
+        ],
+      );
 
   Widget loadFailed(UserProfileController controller) {
     return Center(
@@ -65,71 +65,45 @@ class UserProfileUI extends StatelessWidget {
         padding: EdgeInsets.only(left: 5, right: 5),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Stack(
+            Row(
               children: [
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: customCupertinoButton(
-                      Alignment.center,
-                      EdgeInsets.zero,
-                      Container(
-                        child: Text(
-                          'Report',
-                          textAlign: TextAlign.center,
-                        ),
-                        width: Get.width / 2 - 100,
-                      ),
-                      () {}),
-                ),
                 Align(
                   child: Padding(
                     padding: EdgeInsets.only(right: 5),
-                    child: displayAvatar(
-                        200, controller.data['avatarColor1'], controller.data['avatarColor2'], controller.data['userName'], controller.data['avatarLink']),
+                    child: displayAvatar(80, controller.data['avatarColor1'], controller.data['avatarColor2'], controller.data['userName'],
+                        controller.data['avatarLink']),
                   ),
-                  alignment: Alignment.topCenter,
-                ), //Avatar
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: customCupertinoButton(
-                      Alignment.center,
-                      EdgeInsets.zero,
-                      Container(
-                        child: Text(
-                          'Theo dõi',
-                          textAlign: TextAlign.center,
-                        ),
-                        width: Get.width / 2 - 100,
-                      ),
-                      () {}),
+                  alignment: Alignment.topLeft,
                 ),
+                Align(
+                  child: RichText(
+                    textAlign: TextAlign.start,
+                    text: TextSpan(
+                      children: <TextSpan>[
+                        TextSpan(
+                            text: '${controller.data['userName'] ??= 'Loading Username...'}\n',
+                            style: TextStyle(color: Color(0xFFFD6E00), fontWeight: FontWeight.bold, fontSize: 16)),
+                        TextSpan(
+                            text: '${controller.data['title'] ??= 'Loading Title...'}\n',
+                            style: TextStyle(color: Get.theme.primaryColor, fontSize: 16)),
+                        TextSpan(
+                            text: controller.data['from'] != '' ? '${controller.data['from']}\n' : '',
+                            style: TextStyle(color: Get.theme.primaryColor, fontSize: 16)),
+                        TextSpan(
+                            text: 'Joined: ${controller.data['joined'] ??= 'Loading...'}\n',
+                            style: TextStyle(color: Get.theme.primaryColor, fontSize: 16)),
+                        TextSpan(
+                            text: 'Last seen: ${controller.data['lastSeen'] ??= 'Loading...'}',
+                            style: TextStyle(color: Get.theme.primaryColor, fontSize: 16)),
+                      ],
+                    ),
+                  ),
+                  alignment: Alignment.center,
+                ), //Info
               ],
             ),
-            Align(
-              child: RichText(
-                textAlign: TextAlign.center,
-                text: TextSpan(
-                  children: <TextSpan>[
-                    TextSpan(
-                        text: '${controller.data['userName'] ??= 'Loading Username...'}\n',
-                        style: TextStyle(color: Color(0xFFFD6E00), fontWeight: FontWeight.bold, fontSize: 16)),
-                    TextSpan(
-                        text: '${controller.data['title'] ??= 'Loading Title...'}\n', style: TextStyle(color: Get.theme.primaryColor, fontSize: 16)),
-                    TextSpan(
-                        text: controller.data['from'] != '' ? '${controller.data['from']}\n' : '',
-                        style: TextStyle(color: Get.theme.primaryColor, fontSize: 16)),
-                    TextSpan(
-                        text: 'Joined: ${controller.data['joined'] ??= 'Loading...'}\n',
-                        style: TextStyle(color: Get.theme.primaryColor, fontSize: 16)),
-                    TextSpan(
-                        text: 'Last seen: ${controller.data['lastSeen'] ??= 'Loading...'}',
-                        style: TextStyle(color: Get.theme.primaryColor, fontSize: 16)),
-                  ],
-                ),
-              ),
-              alignment: Alignment.center,
-            ), //Info
             Padding(
               padding: EdgeInsets.only(bottom: 10, top: 10),
               child: Stack(
@@ -170,51 +144,15 @@ class UserProfileUI extends StatelessWidget {
                 ],
               ),
             ), //totalPosts
-            Align(alignment: Alignment.center, child: Text('\t\t\tACTION\n', style: TextStyle(color: Colors.grey))),
-            customCupertinoButton(
-                Alignment.center,
-                EdgeInsets.zero,
-                Container(
-                  child: Text(
-                    'Profile posts',
-                    textAlign: TextAlign.center,
-                  ),
-                  width: Get.width,
-                ),
-                () {}),
-            customCupertinoButton(
-                Alignment.center,
-                EdgeInsets.zero,
-                Container(
-                  child: Text(
-                    'Latest activity',
-                    textAlign: TextAlign.center,
-                  ),
-                  width: Get.width,
-                ),
-                () {}),
-            customCupertinoButton(
-                Alignment.center,
-                EdgeInsets.zero,
-                Container(
-                  child: Text(
-                    'Postings',
-                    textAlign: TextAlign.center,
-                  ),
-                  width: Get.width,
-                ),
-                () {}),
-            customCupertinoButton(
-                Alignment.center,
-                EdgeInsets.zero,
-                Container(
-                  child: Text(
-                    'About',
-                    textAlign: TextAlign.center,
-                  ),
-                  width: Get.width,
-                ),
-                () {}),
+            Align(alignment: Alignment.topLeft, child: Text('\t\t\tACTION\n', style: TextStyle(color: Colors.grey))),
+            RichText(
+                text: TextSpan(children: [
+              TextSpan(text: 'Profile posts\n', style: TextStyle(color: Get.theme.primaryColor, fontSize: 16)),
+              TextSpan(text: 'Latest activity\n', style: TextStyle(color: Get.theme.primaryColor, fontSize: 16)),
+              //TextSpan(text: 'Postings\n', style: TextStyle(color: Get.theme.primaryColor, fontSize: 16)),
+              TextSpan(text: 'Threads\n', style: TextStyle(color: Get.theme.primaryColor, fontSize: 16)),
+              TextSpan(text: 'About\n', style: TextStyle(color: Get.theme.primaryColor, fontSize: 16)),
+            ])),
           ],
         ),
       ),

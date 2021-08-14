@@ -22,7 +22,7 @@ class GlobalController extends GetxController {
       inboxReactLink = 'https://voz.vn/conversations/messages/',
       viewReactLink = 'https://voz.vn/p/';
   final userStorage = GetStorage();
-  var xfCsrfLogin, dataCsrfLogin, xfCsrfPost, dataCsrfPost;
+  var xfCsrfLogin, dataCsrfLogin, xfCsrfPost, token;
   bool isLogged = false;
   List alertList = [], inboxList = [], sessionTag = [];
   String xfSession = '', dateExpire = '', xfUser = '';
@@ -106,13 +106,15 @@ class GlobalController extends GetxController {
     return parser.parse(response.toString());
   }
 
-  Future getHttpPost(Map<String, String> header, dynamic body, String link) async {
+  Future getHttpPost(bool isJson,Map<String, String> header, dynamic body, String link) async {
     final response = await http.post(Uri.parse(link), headers: header, body: body).catchError((err) {
       print('get http post error: $header \n$body \n$link');
       Get.back();
       setDialogError('Server down or No connection\n\n Details: $err');
     });
-    return jsonDecode(response.body);
+    // return jsonDecode(response.body);
+
+    return isJson? jsonDecode(response.body) : response.body;
   }
 
   Future getHttp(Map<String, String> header, String link) async {
@@ -144,7 +146,9 @@ class GlobalController extends GetxController {
 
   Future<void> setAccountUser() async {
     if (isLogged == true) {
-      NaviDrawerController.i.data['avatarUser'] = await userStorage.read('avatarUser');
+      NaviDrawerController.i.data['avatarUser'] = await userStorage.read('avatarUser') ?? 'no';
+      NaviDrawerController.i.data['avatarColor1'] = await userStorage.read('avatarColor1');
+      NaviDrawerController.i.data['avatarColor2'] = await userStorage.read('avatarColor2');
       NaviDrawerController.i.data['nameUser'] = await userStorage.read('nameUser');
       NaviDrawerController.i.data['titleUser'] = await userStorage.read('titleUser');
       NaviDrawerController.i.data['linkUser'] = await userStorage.read('linkUser');

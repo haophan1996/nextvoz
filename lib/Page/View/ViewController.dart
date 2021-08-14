@@ -171,7 +171,8 @@ class ViewController extends GetxController {
       update(['download'], true);
     }, dio, url, false).then((value) async {
       lengthHtmlDataList = htmlData.length;
-      data['dataCsrfPost'] = value!.getElementsByTagName('html')[0].attributes['data-csrf'];
+      GlobalController.i.token = value!.getElementsByTagName('html')[0].attributes['data-csrf'];
+      data['dataCsrfPost'] = value.getElementsByTagName('html')[0].attributes['data-csrf'];
       data['xfCsrfPost'] = GlobalController.i.xfCsrfPost;
       data['fullUrl'] = value
           .getElementsByTagName('head')[0]
@@ -306,7 +307,8 @@ class ViewController extends GetxController {
       update(['download'], true);
     }, dio, link, false).then((value) {
       lengthHtmlDataList = htmlData.length;
-      data['dataCsrfPost'] = value!.getElementsByTagName('html')[0].attributes['data-csrf'];
+      GlobalController.i.token = value!.getElementsByTagName('html')[0].attributes['data-csrf'];
+      data['dataCsrfPost'] = value.getElementsByTagName('html')[0].attributes['data-csrf'];
       data['xfCsrfPost'] = GlobalController.i.xfCsrfPost;
 
       data['fullUrl'] = value
@@ -428,7 +430,7 @@ class ViewController extends GetxController {
     var body = {'_xfWithData': '1', '_xfToken': '${data['dataCsrfPost']}', '_xfResponseType': 'json'};
 
     await GlobalController.i
-        .getHttpPost(headers, body,
+        .getHttpPost(true, headers, body,
             '${data['view'] == 0 ? GlobalController.i.viewReactLink : GlobalController.i.inboxReactLink}$idPost/react?reaction_id=$idReact?reaction_id=$idReact')
         .then((jsonValue) {
       if (jsonValue['status'] == 'error') {
@@ -511,7 +513,7 @@ class ViewController extends GetxController {
     var body = {'_xfWithData': '1', '_xfToken': '${data['dataCsrfPost']}', '_xfResponseType': 'json'};
 
     await GlobalController.i
-        .getHttpPost(headers, body,
+        .getHttpPost(true, headers, body,
             '${data['view'] == 0 ? GlobalController.i.viewReactLink : GlobalController.i.inboxReactLink}${htmlData.elementAt(index)['postID']}/quote')
         .then(
       (value) {
@@ -604,7 +606,7 @@ class ViewController extends GetxController {
     var body = {'_xfToken': '${data['dataCsrfPost']}', '_xfResponseType': 'json', 'reason': response};
 
     await GlobalController.i
-        .getHttpPost(headers, body, GlobalController.i.viewReactLink + htmlData.elementAt(index)['postID'] + '/delete')
+        .getHttpPost(true, headers, body, GlobalController.i.viewReactLink + htmlData.elementAt(index)['postID'] + '/delete')
         .then((value) async {
       if (value['status'] == 'ok') {
         if (Get.isDialogOpen == true) Get.back();
