@@ -48,8 +48,11 @@ class UserProfileController extends GetxController {
 
   loadProfileUser() async {
     percentDownload = 0.1;
-    await GlobalController.i.getBody(() {
-      onErrorLoad();
+    await GlobalController.i.getBodyBeta((value) async {
+      if (value == 1) {
+        await loadProfileUser();
+      } else
+        onErrorLoad();
     }, (download) {
       percentDownload = download;
       update(['download']);
