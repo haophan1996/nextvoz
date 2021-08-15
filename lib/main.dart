@@ -4,7 +4,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:nextvoz/Page/Login/LoginBindings.dart';
 import 'package:nextvoz/Page/Login/LoginUI.dart';
+import 'package:nextvoz/Page/Profile/UserProfile/UserProfileBinding.dart';
 import 'package:nextvoz/Page/Search/Search/SearchBinding.dart';
+import 'package:nextvoz/Page/View/ViewBinding.dart';
 import 'package:nextvoz/Routes/routes.dart';
 import '/Page/Alert_Inbox/InboxBindings.dart';
 import '/Page/Alert_Inbox/InboxUI.dart';
@@ -67,6 +69,7 @@ class MyPage extends StatelessWidget {
         GetPage(
             name: Routes.View,
             page: () => ViewUI(),
+            binding: ViewBinding(),
             transition: Transition.rightToLeft,
             transitionDuration: Duration(milliseconds: 200),
             popGesture: true,
@@ -74,7 +77,13 @@ class MyPage extends StatelessWidget {
         GetPage(name: Routes.Alerts, page: () => AlertsUI(), binding: PopBinding(), gestureWidth: (context) => context.width, popGesture: true),
         GetPage(
             name: Routes.Conversation, page: () => InboxUI(), binding: InboxBindings(), gestureWidth: (context) => context.width, popGesture: true),
-        GetPage(name: Routes.Profile, page: () => UserProfileUI(), gestureWidth: (context) => context.width, popGesture: true, maintainState: false),
+        GetPage(
+            name: Routes.Profile,
+            page: () => UserProfileUI(),
+            binding: UserProfileBinding(),
+            gestureWidth: (context) => context.width,
+            popGesture: true,
+            maintainState: false),
         GetPage(name: Routes.Youtube, page: () => YoutubeView(), binding: YoutubeBinding(), popGesture: true),
         GetPage(
             name: Routes.AddReply,

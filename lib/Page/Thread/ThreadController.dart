@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:nextvoz/Page/reuseWidget.dart';
 import 'package:nextvoz/Routes/routes.dart';
 import '/GlobalController.dart';
 import '/Page/View/ViewController.dart';
@@ -29,8 +30,6 @@ class ThreadController extends GetxController {
   }
 
   navigateToThread(int index) {
-    GlobalController.i.sessionTag.add(myThreadList.elementAt(index)['title']);
-    Get.lazyPut<ViewController>(() => ViewController(), tag: GlobalController.i.sessionTag.last);
     Get.toNamed(Routes.View,
         arguments: [myThreadList.elementAt(index)['title'], myThreadList.elementAt(index)['link'], myThreadList.elementAt(index)['prefix'], 0]);
   }
@@ -57,9 +56,13 @@ class ThreadController extends GetxController {
   }
 
   loadSubHeader(String url) async {
-    await GlobalController.i.getBodyBeta(() async {
+    await GlobalController.i.getBodyBeta((value) async {
       ///onError
-      if (currentPage == 0) await loadSubHeader(url);
+      setDialogError(value.toString());
+      if (value == 1){
+        await loadSubHeader(url);
+        update();
+      }
 
     }, (download) {
       percentDownload = download;

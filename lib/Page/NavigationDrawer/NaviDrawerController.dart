@@ -33,8 +33,6 @@ class NaviDrawerController extends GetxController {
   navigateToThread(String title, String link, String prefix) {
     Future.delayed(Duration(milliseconds: 100), () async {
       Get.back();
-      GlobalController.i.sessionTag.add(title);
-      Get.lazyPut<ViewController>(() => ViewController(), tag: title);
       Get.toNamed(Routes.View, arguments: [title, link, prefix, 0], preventDuplicates: false);
     });
   }

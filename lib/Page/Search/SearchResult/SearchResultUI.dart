@@ -30,9 +30,6 @@ class SearchResultUI extends GetView<SearchResultController> {
                 itemBuilder: (context, index) {
                   return customCupertinoButton(Alignment.center, EdgeInsets.zero, itemView(index), (){
                     if (controller.htmlData.elementAt(index)['link'].toString().contains('/t/',0)){
-
-                      GlobalController.i.sessionTag.add(controller.htmlData.elementAt(index)['title']);
-                      Get.lazyPut<ViewController>(() => ViewController(), tag: GlobalController.i.sessionTag.last);
                       Get.toNamed(Routes.View,
                           arguments: [controller.htmlData.elementAt(index)['title'], controller.htmlData.elementAt(index)['link'], '', 0]);
 

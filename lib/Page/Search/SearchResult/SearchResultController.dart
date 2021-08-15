@@ -17,6 +17,8 @@ class SearchResultController extends GetxController {
     data['SearchType'] = Get.arguments[0];
     data['SearchConfig'] = Get.arguments[1];
     data['loading'] = 'loading';
+    data['currentPage'] = 0;
+    data['totalPage'] = 0;
   }
 
   @override
@@ -104,6 +106,25 @@ class SearchResultController extends GetxController {
 
   queryData(dynamic value) async {
     final doc = parser.parse(value);
+
+    if (doc.getElementsByTagName('html')[0].attributes['data-logged-in'] == 'true') {
+      GlobalController.i.controlNotification(
+          int.parse(doc.getElementsByClassName('p-navgroup-link--alerts')[0].attributes['data-badge'].toString()),
+          int.parse(doc.getElementsByClassName('p-navgroup-link--conversations')[0].attributes['data-badge'].toString()),
+          doc.getElementsByTagName('html')[0].attributes['data-logged-in'].toString());
+    } else
+      GlobalController.i.controlNotification(0, 0, 'false');
+
+    GlobalController.i.token = doc.getElementsByTagName('html')[0].attributes['data-csrf'];
+
+    if (doc.getElementsByClassName('pageNavSimple').length == 0){
+      data['currentPage'] = 1;
+      data['totalPage'] = 1;
+    } else {
+      data['currentPage'] = int.parse(doc.getElementsByClassName('pageNavSimple').map((e) => e.getElementsByTagName('a')[0].text).first.trim().replaceAll(RegExp(r'[^0-9]\S*'), ""));
+      data['totalPage'] = int.parse(doc.getElementsByClassName('pageNavSimple').map((e) => e.getElementsByTagName('a')[0].text).first.trim().replaceAll(RegExp(r'\S*[^0-9]'), ""));
+    }
+
     if (doc.getElementsByClassName('block-row block-row--separated  js-inlineModContainer').length == 0) {
       data['loading'] = 'no';
       data['content'] = doc.getElementsByClassName('p-body-content')[0].text;

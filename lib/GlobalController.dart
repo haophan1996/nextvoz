@@ -83,7 +83,7 @@ class GlobalController extends GetxController {
     return parser.parse(response.toString());
   }
 
-  Future<dom.Document?> getBodyBeta(Function onError, Function(double) onDownload, Dio dios, String url, bool isHomePage) async {
+  Future<dom.Document?> getBodyBeta(Function(int) onError, Function(double) onDownload, Dio dios, String url, bool isHomePage) async {
     if (isLogged == true) {
       dios.options.headers['cookie'] = 'xf_user=${xfUser.toString()}; xf_session=${xfSession.toString()}';
     } else
@@ -96,9 +96,9 @@ class GlobalController extends GetxController {
       onDownload(0.0);
     }).catchError((err) async {
       if (err.type == DioErrorType.other) {
-        onError();
+        onError(1);
       } else {
-        //onError();
+        onError(2);
       }
     });
     xfCsrfPost = cookXfCsrf(response.headers['set-cookie'].toString());

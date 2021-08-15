@@ -87,8 +87,6 @@ Widget logged() {
                             Get.theme.primaryColor, Get.textTheme.caption!.fontSize, NaviDrawerController.i.data['titleUser'], FontWeight.normal),
                       ],
                     ), () async {
-                  GlobalController.i.sessionTag.add('profile${DateTime.now().toString()}');
-                  Get.lazyPut<UserProfileController>(() => UserProfileController(), tag: GlobalController.i.sessionTag.last);
                   Get.toNamed(Routes.Profile, arguments: [NaviDrawerController.i.data['linkUser']], preventDuplicates: false);
                 }),
               ), //Title and name user

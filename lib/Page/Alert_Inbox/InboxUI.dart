@@ -88,8 +88,6 @@ class InboxUI extends GetView<InboxController> {
             GlobalController.i.inboxList.elementAt(index)['isUnread'] = 'false';
             GlobalController.i.update();
           }
-          GlobalController.i.sessionTag.add(GlobalController.i.inboxList.elementAt(index)['title'] + DateTime.now().toString());
-          Get.lazyPut<ViewController>(() => ViewController(), tag: GlobalController.i.sessionTag.last);
           Get.toNamed(Routes.View,
               arguments: [GlobalController.i.inboxList.elementAt(index)['title'], GlobalController.i.inboxList.elementAt(index)['linkInbox'], '', 1]);
         },

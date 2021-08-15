@@ -381,8 +381,6 @@ Widget onTapUser(ViewController controller, int index) {
             ),
             onPressed: () async {
               if (Get.isBottomSheetOpen == true) Get.back();
-              GlobalController.i.sessionTag.add('profile${DateTime.now().toString()}');
-              Get.lazyPut<UserProfileController>(() => UserProfileController(), tag: GlobalController.i.sessionTag.last);
               Get.toNamed(Routes.Profile, arguments: [controller.htmlData.elementAt(index)['userLink']], preventDuplicates: false);
             }),
         CupertinoButton(
@@ -703,8 +701,8 @@ Widget customHtml(List htmlData, int index, List imageList) {
                     imageList.indexOf(renderContext.tree.element!.attributes['data-src'].toString().length > 4
                         ? renderContext.tree.element!.attributes['data-src'].toString()
                         : renderContext.tree.element!.attributes['data-url'].toString().length > 4
-                        ? renderContext.tree.element!.attributes['data-url'].toString()
-                        : renderContext.tree.element!.attributes['src'].toString()));
+                            ? renderContext.tree.element!.attributes['data-url'].toString()
+                            : renderContext.tree.element!.attributes['src'].toString()));
               },
               icon: Icon(
                 Icons.image,
@@ -713,11 +711,8 @@ Widget customHtml(List htmlData, int index, List imageList) {
           imageList.add(renderContext.tree.element!.attributes['data-src'].toString().length > 4
               ? renderContext.tree.element!.attributes['data-src'].toString()
               : renderContext.tree.element!.attributes['data-url'].toString().length > 4
-              ? renderContext.tree.element!.attributes['data-url'].toString()
-              : renderContext.tree.element!.attributes['src'].toString());
-
-
-
+                  ? renderContext.tree.element!.attributes['data-url'].toString()
+                  : renderContext.tree.element!.attributes['src'].toString());
           return customCupertinoButton(
               Alignment.center,
               EdgeInsets.zero,
@@ -725,8 +720,8 @@ Widget customHtml(List htmlData, int index, List imageList) {
                 renderContext.tree.element!.attributes['data-src'].toString().length > 4
                     ? renderContext.tree.element!.attributes['data-src'].toString()
                     : renderContext.tree.element!.attributes['data-url'].toString().length > 4
-                    ? renderContext.tree.element!.attributes['data-url'].toString()
-                    : renderContext.tree.element!.attributes['src'].toString(),
+                        ? renderContext.tree.element!.attributes['data-url'].toString()
+                        : renderContext.tree.element!.attributes['src'].toString(),
                 clearMemoryCacheWhenDispose: true,
                 cache: true,
                 scale: 2,
@@ -771,9 +766,16 @@ Widget customHtml(List htmlData, int index, List imageList) {
                 imageList.indexOf(renderContext.tree.element!.attributes['data-src'].toString().length > 4
                     ? renderContext.tree.element!.attributes['data-src'].toString()
                     : renderContext.tree.element!.attributes['data-url'].toString().length > 4
-                    ? renderContext.tree.element!.attributes['data-url'].toString()
-                    : renderContext.tree.element!.attributes['src'].toString()));
+                        ? renderContext.tree.element!.attributes['data-url'].toString()
+                        : renderContext.tree.element!.attributes['src'].toString()));
           });
+        }
+      },
+      'span': (context, child) {
+        if (context.tree.element!.attributes['style']!.contains('rgb(0, 0, 0)') ||
+            context.tree.element!.attributes['style']!.contains('rgb(255, 255, 255)')||
+            context.tree.element!.attributes['style']!.contains('color: #000000')) {
+          context.style.color = Get.theme.primaryColor;
         }
       },
       "table": (context, child) {
@@ -856,10 +858,12 @@ Widget customHtml(List htmlData, int index, List imageList) {
     style: {
       "code": Style(color: Colors.blue),
       "table": Style(backgroundColor: Get.theme.cardColor),
-      "body": Style(fontSize: FontSize(GlobalController.i.userStorage.read('fontSizeView') ?? Get.textTheme.button!.fontSize), margin: EdgeInsets.only(left: 3, right: 3)),
+      "body": Style(
+          fontSize: FontSize(GlobalController.i.userStorage.read('fontSizeView') ?? Get.textTheme.button!.fontSize),
+          margin: EdgeInsets.only(left: 3, right: 3)),
       "div": Style(display: Display.INLINE, margin: EdgeInsets.zero),
       "blockquote":
-          Style(width: double.infinity, backgroundColor: Get.theme.cardColor, margin: EdgeInsets.only(left: 5.0, right: 5.0), display: Display.BLOCK)
+          Style(width: double.infinity, backgroundColor: Get.theme.cardColor,color: Get.theme.primaryColor ,margin: EdgeInsets.only(left: 10.0, right: 10.0), display: Display.BLOCK)
     },
     onLinkTap: (String? url, RenderContext context, Map<String, String> attributes, dom.Element? element) async {
       if (url != null) {
@@ -890,12 +894,8 @@ Widget customHtml(List htmlData, int index, List imageList) {
                 isScrollControlled: true);
           }
         } else if (url.contains('https://voz.vn/t/', 0)) {
-          GlobalController.i.sessionTag.add('ViewController at $url');
-          Get.lazyPut<ViewController>(() => ViewController(), tag: GlobalController.i.sessionTag.last);
           Get.toNamed(Routes.View, arguments: [url.replaceFirst(GlobalController.i.url + '/t/', '', 0), url, '', 0], preventDuplicates: false);
         } else if (url.contains('https://voz.vn/u/', 0)) {
-          GlobalController.i.sessionTag.add('profile${DateTime.now().toString()}');
-          Get.lazyPut<UserProfileController>(() => UserProfileController(), tag: GlobalController.i.sessionTag.last);
           Get.toNamed(Routes.Profile, arguments: [url.replaceFirst(GlobalController.i.url, '', 0)], preventDuplicates: false);
         } else
           // print(url.toString().split('?id=')[1]);

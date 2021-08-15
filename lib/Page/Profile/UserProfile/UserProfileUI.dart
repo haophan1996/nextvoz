@@ -8,7 +8,11 @@ import '/GlobalController.dart';
 import '/Page/reuseWidget.dart';
 import '/Page/Profile/UserProfile/UserProfileController.dart';
 
-class UserProfileUI extends StatelessWidget {
+class UserProfileUI extends GetView<UserProfileController> {
+  @override
+  // TODO: implement tag
+  String? get tag => GlobalController.i.sessionTag.last;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -20,7 +24,7 @@ class UserProfileUI extends StatelessWidget {
       backgroundColor: Theme.of(context).backgroundColor,
       body: GetBuilder<UserProfileController>(
           id: 'loadingState',
-          tag: GlobalController.i.sessionTag.last,
+          tag: tag,
           builder: (controller) {
             return controller.data['loadingStatus'] == 'loadFailed'
                 ? loadFailed(controller)
@@ -35,7 +39,7 @@ class UserProfileUI extends StatelessWidget {
         children: [
           GetBuilder<UserProfileController>(
               id: 'download',
-              tag: GlobalController.i.sessionTag.last,
+              tag: tag,
               builder: (controller) {
                 return LinearProgressIndicator(
                   value: controller.percentDownload,

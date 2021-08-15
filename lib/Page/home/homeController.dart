@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 import 'package:nextvoz/Routes/routes.dart';
+import '../reuseWidget.dart';
 import '/GlobalController.dart';
 
 class HomeController extends GetxController {
@@ -41,7 +42,13 @@ class HomeController extends GetxController {
 
   loading() async {
     loadingStatus = 'loading';
-    await GlobalController.i.getBody(() => onLoadError(), (download) {
+    await GlobalController.i.getBodyBeta((value) async {
+      if (value == 1) {
+        setDialogError(value.toString());
+        await loading();
+      } else
+        onLoadError();
+    }, (download) {
       percentDownload = download;
       update(['download'], true);
     }, dio, GlobalController.i.url, true).then((doc) async {

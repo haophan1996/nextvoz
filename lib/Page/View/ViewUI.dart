@@ -8,8 +8,10 @@ import '/Page/reuseWidget.dart';
 import '/Page/View/ViewController.dart';
 import '/GlobalController.dart';
 
-class ViewUI extends StatelessWidget {
-  final controller = Get.find<ViewController>(tag: GlobalController.i.sessionTag.last);
+class ViewUI extends GetView<ViewController> {
+  @override
+  // TODO: implement tag
+  String? get tag => GlobalController.i.sessionTag.last;
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +53,7 @@ class ViewUI extends StatelessWidget {
         },
         child: GetBuilder<ViewController>(
           id: 'firstLoading',
-          tag: GlobalController.i.sessionTag.last,
+          tag: tag,
           builder: (controller) {
             return controller.htmlData.length != 0
                 ? loadSuccess()
@@ -67,7 +69,7 @@ class ViewUI extends StatelessWidget {
   Widget loading() {
     return GetBuilder<ViewController>(
         id: 'download',
-        tag: GlobalController.i.sessionTag.last,
+        tag: tag,
         builder: (controller) {
           return LinearProgressIndicator(
             value: controller.percentDownload,
@@ -102,7 +104,7 @@ class ViewUI extends StatelessWidget {
         },
             () => controller.reply('', false),
             GetBuilder<ViewController>(
-              tag: GlobalController.i.sessionTag.last,
+              tag: tag,
               builder: (controller) {
                 return Text('${controller.currentPage.toString()} of ${controller.totalPage.toString()}');
               },
@@ -130,7 +132,7 @@ class ViewUI extends StatelessWidget {
     return CupertinoScrollbar(
         controller: controller.listViewScrollController,
         child: GetBuilder<ViewController>(
-          tag: GlobalController.i.sessionTag.last,
+          tag: tag,
           builder: (controller) {
             return ListView.builder(
               cacheExtent: 999999999,
@@ -143,7 +145,7 @@ class ViewUI extends StatelessWidget {
                 return controller.htmlData.length == index + 1
                     ? GetBuilder<ViewController>(
                         id: 'lastItemList',
-                        tag: GlobalController.i.sessionTag.last,
+                        tag: tag,
                         builder: (controller) {
                           return loadingBottom(controller.isScroll);
                         })

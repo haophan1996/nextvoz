@@ -55,6 +55,7 @@ class ViewController extends GetxController {
     reactionList.clear();
     imageList.clear();
     this.dispose();
+    _user = null;
     PaintingBinding.instance!.imageCache!.clear();
     PaintingBinding.instance!.imageCache!.clearLiveImages();
   }
@@ -155,16 +156,22 @@ class ViewController extends GetxController {
 
   Future<void> loadUserPost(String url) async {
     data['_commentImg'] = '';
-    await GlobalController.i.getBodyBeta(() async {
+    await GlobalController.i.getBodyBeta((value) async {
       ///error
-      //data['loading'] = 'error';
-      //update(['firstLoading']);
-      await loadUserPost(url);
-      if (currentPage <= 0)
+      if (value == 1){
+        ///retry server if unresponsive
+        await loadUserPost(url);
+        if (data['loading'] == 'loading'){
+          update(['firstLoading']);
+        } else {
+          update();
+        }
+        await updateLastItemScroll();
+      } else {
+        data['loading'] = 'error';
         update(['firstLoading']);
-      else
-        update();
-      await updateLastItemScroll();
+      }
+
     }, (download) {
       ///download
       percentDownload = download;

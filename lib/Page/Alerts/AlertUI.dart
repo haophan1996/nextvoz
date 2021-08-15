@@ -85,15 +85,11 @@ class AlertsUI extends GetView<AlertsController> {
           controller.update(['loadingState']);
         }
         if (GlobalController.i.alertList.elementAt(index)['link'].contains('/u/', 0) == true) {
-          GlobalController.i.sessionTag.add('profile${DateTime.now().toString()}');
-          Get.lazyPut<UserProfileController>(() => UserProfileController(), tag: GlobalController.i.sessionTag.last);
           Get.toNamed(Routes.Profile, arguments: [GlobalController.i.alertList.elementAt(index)['link']], preventDuplicates: false);
         } else if (GlobalController.i.alertList.elementAt(index)['link'].contains('/profile-posts/', 0) == true) {
           // Go to status
           print('status');
         } else {
-          GlobalController.i.sessionTag.add(GlobalController.i.alertList.elementAt(index)['threadName']);
-          Get.lazyPut<ViewController>(() => ViewController(), tag: GlobalController.i.sessionTag.last);
           Get.toNamed(Routes.View, arguments: [
             GlobalController.i.alertList.elementAt(index)['threadName'],
             GlobalController.i.alertList.elementAt(index)['link'],
