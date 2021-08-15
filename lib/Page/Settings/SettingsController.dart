@@ -16,7 +16,7 @@ class SettingsController extends GetxController {
     // TODO: implement onInit
     super.onInit();
     langIndex = GlobalController.i.userStorage.read('lang') ?? 1;
-    fontSizeView.value = GlobalController.i.userStorage.read('fontSizeView') ?? 20;
+    fontSizeView.value = (GlobalController.i.userStorage.read('fontSizeView') ?? Get.textTheme.button!.fontSize)!;
     switchValuePost.value = GlobalController.i.userStorage.read('scrollToMyRepAfterPost') ?? true;
     switchImage.value = GlobalController.i.userStorage.read('showImage') ?? true;
     switchSignature.value = GlobalController.i.userStorage.read('signature') ?? true;

@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import '/GlobalController.dart';
 
 class UserProfileController extends GetxController {
-  late var xfCsrfPost,dataCsrfPost;
+  late var xfCsrfPost, dataCsrfPost;
   double percentDownload = 0.0;
   Map<String, dynamic> data = {};
   List htmlData = [];
@@ -48,22 +48,21 @@ class UserProfileController extends GetxController {
 
   loadProfileUser() async {
     percentDownload = 0.1;
-    await GlobalController.i.getBody((){
+    await GlobalController.i.getBody(() {
       onErrorLoad();
-    }, (download){
+    }, (download) {
       percentDownload = download;
       update(['download']);
-    }, dio,GlobalController.i.url+data['linkProfileUser'], false).then((value) {
+    }, dio, GlobalController.i.url + data['linkProfileUser'], false).then((value) {
       data['dataCsrfPost'] = value!.getElementsByTagName('html')[0].attributes['data-csrf']; //Current page token
       data['xfCsrfPost'] = GlobalController.i.xfCsrfPost; // Post token
       GlobalController.i.token = value.getElementsByTagName('html')[0].attributes['data-csrf'];
 
       var userProfile = value.getElementsByClassName('memberHeader ')[0];
-
       var avatar = userProfile.getElementsByClassName('avatar avatar--l').first;
       if (avatar.getElementsByTagName('img').length > 0) {
         data['avatarLink'] = avatar.attributes['href'].toString();
-        if (data['avatarLink'].contains('https')== false){
+        if (data['avatarLink'].contains('https') == false) {
           data['avatarLink'] = GlobalController.i.url + data['avatarLink'];
         }
         data['avatarColor1'] = '0x00000000';
@@ -74,11 +73,15 @@ class UserProfileController extends GetxController {
         data['avatarColor2'] = '0xFFF' + avatar.attributes['style'].toString().split('#')[2];
       }
 
+      data['data-user-id'] = userProfile.getElementsByClassName('username ')[0].attributes['data-user-id'];
       data['userName'] = userProfile.getElementsByClassName('username ')[0].text;
       data['title'] = userProfile.getElementsByClassName('userTitle ')[0].text;
       data['joined'] = userProfile.getElementsByClassName('u-dt ')[0].text;
-      data['from'] = userProfile.getElementsByClassName('memberHeader-blurb')[0].getElementsByClassName('u-concealed').length > 0 ? 'From '+userProfile.getElementsByClassName('memberHeader-blurb')[0].getElementsByClassName('u-concealed')[0].text : '';
-      data['lastSeen'] = userProfile.getElementsByClassName('u-dt ').length > 1 ?userProfile.getElementsByClassName('u-dt ')[1].text : 'No information';
+      data['from'] = userProfile.getElementsByClassName('memberHeader-blurb')[0].getElementsByClassName('u-concealed').length > 0
+          ? 'From ' + userProfile.getElementsByClassName('memberHeader-blurb')[0].getElementsByClassName('u-concealed')[0].text
+          : '';
+      data['lastSeen'] =
+          userProfile.getElementsByClassName('u-dt ').length > 1 ? userProfile.getElementsByClassName('u-dt ')[1].text : 'No information';
       data['pointTrophies'] = userProfile.getElementsByClassName('fauxBlockLink-linkRow u-concealed')[1].text.trim();
       data['messages'] = userProfile.getElementsByClassName('fauxBlockLink-linkRow u-concealed ')[0].text.trim();
       data['reactionScore'] =
@@ -143,26 +146,26 @@ class UserProfileController extends GetxController {
     update(['loadingState']);
   }
 
-  // uploadStatus() async {
-  //   var header = {
-  //     'cookie': 'xf_user=${GlobalController.i.xfUser.toString()}; $xfCsrfPost',
-  //     'referer': GlobalController.i.url + NaviDrawerController.i.linkUser,
-  //     'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
-  //     'User-Agent': NaviDrawerController.i.nameUser,
-  //     'Host': 'voz.vn'
-  //   };
-  //   var body = {
-  //     'message_html': 'post tu app flutter',
-  //     'load_extra': '1',
-  //     '_xfToken': dataCsrfPost,
-  //     '_xfRequestUri': NaviDrawerController.i.linkUser,
-  //     '_xfResponseType': 'json'
-  //   };
-  //
-  //   await http.post(Uri.parse(GlobalController.i.url + NaviDrawerController.i.linkUser + "/post"), headers: header, body: body).then((value) {
-  //     print(value.statusCode);
-  //     print(value.headers);
-  //     print(value.body);
-  //   });
-  // }
+// uploadStatus() async {
+//   var header = {
+//     'cookie': 'xf_user=${GlobalController.i.xfUser.toString()}; $xfCsrfPost',
+//     'referer': GlobalController.i.url + NaviDrawerController.i.linkUser,
+//     'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
+//     'User-Agent': NaviDrawerController.i.nameUser,
+//     'Host': 'voz.vn'
+//   };
+//   var body = {
+//     'message_html': 'post tu app flutter',
+//     'load_extra': '1',
+//     '_xfToken': dataCsrfPost,
+//     '_xfRequestUri': NaviDrawerController.i.linkUser,
+//     '_xfResponseType': 'json'
+//   };
+//
+//   await http.post(Uri.parse(GlobalController.i.url + NaviDrawerController.i.linkUser + "/post"), headers: header, body: body).then((value) {
+//     print(value.statusCode);
+//     print(value.headers);
+//     print(value.body);
+//   });
+// }
 }

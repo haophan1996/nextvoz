@@ -492,7 +492,7 @@ class ViewController extends GetxController {
       'cookie': '${data['xfCsrfPost']}; xf_user=${GlobalController.i.xfUser};',
     };
 
-    await GlobalController.i.getHttp(headers, url).then((value) async {
+    await GlobalController.i.getHttp(true, headers, url).then((value) async {
       if (Get.isDialogOpen == true) Get.back();
       if (value['status'] == 'ok') {
         data['postID'] = htmlData.elementAt(index)['postID'];

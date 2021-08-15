@@ -691,33 +691,40 @@ Widget customHtml(List htmlData, int index, List imageList) {
         } else if ((renderContext.tree.element!.attributes['data-url'] != null &&
                 renderContext.tree.element!.attributes['data-url']!.contains(".gif") == true) ||
             renderContext.tree.element!.attributes['alt']!.contains(".gif") == true) {
-          imageList.add(renderContext.tree.element!.attributes['src']!.contains('data:image/', 0) == true
-              ? renderContext.tree.element!.attributes['data-src'].toString()
-              : renderContext.tree.element!.attributes['src'].toString());
-          return IconButton(
-              onPressed: () {
-                displayGallery(
-                    imageList,
-                    imageList.indexOf(renderContext.tree.element!.attributes['data-url'] != ''
-                        ? renderContext.tree.element!.attributes['data-url'].toString()
-                        : renderContext.tree.element!.attributes['data-src'] != ''
-                            ? renderContext.tree.element!.attributes['data-src'].toString()
-                            : renderContext.tree.element!.attributes['src'].toString()));
-              },
-              icon: Icon(
-                Icons.image,
-              ));
-        } else {
           imageList.add(renderContext.tree.element!.attributes['data-url'] != ''
               ? renderContext.tree.element!.attributes['data-url'].toString()
               : renderContext.tree.element!.attributes['data-src'] != ''
                   ? renderContext.tree.element!.attributes['data-src'].toString()
                   : renderContext.tree.element!.attributes['src'].toString());
+          return IconButton(
+              onPressed: () {
+                displayGallery(
+                    imageList,
+                    imageList.indexOf(renderContext.tree.element!.attributes['data-src'].toString().length > 4
+                        ? renderContext.tree.element!.attributes['data-src'].toString()
+                        : renderContext.tree.element!.attributes['data-url'].toString().length > 4
+                        ? renderContext.tree.element!.attributes['data-url'].toString()
+                        : renderContext.tree.element!.attributes['src'].toString()));
+              },
+              icon: Icon(
+                Icons.image,
+              ));
+        } else {
+          imageList.add(renderContext.tree.element!.attributes['data-src'].toString().length > 4
+              ? renderContext.tree.element!.attributes['data-src'].toString()
+              : renderContext.tree.element!.attributes['data-url'].toString().length > 4
+              ? renderContext.tree.element!.attributes['data-url'].toString()
+              : renderContext.tree.element!.attributes['src'].toString());
+
+
+
           return customCupertinoButton(
               Alignment.center,
               EdgeInsets.zero,
               ExtendedImage.network(
-                renderContext.tree.element!.attributes['data-url'] != ''
+                renderContext.tree.element!.attributes['data-src'].toString().length > 4
+                    ? renderContext.tree.element!.attributes['data-src'].toString()
+                    : renderContext.tree.element!.attributes['data-url'].toString().length > 4
                     ? renderContext.tree.element!.attributes['data-url'].toString()
                     : renderContext.tree.element!.attributes['src'].toString(),
                 clearMemoryCacheWhenDispose: true,
@@ -733,13 +740,17 @@ Widget customHtml(List htmlData, int index, List imageList) {
                       if (width != null && height != null) {
                         return AspectRatio(
                           aspectRatio: width / height,
-                          child: Text('Loading'),
+                          child: Center(
+                            child: CircularProgressIndicator(),
+                          ),
                         );
                       } else
                         return Container(
                           height: 100,
                           width: Get.width,
-                          child: Text('Loading'),
+                          child: Center(
+                            child: CircularProgressIndicator(),
+                          ),
                         );
                     case LoadState.completed:
                       // TODO: Handle this case.
@@ -757,8 +768,10 @@ Widget customHtml(List htmlData, int index, List imageList) {
               ), () {
             displayGallery(
                 imageList,
-                imageList.indexOf(renderContext.tree.element!.attributes['src']!.contains('data:image/', 0) == true
+                imageList.indexOf(renderContext.tree.element!.attributes['data-src'].toString().length > 4
                     ? renderContext.tree.element!.attributes['data-src'].toString()
+                    : renderContext.tree.element!.attributes['data-url'].toString().length > 4
+                    ? renderContext.tree.element!.attributes['data-url'].toString()
                     : renderContext.tree.element!.attributes['src'].toString()));
           });
         }
@@ -843,7 +856,7 @@ Widget customHtml(List htmlData, int index, List imageList) {
     style: {
       "code": Style(color: Colors.blue),
       "table": Style(backgroundColor: Get.theme.cardColor),
-      "body": Style(fontSize: FontSize(GlobalController.i.userStorage.read('fontSizeView') ?? 20), margin: EdgeInsets.only(left: 3, right: 3)),
+      "body": Style(fontSize: FontSize(GlobalController.i.userStorage.read('fontSizeView') ?? Get.textTheme.button!.fontSize), margin: EdgeInsets.only(left: 3, right: 3)),
       "div": Style(display: Display.INLINE, margin: EdgeInsets.zero),
       "blockquote":
           Style(width: double.infinity, backgroundColor: Get.theme.cardColor, margin: EdgeInsets.only(left: 5.0, right: 5.0), display: Display.BLOCK)

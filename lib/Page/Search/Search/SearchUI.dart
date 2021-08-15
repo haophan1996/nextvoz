@@ -82,7 +82,10 @@ class SearchUI extends GetView<SearchController> {
                         );
                       },
                     ),
-                    expanded: Text(' '),
+                    expanded: Padding(
+                      padding: EdgeInsets.only(top: 5),
+                      child: inputCustom(TextInputType.text, controller.postedOnTheProfileOfMember, false, 'Posted on the profile of member', () => controller.search()),
+                    ),
                     collapsed: Column(crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.center, children: [
                       Text('Minimum number of replies:'),
                       Padding(
@@ -168,21 +171,21 @@ class SearchUI extends GetView<SearchController> {
                                 RadioListTile(
                                     controlAffinity: ListTileControlAffinity.leading,
                                     title: Text('Relevance'),
-                                    value: '1',
+                                    value: 'relevance',
                                     groupValue: controller.radioGroup,
                                     onChanged: (value) {
                                       controller.handleRadioValueChange(value!);
                                     }),
                                 RadioListTile(
                                     title: Text('Date'),
-                                    value: '2',
+                                    value: 'date',
                                     groupValue: controller.radioGroup,
                                     onChanged: (value) {
                                       controller.handleRadioValueChange(value!);
                                     }),
                                 RadioListTile(
                                     title: Text('Most replies'),
-                                    value: '3',
+                                    value: 'replies',
                                     groupValue: controller.radioGroup,
                                     onChanged: (value) {
                                       controller.handleRadioValueChange(value!);

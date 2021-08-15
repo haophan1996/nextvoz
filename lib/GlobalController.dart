@@ -117,13 +117,13 @@ class GlobalController extends GetxController {
     return isJson? jsonDecode(response.body) : response.body;
   }
 
-  Future getHttp(Map<String, String> header, String link) async {
+  Future getHttp(bool isJson,Map<String, String> header, String link) async {
     final response = await http.get(Uri.parse(link), headers: header).catchError((err) {
       print('get http post error: $header \n$link');
       Get.back();
       setDialogError('Server down or No connection\n\n Details: $err');
     });
-    return jsonDecode(response.body);
+    return isJson? jsonDecode(response.body) : response.body;
   }
 
   Future<File> getImageFileFromAssets(String path) async {

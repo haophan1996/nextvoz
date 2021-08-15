@@ -45,11 +45,11 @@ class SettingsUI extends GetView<SettingsController> {
                   ),
                   Obx(() => Expanded(
                         child: Slider(
-                            divisions: 25,
+                            divisions: 30,
                             label: controller.fontSizeView.string,
                             value: controller.fontSizeView.value,
                             max: 40.0,
-                            min: 15.0,
+                            min: 10.0,
                             onChanged: (value) {
                               controller.fontSizeView.value = value;
                             }),

@@ -1,6 +1,9 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:nextvoz/Page/Search/SearchType.dart';
+import 'package:nextvoz/Routes/routes.dart';
 import '/GlobalController.dart';
 import '/Page/reuseWidget.dart';
 import '/Page/Profile/UserProfile/UserProfileController.dart';
@@ -113,7 +116,19 @@ class UserProfileUI extends StatelessWidget {
                     text: TextSpan(
                       children: <TextSpan>[
                         TextSpan(text: '\t\t\tTOTAL POSTS\n', style: TextStyle(color: Colors.grey, fontSize: 16)),
-                        TextSpan(text: 'Messages \n', style: TextStyle(color: Get.theme.primaryColor, fontSize: 16)),
+                        TextSpan(
+                            text: 'Messages \n',
+                            recognizer: TapGestureRecognizer()
+                              ..onTap = () {
+                                Get.toNamed(Routes.SearchResult, arguments: [
+                                  SearchType.SearchEverything,
+                                  {
+                                    'postBy': controller.data['userName'],
+                                    'order': 'relevance',
+                                  }
+                                ]);
+                              },
+                            style: TextStyle(color: Colors.blue, fontSize: 16)),
                         TextSpan(text: 'Reaction score\n', style: TextStyle(color: Get.theme.primaryColor, fontSize: 16)),
                         TextSpan(text: 'Points\n', style: TextStyle(color: Get.theme.primaryColor, fontSize: 16)),
                       ],
@@ -144,9 +159,20 @@ class UserProfileUI extends StatelessWidget {
                 ],
               ),
             ), //totalPosts
-            Align(alignment: Alignment.topLeft, child: Text('\t\t\tACTION\n', style: TextStyle(color: Colors.grey))),
+            Align(alignment: Alignment.topLeft, child: Text('\t\t\tACTION', style: TextStyle(color: Colors.grey))),
             RichText(
                 text: TextSpan(children: [
+              TextSpan(
+                  text: 'All Threads\n',
+                  recognizer: TapGestureRecognizer()..onTap = () {
+                    Get.toNamed(Routes.SearchResult, arguments: [
+                      SearchType.SearchThreadsOnly,
+                      {
+                        'data-user-id' : controller.data['data-user-id']
+                      }
+                    ]);
+                  },
+                  style: TextStyle(color: Colors.blue, fontSize: 16)),
               TextSpan(text: 'Profile posts\n', style: TextStyle(color: Get.theme.primaryColor, fontSize: 16)),
               TextSpan(text: 'Latest activity\n', style: TextStyle(color: Get.theme.primaryColor, fontSize: 16)),
               //TextSpan(text: 'Postings\n', style: TextStyle(color: Get.theme.primaryColor, fontSize: 16)),

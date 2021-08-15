@@ -2,14 +2,18 @@ import 'package:expandable/expandable.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:nextvoz/Page/Search/SearchType.dart';
-import 'package:nextvoz/Page/reuseWidget.dart';
 import 'package:nextvoz/Routes/routes.dart';
 
+import '../../reuseWidget.dart';
+
 class SearchController extends GetxController {
-  TextEditingController keywords = TextEditingController(), postBy = TextEditingController(), replies = TextEditingController();
+  TextEditingController keywords = TextEditingController(),
+      postBy = TextEditingController(),
+      replies = TextEditingController(),
+      postedOnTheProfileOfMember = TextEditingController();
   ExpandableController expandableController = ExpandableController();
   bool isSearchTitlesOnly = false, visible = true;
-  String dateTime = '',radioGroup = '2';
+  String dateTime = '', radioGroup = 'relevance';
   DateTime newDateTime = DateTime.now();
   int selectPrefix = 0, selectSearchInForum = 0;
 
@@ -52,12 +56,20 @@ class SearchController extends GetxController {
     update(['updateGroupRadio']);
   }
 
+  getSearchType() {
+    return expandableController.value == true
+        ? SearchType.SearchProfilePosts
+        : replies.text == '' && selectPrefix == 0 && selectSearchInForum == 0 && radioGroup != 'replies'
+            ? SearchType.SearchEverything
+            : SearchType.SearchThreads;
+  }
+
   search() {
     if (keywords.text.isEmpty && postBy.text.isEmpty) {
       setDialogError('Please specify a search query or the name of a member.');
     } else {
       Get.toNamed(Routes.SearchResult, arguments: [
-        SearchType.SearchEverything,
+        getSearchType(),
         {
           'keywords': keywords.text,
           'postBy': postBy.text,
@@ -65,7 +77,9 @@ class SearchController extends GetxController {
           'dateTime': dateTime,
           'prefix': prefix.elementAt(selectPrefix)['id'],
           'searchInForums': searchInForums.elementAt(selectSearchInForum)['id'],
-          'min_reply_count' : replies.text,
+          'min_reply_count': radioGroup == 'replies' && replies.text == '' ? '0' : replies.text,
+          'order': radioGroup,
+          'profile_users' : postedOnTheProfileOfMember.text,
         }
       ]);
     }
