@@ -450,149 +450,144 @@ Widget dialogButtonYesNo(Function onDone) => Row(
       ],
     );
 
-Widget viewContent(int index, ViewController controller) => Container(
-      decoration: BoxDecoration(
-        border: Border(bottom: BorderSide(color: Get.theme.canvasColor)),
-        color: Get.theme.backgroundColor,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          CupertinoButton(
-              padding: EdgeInsets.zero,
-              child: Stack(
-                children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Padding(
-                        padding: EdgeInsets.only(top: 5, left: 5, bottom: 5),
-                        child: displayAvatar(
-                            48,
-                            controller.htmlData.elementAt(index)["avatarColor1"],
-                            controller.htmlData.elementAt(index)["avatarColor2"],
-                            controller.htmlData.elementAt(index)["userName"],
-                            controller.htmlData.elementAt(index)["userAvatar"]),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(top: 10, left: 10),
-                        child: RichText(
-                          text: TextSpan(children: <TextSpan>[
-                            TextSpan(
-                                text: controller.htmlData.elementAt(index)['userName'] + "\n",
-                                style: TextStyle(
-                                    color: controller.htmlData.elementAt(index)['newPost'] == true ? Color(0xFFFD6E00) : Colors.blue,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 16)),
-                            TextSpan(
-                                text: controller.htmlData.elementAt(index)['userTitle'],
-                                style: TextStyle(color: Get.theme.primaryColor, fontSize: 13)),
-                          ]),
-                        ),
-                      ),
-                    ],
+Widget viewContent(int index, ViewController controller) => Column(
+  crossAxisAlignment: CrossAxisAlignment.start,
+  children: <Widget>[
+    CupertinoButton(
+        color: Get.theme.shadowColor,
+        padding: EdgeInsets.zero,
+        child: Stack(
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Padding(
+                  padding: EdgeInsets.only(top: 5, left: 5, bottom: 5),
+                  child: displayAvatar(
+                      40,
+                      controller.htmlData.elementAt(index)["avatarColor1"],
+                      controller.htmlData.elementAt(index)["avatarColor2"],
+                      controller.htmlData.elementAt(index)["userName"],
+                      controller.htmlData.elementAt(index)["userAvatar"]),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(top: 10, left: 10),
+                  child: RichText(
+                    text: TextSpan(children: <TextSpan>[
+                      TextSpan(
+                          text: controller.htmlData.elementAt(index)['userName'] + "\n",
+                          style: TextStyle(
+                              color: controller.htmlData.elementAt(index)['newPost'] == true ? Color(0xFFFD6E00) : Colors.blue,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16)),
+                      TextSpan(
+                          text: controller.htmlData.elementAt(index)['userTitle'],
+                          style: TextStyle(color: Get.theme.primaryColor, fontSize: 13)),
+                    ]),
                   ),
-                  Padding(
-                    padding: EdgeInsets.only(top: 10, right: 10),
-                    child: Align(
-                      alignment: Alignment.centerRight,
-                      child: Text('${controller.htmlData.elementAt(index)['userPostDate']}\n ${controller.htmlData.elementAt(index)['orderPost']}',
-                          textAlign: TextAlign.right, style: TextStyle(color: Get.theme.primaryColor, fontSize: 13)),
-                    ),
-                  ),
-                ],
-              ),
-              onPressed: () {
-                Get.bottomSheet(
-                    Card(
-                      color: Get.theme.canvasColor,
-                      child: controller.htmlData.elementAt(index)['userName'] == NaviDrawerController.i.data['nameUser']
-                          ? onTapMine(controller, index)
-                          : onTapUser(controller, index),
-                    ),
-                    ignoreSafeArea: false);
-              }),
-          customHtml(controller.htmlData, index, controller.imageList),
-          Padding(
-            padding: EdgeInsets.only(left: 5),
-            child: GetBuilder<ViewController>(tag: GlobalController.i.sessionTag.last,
-            id: index,
-              builder: (controller){
-              return Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  controller.htmlData.elementAt(index)['commentImage'].toString() != 'no'
-                      ? Image.asset(
-                    'assets/reaction/' + controller.htmlData.elementAt(index)['commentImage'][0] + '.png',
-                    width: 17,
-                    height: 17,
-                  )
-                      : Container(),
-                  controller.htmlData.elementAt(index)['commentImage'].toString().length > 1 &&
-                      controller.htmlData.elementAt(index)['commentImage'].toString() != 'no'
-                      ? Image.asset('assets/reaction/' + controller.htmlData.elementAt(index)['commentImage'][1] + '.png', width: 17, height: 17)
-                      : Container(),
-                  Expanded(
-                    child: TextButton(
-                      style: ButtonStyle(alignment: Alignment.centerLeft, padding: MaterialStateProperty.all<EdgeInsets>(EdgeInsets.only(left: 5))),
-                      onPressed: () {
-                        controller.getDataReactionList(index);
-                        Get.bottomSheet(listReactionUI(controller), isScrollControlled: false, ignoreSafeArea: true);
-                      },
-                      child: Text(controller.htmlData.elementAt(index)['commentName'],
-                          style: TextStyle(color: Colors.blue), overflow: TextOverflow.ellipsis, maxLines: 1),
-                    ),
-                  ),
-                  FlutterReactionButton(
-                    onReactionChanged: (reaction, i) {
-                      if (GlobalController.i.isLogged == false) {
-                        controller.update([index]);
-                        setDialogError('popMess4'.tr);
-                      } else {
-                        if (controller.htmlData.elementAt(index)['commentByMe'] != i) {
-                          if (i == 0) {
-                            controller
-                                .reactionPost(
-                                index, controller.htmlData.elementAt(index)['postID'], controller.htmlData.elementAt(index)['commentByMe'])
-                                .then((value) {
-                              if (value['status'] != 'error') {
-                                controller.htmlData.elementAt(index)['commentByMe'] = 0;
-                              } else {
-                                setDialogError(value['mess']);
-                              }
-                            });
-                          } else {
-                            controller.reactionPost(index, controller.htmlData.elementAt(index)['postID'], i).then((value) {
-                              if (value['status'] != 'error') {
-                                controller.htmlData.elementAt(index)['commentByMe'] = i;
-                              } else {
-                                setDialogError(value['mess']);
-                              }
-                            });
-                          }
-                        }
-                      }
-                    },
-                    reactions: controller.flagsReactions,
-                    initialReaction: controller.htmlData.elementAt(index)['commentByMe'] == -1
-                        ? controller.flagsReactions[0]
-                        : controller.flagsReactions[controller.htmlData.elementAt(index)['commentByMe']],
-                    boxRadius: 10,
-                    boxAlignment: AlignmentDirectional.bottomEnd,
-                  ),
-                  TextButton(
-                      onPressed: () {
-                        controller.quote(index);
-                      },
-                      child: Text('rep'.tr))
-                ],
-              );
-              },
+                ),
+              ],
             ),
-          )
-        ],
+            Padding(
+              padding: EdgeInsets.only(top: 10, right: 10),
+              child: Align(
+                alignment: Alignment.centerRight,
+                child: Text('${controller.htmlData.elementAt(index)['userPostDate']}\n ${controller.htmlData.elementAt(index)['orderPost']}',
+                    textAlign: TextAlign.right, style: TextStyle(color: Get.theme.primaryColor, fontSize: 13)),
+              ),
+            ),
+          ],
+        ),
+        onPressed: () {
+          Get.bottomSheet(
+              Card(
+                color: Get.theme.canvasColor,
+                child: controller.htmlData.elementAt(index)['userName'] == NaviDrawerController.i.data['nameUser']
+                    ? onTapMine(controller, index)
+                    : onTapUser(controller, index),
+              ),
+              ignoreSafeArea: false);
+        }),
+    customHtml(controller.htmlData, index, controller.imageList),
+    Padding(
+      padding: EdgeInsets.only(left: 5),
+      child: GetBuilder<ViewController>(tag: GlobalController.i.sessionTag.last,
+        id: index,
+        builder: (controller){
+          return Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              controller.htmlData.elementAt(index)['commentImage'].toString() != 'no'
+                  ? Image.asset(
+                'assets/reaction/' + controller.htmlData.elementAt(index)['commentImage'][0] + '.png',
+                width: 17,
+                height: 17,
+              )
+                  : Container(),
+              controller.htmlData.elementAt(index)['commentImage'].toString().length > 1 &&
+                  controller.htmlData.elementAt(index)['commentImage'].toString() != 'no'
+                  ? Image.asset('assets/reaction/' + controller.htmlData.elementAt(index)['commentImage'][1] + '.png', width: 17, height: 17)
+                  : Container(),
+              Expanded(
+                child: TextButton(
+                  style: ButtonStyle(alignment: Alignment.centerLeft, padding: MaterialStateProperty.all<EdgeInsets>(EdgeInsets.only(left: 5))),
+                  onPressed: () {
+                    controller.getDataReactionList(index);
+                    Get.bottomSheet(listReactionUI(controller), isScrollControlled: false, ignoreSafeArea: true);
+                  },
+                  child: Text(controller.htmlData.elementAt(index)['commentName'],
+                      style: TextStyle(color: Colors.blue), overflow: TextOverflow.ellipsis, maxLines: 1),
+                ),
+              ),
+              FlutterReactionButton(
+                onReactionChanged: (reaction, i) {
+                  if (GlobalController.i.isLogged == false) {
+                    controller.update([index]);
+                    setDialogError('popMess4'.tr);
+                  } else {
+                    if (controller.htmlData.elementAt(index)['commentByMe'] != i) {
+                      if (i == 0) {
+                        controller
+                            .reactionPost(
+                            index, controller.htmlData.elementAt(index)['postID'], controller.htmlData.elementAt(index)['commentByMe'])
+                            .then((value) {
+                          if (value['status'] != 'error') {
+                            controller.htmlData.elementAt(index)['commentByMe'] = 0;
+                          } else {
+                            setDialogError(value['mess']);
+                          }
+                        });
+                      } else {
+                        controller.reactionPost(index, controller.htmlData.elementAt(index)['postID'], i).then((value) {
+                          if (value['status'] != 'error') {
+                            controller.htmlData.elementAt(index)['commentByMe'] = i;
+                          } else {
+                            setDialogError(value['mess']);
+                          }
+                        });
+                      }
+                    }
+                  }
+                },
+                reactions: controller.flagsReactions,
+                initialReaction: controller.htmlData.elementAt(index)['commentByMe'] == -1
+                    ? controller.flagsReactions[0]
+                    : controller.flagsReactions[controller.htmlData.elementAt(index)['commentByMe']],
+                boxRadius: 10,
+                boxAlignment: AlignmentDirectional.bottomEnd,
+              ),
+              TextButton(
+                  onPressed: () {
+                    controller.quote(index);
+                  },
+                  child: Text('rep'.tr))
+            ],
+          );
+        },
       ),
-    );
+    )
+  ],
+);
 
 Widget displayAvatar(double sizeImage, String avatarColor1, String avatarColor2, String? userName, String imageLink) {
   return Container(
@@ -684,7 +679,6 @@ Widget customHtml(List htmlData, int index, List imageList) {
       "img": (renderContext, child) {
         double? width = double.tryParse(renderContext.tree.element!.attributes['width'].toString());
         double? height = double.tryParse(renderContext.tree.element!.attributes['height'].toString());
-
         if (renderContext.tree.element!.attributes['src']!.contains("/styles/next/xenforo")) {
           return ExtendedImage.asset(
             GlobalController.i.getEmoji(renderContext.tree.element!.attributes['src'].toString()),
@@ -716,6 +710,7 @@ Widget customHtml(List htmlData, int index, List imageList) {
                 Icons.image,
               ));
         } else {
+          print(index);
           imageList.add(renderContext.tree.element!.attributes['data-src'].toString().length > 4
               ? renderContext.tree.element!.attributes['data-src'].toString()
               : renderContext.tree.element!.attributes['data-url'].toString().length > 4
@@ -779,14 +774,6 @@ Widget customHtml(List htmlData, int index, List imageList) {
           });
         }
       },
-      'span': (context, child) {
-        //if (context.tree.element!.attributes['sty'])
-        if (context.tree.element!.attributes['style']?.contains('rgb(0, 0, 0)') == true ||
-            context.tree.element!.attributes['style']?.contains('rgb(255, 255, 255)') == true ||
-            context.tree.element!.attributes['style']?.contains('color: #000000') == true) {
-          context.style.color = Get.theme.primaryColor;
-        }
-      },
       "table": (context, child) {
         if (context.tree.element!.getElementsByTagName("td").length > 2)
           return SingleChildScrollView(
@@ -806,10 +793,10 @@ Widget customHtml(List htmlData, int index, List imageList) {
             child: (context.tree as TableLayoutElement).toWidget(context),
           );
       },
-      'div': (context, child) {
+      'span': (context, child) {
         if (context.tree.element!.attributes['style']?.contains('rgb(0, 0, 0)') == true ||
             context.tree.element!.attributes['style']?.contains('rgb(255, 255, 255)') == true ||
-            context.tree.style.color == Color(0xff000000)) {
+            context.tree.element!.attributes['style']?.contains('color: #000000') == true) {
           context.style.color = Get.theme.primaryColor;
         }
       },
@@ -865,12 +852,12 @@ Widget customHtml(List htmlData, int index, List imageList) {
           fontSize: FontSize(GlobalController.i.userStorage.read('fontSizeView') ?? Get.textTheme.button!.fontSize),
           padding: EdgeInsets.zero,
           margin: EdgeInsets.only(left: 3, right: 3)),
-      //"div": Style(display: Display.INLINE, margin: EdgeInsets.zero),
+      "div": Style(display: Display.INLINE, margin: EdgeInsets.zero),
       "blockquote": Style(
           padding: EdgeInsets.all(5),
           width: double.infinity,
           backgroundColor: Get.theme.cardColor,
-          margin: EdgeInsets.only(left: 10.0, right: 10.0),
+          margin: EdgeInsets.only(left: 10.0, right: 10.0, top: 5),
           display: Display.BLOCK)
     },
     onLinkTap: (String? url, RenderContext context, Map<String, String> attributes, dom.Element? element) async {

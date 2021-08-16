@@ -25,7 +25,6 @@ class Language extends Translations{
       'or' : '\tor\t',
       'loginPassword' : 'Password',
       'login'   : 'Log in',
-      'logout'  : 'Logout',
       'forgotPass' : 'Forgot your password?',
       'error'   : 'Error',
       'fontSizeView' : 'Font size :',
@@ -44,6 +43,8 @@ class Language extends Translations{
       'appSignature' : 'App Signature',
       'defaultsPage' : 'Default Forum',
       'search' : 'Search',
+      'guestUser' : 'Guest user',
+      'posts' : 'Posts',
     },
     'vi_VN' : {
       'lang'    : 'Ngôn ngữ :',
@@ -66,7 +67,6 @@ class Language extends Translations{
       'loginPassword' : 'Mật Khẩu',
       'login'   : 'Đăng Nhập',
       'forgotPass' : 'Quên mật khẩu?',
-      'logout'  : 'Đăng Xuất',
       'error'   : 'Thông Báo Lỗi',
       'fontSizeView' : 'Kích Cỡ Chữ :',
       'unReact' : 'Bỏ React',
@@ -84,6 +84,8 @@ class Language extends Translations{
       'appSignature' : 'Chữ Ký Ứng Dụng',
       'defaultsPage' : 'Mặc Định Forum',
       'search' : 'Tìm Kiếm',
+      'guestUser' : 'Khách',
+      'posts' : 'Bản tin mới',
     }
   };
 

@@ -1,11 +1,13 @@
 import 'package:get/get.dart';
+import '../../GlobalController.dart';
 import '/Page/Thread/ThreadController.dart';
 
 class ThreadBinding extends Bindings{
   @override
   void dependencies() {
     // TODO: implement dependencies
-    Get.lazyPut<ThreadController>(() => ThreadController());
+    GlobalController.i.sessionTag.add(DateTime.now().toString());
+    Get.lazyPut<ThreadController>(() => ThreadController(), tag: GlobalController.i.sessionTag.last);
   }
 
 }

@@ -34,12 +34,12 @@ class ViewController extends GetxController {
   @override
   Future<void> onReady() async {
     super.onReady();
+    data['loading'] = 'loading';
     data['subLink'] = Get.arguments[1];
     data['subLink'] = data['subLink'].toString().replaceAll(GlobalController.i.url, '');
     data['view'] == 0
         ? await loadUserPost(data['fullUrl'] = GlobalController.i.url + data['subLink'])
         : await loadInboxView(data['fullUrl'] = GlobalController.i.url + data['subLink']);
-    data['loading'] = 'loading';
     update(['firstLoading']);
   }
 
@@ -47,6 +47,7 @@ class ViewController extends GetxController {
   onClose() {
     super.onClose();
     dio.close(force: true);
+    dio.clear();
     input.dispose();
     GlobalController.i.sessionTag.removeLast();
     listViewScrollController.dispose();
@@ -161,11 +162,6 @@ class ViewController extends GetxController {
       if (value == 1){
         ///retry server if unresponsive
         await loadUserPost(url);
-        if (data['loading'] == 'loading'){
-          update(['firstLoading']);
-        } else {
-          update();
-        }
         await updateLastItemScroll();
       } else {
         data['loading'] = 'error';
@@ -295,7 +291,6 @@ class ViewController extends GetxController {
       imageList.clear();
       PaintingBinding.instance!.imageCache!.clear();
       PaintingBinding.instance!.imageCache!.clearLiveImages();
-      data['loading'] = 'ok';
 
       if (Get.isDialogOpen == true || isScroll == 'Release' || isEdit == true) {
         if (Get.isDialogOpen == true) Get.back();
@@ -303,7 +298,10 @@ class ViewController extends GetxController {
         listViewScrollController.jumpTo(-10.0);
       }
       htmlData.add(null);
-      update();
+      if (data['loading'] == 'loading'){
+        data['loading'] = 'ok';
+        update(['firstLoading']);
+      } else update();
     });
   }
 
@@ -420,9 +418,11 @@ class ViewController extends GetxController {
         htmlData.removeRange(0, lengthHtmlDataList);
         listViewScrollController.jumpTo(-10.0);
       }
-      data['loading'] = 'ok';
       htmlData.add(null);
-      update();
+      if (data['loading'] == 'loading'){
+        data['loading'] = 'ok';
+        update(['firstLoading']);
+      } else update();
     });
   }
 

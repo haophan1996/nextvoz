@@ -63,13 +63,13 @@ Widget pageNavigation(Function(String index) gotoPage, Function reply, Widget ch
                     id: 'Notification',
                     builder: (controller) {
                       return Icon(
-                        Icons.more_rounded,
+                        Icons.dashboard_rounded,
                         color: controller.inboxNotifications != 0 || controller.alertNotifications != 0 ? Colors.red : Get.theme.primaryColor,
                       );
                     },
                   ),
                   onPressed: () {
-                    Get.bottomSheet(userInformation());
+                    Get.bottomSheet(userInformation(),  );
                   },
                 )),
           ],
@@ -88,6 +88,13 @@ Widget userInformation() {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
+          Padding(
+            padding: EdgeInsets.only(bottom: 5),
+            child: Text(
+              'Control Center',
+              style: TextStyle(fontSize: Get.theme.textTheme.headline5!.fontSize, color: Colors.white, fontWeight: FontWeight.bold),
+            ),
+          ),
           GetBuilder<GlobalController>(
               id: 'Notification',
               builder: (controller) {
@@ -128,10 +135,13 @@ Widget whatNew() => Container(
                 child: CupertinoButton(
                     padding: EdgeInsets.zero,
                     child: Text(
-                      'Posts',
+                      'posts'.tr,
                       maxLines: 1,
                     ),
-                    onPressed: () {}),
+                    onPressed: () {
+                      if (Get.isBottomSheetOpen == true) Get.back();
+                      Get.toNamed(Routes.Thread, arguments: ['New posts', 'https://voz.vn/whats-new/posts/'], preventDuplicates: false);
+                    }),
               ),
               Expanded(
                 child: CupertinoButton(

@@ -7,7 +7,7 @@ class Themes {
     primaryColor: Colors.black,
     backgroundColor: Colors.white,
     canvasColor: Color(0xFFEEE3E3),
-    shadowColor: Color(0xFFC7F1C9),
+    shadowColor: Colors.grey.shade200,
     cardColor: Colors.grey.shade300,
     dividerColor: Colors.grey,
     secondaryHeaderColor: Colors.grey.shade700,
@@ -29,7 +29,7 @@ class Themes {
     backgroundColor: Colors.black,
     cardColor: Color(0xFF171616),
     canvasColor: Color(0xFF343030),
-    shadowColor: Color(0xFF2A2F2A),
+    shadowColor: Colors.grey.shade900,
     dividerColor: Colors.grey,
     secondaryHeaderColor: Colors.white70,
     appBarTheme: AppBarTheme(

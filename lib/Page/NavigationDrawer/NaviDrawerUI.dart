@@ -98,6 +98,24 @@ Widget logged() {
               CupertinoButton(
                 padding: EdgeInsets.only(right: 10, top: 10),
                 child: Icon(
+                  Icons.people_alt_rounded,
+                  color: Get.theme.primaryColor,
+                ),
+                onPressed: () async {
+                },
+              ), //follow
+              CupertinoButton(
+                padding: EdgeInsets.only(right: 10, top: 10),
+                child: Icon(
+                  Icons.do_disturb_off_rounded,
+                  color: Get.theme.primaryColor,
+                ),
+                onPressed: () async {
+                },
+              ), //ignore
+              CupertinoButton(
+                padding: EdgeInsets.only(right: 10, top: 10),
+                child: Icon(
                   Icons.refresh,
                   color: Get.theme.primaryColor,
                 ),
@@ -107,13 +125,18 @@ Widget logged() {
                   Get.back();
                 },
               ), //Refresh user data
+              //Spacer(),
               CupertinoButton(
-                  padding: EdgeInsets.only(right: 10, top: 10),
-                  child: Text('logout'.tr),
+                padding: EdgeInsets.only(right: 10, top: 10),
+                child: Icon(
+                  Icons.logout,
+                  color: Get.theme.primaryColor,
+                ),
                   onPressed: () async {
                     if (Get.isBottomSheetOpen == true) Get.back();
                     await NaviDrawerController.i.logout();
-                  }),
+                  }
+              ), //logout
             ],
           )
         ],

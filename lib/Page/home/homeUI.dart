@@ -140,7 +140,7 @@ class HomePageUI extends GetView<HomeController> {
                     id: 'Notification',
                     builder: (controller) {
                       return Text(
-                        controller.isLogged == false ? 'Guest user' : 'Logged in as ${NaviDrawerController.i.data['nameUser']}',
+                        controller.isLogged == false ? 'guestUser'.tr : NaviDrawerController.i.data['nameUser'] ?? 'null',
                         style: TextStyle(
                             color: controller.alertNotifications != 0 || controller.inboxNotifications != 0 ? Colors.redAccent : Colors.blue),
                       );
