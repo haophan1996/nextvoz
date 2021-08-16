@@ -1,10 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:nextvoz/Routes/routes.dart';
+import '/Routes/routes.dart';
 import '/GlobalController.dart';
 import '/Page/Alert_Inbox/InboxController.dart';
-import '/Page/View/ViewController.dart';
 import '/Page/reuseWidget.dart';
 
 class InboxUI extends GetView<InboxController> {

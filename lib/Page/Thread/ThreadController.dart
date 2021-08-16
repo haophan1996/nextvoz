@@ -2,10 +2,9 @@ import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:nextvoz/Page/reuseWidget.dart';
-import 'package:nextvoz/Routes/routes.dart';
+import '/Page/reuseWidget.dart';
+import '/Routes/routes.dart';
 import '/GlobalController.dart';
-import '/Page/View/ViewController.dart';
 
 class ThreadController extends GetxController {
   late String _url;

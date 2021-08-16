@@ -2,7 +2,7 @@ import 'package:get/get.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_reaction_button/flutter_reaction_button.dart';
-import 'package:nextvoz/GlobalController.dart';
+import '/GlobalController.dart';
 import '/Page/reuseWidget.dart';
 import '/Page/Settings/SettingsController.dart';
 

@@ -7,13 +7,12 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_html/shims/dart_ui_real.dart';
 import 'package:flutter_reaction_button/flutter_reaction_button.dart';
 import 'package:interactiveviewer_gallery/interactiveviewer_gallery.dart';
-import 'package:nextvoz/Routes/routes.dart';
+import '/Routes/routes.dart';
 import '/utils/color.dart';
 import 'package:extended_image/extended_image.dart';
 import '/GlobalController.dart';
 import '/Page/NavigationDrawer/NaviDrawerController.dart';
 import '/Page/View/ViewController.dart';
-import '/Page/Profile/UserProfile/UserProfileController.dart';
 
 ///  * Global appbar
 PreferredSize preferredSize(BuildContext context, String title, String prefix) => PreferredSize(
@@ -516,69 +515,79 @@ Widget viewContent(int index, ViewController controller) => Container(
           customHtml(controller.htmlData, index, controller.imageList),
           Padding(
             padding: EdgeInsets.only(left: 5),
-            child: Row(
-              children: [
-                controller.htmlData.elementAt(index)['commentImage'].toString() != 'no'
-                    ? Image.asset('assets/reaction/' + controller.htmlData.elementAt(index)['commentImage'][0] + '.png', width: 17, height: 17)
-                    : Container(),
-                controller.htmlData.elementAt(index)['commentImage'].toString().length > 1 &&
-                        controller.htmlData.elementAt(index)['commentImage'].toString() != 'no'
-                    ? Image.asset('assets/reaction/' + controller.htmlData.elementAt(index)['commentImage'][1] + '.png', width: 17, height: 17)
-                    : Container(),
-                Expanded(
-                  child: TextButton(
-                    style: ButtonStyle(alignment: Alignment.centerLeft),
-                    onPressed: () {
-                      controller.getDataReactionList(index);
-                      Get.bottomSheet(listReactionUI(controller), isScrollControlled: false, ignoreSafeArea: true);
-                    },
-                    child: Text(controller.htmlData.elementAt(index)['commentName'],
-                        style: TextStyle(color: Colors.blue), overflow: TextOverflow.ellipsis, maxLines: 1),
+            child: GetBuilder<ViewController>(tag: GlobalController.i.sessionTag.last,
+            id: index,
+              builder: (controller){
+              return Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  controller.htmlData.elementAt(index)['commentImage'].toString() != 'no'
+                      ? Image.asset(
+                    'assets/reaction/' + controller.htmlData.elementAt(index)['commentImage'][0] + '.png',
+                    width: 17,
+                    height: 17,
+                  )
+                      : Container(),
+                  controller.htmlData.elementAt(index)['commentImage'].toString().length > 1 &&
+                      controller.htmlData.elementAt(index)['commentImage'].toString() != 'no'
+                      ? Image.asset('assets/reaction/' + controller.htmlData.elementAt(index)['commentImage'][1] + '.png', width: 17, height: 17)
+                      : Container(),
+                  Expanded(
+                    child: TextButton(
+                      style: ButtonStyle(alignment: Alignment.centerLeft, padding: MaterialStateProperty.all<EdgeInsets>(EdgeInsets.only(left: 5))),
+                      onPressed: () {
+                        controller.getDataReactionList(index);
+                        Get.bottomSheet(listReactionUI(controller), isScrollControlled: false, ignoreSafeArea: true);
+                      },
+                      child: Text(controller.htmlData.elementAt(index)['commentName'],
+                          style: TextStyle(color: Colors.blue), overflow: TextOverflow.ellipsis, maxLines: 1),
+                    ),
                   ),
-                ),
-                FlutterReactionButton(
-                  onReactionChanged: (reaction, i) {
-                    if (GlobalController.i.isLogged == false) {
-                      controller.update();
-                      setDialogError('popMess4'.tr);
-                    } else {
-                      if (controller.htmlData.elementAt(index)['commentByMe'] != i) {
-                        if (i == 0) {
-                          controller
-                              .reactionPost(
-                                  index, controller.htmlData.elementAt(index)['postID'], controller.htmlData.elementAt(index)['commentByMe'])
-                              .then((value) {
-                            if (value['status'] != 'error') {
-                              controller.htmlData.elementAt(index)['commentByMe'] = 0;
-                            } else {
-                              setDialogError(value['mess']);
-                            }
-                          });
-                        } else {
-                          controller.reactionPost(index, controller.htmlData.elementAt(index)['postID'], i).then((value) {
-                            if (value['status'] != 'error') {
-                              controller.htmlData.elementAt(index)['commentByMe'] = i;
-                            } else {
-                              setDialogError(value['mess']);
-                            }
-                          });
+                  FlutterReactionButton(
+                    onReactionChanged: (reaction, i) {
+                      if (GlobalController.i.isLogged == false) {
+                        controller.update([index]);
+                        setDialogError('popMess4'.tr);
+                      } else {
+                        if (controller.htmlData.elementAt(index)['commentByMe'] != i) {
+                          if (i == 0) {
+                            controller
+                                .reactionPost(
+                                index, controller.htmlData.elementAt(index)['postID'], controller.htmlData.elementAt(index)['commentByMe'])
+                                .then((value) {
+                              if (value['status'] != 'error') {
+                                controller.htmlData.elementAt(index)['commentByMe'] = 0;
+                              } else {
+                                setDialogError(value['mess']);
+                              }
+                            });
+                          } else {
+                            controller.reactionPost(index, controller.htmlData.elementAt(index)['postID'], i).then((value) {
+                              if (value['status'] != 'error') {
+                                controller.htmlData.elementAt(index)['commentByMe'] = i;
+                              } else {
+                                setDialogError(value['mess']);
+                              }
+                            });
+                          }
                         }
                       }
-                    }
-                  },
-                  reactions: controller.flagsReactions,
-                  initialReaction: controller.htmlData.elementAt(index)['commentByMe'] == -1
-                      ? controller.flagsReactions[0]
-                      : controller.flagsReactions[controller.htmlData.elementAt(index)['commentByMe']],
-                  boxRadius: 10,
-                  boxAlignment: AlignmentDirectional.bottomEnd,
-                ),
-                TextButton(
-                    onPressed: () {
-                      controller.quote(index);
                     },
-                    child: Text('rep'.tr))
-              ],
+                    reactions: controller.flagsReactions,
+                    initialReaction: controller.htmlData.elementAt(index)['commentByMe'] == -1
+                        ? controller.flagsReactions[0]
+                        : controller.flagsReactions[controller.htmlData.elementAt(index)['commentByMe']],
+                    boxRadius: 10,
+                    boxAlignment: AlignmentDirectional.bottomEnd,
+                  ),
+                  TextButton(
+                      onPressed: () {
+                        controller.quote(index);
+                      },
+                      child: Text('rep'.tr))
+                ],
+              );
+              },
             ),
           )
         ],
@@ -686,9 +695,8 @@ Widget customHtml(List htmlData, int index, List imageList) {
             renderContext.tree.element!.attributes['alt']!,
             style: TextStyle(fontSize: GlobalController.i.userStorage.read('fontSizeView')),
           );
-        } else if ((renderContext.tree.element!.attributes['data-url'] != null &&
-                renderContext.tree.element!.attributes['data-url']!.contains(".gif") == true) ||
-            renderContext.tree.element!.attributes['alt']!.contains(".gif") == true) {
+        } else if ((renderContext.tree.element!.attributes['data-url']?.contains(".gif") == true) ||
+            renderContext.tree.element!.attributes['alt']?.contains(".gif") == true) {
           imageList.add(renderContext.tree.element!.attributes['data-url'] != ''
               ? renderContext.tree.element!.attributes['data-url'].toString()
               : renderContext.tree.element!.attributes['data-src'] != ''
@@ -772,9 +780,10 @@ Widget customHtml(List htmlData, int index, List imageList) {
         }
       },
       'span': (context, child) {
-        if (context.tree.element!.attributes['style']!.contains('rgb(0, 0, 0)') ||
-            context.tree.element!.attributes['style']!.contains('rgb(255, 255, 255)')||
-            context.tree.element!.attributes['style']!.contains('color: #000000')) {
+        //if (context.tree.element!.attributes['sty'])
+        if (context.tree.element!.attributes['style']?.contains('rgb(0, 0, 0)') == true ||
+            context.tree.element!.attributes['style']?.contains('rgb(255, 255, 255)') == true ||
+            context.tree.element!.attributes['style']?.contains('color: #000000') == true) {
           context.style.color = Get.theme.primaryColor;
         }
       },
@@ -797,9 +806,15 @@ Widget customHtml(List htmlData, int index, List imageList) {
             child: (context.tree as TableLayoutElement).toWidget(context),
           );
       },
+      'div': (context, child) {
+        if (context.tree.element!.attributes['style']?.contains('rgb(0, 0, 0)') == true ||
+            context.tree.element!.attributes['style']?.contains('rgb(255, 255, 255)') == true ||
+            context.tree.style.color == Color(0xff000000)) {
+          context.style.color = Get.theme.primaryColor;
+        }
+      },
       "iframe": (RenderContext context, Widget child) {
         final attrs = context.tree.element?.attributes;
-
         double? width = double.tryParse(attrs!['width'] ?? "");
         double? height = double.tryParse(attrs['height'] ?? "");
         if (attrs['src'].toString().contains('youtube') == true) {
@@ -835,35 +850,28 @@ Widget customHtml(List htmlData, int index, List imageList) {
                         ),
                       ),
                     ),
-                    Positioned(
-                      child: Text(
-                        'Nếu youtube không play được, vui lòng nhấn vô \nlink phía trên',
-                        style: TextStyle(
-                            fontSize: GlobalController.i.userStorage.read('fontSizeView'),
-                            color: Colors.white,
-                            background: Paint()..color = Colors.red),
-                        maxLines: 2,
-                      ),
-                      top: 25,
-                      left: 5,
-                    ),
                   ],
                 ),
               )
             ],
           );
         }
-      }
+      },
     },
     style: {
       "code": Style(color: Colors.blue),
       "table": Style(backgroundColor: Get.theme.cardColor),
       "body": Style(
           fontSize: FontSize(GlobalController.i.userStorage.read('fontSizeView') ?? Get.textTheme.button!.fontSize),
+          padding: EdgeInsets.zero,
           margin: EdgeInsets.only(left: 3, right: 3)),
-      "div": Style(display: Display.INLINE, margin: EdgeInsets.zero),
-      "blockquote":
-          Style(width: double.infinity, backgroundColor: Get.theme.cardColor,color: Get.theme.primaryColor ,margin: EdgeInsets.only(left: 10.0, right: 10.0), display: Display.BLOCK)
+      //"div": Style(display: Display.INLINE, margin: EdgeInsets.zero),
+      "blockquote": Style(
+          padding: EdgeInsets.all(5),
+          width: double.infinity,
+          backgroundColor: Get.theme.cardColor,
+          margin: EdgeInsets.only(left: 10.0, right: 10.0),
+          display: Display.BLOCK)
     },
     onLinkTap: (String? url, RenderContext context, Map<String, String> attributes, dom.Element? element) async {
       if (url != null) {

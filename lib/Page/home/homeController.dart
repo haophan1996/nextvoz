@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
-import 'package:nextvoz/Routes/routes.dart';
+import '/Routes/routes.dart';
 import '../reuseWidget.dart';
 import '/GlobalController.dart';
 

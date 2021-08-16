@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
-import 'package:nextvoz/Page/Search/SearchType.dart';
+import '/Page/Search/SearchType.dart';
 import '../../../GlobalController.dart';
 import 'package:html/parser.dart' as parser;
 
@@ -61,10 +61,10 @@ class SearchResultController extends GetxController {
           'keywords': data['SearchConfig']['keywords'],
           'c[users]': data['SearchConfig']['postBy'],
           'c[newer_than]': data['SearchConfig']['dateTime'],
-          'c[min_reply_count]' : data['SearchConfig']['min_reply_count'],
-          'c[prefixes][]' : data['SearchConfig']['prefix'],
-          'c[nodes][]' : data['SearchConfig']['searchInForums'],
-          'c[child_nodes][]' : '1',
+          'c[min_reply_count]': data['SearchConfig']['min_reply_count'],
+          'c[prefixes][]': data['SearchConfig']['prefix'],
+          'c[nodes][]': data['SearchConfig']['searchInForums'],
+          'c[child_nodes][]': '1',
           'order': data['SearchConfig']['order'],
           'search_type': 'post',
           'c[title_only]': data['SearchConfig']['isSearchTitlesOnly'],
@@ -98,7 +98,9 @@ class SearchResultController extends GetxController {
   }
 
   performSearchThreadsOnly() async {
-    await GlobalController.i.getHttp(false,headers, GlobalController.i.url+'/search/member?user_id=${data['SearchConfig']['data-user-id']}&content=thread').then((value) async {
+    await GlobalController.i
+        .getHttp(false, headers, GlobalController.i.url + '/search/member?user_id=${data['SearchConfig']['data-user-id']}&content=thread')
+        .then((value) async {
       await queryData(value);
     });
     update(['updateSearchResult']);
@@ -117,12 +119,22 @@ class SearchResultController extends GetxController {
 
     GlobalController.i.token = doc.getElementsByTagName('html')[0].attributes['data-csrf'];
 
-    if (doc.getElementsByClassName('pageNavSimple').length == 0){
+    if (doc.getElementsByClassName('pageNavSimple').length == 0) {
       data['currentPage'] = 1;
       data['totalPage'] = 1;
     } else {
-      data['currentPage'] = int.parse(doc.getElementsByClassName('pageNavSimple').map((e) => e.getElementsByTagName('a')[0].text).first.trim().replaceAll(RegExp(r'[^0-9]\S*'), ""));
-      data['totalPage'] = int.parse(doc.getElementsByClassName('pageNavSimple').map((e) => e.getElementsByTagName('a')[0].text).first.trim().replaceAll(RegExp(r'\S*[^0-9]'), ""));
+      data['currentPage'] = int.parse(doc
+          .getElementsByClassName('pageNavSimple')
+          .map((e) => e.getElementsByTagName('a')[0].text)
+          .first
+          .trim()
+          .replaceAll(RegExp(r'[^0-9]\S*'), ""));
+      data['totalPage'] = int.parse(doc
+          .getElementsByClassName('pageNavSimple')
+          .map((e) => e.getElementsByTagName('a')[0].text)
+          .first
+          .trim()
+          .replaceAll(RegExp(r'\S*[^0-9]'), ""));
     }
 
     if (doc.getElementsByClassName('block-row block-row--separated  js-inlineModContainer').length == 0) {
@@ -133,9 +145,16 @@ class SearchResultController extends GetxController {
     doc.getElementsByClassName('block-row block-row--separated').forEach((element) {
       data['author'] = element.attributes['data-author'];
       data['link'] = element.getElementsByClassName('contentRow-title')[0].getElementsByTagName('a')[0].attributes['href'];
-      data['title'] = element.getElementsByClassName('contentRow-title')[0].text.trim();
-      data['content'] = element.getElementsByClassName('contentRow-snippet')[0].text.trim();
 
+      if (element.getElementsByClassName('contentRow-title')[0].getElementsByTagName('span').length == 0) {
+        data['title'] = element.getElementsByClassName('contentRow-title')[0].text.trim().replaceAll(RegExp('\\s+'), ' ');
+        data['prefix'] = '';
+      } else {
+        data['prefix'] = element.getElementsByClassName('contentRow-title')[0].getElementsByTagName('span')[0].text;
+        data['title'] = element.getElementsByClassName('contentRow-title')[0].text.trim().replaceAll(data['prefix'], '');
+      }
+
+      data['content'] = element.getElementsByClassName('contentRow-snippet')[0].text.trim();
       if (element.getElementsByClassName('avatar avatar--s')[0].getElementsByTagName('img').length > 0) {
         data['_userAvatar'] = element.getElementsByClassName('avatar avatar--s')[0].getElementsByTagName('img')[0].attributes['src'].toString();
         data['avatarColor1'] = '0x00000000';
@@ -153,6 +172,7 @@ class SearchResultController extends GetxController {
       htmlData.add({
         'author': data['author'],
         'link': data['link'],
+        'prefix': data['prefix'],
         'title': data['title'],
         'content': data['content'],
         '_userAvatar': data['_userAvatar'],

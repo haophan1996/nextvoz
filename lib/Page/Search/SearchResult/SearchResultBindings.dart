@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:nextvoz/Page/Search/SearchResult/SearchResultController.dart';
+import '/Page/Search/SearchResult/SearchResultController.dart';
 import '../../../GlobalController.dart';
 
 class SearchResultBindings extends Bindings{

@@ -2,10 +2,9 @@ import 'package:flutter_html/shims/dart_ui_real.dart';
 import 'package:get/get.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:nextvoz/Routes/routes.dart';
+import '/Routes/routes.dart';
 import '/GlobalController.dart';
 import '/Page/NavigationDrawer/NaviDrawerController.dart';
-import '/Page/Profile/UserProfile/UserProfileController.dart';
 import '/Page/reuseWidget.dart';
 
 class NaviDrawerUI extends GetView<NaviDrawerController> {

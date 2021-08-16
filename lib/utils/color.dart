@@ -2,7 +2,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 
 Color getColorInvert(String typeT) {
-  if (typeT == 'tin tức' || typeT == 'thảo luận')
+  if (typeT == 'tin tức' || typeT == 'thảo luận'|| typeT == 'thắc mắc')
     return Colors.black;
   else
     return Colors.white;

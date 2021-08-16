@@ -2,7 +2,7 @@ import 'package:get/get.dart';
 import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:nextvoz/Routes/routes.dart';
+import '/Routes/routes.dart';
 import '/Page/reuseWidget.dart';
 import '/GlobalController.dart';
 import 'NavigationDrawer/NaviDrawerUI.dart';

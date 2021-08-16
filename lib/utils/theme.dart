@@ -25,7 +25,7 @@ class Themes {
   );
 
   final darkTheme = ThemeData.dark().copyWith(
-    primaryColor: Colors.grey.shade300,
+    primaryColor: Colors.grey.shade400,
     backgroundColor: Colors.black,
     cardColor: Color(0xFF171616),
     canvasColor: Color(0xFF343030),

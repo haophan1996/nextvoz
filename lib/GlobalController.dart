@@ -17,23 +17,26 @@ import '/Page/NavigationDrawer/NaviDrawerController.dart';
 
 class GlobalController extends GetxController {
   static GlobalController get i => Get.find();
-  final String url = "https://voz.vn",
-      pageLink = "page-",
-      inboxReactLink = 'https://voz.vn/conversations/messages/',
-      viewReactLink = 'https://voz.vn/p/';
   final userStorage = GetStorage();
   var xfCsrfLogin, dataCsrfLogin, xfCsrfPost, token;
   bool isLogged = false;
   List alertList = [], inboxList = [], sessionTag = [];
   String xfSession = '', dateExpire = '', xfUser = '';
   int alertNotifications = 0, inboxNotifications = 0;
+
+  ///Default settings
   double heightAppbar = 45, overScroll = 100;
+  final String url = "https://voz.vn",
+      pageLink = "page-",
+      inboxReactLink = 'https://voz.vn/conversations/messages/',
+      viewReactLink = 'https://voz.vn/p/';
 
   @override
   onInit() async {
     super.onInit();
   }
 
+  ///Only update when variables are different
   controlNotification(int alt, int ib, String login) {
     if (login == 'false') {
       if (login != isLogged.toString()) {
@@ -112,7 +115,6 @@ class GlobalController extends GetxController {
       Get.back();
       setDialogError('Server down or No connection\n\n Details: $err');
     });
-    // return jsonDecode(response.body);
 
     return isJson? jsonDecode(response.body) : response.body;
   }
@@ -142,6 +144,7 @@ class GlobalController extends GetxController {
       xfUser = await userStorage.read('xf_user');
       xfSession = await userStorage.read('xf_session');
     }
+
   }
 
   Future<void> setAccountUser() async {
@@ -162,7 +165,7 @@ class GlobalController extends GetxController {
   final langList = {Locale('en', 'US'), Locale('vi', 'VN')};
 
 
-  getEmoji(String s) {
+  String getEmoji(String s) {
     return "assets/" + s.replaceAll(RegExp(r"\S*smilies\S"), "").replaceAll(RegExp(r'\?[^]*'), "");
   }
 
@@ -177,7 +180,7 @@ class GlobalController extends GetxController {
       return null;
   }
 
-  launchURL(String url) async {
+  Future<void> launchURL(String url) async {
     if (await canLaunch(url)) {
       await launch(url, forceSafariVC: true, forceWebView: false, enableJavaScript: true);
     } else {

@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:nextvoz/Page/reuseWidget.dart';
+import '/Page/reuseWidget.dart';
 import 'SearchController.dart';
 import 'package:expandable/expandable.dart';
 

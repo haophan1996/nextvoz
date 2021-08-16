@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:nextvoz/Page/reuseWidget.dart';
-import '../../GlobalController.dart';
+import '/Page/reuseWidget.dart';
+import '/GlobalController.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'LoginController.dart';
 

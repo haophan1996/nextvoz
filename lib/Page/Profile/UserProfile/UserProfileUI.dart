@@ -2,8 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
-import 'package:nextvoz/Page/Search/SearchType.dart';
-import 'package:nextvoz/Routes/routes.dart';
+import '/Page/Search/SearchType.dart';
+import '/Routes/routes.dart';
 import '/GlobalController.dart';
 import '/Page/reuseWidget.dart';
 import '/Page/Profile/UserProfile/UserProfileController.dart';
@@ -19,7 +19,7 @@ class UserProfileUI extends GetView<UserProfileController> {
       appBar: appBarOnly('Members', [
         IconButton(
             icon: Icon(Icons.refresh),
-            onPressed: () async => await Get.find<UserProfileController>(tag: GlobalController.i.sessionTag.last).onRefresh())
+            onPressed: () async => await controller.onRefresh())
       ]),
       backgroundColor: Theme.of(context).backgroundColor,
       body: GetBuilder<UserProfileController>(

@@ -5,7 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:html/parser.dart' as parser;
 import 'package:html/dom.dart' as dom;
-import 'package:nextvoz/Routes/routes.dart';
+import '/Routes/routes.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter_reaction_button/flutter_reaction_button.dart';
 import '/GlobalController.dart';
@@ -463,7 +463,9 @@ class ViewController extends GetxController {
       }
     });
     imageList.clear();
-    update();
+
+    ///only update anything below HTML view
+    update([index]);
     Get.back();
     return status;
   }

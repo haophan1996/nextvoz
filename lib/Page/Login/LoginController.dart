@@ -2,9 +2,9 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
-import 'package:nextvoz/Page/NavigationDrawer/NaviDrawerController.dart';
-import '../../GlobalController.dart';
-import '../reuseWidget.dart';
+import '/Page/NavigationDrawer/NaviDrawerController.dart';
+import '/GlobalController.dart';
+import '/Page/reuseWidget.dart';
 
 class LoginController extends GetxController {
   RxBool isShowPass = true.obs;
