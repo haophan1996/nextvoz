@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '/Routes/routes.dart';
+import '/Routes/pages.dart';
 import '/GlobalController.dart';
 import '/Page/Alert_Inbox/InboxController.dart';
 import '/Page/reuseWidget.dart';

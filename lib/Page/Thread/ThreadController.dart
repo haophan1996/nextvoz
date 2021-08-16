@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '/Routes/routes.dart';
+import '/Routes/pages.dart';
 import '/GlobalController.dart';
 
 class ThreadController extends GetxController {
@@ -150,7 +150,7 @@ class ThreadController extends GetxController {
             myThreadList.removeRange(0, data['lengthHtmlDataList']);
             listViewScrollController.jumpTo(-10.0);
           }
-          myThreadList.add(null);
+          //myThreadList.add(null);
         })
         .then((value) => update())
         .catchError((err) {

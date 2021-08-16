@@ -37,7 +37,12 @@ class InboxController extends GetxController {
   getInboxAlert() async {
     String getName = '', title, link, rep, party, latestDay, latestRep, avatarLink, avatarColor1, avatarColor2, isUnread;
     if (GlobalController.i.isLogged == true) {
-      await GlobalController.i.getBody(() {}, (download) {
+      await GlobalController.i.getBodyBeta((value) async {
+        if (value == 1){
+          print('retry');
+          await getInboxAlert();
+        }
+      }, (download) {
         percentDownload = download;
         update(['download'], true);
       }, dio, GlobalController.i.url + '/conversations/', false).then((value) {

@@ -2,7 +2,7 @@ import 'package:expandable/expandable.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import '/Page/Search/SearchType.dart';
-import '/Routes/routes.dart';
+import '/Routes/pages.dart';
 import '../../reuseWidget.dart';
 
 class SearchController extends GetxController {

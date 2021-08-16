@@ -22,30 +22,30 @@ class ViewUI extends GetView<ViewController> {
       backgroundColor: Theme.of(context).backgroundColor,
       body: NotificationListener(
         onNotification: (Notification notification) {
-          if (notification is ScrollUpdateNotification && controller.isScroll != 'Release') {
+          if (notification is ScrollUpdateNotification && controller.data['isScroll'] != 'Release') {
             if (((notification).metrics.pixels > (notification).metrics.maxScrollExtent + GlobalController.i.overScroll) &&
                 (notification).dragDetails != null &&
-                controller.isScroll != 'Holding') {
+                controller.data['isScroll'] != 'Holding') {
               ///detect user overScroll
-              controller.isScroll = "Holding";
+              controller.data['isScroll'] = "Holding";
               controller.update(['lastItemList']);
             } else if (((notification).metrics.pixels > (notification).metrics.maxScrollExtent + GlobalController.i.overScroll) &&
                 (notification).dragDetails == null &&
-                controller.isScroll != 'Release') {
+                controller.data['isScroll'] != 'Release') {
               ///User overScroll and release finger
-              controller.isScroll = 'Release';
-              if (controller.currentPage + 1 > controller.totalPage) {
+              controller.data['isScroll'] = 'Release';
+              if (controller.data['currentPage'] + 1 > controller.data['totalPage']) {
                 HapticFeedback.lightImpact();
               } else {
                 controller.update(['lastItemList']);
-                controller.setPageOnClick(controller.currentPage + 1);
+                controller.setPageOnClick(controller.data['currentPage'] + 1);
               }
             }
           }
-          if (notification is ScrollEndNotification && controller.isScroll != 'idle') {
-            if (controller.isScroll != 'Release' || (controller.currentPage + 1) > controller.totalPage) {
+          if (notification is ScrollEndNotification && controller.data['isScroll'] != 'idle') {
+            if (controller.data['isScroll'] != 'Release' || (controller.data['currentPage'] + 1) > controller.data['totalPage']) {
               ///return to idle
-              controller.isScroll = 'idle';
+              controller.data['isScroll'] = 'idle';
               controller.update(['lastItemList']);
             }
           }
@@ -72,9 +72,9 @@ class ViewUI extends GetView<ViewController> {
         tag: tag,
         builder: (controller) {
           return LinearProgressIndicator(
-            value: controller.percentDownload,
+            value: controller.data['percentDownload'],
             valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF0CF301)),
-            backgroundColor: Get.theme.backgroundColor,
+            backgroundColor: Colors.transparent,
           );
         });
   }
@@ -86,19 +86,20 @@ class ViewUI extends GetView<ViewController> {
       Align(
         alignment: Alignment.bottomCenter,
         child: pageNavigation((String symbol) {
+          if (controller.data['isScroll'] == 'Release') return;
           setDialog();
           switch (symbol) {
             case 'F':
               controller.setPageOnClick(1);
               break;
             case 'P':
-              controller.setPageOnClick(controller.currentPage - 1);
+              controller.setPageOnClick(controller.data['currentPage'] - 1);
               break;
             case 'N':
-              controller.setPageOnClick(controller.currentPage + 1);
+              controller.setPageOnClick(controller.data['currentPage'] + 1);
               break;
             case 'L':
-              controller.setPageOnClick(controller.totalPage);
+              controller.setPageOnClick(controller.data['totalPage']);
               break;
           }
         },
@@ -106,7 +107,7 @@ class ViewUI extends GetView<ViewController> {
             GetBuilder<ViewController>(
               tag: tag,
               builder: (controller) {
-                return Text('${controller.currentPage.toString()} of ${controller.totalPage.toString()}');
+                return Text('${controller.data['currentPage'].toString()} of ${controller.data['totalPage'].toString()}');
               },
             )),
       )
@@ -137,17 +138,16 @@ class ViewUI extends GetView<ViewController> {
             return ListView.builder(
               cacheExtent: 999999999,
               physics: BouncingScrollPhysics(),
-              //scrollDirection: Axis.vertical,
               clipBehavior: Clip.none,
               controller: controller.listViewScrollController,
-              itemCount: controller.htmlData.length,
+              itemCount: controller.htmlData.length + 1,
               itemBuilder: (context, index) {
-                return controller.htmlData.length == index + 1
+                return controller.htmlData.length == index
                     ? GetBuilder<ViewController>(
                         id: 'lastItemList',
                         tag: tag,
                         builder: (controller) {
-                          return loadingBottom(controller.isScroll);
+                          return loadingBottom(controller.data['isScroll']);
                         })
                     : viewContent(index, controller);
               },

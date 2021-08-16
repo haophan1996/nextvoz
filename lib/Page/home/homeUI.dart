@@ -145,7 +145,7 @@ class HomePageUI extends GetView<HomeController> {
                             color: controller.alertNotifications != 0 || controller.inboxNotifications != 0 ? Colors.redAccent : Colors.blue),
                       );
                     }),
-                () => Get.bottomSheet(userInformation()),
+                () => Get.bottomSheet(controlCenter()),
               ),
             ),
           ),

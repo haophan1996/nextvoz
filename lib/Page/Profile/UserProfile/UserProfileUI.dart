@@ -3,7 +3,7 @@ import 'package:flutter/gestures.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import '/Page/Search/SearchType.dart';
-import '/Routes/routes.dart';
+import '/Routes/pages.dart';
 import '/GlobalController.dart';
 import '/Page/reuseWidget.dart';
 import '/Page/Profile/UserProfile/UserProfileController.dart';

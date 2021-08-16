@@ -61,9 +61,9 @@ class ThreadUI extends GetView<ThreadController> {
                   return ListView.builder(
                     physics: BouncingScrollPhysics(),
                     controller: controller.listViewScrollController,
-                    itemCount: controller.myThreadList.length,
+                    itemCount: controller.myThreadList.length+1,
                     itemBuilder: (BuildContext context, int index) {
-                      return controller.myThreadList.length == index + 1
+                      return controller.myThreadList.length == index
                           ? GetBuilder<ThreadController>(
                               tag: tag,
                               id: 'lastItemList',
@@ -99,12 +99,13 @@ class ThreadUI extends GetView<ThreadController> {
                   return LinearProgressIndicator(
                     value: controller.data['percentDownload'],
                     valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF0CF301)),
-                    backgroundColor: Theme.of(context).backgroundColor,
+                    backgroundColor: Colors.transparent,
                   );
                 }),
             Align(
               alignment: Alignment.bottomCenter,
               child: pageNavigation((String symbol) {
+                if (controller.data['isScroll'] == 'Release') return;
                 setDialog();
                 switch (symbol) {
                   case 'F':

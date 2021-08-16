@@ -5,7 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:html/parser.dart' as parser;
 import 'package:html/dom.dart' as dom;
-import '/Routes/routes.dart';
+import '/Routes/pages.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter_reaction_button/flutter_reaction_button.dart';
 import '/GlobalController.dart';
@@ -13,19 +13,19 @@ import '/Page/reuseWidget.dart';
 
 class ViewController extends GetxController {
   List htmlData = [], reactionList = [], imageList = [];
-  int currentPage = 0, totalPage = 0, lengthHtmlDataList = 0;
   Map<String, dynamic> data = {};
   bool isEdit = false;
-  late var _user;
-  var dio = Dio(), percentDownload = 0.0;
+  var dio = Dio();
   late dom.Document res;
   late ScrollController listViewScrollController = ScrollController();
   TextEditingController input = TextEditingController();
-  String isScroll = 'idle';
 
   @override
   Future<void> onInit() async {
     super.onInit();
+    data['percentDownload'] = 0.0;
+    data['isScroll'] = 'idle';
+
     data['subHeader'] = Get.arguments[0];
     data['subTypeHeader'] = Get.arguments[2] ?? '';
     data['view'] = Get.arguments[3];
@@ -40,7 +40,6 @@ class ViewController extends GetxController {
     data['view'] == 0
         ? await loadUserPost(data['fullUrl'] = GlobalController.i.url + data['subLink'])
         : await loadInboxView(data['fullUrl'] = GlobalController.i.url + data['subLink']);
-    update(['firstLoading']);
   }
 
   @override
@@ -55,10 +54,9 @@ class ViewController extends GetxController {
     data.clear();
     reactionList.clear();
     imageList.clear();
-    this.dispose();
-    _user = null;
     PaintingBinding.instance!.imageCache!.clear();
     PaintingBinding.instance!.imageCache!.clearLiveImages();
+    this.dispose();
   }
 
   _removeTag(String content) {
@@ -75,8 +73,8 @@ class ViewController extends GetxController {
   }
 
   updateLastItemScroll() async {
-    if (isScroll != 'idle') {
-      isScroll = 'idle';
+    if (data['isScroll'] != 'idle') {
+      data['isScroll'] = 'idle';
       update(['lastItemList']);
     }
   }
@@ -135,9 +133,26 @@ class ViewController extends GetxController {
         data['rMessage3'] = element.getElementsByClassName('pairs pairs--inline')[2].getElementsByTagName('dd')[0].text;
         data['rTime'] = element.getElementsByClassName('u-dt')[0].text;
         data['rReactIcon'] = element.getElementsByClassName('reaction-image js-reaction')[0].attributes['alt'].toString() == 'Ưng' ? '1' : '2';
-        data['avatar'] = element.getElementsByClassName('avatar')[0].getElementsByTagName('img').length > 0
-            ? element.getElementsByClassName('avatar')[0].getElementsByTagName('img')[0].attributes['src']
-            : 'no';
+
+        // data['avatar'] = element.getElementsByClassName('avatar')[0].getElementsByTagName('img').length > 0
+        //     ? element.getElementsByClassName('avatar')[0].getElementsByTagName('img')[0].attributes['src']
+        //     : 'no';
+
+        if (element.getElementsByClassName('avatar avatar--s')[0].getElementsByTagName('img').length > 0) {
+          data['_userAvatar'] = element.getElementsByClassName('avatar avatar--s')[0].getElementsByTagName('img')[0].attributes['src'].toString();
+          data['avatarColor1'] = '0x00000000';
+          data['avatarColor2'] = '0x00000000';
+          if (data['_userAvatar'].contains('https') == false) {
+            data['_userAvatar'] = GlobalController.i.url + data['_userAvatar'];
+          }
+        } else {
+          data['_userAvatar'] = 'no';
+          data['avatarColor1'] =
+              '0xFFF' + element.getElementsByClassName('avatar avatar--s')[0].attributes['style'].toString().split('#')[1].split(';')[0];
+          data['avatarColor2'] = '0xFFF' + element.getElementsByClassName('avatar avatar--s')[0].attributes['style'].toString().split('#')[2];
+        }
+
+
         reactionList.add({
           'rName': data['rName'],
           'rTitle': data['rTitle'],
@@ -146,7 +161,9 @@ class ViewController extends GetxController {
           'rMessage3': data['rMessage3'],
           'rTime': data['rTime'],
           'rReactIcon': data['rReactIcon'],
-          'rAvatar': data['avatar'],
+          'rAvatar': data['_userAvatar'],
+          'avatarColor1' : data['avatarColor1'],
+          'avatarColor2' : data['avatarColor2'],
         });
       });
       PaintingBinding.instance!.imageCache!.clear();
@@ -170,10 +187,10 @@ class ViewController extends GetxController {
 
     }, (download) {
       ///download
-      percentDownload = download;
+      data['percentDownload'] = download;
       update(['download'], true);
     }, dio, url, false).then((value) async {
-      lengthHtmlDataList = htmlData.length;
+      data['lengthHtmlDataList'] = htmlData.length;
       GlobalController.i.token = value!.getElementsByTagName('html')[0].attributes['data-csrf'];
       data['dataCsrfPost'] = value.getElementsByTagName('html')[0].attributes['data-csrf'];
       data['xfCsrfPost'] = GlobalController.i.xfCsrfPost;
@@ -202,12 +219,12 @@ class ViewController extends GetxController {
       value.getElementsByClassName("block block--messages").forEach((element) {
         var lastP = element.getElementsByClassName("pageNavSimple");
         if (lastP.length == 0) {
-          currentPage = 1;
-          totalPage = 1;
+          data['currentPage'] = 1;
+          data['totalPage'] = 1;
         } else {
           var naviPage = element.getElementsByClassName("pageNavSimple-el pageNavSimple-el--current").first.innerHtml.trim();
-          currentPage = int.parse(naviPage.replaceAll(RegExp(r'[^0-9]\S*'), ""));
-          totalPage = int.parse(naviPage.replaceAll(RegExp(r'\S*[^0-9]'), ""));
+          data['currentPage'] = int.parse(naviPage.replaceAll(RegExp(r'[^0-9]\S*'), ""));
+          data['totalPage'] = int.parse(naviPage.replaceAll(RegExp(r'\S*[^0-9]'), ""));
         }
 
         //Get post
@@ -220,10 +237,10 @@ class ViewController extends GetxController {
 
           data['_userPostDate'] = element.getElementsByClassName("u-concealed")[0].text.trim();
 
-          _user = element.getElementsByClassName("message-cell message-cell--user");
+          data['_user'] = element.getElementsByClassName("message-cell message-cell--user");
           data['postID'] = element.attributes['id']!.split('t-')[1];
-          data['_userLink'] = _user.map((e) => e.getElementsByTagName("a")[1].attributes['href']).first!;
-          data['_userTitle'] = _user.map((e) => e.getElementsByClassName("userTitle message-userTitle")[0].innerHtml).first;
+          data['_userLink'] = data['_user'].map((e) => e.getElementsByTagName("a")[1].attributes['href']).first!;
+          data['_userTitle'] = data['_user'].map((e) => e.getElementsByClassName("userTitle message-userTitle")[0].innerHtml).first;
 
           if (element.getElementsByClassName('avatar avatar--m')[0].getElementsByTagName('img').length > 0) {
             data['_userAvatar'] = element.getElementsByClassName('avatar avatar--m')[0].getElementsByTagName('img')[0].attributes['src'].toString();
@@ -239,7 +256,7 @@ class ViewController extends GetxController {
             data['avatarColor2'] = '0xFFF' + element.getElementsByClassName('avatar avatar--m')[0].attributes['style'].toString().split('#')[2];
           }
 
-          data['_userName'] = _user.map((e) => e.getElementsByTagName("a")[1].text).first;
+          data['_userName'] = data['_user'].map((e) => e.getElementsByTagName("a")[1].text).first;
 
           data['_orderPost'] = element
               .getElementsByClassName("message-attribution-opposite message-attribution-opposite--list")
@@ -292,12 +309,11 @@ class ViewController extends GetxController {
       PaintingBinding.instance!.imageCache!.clear();
       PaintingBinding.instance!.imageCache!.clearLiveImages();
 
-      if (Get.isDialogOpen == true || isScroll == 'Release' || isEdit == true) {
+      if (Get.isDialogOpen == true || data['isScroll'] == 'Release' || isEdit == true) {
         if (Get.isDialogOpen == true) Get.back();
-        htmlData.removeRange(0, lengthHtmlDataList);
+        htmlData.removeRange(0, data['lengthHtmlDataList']);
         listViewScrollController.jumpTo(-10.0);
       }
-      htmlData.add(null);
       if (data['loading'] == 'loading'){
         data['loading'] = 'ok';
         update(['firstLoading']);
@@ -308,10 +324,10 @@ class ViewController extends GetxController {
   Future<void> loadInboxView(String link) async {
     data['_commentImg'] = '';
     await GlobalController.i.getBody(() {}, (download) {
-      percentDownload = download;
+      data['percentDownload'] = download;
       update(['download'], true);
     }, dio, link, false).then((value) {
-      lengthHtmlDataList = htmlData.length;
+      data['lengthHtmlDataList'] = htmlData.length;
       GlobalController.i.token = value!.getElementsByTagName('html')[0].attributes['data-csrf'];
       data['dataCsrfPost'] = value.getElementsByTagName('html')[0].attributes['data-csrf'];
       data['xfCsrfPost'] = GlobalController.i.xfCsrfPost;
@@ -341,12 +357,12 @@ class ViewController extends GetxController {
 
       var lastP = value.getElementsByClassName("pageNavSimple");
       if (lastP.length == 0) {
-        currentPage = 1;
-        totalPage = 1;
+        data['currentPage'] = 1;
+        data['totalPage'] = 1;
       } else {
         var naviPage = value.getElementsByClassName("pageNavSimple-el pageNavSimple-el--current").first.innerHtml.trim();
-        currentPage = int.parse(naviPage.replaceAll(RegExp(r'[^0-9]\S*'), ""));
-        totalPage = int.parse(naviPage.replaceAll(RegExp(r'\S*[^0-9]'), ""));
+        data['currentPage'] = int.parse(naviPage.replaceAll(RegExp(r'[^0-9]\S*'), ""));
+        data['totalPage'] = int.parse(naviPage.replaceAll(RegExp(r'\S*[^0-9]'), ""));
       }
 
       value.getElementsByClassName('message message--conversationMessage').forEach((element) {
@@ -413,12 +429,11 @@ class ViewController extends GetxController {
         data['_commentImg'] = '';
       });
       imageList.clear();
-      if (Get.isDialogOpen == true || isScroll == 'Release' || isEdit == true) {
+      if (Get.isDialogOpen == true || data['isScroll'] == 'Release' || isEdit == true) {
         if (Get.isDialogOpen == true) Get.back();
-        htmlData.removeRange(0, lengthHtmlDataList);
+        htmlData.removeRange(0, data['lengthHtmlDataList']);
         listViewScrollController.jumpTo(-10.0);
       }
-      htmlData.add(null);
       if (data['loading'] == 'loading'){
         data['loading'] = 'ok';
         update(['firstLoading']);
@@ -477,10 +492,10 @@ class ViewController extends GetxController {
     if (x?[0] == 'ok') {
       if (GlobalController.i.userStorage.read('scrollToMyRepAfterPost') ?? true /* == true*/) {
         isEdit = true;
-        int lastPage = totalPage;
+        int lastPage = data['totalPage'];
         await setPageOnClick(lastPage);
-        if (totalPage != lastPage) {
-          await setPageOnClick(totalPage);
+        if (data['totalPage'] != lastPage) {
+          await setPageOnClick(data['totalPage']);
         }
         isEdit = false;
         listViewScrollController.animateTo(listViewScrollController.position.maxScrollExtent + 200,
@@ -621,7 +636,7 @@ class ViewController extends GetxController {
         if (Get.isDialogOpen == true) Get.back();
         if (Get.isDialogOpen == true) Get.back();
         setDialog();
-        await setPageOnClick(currentPage);
+        await setPageOnClick(data['currentPage']);
         input.clear();
       } else {
         if (Get.isDialogOpen == true) Get.back();

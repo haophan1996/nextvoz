@@ -4,7 +4,7 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:get/get.dart';
 import '/GlobalController.dart';
 import '/Page/reuseWidget.dart';
-import '/Routes/routes.dart';
+import '/Routes/pages.dart';
 import 'SearchResultController.dart';
 
 class SearchResultUI extends GetView<SearchResultController> {

@@ -47,7 +47,12 @@ class AlertsController extends GetxController {
 
   getAlert() async {
     if (GlobalController.i.isLogged == true) {
-      await GlobalController.i.getBody(() {}, (download) {
+      await GlobalController.i.getBodyBeta((value) async {
+        if (value == 1){
+          print('retry');
+          await getAlert();
+        }
+      }, (download) {
         percentDownload = download;
         update(['download'], true);
       }, dio, GlobalController.i.url + '/account/alerts?page=1', false).then((value) {

@@ -1,4 +1,7 @@
+part of 'pages.dart';
+
 abstract class Routes{
+  Routes._();
   static const Home = '/HomePage';
   static const Thread = '/ThreadPage';
   static const View = '/ViewPage';
@@ -9,7 +12,11 @@ abstract class Routes{
   static const AddReply = '/PostStatus';
   static const Settings = '/Settings';
   static const Login = '/Login';
-  static const SearchPage = "/searchPage";
-  static const SearchResult = "/searchResult";
+  static const BrowserLogin = '/BrowserLogin'; ///todo
+  static const SearchPage = '/searchPage';
+  static const SearchResult = '/searchResult';
+  static const AlertPlus = '/AlertPlus'; ///todo Your news feed, ( Latest activity ) only logged = true
+  static const UserFollIgr = '/UserFollowAndIgnore'; ///todo Display who is following, follower, ignoring
+  static const ProfilePost = '/ProfilePost'; ///todo Latest profile post
 }
 

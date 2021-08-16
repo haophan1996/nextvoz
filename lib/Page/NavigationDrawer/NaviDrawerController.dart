@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
-import '/Routes/routes.dart';
+import '/Routes/pages.dart';
 import '/GlobalController.dart';
 import '/Page/reuseWidget.dart';
 

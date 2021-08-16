@@ -2,7 +2,7 @@ import 'package:get/get.dart';
 import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import '/Routes/routes.dart';
+import '/Routes/pages.dart';
 import '/Page/reuseWidget.dart';
 import '/GlobalController.dart';
 import 'NavigationDrawer/NaviDrawerUI.dart';
@@ -69,7 +69,7 @@ Widget pageNavigation(Function(String index) gotoPage, Function reply, Widget ch
                     },
                   ),
                   onPressed: () {
-                    Get.bottomSheet(userInformation(),  );
+                    Get.bottomSheet(controlCenter(),  );
                   },
                 )),
           ],
@@ -79,7 +79,7 @@ Widget pageNavigation(Function(String index) gotoPage, Function reply, Widget ch
   );
 }
 
-Widget userInformation() {
+Widget controlCenter() {
   return SafeArea(
       child: Container(
     decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(6)), color: Colors.grey.shade700),
