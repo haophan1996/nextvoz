@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:theNEXTvoz/Page/Profile/AlertPlus/AlertPlusType.dart';
 import '/Page/Search/SearchType.dart';
 import '/Routes/pages.dart';
 import '/GlobalController.dart';
@@ -16,11 +17,7 @@ class UserProfileUI extends GetView<UserProfileController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: appBarOnly('Members', [
-        IconButton(
-            icon: Icon(Icons.refresh),
-            onPressed: () async => await controller.onRefresh())
-      ]),
+      appBar: appBarOnly('Members', [IconButton(icon: Icon(Icons.refresh), onPressed: () async => await controller.onRefresh())]),
       backgroundColor: Theme.of(context).backgroundColor,
       body: GetBuilder<UserProfileController>(
           id: 'loadingState',
@@ -167,20 +164,32 @@ class UserProfileUI extends GetView<UserProfileController> {
             RichText(
                 text: TextSpan(children: [
               TextSpan(
-                  text: 'All Threads\n',
-                  recognizer: TapGestureRecognizer()..onTap = () {
+                text: 'All Threads\n',
+                style: TextStyle(color: Colors.blue, fontSize: 16),
+                recognizer: TapGestureRecognizer()
+                  ..onTap = () {
                     Get.toNamed(Routes.SearchResult, arguments: [
                       SearchType.SearchThreadsOnly,
+                      {'data-user-id': controller.data['data-user-id']}
+                    ]);
+                  },
+              ),
+              TextSpan(text: 'Profile posts\n', style: TextStyle(color: Get.theme.primaryColor, fontSize: 16)),
+              TextSpan(
+                text: 'Latest activity\n',
+                style: TextStyle(color: Colors.blue, fontSize: 16),
+                recognizer: TapGestureRecognizer()
+                  ..onTap = () {
+                    //print(controller.data['linkProfileUser'] + AlertPlusType.ProfileLatestActivity);
+                    Get.toNamed(Routes.AlertPlus, arguments: [
                       {
-                        'data-user-id' : controller.data['data-user-id']
+                        'type': AlertPlusType.ProfileLatestActivity,
+                        'userLink': controller.data['linkProfileUser'],
+                        'userName': controller.data['userName']+'\'s '
                       }
                     ]);
                   },
-                  style: TextStyle(color: Colors.blue, fontSize: 16)),
-              TextSpan(text: 'Profile posts\n', style: TextStyle(color: Get.theme.primaryColor, fontSize: 16)),
-              TextSpan(text: 'Latest activity\n', style: TextStyle(color: Get.theme.primaryColor, fontSize: 16)),
-              //TextSpan(text: 'Postings\n', style: TextStyle(color: Get.theme.primaryColor, fontSize: 16)),
-              TextSpan(text: 'Threads\n', style: TextStyle(color: Get.theme.primaryColor, fontSize: 16)),
+              ),
               TextSpan(text: 'About\n', style: TextStyle(color: Get.theme.primaryColor, fontSize: 16)),
             ])),
           ],

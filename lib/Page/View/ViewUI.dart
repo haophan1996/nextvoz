@@ -147,7 +147,7 @@ class ViewUI extends GetView<ViewController> {
                         id: 'lastItemList',
                         tag: tag,
                         builder: (controller) {
-                          return loadingBottom(controller.data['isScroll']);
+                          return loadingBottom(controller.data['isScroll'], 70);
                         })
                     : viewContent(index, controller);
               },

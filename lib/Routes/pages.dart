@@ -1,3 +1,6 @@
+import 'package:theNEXTvoz/Page/Profile/AlertPlus/AlertPlusBindings.dart';
+import 'package:theNEXTvoz/Page/Profile/AlertPlus/AlertPlusUI.dart';
+
 import '/Page/Alert_Inbox/InboxBindings.dart';
 import '/Page/Alert_Inbox/InboxUI.dart';
 import '/Page/Alerts/AlertUI.dart';
@@ -111,6 +114,15 @@ class AppPage {
       name: Routes.SearchResult,
       page: () => SearchResultUI(),
       binding: SearchResultBindings(),
+      transition: Transition.topLevel,
+      transitionDuration: Duration(milliseconds: 200),
+      gestureWidth: (context) => context.width,
+      popGesture: true,
+    ),
+    GetPage(
+      name: Routes.AlertPlus,
+      page: () => AlertPlusUI(),
+      binding: AlertPlusBindings(),
       transition: Transition.topLevel,
       transitionDuration: Duration(milliseconds: 200),
       gestureWidth: (context) => context.width,

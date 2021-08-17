@@ -6,6 +6,7 @@ import '/Routes/pages.dart';
 import '/Page/reuseWidget.dart';
 import '/GlobalController.dart';
 import 'NavigationDrawer/NaviDrawerUI.dart';
+import 'Profile/AlertPlus/AlertPlusType.dart';
 
 Widget pageNavigation(Function(String index) gotoPage, Function reply, Widget child) {
   return FittedBox(
@@ -69,7 +70,9 @@ Widget pageNavigation(Function(String index) gotoPage, Function reply, Widget ch
                     },
                   ),
                   onPressed: () {
-                    Get.bottomSheet(controlCenter(),  );
+                    Get.bottomSheet(
+                      controlCenter(),
+                    );
                   },
                 )),
           ],
@@ -159,10 +162,23 @@ Widget whatNew() => Container(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
+              GlobalController.i.isLogged == true ? Expanded(
+                child: CupertinoButton(
+                    padding: EdgeInsets.zero,
+                    child: Text('News feed'),
+                    onPressed: () {
+                      if (Get.isBottomSheetOpen == true) Get.back();
+                      Get.toNamed(Routes.AlertPlus, arguments: [{'type' : AlertPlusType.NewFeed}]);
+                    }),
+              ) : SizedBox(),
               Expanded(
-                child: CupertinoButton(padding: EdgeInsets.zero, child: Text('Your news feed'), onPressed: () {}),
-              ),
-              Expanded(child: CupertinoButton(padding: EdgeInsets.zero, child: Text('Latest activity'), onPressed: () {}))
+                  child: CupertinoButton(
+                      padding: EdgeInsets.zero,
+                      child: Text(AlertPlusType.LatestActivity.tr),
+                      onPressed: () {
+                        if (Get.isBottomSheetOpen == true) Get.back();
+                        Get.toNamed(Routes.AlertPlus, arguments: [{'type' : AlertPlusType.LatestActivity}]);
+                      }))
             ],
           ),
         ],

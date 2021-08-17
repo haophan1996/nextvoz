@@ -15,7 +15,7 @@ abstract class Routes{
   static const BrowserLogin = '/BrowserLogin'; ///todo
   static const SearchPage = '/searchPage';
   static const SearchResult = '/searchResult';
-  static const AlertPlus = '/AlertPlus'; ///todo Your news feed, ( Latest activity ) only logged = true
+  static const AlertPlus = '/AlertPlus';
   static const UserFollIgr = '/UserFollowAndIgnore'; ///todo Display who is following, follower, ignoring
   static const ProfilePost = '/ProfilePost'; ///todo Latest profile post
 }

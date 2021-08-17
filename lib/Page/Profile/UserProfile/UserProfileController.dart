@@ -13,9 +13,6 @@ class UserProfileController extends GetxController {
   onInit() async {
     super.onInit();
     data['linkProfileUser'] = Get.arguments[0];
-    data['avatarLink'] = 'no';
-    data['avatarColor1'] = '0x00000000';
-    data['avatarColor2'] = '0x00000000';
     data['loadingStatus'] = 'loading';
   }
 
@@ -60,7 +57,6 @@ class UserProfileController extends GetxController {
       data['dataCsrfPost'] = value!.getElementsByTagName('html')[0].attributes['data-csrf']; //Current page token
       data['xfCsrfPost'] = GlobalController.i.xfCsrfPost; // Post token
       GlobalController.i.token = value.getElementsByTagName('html')[0].attributes['data-csrf'];
-
       var userProfile = value.getElementsByClassName('memberHeader ')[0];
       var avatar = userProfile.getElementsByClassName('avatar avatar--l').first;
       if (avatar.getElementsByTagName('img').length > 0) {

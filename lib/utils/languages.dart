@@ -45,6 +45,9 @@ class Language extends Translations{
       'search' : 'Search',
       'guestUser' : 'Guest user',
       'posts' : 'Posts',
+      '/latest-activity' : 'Latest activity',
+      '/whats-new/latest-activity' : 'Latest activity',
+      '/whats-new/news-feed' : 'New Feed',
     },
     'vi_VN' : {
       'lang'    : 'Ngôn ngữ :',
@@ -86,6 +89,9 @@ class Language extends Translations{
       'search' : 'Tìm Kiếm',
       'guestUser' : 'Khách',
       'posts' : 'Bản tin mới',
+      '/latest-activity' : 'Hoạt động mới nhất',
+      '/whats-new/latest-activity' : 'Hoạt động mới nhất',
+      '/whats-new/news-feed' : 'Bảng Tin',
     }
   };
 

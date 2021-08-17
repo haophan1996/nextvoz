@@ -233,6 +233,40 @@ setDialogError(String text) => Get.defaultDialog(
       backgroundColor: Get.theme.canvasColor,
     );
 
+Widget loadFailed(String message, Function onRefresh) {
+  return Column(
+    children: [
+      RichText(
+        textAlign: TextAlign.center,
+        text: TextSpan(
+          children: <TextSpan>[
+            TextSpan(text: 'Page could not be loaded\n', style: TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold, fontSize: 16)),
+            TextSpan(
+                text:
+                 message,
+                style: TextStyle(color: Get.theme.primaryColor, fontSize: 16)),
+          ],
+        ),
+      ),
+      customCupertinoButton(
+          Alignment.center,
+          EdgeInsets.fromLTRB(10, 0, 10, 0),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.refresh_outlined),
+              Text('\t\tRefresh '),
+              Text(
+                '\u{1F611} ',
+                style: TextStyle(fontSize: Get.textTheme.headline5!.fontSize),
+              ),
+            ],
+          ),
+              () async => onRefresh())
+    ],
+  );
+}
+
 Widget buildFlagsPreviewIcon(String path, String text) => Padding(
       padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       child: Column(
@@ -634,10 +668,10 @@ void displayGallery(List imageList, int index) {
       enableDrag: false);
 }
 
-Widget loadingBottom(String type) {
+Widget loadingBottom(String type, double height) {
   return Container(
     alignment: Alignment.topCenter,
-    height: 70,
+    height: height,
     child: Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
