@@ -132,20 +132,22 @@ class ThreadController extends GetxController {
         }
         //Detail SubHeader
         element.getElementsByClassName("structItem structItem--thread").forEach((element) async {
-          data['_title'] = element.getElementsByClassName("structItem-title");
-          if (data['_title'].map((e) => e.getElementsByTagName("a").length).toString() == "(1)") {
-            data['title'] = data['_title'].map((e) => e.getElementsByTagName("a")[0].innerHtml).first;
-            data['linkThread'] = data['_title'].map((e) => e.getElementsByTagName("a")[0].attributes['href']).first!;
+          if (element.getElementsByClassName("structItem-title")[0].getElementsByTagName('a').length > 1) {
+            data['title'] = element.getElementsByClassName("structItem-title")[0].text;
+            data['themeTitle'] = element.getElementsByClassName("structItem-title")[0].getElementsByTagName('a')[0].text;
+            data['title'] = ' ' + data['title'].toString().replaceAll(data['themeTitle'], '').trim();
+            data['linkThread'] = element.getElementsByClassName('structItem-title')[0].getElementsByTagName('a')[1].attributes['href'];
           } else {
-            data['title'] = ' ' + data['_title'].map((e) => e.getElementsByTagName("a")[1].innerHtml).first;
-            data['themeTitle'] = data['_title'].map((e) => e.getElementsByTagName("span")[0].innerHtml).first;
-            data['linkThread'] = data['_title'].map((e) => e.getElementsByTagName("a")[1].attributes['href']).first!;
+            data['title'] = element.getElementsByClassName("structItem-title")[0].text.trim();
+            data['linkThread'] = element.getElementsByClassName('structItem-title')[0].getElementsByTagName('a')[0].attributes['href'];
           }
+          data['authorName'] = element.attributes["data-author"];
+
           myThreadList.add({
             "title": data['title'],
             "prefix": data['themeTitle'] ?? '',
             'isRead': data['linkThread'].contains('/unread') ? true : false,
-            "authorName": element.attributes["data-author"],
+            "authorName": data['authorName'],
             "link": data['linkThread'],
             "replies":
                 "Replies " + element.getElementsByClassName("pairs pairs--justified").map((e) => e.getElementsByTagName("dd")[0].innerHtml).first,

@@ -154,7 +154,10 @@ Widget whatNew() => Container(
                       overflow: TextOverflow.ellipsis,
                       maxLines: 1,
                     ),
-                    onPressed: () {}),
+                    onPressed: () {
+                      if (Get.isBottomSheetOpen == true) Get.back();
+                      Get.toNamed(Routes.ProfilePost);
+                    }),
               )
             ],
           ),
@@ -162,22 +165,28 @@ Widget whatNew() => Container(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              GlobalController.i.isLogged == true ? Expanded(
-                child: CupertinoButton(
-                    padding: EdgeInsets.zero,
-                    child: Text('News feed'),
-                    onPressed: () {
-                      if (Get.isBottomSheetOpen == true) Get.back();
-                      Get.toNamed(Routes.AlertPlus, arguments: [{'type' : AlertPlusType.NewFeed}]);
-                    }),
-              ) : SizedBox(),
+              GlobalController.i.isLogged == true
+                  ? Expanded(
+                      child: CupertinoButton(
+                          padding: EdgeInsets.zero,
+                          child: Text('News feed'),
+                          onPressed: () {
+                            if (Get.isBottomSheetOpen == true) Get.back();
+                            Get.toNamed(Routes.AlertPlus, arguments: [
+                              {'type': AlertPlusType.NewFeed}
+                            ]);
+                          }),
+                    )
+                  : SizedBox(),
               Expanded(
                   child: CupertinoButton(
                       padding: EdgeInsets.zero,
                       child: Text(AlertPlusType.LatestActivity.tr),
                       onPressed: () {
                         if (Get.isBottomSheetOpen == true) Get.back();
-                        Get.toNamed(Routes.AlertPlus, arguments: [{'type' : AlertPlusType.LatestActivity}]);
+                        Get.toNamed(Routes.AlertPlus, arguments: [
+                          {'type': AlertPlusType.LatestActivity}
+                        ]);
                       }))
             ],
           ),

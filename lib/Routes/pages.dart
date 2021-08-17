@@ -1,6 +1,7 @@
-import 'package:theNEXTvoz/Page/Profile/AlertPlus/AlertPlusBindings.dart';
-import 'package:theNEXTvoz/Page/Profile/AlertPlus/AlertPlusUI.dart';
-
+import '/Page/Profile/AlertPlus/AlertPlusBindings.dart';
+import '/Page/Profile/AlertPlus/AlertPlusUI.dart';
+import '/Page/Profile/ProfilePost/ProfilePostBindings.dart';
+import '/Page/Profile/ProfilePost/ProfilePostUI.dart';
 import '/Page/Alert_Inbox/InboxBindings.dart';
 import '/Page/Alert_Inbox/InboxUI.dart';
 import '/Page/Alerts/AlertUI.dart';
@@ -26,7 +27,6 @@ import '/Page/home/homeUI.dart';
 import '/Page/youtubeView/ViewYoutube.dart';
 import '/Page/youtubeView/YoutubeBinding.dart';
 import 'package:get/get.dart';
-
 part 'routes.dart';
 
 class AppPage {
@@ -126,6 +126,15 @@ class AppPage {
       transition: Transition.topLevel,
       transitionDuration: Duration(milliseconds: 200),
       gestureWidth: (context) => context.width,
+      popGesture: true,
+    ),
+    GetPage(
+      name: Routes.ProfilePost,
+      page: () => ProfilePostUI(),
+      binding: ProfilePostBindings(),
+      transition: Transition.topLevel,
+      transitionDuration: Duration(milliseconds: 200),
+      //gestureWidth: (context) => context.width,
       popGesture: true,
     ),
   ];

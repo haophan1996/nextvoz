@@ -98,6 +98,8 @@ class GlobalController extends GetxController {
     }).whenComplete(() async {
       onDownload(0.0);
     }).catchError((err) async {
+      print(DioErrorType);
+      print(err.toString());
       if (err.type == DioErrorType.other) {
         onError(1);
       } else {

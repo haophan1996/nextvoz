@@ -69,7 +69,6 @@ class AlertPlusController extends GetxController {
   }
 
   updateListView() async {
-    print('ascsacsa');
     if (data['loading'] == 'firstLoading') {
       data['loading'] = 'ok';
       update(['firstLoading']);
@@ -133,8 +132,15 @@ class AlertPlusController extends GetxController {
 
   performNewFeed() async {
     GlobalController.i.getBodyBeta((value) async {
+      print('error');
       if (Get.currentRoute == Routes.AlertPlus) {
-        if (value == 1) await performNewFeed();
+        if (value == 2) {
+          ///server shutdown
+           setDialogError('Server unresponsive.\nTry again or check your connection');
+           await updateLastItemScroll();
+        } else {
+          await performNewFeed();
+        }
       }
     }, (download) {
       data['percentDownload'] = download;
