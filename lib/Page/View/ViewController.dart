@@ -124,51 +124,11 @@ class ViewController extends GetxController {
                 htmlData.elementAt(index)['postID'] +
                 '/reactions',
             false)
-        .then((value) {
-      value!.getElementsByClassName('block-row block-row--separated').forEach((element) {
-        data['rName'] = element.getElementsByClassName('username ')[0].text;
-        data['rTitle'] = element.getElementsByClassName('userTitle')[0].text;
-        data['rMessage'] = element.getElementsByClassName('pairs pairs--inline')[0].getElementsByTagName('dd')[0].text;
-        data['rMessage2'] = element.getElementsByClassName('pairs pairs--inline')[1].getElementsByTagName('dd')[0].text;
-        data['rMessage3'] = element.getElementsByClassName('pairs pairs--inline')[2].getElementsByTagName('dd')[0].text;
-        data['rTime'] = element.getElementsByClassName('u-dt')[0].text;
-        data['rReactIcon'] = element.getElementsByClassName('reaction-image js-reaction')[0].attributes['alt'].toString() == 'Ưng' ? '1' : '2';
-
-        // data['avatar'] = element.getElementsByClassName('avatar')[0].getElementsByTagName('img').length > 0
-        //     ? element.getElementsByClassName('avatar')[0].getElementsByTagName('img')[0].attributes['src']
-        //     : 'no';
-
-        if (element.getElementsByClassName('avatar avatar--s')[0].getElementsByTagName('img').length > 0) {
-          data['_userAvatar'] = element.getElementsByClassName('avatar avatar--s')[0].getElementsByTagName('img')[0].attributes['src'].toString();
-          data['avatarColor1'] = '0x00000000';
-          data['avatarColor2'] = '0x00000000';
-          if (data['_userAvatar'].contains('https') == false) {
-            data['_userAvatar'] = GlobalController.i.url + data['_userAvatar'];
-          }
-        } else {
-          data['_userAvatar'] = 'no';
-          data['avatarColor1'] =
-              '0xFFF' + element.getElementsByClassName('avatar avatar--s')[0].attributes['style'].toString().split('#')[1].split(';')[0];
-          data['avatarColor2'] = '0xFFF' + element.getElementsByClassName('avatar avatar--s')[0].attributes['style'].toString().split('#')[2];
-        }
-
-
-        reactionList.add({
-          'rName': data['rName'],
-          'rTitle': data['rTitle'],
-          'rMessage': data['rMessage'],
-          'rMessage2': data['rMessage2'],
-          'rMessage3': data['rMessage3'],
-          'rTime': data['rTime'],
-          'rReactIcon': data['rReactIcon'],
-          'rAvatar': data['_userAvatar'],
-          'avatarColor1' : data['avatarColor1'],
-          'avatarColor2' : data['avatarColor2'],
-        });
-      });
+        .then((value) async {
+      reactionList = await GlobalController.i.performQueryReaction(value!, reactionList);
       PaintingBinding.instance!.imageCache!.clear();
       PaintingBinding.instance!.imageCache!.clearLiveImages();
-      update(['reactionState'], true);
+      if (Get.isBottomSheetOpen == true) update(['reactionState']);
     });
   }
 
@@ -176,7 +136,7 @@ class ViewController extends GetxController {
     data['_commentImg'] = '';
     await GlobalController.i.getBodyBeta((value) async {
       ///error
-      if (value == 1){
+      if (value == 1) {
         ///retry server if unresponsive
         await loadUserPost(url);
         await updateLastItemScroll();
@@ -184,7 +144,6 @@ class ViewController extends GetxController {
         data['loading'] = 'error';
         update(['firstLoading']);
       }
-
     }, (download) {
       ///download
       data['percentDownload'] = download;
@@ -281,7 +240,7 @@ class ViewController extends GetxController {
               });
             });
           } else {
-            data['_commentImg'] = 'no';
+            data['_commentImg'] = '';
             data['_commentName'] = '';
             data['_commentByMe'] = '0';
           }
@@ -314,10 +273,11 @@ class ViewController extends GetxController {
         htmlData.removeRange(0, data['lengthHtmlDataList']);
         listViewScrollController.jumpTo(-10.0);
       }
-      if (data['loading'] == 'loading'){
+      if (data['loading'] == 'loading') {
         data['loading'] = 'ok';
         update(['firstLoading']);
-      } else update();
+      } else
+        update();
     });
   }
 
@@ -406,7 +366,7 @@ class ViewController extends GetxController {
             });
           });
         } else {
-          data['_commentImg'] = 'no';
+          data['_commentImg'] = '';
           data['_commentName'] = '';
           data['_commentByMe'] = '0';
         }
@@ -434,10 +394,11 @@ class ViewController extends GetxController {
         htmlData.removeRange(0, data['lengthHtmlDataList']);
         listViewScrollController.jumpTo(-10.0);
       }
-      if (data['loading'] == 'loading'){
+      if (data['loading'] == 'loading') {
         data['loading'] = 'ok';
         update(['firstLoading']);
-      } else update();
+      } else
+        update();
     });
   }
 
@@ -471,7 +432,7 @@ class ViewController extends GetxController {
           htmlData.elementAt(index)['commentImage'] = data['_commentImg'];
         } else {
           htmlData.elementAt(index)['commentName'] = '';
-          htmlData.elementAt(index)['commentImage'] = 'no';
+          htmlData.elementAt(index)['commentImage'] = '';
         }
         status['status'] = 'ok';
         status['mess'] = '';
@@ -480,7 +441,7 @@ class ViewController extends GetxController {
     imageList.clear();
 
     ///only update anything below HTML view
-    update([index]);
+    update([index.toString()]);
     Get.back();
     return status;
   }

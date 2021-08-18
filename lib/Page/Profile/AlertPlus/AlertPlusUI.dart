@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:theNEXTvoz/GlobalController.dart';
-import 'package:theNEXTvoz/Page/Profile/AlertPlus/AlertPlusController.dart';
+import '/GlobalController.dart';
+import '/Page/Profile/AlertPlus/AlertPlusController.dart';
 import '../../reuseWidget.dart';
 
 class AlertPlusUI extends GetView<AlertPlusController> {

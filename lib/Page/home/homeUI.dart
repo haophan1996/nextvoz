@@ -114,8 +114,7 @@ class HomePageUI extends GetView<HomeController> {
                       } else {
                         GlobalController.i.userStorage.write('defaultsPage', true);
                         GlobalController.i.userStorage.write('defaultsPage_title', controller.myHomePage.elementAt(index)['subHeader']);
-                        GlobalController.i.userStorage
-                            .write('defaultsPage_link', controller.myHomePage.elementAt(index)['linkSubHeader']);
+                        GlobalController.i.userStorage.write('defaultsPage_link', controller.myHomePage.elementAt(index)['linkSubHeader']);
                         Get.snackbar('Alert', 'Default Page: ' + controller.myHomePage.elementAt(index)['subHeader'],
                             forwardAnimationCurve: Curves.decelerate, colorText: Colors.blueAccent);
                       }
@@ -156,12 +155,15 @@ class HomePageUI extends GetView<HomeController> {
 }
 
 theme(String theme, BuildContext context) {
-  return Container(
-    color: Theme.of(context).canvasColor,
-    child: ListTile(
-      title: Text(
-        theme,
-        style: TextStyle(color: Theme.of(context).primaryColor, fontWeight: FontWeight.w900),
+  return Padding(
+    padding: EdgeInsets.only(bottom: 5),
+    child: Container(
+      color: Theme.of(context).canvasColor,
+      child: ListTile(
+        title: Text(
+          theme,
+          style: TextStyle(color: Theme.of(context).primaryColor, fontWeight: FontWeight.w900),
+        ),
       ),
     ),
   );

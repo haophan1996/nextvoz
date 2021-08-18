@@ -19,6 +19,7 @@ class GlobalController extends GetxController {
   static GlobalController get i => Get.find();
   final userStorage = GetStorage();
   var xfCsrfLogin, dataCsrfLogin, xfCsrfPost, token;
+  Map<String, dynamic> data = {};
   bool isLogged = false;
   List alertList = [], inboxList = [], sessionTag = [];
   String xfSession = '', dateExpire = '', xfUser = '';
@@ -70,13 +71,16 @@ class GlobalController extends GetxController {
       dios.options.headers['cookie'] = '';
 
     onDownload(0.1);
-    final response = await dios.get(url,options: Options(receiveTimeout: 5000, sendTimeout: 5000,),onReceiveProgress: (actual, total) {
+    final response = await dios.get(url,
+        options: Options(
+          receiveTimeout: 5000,
+          sendTimeout: 5000,
+        ), onReceiveProgress: (actual, total) {
       onDownload((actual.bitLength - 4) / total.bitLength);
     }).whenComplete(() async {
       onDownload(0.0);
     }).catchError((err) async {
       if (err.type == DioErrorType.other) {
-
       } else {
         onError();
       }
@@ -93,7 +97,11 @@ class GlobalController extends GetxController {
       dios.options.headers['cookie'] = '';
 
     onDownload(0.1);
-    final response = await dios.get(url,options: Options(receiveTimeout: 5000, sendTimeout: 5000,),onReceiveProgress: (actual, total) {
+    final response = await dios.get(url,
+        options: Options(
+          receiveTimeout: 5000,
+          sendTimeout: 5000,
+        ), onReceiveProgress: (actual, total) {
       onDownload((actual.bitLength - 4) / total.bitLength);
     }).whenComplete(() async {
       onDownload(0.0);
@@ -111,23 +119,52 @@ class GlobalController extends GetxController {
     return parser.parse(response.toString());
   }
 
-  Future getHttpPost(bool isJson,Map<String, String> header, dynamic body, String link) async {
+  Future<dom.Document?> getBodyBetaCancel(Function(int) onError, Function(double) onDownload, Dio dios, String url, bool isHomePage) async {
+    if (isLogged == true) {
+      dios.options.headers['cookie'] = 'xf_user=${xfUser.toString()}; xf_session=${xfSession.toString()}';
+    } else
+      dios.options.headers['cookie'] = '';
+
+    onDownload(0.1);
+    final response = await dios.get(url,
+        options: Options(
+          receiveTimeout: 5000,
+          sendTimeout: 5000,
+        ), onReceiveProgress: (actual, total) {
+          onDownload((actual.bitLength - 4) / total.bitLength);
+        }).whenComplete(() async {
+      onDownload(0.0);
+    }).catchError((err) async {
+      print(DioErrorType);
+      print(err.toString());
+      if (err.type == DioErrorType.other) {
+        onError(1);
+      } else {
+        onError(2);
+      }
+    });
+    xfCsrfPost = cookXfCsrf(response.headers['set-cookie'].toString());
+    if (isHomePage == true) xfCsrfLogin = cookXfCsrf(response.headers['set-cookie'].toString());
+    return parser.parse(response.toString());
+  }
+
+  Future getHttpPost(bool isJson, Map<String, String> header, dynamic body, String link) async {
     final response = await http.post(Uri.parse(link), headers: header, body: body).catchError((err) {
       print('get http post error: $header \n$body \n$link');
       Get.back();
       setDialogError('Server down or No connection\n\n Details: $err');
     });
 
-    return isJson? jsonDecode(response.body) : response.body;
+    return isJson ? jsonDecode(response.body) : response.body;
   }
 
-  Future getHttp(bool isJson,Map<String, String> header, String link) async {
+  Future getHttp(bool isJson, Map<String, String> header, String link) async {
     final response = await http.get(Uri.parse(link), headers: header).catchError((err) {
       print('get http post error: $header \n$link');
       Get.back();
       setDialogError('Server down or No connection\n\n Details: $err');
     });
-    return isJson? jsonDecode(response.body) : response.body;
+    return isJson ? jsonDecode(response.body) : response.body;
   }
 
   Future<File> getImageFileFromAssets(String path) async {
@@ -146,7 +183,6 @@ class GlobalController extends GetxController {
       xfUser = await userStorage.read('xf_user');
       xfSession = await userStorage.read('xf_session');
     }
-
   }
 
   Future<void> setAccountUser() async {
@@ -165,7 +201,6 @@ class GlobalController extends GetxController {
   }
 
   final langList = {Locale('en', 'US'), Locale('vi', 'VN')};
-
 
   String getEmoji(String s) {
     return "assets/" + s.replaceAll(RegExp(r"\S*smilies\S"), "").replaceAll(RegExp(r'\?[^]*'), "");
@@ -188,5 +223,70 @@ class GlobalController extends GetxController {
     } else {
       throw 'Could not launch $url';
     }
+  }
+
+  performQueryReaction(dom.Document doc, List reactionList) async {
+    if (doc.getElementsByTagName('html')[0].attributes['data-logged-in'] == 'true') {
+      controlNotification(
+          int.parse(doc.getElementsByClassName('p-navgroup-link--alerts')[0].attributes['data-badge'].toString()),
+          int.parse(doc.getElementsByClassName('p-navgroup-link--conversations')[0].attributes['data-badge'].toString()),
+          doc.getElementsByTagName('html')[0].attributes['data-logged-in'].toString());
+    } else
+      controlNotification(0, 0, 'false');
+
+    if (doc.getElementsByClassName('block-row block-row--separated').length == 0) {
+      reactionList.add(null);
+    } else
+      doc.getElementsByClassName('block-row block-row--separated').forEach((value) {
+        ///Username
+        data['rName'] = value.getElementsByClassName('username ')[0].text.trim();
+
+        ///Reaction Icon
+        data['rReactIcon'] = value.getElementsByClassName('reaction reaction--right')[0].attributes['data-reaction-id'];
+
+        ///User title
+        data['rTitle'] = value.getElementsByClassName('userTitle')[0].innerHtml;
+
+        ///Time
+        data['rTime'] = value.getElementsByClassName('u-dt')[0].innerHtml;
+
+        ///Messages
+        data['rMessage'] = value.getElementsByClassName('pairs pairs--inline')[0].getElementsByTagName('dd')[0].innerHtml;
+
+        ///Reaction score
+        data['rMessage2'] = value.getElementsByClassName('pairs pairs--inline')[1].getElementsByTagName('dd')[0].innerHtml;
+
+        ///Point
+        data['rMessage3'] = value.getElementsByClassName('pairs pairs--inline')[2].getElementsByTagName('dd')[0].innerHtml;
+
+        ///Avatar
+        if (value.getElementsByClassName('avatar avatar--s')[0].getElementsByTagName('img').length > 0) {
+          data['_userAvatar'] = value.getElementsByClassName('avatar avatar--s')[0].getElementsByTagName('img')[0].attributes['src'].toString();
+          data['avatarColor1'] = '0x00000000';
+          data['avatarColor2'] = '0x00000000';
+          if (data['_userAvatar'].contains('https') == false) {
+            data['_userAvatar'] = GlobalController.i.url + data['_userAvatar'];
+          }
+        } else {
+          data['_userAvatar'] = 'no';
+          data['avatarColor1'] =
+              '0xFFF' + value.getElementsByClassName('avatar avatar--s')[0].attributes['style'].toString().split('#')[1].split(';')[0];
+          data['avatarColor2'] = '0xFFF' + value.getElementsByClassName('avatar avatar--s')[0].attributes['style'].toString().split('#')[2];
+        }
+
+        reactionList.add({
+          'rName': data['rName'],
+          'rTitle': data['rTitle'],
+          'rMessage': data['rMessage'],
+          'rMessage2': data['rMessage2'],
+          'rMessage3': data['rMessage3'],
+          'rTime': data['rTime'],
+          'rReactIcon': data['rReactIcon'],
+          'rAvatar': data['_userAvatar'],
+          'avatarColor1': data['avatarColor1'],
+          'avatarColor2': data['avatarColor2'],
+        });
+      });
+    return reactionList;
   }
 }

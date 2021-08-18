@@ -1,7 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
-import 'package:theNEXTvoz/GlobalController.dart';
-
+import '/GlobalController.dart';
 import 'package:html/dom.dart' as dom;
 
 class ProfilePostController extends GetxController {
@@ -14,12 +13,16 @@ class ProfilePostController extends GetxController {
   void onInit() {
     // TODO: implement onInit
     super.onInit();
+
+    data['loading'] = 'firstLoad';
   }
 
   @override
-  void onReady() {
+  Future<void> onReady() async {
     // TODO: implement onReady
     super.onReady();
+
+    await performLoading();
   }
 
   @override
@@ -27,57 +30,51 @@ class ProfilePostController extends GetxController {
     // TODO: implement onClose
     super.onClose();
     GlobalController.i.sessionTag.removeLast();
+    htmlData.clear();
+    data.clear();
+    imageList.clear();
+    dios.clear();
   }
 
   performLoading() async {
-    //GlobalController.i.url + '/whats-new/profile-posts/'
-    GlobalController.i.getBodyBeta((value) {}, (download) {}, dios, 'https://voz.vn/whats-new/profile-posts/3569763/', false).then((value) async {
-      print('done');
-      //await performQuery(value);
-      res = value!;
+    GlobalController.i.getBodyBeta((value) {}, (download) {}, dios, GlobalController.i.url + '/whats-new/profile-posts/', false).then((value) async {
+      await performQuery(value!);
+      //res = value!;
     });
   }
 
-  performQuery() async {
-    htmlData.clear();
-    reactionList.clear();
-    res.getElementsByClassName('message message--simple  js-inlineModContainer').forEach((element) {
-      /// username
+  performQuery(dom.Document value) async {
+    value.getElementsByClassName('message message--simple  js-inlineModContainer').forEach((element) {
+      ///Username
       if (element.getElementsByClassName('attribution')[0].getElementsByTagName('a').length == 1) {
-        /// username
-        //print(element.getElementsByClassName('attribution')[0].text.trim());
+        data['username'] = element.getElementsByClassName('attribution')[0].text.trim();
+        data['username2'] = '';
       } else {
-        ///Username => username2
-        //print(element.getElementsByClassName('attribution')[0].getElementsByTagName('a')[0].text);
-        //print(element.getElementsByClassName('attribution')[0].getElementsByTagName('a')[1].text);
+        data['username'] = element.getElementsByClassName('attribution')[0].getElementsByTagName('a')[0].text;
+        data['username2'] = element.getElementsByClassName('attribution')[0].getElementsByTagName('a')[1].text;
       }
 
-      ///time
-      //print(element.getElementsByClassName('u-dt')[0].text);
+      ///Time
+      data['time'] = element.getElementsByClassName('u-dt')[0].text;
 
-      ///content
-      //print(element.getElementsByClassName('lbContainer js-lbContainer')[0].innerHtml);
+      ///Content
+      data['content'] = element.getElementsByClassName('lbContainer js-lbContainer')[0].innerHtml;
 
-      ///Usernames reactions
+      ///Usernames Reactions and Reactions Icon
       if (element.getElementsByClassName('reactionsBar-link').length == 0) {
         ///no one reaction on this post
+        data['reaction'] = '';
+        data['reactionsIcon'] = '';
       } else {
-        //print(element.getElementsByClassName('reactionsBar-link')[0].text);
-      }
-
-      ///Usernames reactions Icon
-      if (element.getElementsByClassName('reactionSummary').length == 0) {
-        ///no one reaction on this post
-      } else {
-        data['reactionIcon'] =
+        data['reaction'] = element.getElementsByClassName('reactionsBar-link')[0].text;
+        data['reactionsIcon'] =
             element.getElementsByClassName('reactionSummary')[0].getElementsByClassName('reaction reaction--small')[0].attributes['data-reaction-id'];
         if (element.getElementsByClassName('reactionSummary')[0].getElementsByTagName('li').length == 2) {
-          data['reactionIcon'] += element
+          data['reactionsIcon'] += element
               .getElementsByClassName('reactionSummary')[0]
               .getElementsByClassName('reaction reaction--small')[1]
               .attributes['data-reaction-id'];
         }
-        //print(data['reactionIcon']);
       }
 
       ///View comment previous
@@ -87,52 +84,37 @@ class ProfilePostController extends GetxController {
         print(element.getElementsByClassName('message-responseRow u-jsOnly js-commentLoader')[0].getElementsByTagName('a')[0].attributes['href']);
       }
 
-      reactionList.add({'value': 'acsacascas'});
-      reactionList.add({'value': 'acsacascas'});
-      reactionList.add({'value': 'acsacascas'});
-
+      ///Profile post ID
+      data['profilePostID'] = element.getElementsByClassName('lbContainer js-lbContainer')[0].attributes['data-lb-id']!.split('profile-post-')[1];
 
       htmlData.add({
-        'username' : 'haophan',
-        'comment' : reactionList
+        'profilePostID': data['profilePostID'],
+        'username': data['username'],
+        'username2': data['username2'],
+        'time': data['time'],
+        'content': data['content'],
+        'reaction': data['reaction'],
+        'reactionsIcon': data['reactionsIcon'],
       });
 
-
+      if (data['loading'] == 'firstLoad') {
+        data['loading'] = 'ok';
+        update(['firstLoading']);
+      } else {
+        update(['listview']);
+      }
     });
-    print(htmlData);
+  }
+
+  performReactionList(String idPost) async {
+    reactionList.clear();
+    await GlobalController.i
+        .getBodyBeta((value) {}, (download) {}, dios, GlobalController.i.url + '/profile-posts/$idPost/reactions', false)
+        .then((value) async {
+      reactionList = await GlobalController.i.performQueryReaction(value!, reactionList);
+      if (Get.isBottomSheetOpen == true) update(['reactionList']);
+    });
   }
 
 
-  String html = '''<article class="message-body">
-								<div class="bbWrapper">Hùng ơi, qua dịch ae bố trí làm tý bia nhé 
-	
-
-	
-	
-		
-		
-
-
-
-		
-		
-	
-
-
-	<div class="bbImageWrapper  js-lbImage lazyloaded" title="ex3a9EM.png" data-src="https://camo.voz.tech/6ca0fbe0df9f3730444068691247a39def6b310e/68747470733a2f2f692e696d6775722e636f6d2f6578336139454d2e706e67/" data-lb-sidebar-href="" data-lb-caption-extra-html="" data-single-image="1" data-fancybox="lb-profile-post-45548" data-caption="<h4>ex3a9EM.png</h4><p><a href=&quot;https:&amp;#x2F;&amp;#x2F;voz.vn&amp;#x2F;whats-new&amp;#x2F;profile-posts&amp;#x2F;3569743&amp;#x2F;page-2#profile-post-45548&quot; class=&quot;js-lightboxCloser&quot;>Motnoibuon · Aug 16, 2021 at 2:02 PM</a></p>" style="cursor: pointer;">
-		
-<img src="https://camo.voz.tech/6ca0fbe0df9f3730444068691247a39def6b310e/68747470733a2f2f692e696d6775722e636f6d2f6578336139454d2e706e67/" data-src="https://camo.voz.tech/6ca0fbe0df9f3730444068691247a39def6b310e/68747470733a2f2f692e696d6775722e636f6d2f6578336139454d2e706e67/" data-url="https://i.imgur.com/ex3a9EM.png" class="bbImage lazyloaded" data-zoom-target="1" style="" alt="ex3a9EM.png" title="" width="" height="" loading="lazy">
-
-<noscript><img src="https://camo.voz.tech/6ca0fbe0df9f3730444068691247a39def6b310e/68747470733a2f2f692e696d6775722e636f6d2f6578336139454d2e706e67/"
-			data-url="https://i.imgur.com/ex3a9EM.png"
-			class="bbImage"
-			data-zoom-target="1"
-			style=""
-			alt="ex3a9EM.png"
-			title=""
-			width="" height=""  /></noscript>
-
-
-	</div></div>
-							</article>''';
 }

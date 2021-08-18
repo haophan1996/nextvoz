@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:theNEXTvoz/GlobalController.dart';
+import '/GlobalController.dart';
 
 class UserFollIgrController extends GetxController{
 

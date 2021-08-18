@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:flutter/cupertino.dart';
@@ -46,7 +47,7 @@ PreferredSize appBarOnly(String title, List<Widget> action) {
 Widget blockItem(BuildContext context, FontWeight themeTitleWeight, FontWeight titleWeight, int index, String header11, String header12,
         String header21, String header22, String header3, Function onTap, Function onLongPress) =>
     Padding(
-      padding: EdgeInsets.only(top: 1, left: 8, right: 8),
+      padding: EdgeInsets.only(bottom: 5, left: 5, right: 5),
       child: InkWell(
         splashFactory: InkRipple.splashFactory,
         onTap: () => onTap(),
@@ -54,11 +55,10 @@ Widget blockItem(BuildContext context, FontWeight themeTitleWeight, FontWeight t
         child: Ink(
           width: double.infinity,
           decoration: BoxDecoration(
-            border: Border(
-              bottom: BorderSide(width: 0.5, color: Theme.of(context).primaryColor),
-            ),
+            color: Get.theme.shadowColor,
+            borderRadius: BorderRadius.all(Radius.circular(6)),
           ),
-          padding: EdgeInsets.only(top: 4, bottom: 5),
+          padding: EdgeInsets.all(5),
           child: Row(
             children: [
               Expanded(
@@ -241,10 +241,7 @@ Widget loadFailed(String message, Function onRefresh) {
         text: TextSpan(
           children: <TextSpan>[
             TextSpan(text: 'Page could not be loaded\n', style: TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold, fontSize: 16)),
-            TextSpan(
-                text:
-                 message,
-                style: TextStyle(color: Get.theme.primaryColor, fontSize: 16)),
+            TextSpan(text: message, style: TextStyle(color: Get.theme.primaryColor, fontSize: 16)),
           ],
         ),
       ),
@@ -262,7 +259,7 @@ Widget loadFailed(String message, Function onRefresh) {
               ),
             ],
           ),
-              () async => onRefresh())
+          () async => onRefresh())
     ],
   );
 }
@@ -347,7 +344,9 @@ Widget reactionChild(Map reactionMap) {
 
 Widget listReactionUI(ViewController controller) {
   return DraggableScrollableSheet(
+    expand: false,
     initialChildSize: 1,
+    minChildSize: 0.4,
     builder: (_, dragController) => Container(
       padding: EdgeInsets.only(left: 5, top: 5),
       decoration:
@@ -356,17 +355,17 @@ Widget listReactionUI(ViewController controller) {
         id: 'reactionState',
         tag: GlobalController.i.sessionTag.last,
         builder: (controller) {
-          return controller.reactionList.length > 0
-              ? ListView.builder(
-                  physics: BouncingScrollPhysics(),
-                  controller: dragController,
-                  itemCount: controller.reactionList.length,
-                  itemBuilder: (context, index) {
-                    return reactionChild(controller.reactionList.elementAt(index));
-                  })
-              : Center(
-                  child: Text('No reaction'),
-                );
+          return controller.reactionList.length == 0
+              ? CupertinoActivityIndicator()
+              : controller.reactionList[0] == null
+                  ? Text('No reaction')
+                  : ListView.builder(
+                      controller: dragController,
+                      physics: BouncingScrollPhysics(),
+                      itemCount: controller.reactionList.length,
+                      itemBuilder: (context, index) {
+                        return reactionChild(controller.reactionList.elementAt(index));
+                      });
         },
       ),
     ),
@@ -525,37 +524,49 @@ Widget viewContent(int index, ViewController controller) => Column(
                   ),
                   ignoreSafeArea: false);
             }),
-        customHtml(controller.htmlData, index, controller.imageList),
+        customHtml(controller.htmlData.elementAt(index)['postContent'], controller.imageList),
         Padding(
-          padding: EdgeInsets.only(left: 5),
+          padding: EdgeInsets.fromLTRB(5, 7, 5, 7),
           child: GetBuilder<ViewController>(
             tag: GlobalController.i.sessionTag.last,
-            id: index,
+            id: index.toString(),
             builder: (controller) {
               return Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  controller.htmlData.elementAt(index)['commentImage'].toString() != 'no'
-                      ? Image.asset(
-                          'assets/reaction/' + controller.htmlData.elementAt(index)['commentImage'][0] + '.png',
-                          width: 17,
-                          height: 17,
-                        )
-                      : Container(),
-                  controller.htmlData.elementAt(index)['commentImage'].toString().length > 1 &&
-                          controller.htmlData.elementAt(index)['commentImage'].toString() != 'no'
-                      ? Image.asset('assets/reaction/' + controller.htmlData.elementAt(index)['commentImage'][1] + '.png', width: 17, height: 17)
-                      : Container(),
                   Expanded(
-                    child: TextButton(
-                      style: ButtonStyle(alignment: Alignment.centerLeft, padding: MaterialStateProperty.all<EdgeInsets>(EdgeInsets.only(left: 5))),
-                      onPressed: () {
-                        controller.getDataReactionList(index);
-                        Get.bottomSheet(listReactionUI(controller), isScrollControlled: false, ignoreSafeArea: true);
-                      },
-                      child: Text(controller.htmlData.elementAt(index)['commentName'],
-                          style: TextStyle(color: Colors.blue), overflow: TextOverflow.ellipsis, maxLines: 1),
-                    ),
+                    child: RichText(
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                        text: TextSpan(children: [
+                          WidgetSpan(
+                              child: Image.asset(
+                                controller.htmlData.elementAt(index)['commentImage'] != ''
+                                    ? 'assets/reaction/' + controller.htmlData.elementAt(index)['commentImage'][0] + '.png'
+                                    : 'assets/reaction/nil.png',
+                                width: controller.htmlData.elementAt(index)['commentImage'] != '' ? 16 : 0,
+                                height: controller.htmlData.elementAt(index)['commentImage'] != '' ? 16 : 0,
+                              ),
+                              alignment: PlaceholderAlignment.middle),
+                          WidgetSpan(
+                              child: Image.asset(
+                                controller.htmlData.elementAt(index)['commentImage'].length > 1
+                                    ? 'assets/reaction/' + controller.htmlData.elementAt(index)['commentImage'][1] + '.png'
+                                    : 'assets/reaction/nil.png',
+                                width: controller.htmlData.elementAt(index)['commentImage'].length > 1 ? 16 : 0,
+                                height: controller.htmlData.elementAt(index)['commentImage'].length > 1 ? 16 : 0,
+                              ),
+                              alignment: PlaceholderAlignment.middle),
+                          TextSpan(
+                              text: '\t' + controller.htmlData.elementAt(index)['commentName'],
+                              style: TextStyle(color: Colors.blueAccent, fontSize: Get.textTheme.bodyText1!.fontSize! + 2.0),
+                              recognizer: TapGestureRecognizer()
+                                ..onTap = () {
+                                  controller.getDataReactionList(index);
+                                  Get.bottomSheet(listReactionUI(controller), isScrollControlled: false, ignoreSafeArea: true);
+                                }),
+                        ])),
                   ),
                   FlutterReactionButton(
                     onReactionChanged: (reaction, i) {
@@ -594,11 +605,15 @@ Widget viewContent(int index, ViewController controller) => Column(
                     boxRadius: 10,
                     boxAlignment: AlignmentDirectional.bottomEnd,
                   ),
-                  TextButton(
-                      onPressed: () {
-                        controller.quote(index);
-                      },
-                      child: Text('rep'.tr))
+                  InkWell(
+                    child: Text(
+                      '\t\t' + 'rep'.tr,
+                      style: TextStyle(color: Colors.redAccent),
+                    ),
+                    onTap: () {
+                      controller.quote(index);
+                    },
+                  )
                 ],
               );
             },
@@ -689,9 +704,9 @@ Widget loadingBottom(String type, double height) {
   );
 }
 
-Widget customHtml(List htmlData, int index, List imageList) {
+Widget customHtml(String postContent, List imageList) {
   return Html(
-    data: htmlData.elementAt(index)['postContent'],
+    data: postContent,
     tagsList: Html.tags..remove('noscript')..remove(GlobalController.i.userStorage.read('showImage') ?? true ? '' : 'img'),
     customRender: {
       "img": (renderContext, child) {
@@ -881,30 +896,30 @@ Widget customHtml(List htmlData, int index, List imageList) {
       if (url != null) {
         if (url.contains(RegExp(r'voz.vn/t/.*?/post-'))) {
           ///Check is current page contain this post
-          final postNumber = url.split('post-')[1];
-          var i = htmlData.firstWhere((element) => element['postID'] == postNumber, orElse: () => 'noElement');
-          if (i != 'noElement') {
-            Get.bottomSheet(
-                Container(
-                  height: Get.height * 0.8,
-                  child: DraggableScrollableSheet(
-                    initialChildSize: 1,
-                    minChildSize: 0.85,
-                    builder: (_, controller) {
-                      return SingleChildScrollView(
-                        controller: controller,
-                        child: Container(
-                          decoration: BoxDecoration(color: Colors.grey.shade800, borderRadius: BorderRadius.all(Radius.circular(6))),
-                          padding: EdgeInsets.only(bottom: 20),
-                          child: customHtml([i], 0, []),
-                        ),
-                      );
-                    },
-                  ),
-                ),
-                elevation: 122,
-                isScrollControlled: true);
-          }
+          // final postNumber = url.split('post-')[1];
+          // var i = htmlData.firstWhere((element) => element['postID'] == postNumber, orElse: () => 'noElement');
+          // if (i != 'noElement') {
+          //   Get.bottomSheet(
+          //       Container(
+          //         height: Get.height * 0.8,
+          //         child: DraggableScrollableSheet(
+          //           initialChildSize: 1,
+          //           minChildSize: 0.85,
+          //           builder: (_, controller) {
+          //             return SingleChildScrollView(
+          //               controller: controller,
+          //               child: Container(
+          //                 decoration: BoxDecoration(color: Colors.grey.shade800, borderRadius: BorderRadius.all(Radius.circular(6))),
+          //                 padding: EdgeInsets.only(bottom: 20),
+          //                 child: customHtml([i], 0, []),
+          //               ),
+          //             );
+          //           },
+          //         ),
+          //       ),
+          //       elevation: 122,
+          //       isScrollControlled: true);
+          // }
         } else if (url.contains('https://voz.vn/t/', 0)) {
           Get.toNamed(Routes.View, arguments: [url.replaceFirst(GlobalController.i.url + '/t/', '', 0), url, '', 0], preventDuplicates: false);
         } else if (url.contains('https://voz.vn/u/', 0)) {

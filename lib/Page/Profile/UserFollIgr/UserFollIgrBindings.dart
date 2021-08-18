@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:theNEXTvoz/GlobalController.dart';
+import '/GlobalController.dart';
 import 'UserFollIgrController.dart';
 
 class UserFollIgrBindings extends Bindings {

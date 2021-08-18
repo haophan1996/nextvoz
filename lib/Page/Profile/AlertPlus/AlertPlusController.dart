@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:theNEXTvoz/Page/reuseWidget.dart';
+import '/Page/reuseWidget.dart';
 import '/Page/Profile/AlertPlus/AlertPlusType.dart';
 import '../../../GlobalController.dart';
 import '/Routes/pages.dart';
@@ -14,6 +14,7 @@ class AlertPlusController extends GetxController {
   @override
   void onInit() {
     // TODO: implement onInit
+    dios.interceptors.add(LogInterceptor());
     super.onInit();
     data['percentDownload'] = 0.0;
     data['isScroll'] = 'idle';
@@ -182,6 +183,8 @@ class AlertPlusController extends GetxController {
             .getElementsByTagName('a')[0]
             .attributes['href']!
             .split(AlertPlusType.ProfileLatestActivity)[1];
+
+        print('scascsacasa');
         await performQuery(value);
       }
     });

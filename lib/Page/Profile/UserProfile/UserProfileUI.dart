@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
-import 'package:theNEXTvoz/Page/Profile/AlertPlus/AlertPlusType.dart';
+import '/Page/Profile/AlertPlus/AlertPlusType.dart';
 import '/Page/Search/SearchType.dart';
 import '/Routes/pages.dart';
 import '/GlobalController.dart';
