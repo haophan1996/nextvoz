@@ -64,9 +64,11 @@ class GlobalController extends GetxController {
     }
   }
 
-  Future<dom.Document?> getBody(Function onError, Function(double) onDownload, Dio dios, String url, bool isHomePage) async {
+  Future<dom.Document?> getBody(
+      Function onError, Function(double) onDownload, Dio dios, String url, bool isHomePage) async {
     if (isLogged == true) {
-      dios.options.headers['cookie'] = 'xf_user=${xfUser.toString()}; xf_session=${xfSession.toString()}';
+      dios.options.headers['cookie'] =
+          'xf_user=${xfUser.toString()}; xf_session=${xfSession.toString()}';
     } else
       dios.options.headers['cookie'] = '';
 
@@ -90,9 +92,33 @@ class GlobalController extends GetxController {
     return parser.parse(response.toString());
   }
 
-  Future<dom.Document?> getBodyBeta(Function(int) onError, Function(double) onDownload, Dio dios, String url, bool isHomePage) async {
+  Future<dom.Document?> getBodyBeta(Function(int) onError, Function(double) onDownload, Dio dios,
+      String url, bool isHomePage) async {
+    onDownload(0.1);
+    final response = await dios.get(url,
+        options: Options(
+          headers: {'cookie': 'xf_user=${xfUser.toString()}; xf_session=${xfSession.toString()}'},
+        ), onReceiveProgress: (actual, total) {
+      onDownload((actual.bitLength - 4) / total.bitLength);
+    }).whenComplete(() async {
+      onDownload(0.0);
+    }).catchError((err) async {
+      if (err.type == DioErrorType.other) {
+        onError(1);
+      } else {
+        onError(2);
+      }
+    });
+    xfCsrfPost = cookXfCsrf(response.headers['set-cookie'].toString());
+    if (isHomePage == true) xfCsrfLogin = cookXfCsrf(response.headers['set-cookie'].toString());
+    return parser.parse(response.toString());
+  }
+
+  Future<dom.Document?> getBodyBetaCancel(Function(int) onError, Function(double) onDownload,
+      Dio dios, String url, bool isHomePage) async {
     if (isLogged == true) {
-      dios.options.headers['cookie'] = 'xf_user=${xfUser.toString()}; xf_session=${xfSession.toString()}';
+      dios.options.headers['cookie'] =
+          'xf_user=${xfUser.toString()}; xf_session=${xfSession.toString()}';
     } else
       dios.options.headers['cookie'] = '';
 
@@ -119,37 +145,9 @@ class GlobalController extends GetxController {
     return parser.parse(response.toString());
   }
 
-  Future<dom.Document?> getBodyBetaCancel(Function(int) onError, Function(double) onDownload, Dio dios, String url, bool isHomePage) async {
-    if (isLogged == true) {
-      dios.options.headers['cookie'] = 'xf_user=${xfUser.toString()}; xf_session=${xfSession.toString()}';
-    } else
-      dios.options.headers['cookie'] = '';
-
-    onDownload(0.1);
-    final response = await dios.get(url,
-        options: Options(
-          receiveTimeout: 5000,
-          sendTimeout: 5000,
-        ), onReceiveProgress: (actual, total) {
-          onDownload((actual.bitLength - 4) / total.bitLength);
-        }).whenComplete(() async {
-      onDownload(0.0);
-    }).catchError((err) async {
-      print(DioErrorType);
-      print(err.toString());
-      if (err.type == DioErrorType.other) {
-        onError(1);
-      } else {
-        onError(2);
-      }
-    });
-    xfCsrfPost = cookXfCsrf(response.headers['set-cookie'].toString());
-    if (isHomePage == true) xfCsrfLogin = cookXfCsrf(response.headers['set-cookie'].toString());
-    return parser.parse(response.toString());
-  }
-
   Future getHttpPost(bool isJson, Map<String, String> header, dynamic body, String link) async {
-    final response = await http.post(Uri.parse(link), headers: header, body: body).catchError((err) {
+    final response =
+        await http.post(Uri.parse(link), headers: header, body: body).catchError((err) {
       print('get http post error: $header \n$body \n$link');
       Get.back();
       setDialogError('Server down or No connection\n\n Details: $err');
@@ -170,7 +168,8 @@ class GlobalController extends GetxController {
   Future<File> getImageFileFromAssets(String path) async {
     final byteData = await rootBundle.load('assets/$path');
     final file = File('${(await getTemporaryDirectory()).path}/${path.replaceAll("/", '-')}');
-    await file.writeAsBytes(byteData.buffer.asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
+    await file
+        .writeAsBytes(byteData.buffer.asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
     return file;
   }
 
@@ -178,7 +177,9 @@ class GlobalController extends GetxController {
     if (userStorage.read('shortcut') != null) {
       NaviDrawerController.i.shortcuts = await userStorage.read('shortcut');
     }
-    if (userStorage.read('userLoggedIn') != null && userStorage.read('xf_user') != null && userStorage.read('xf_session') != null) {
+    if (userStorage.read('userLoggedIn') != null &&
+        userStorage.read('xf_user') != null &&
+        userStorage.read('xf_session') != null) {
       isLogged = await userStorage.read('userLoggedIn');
       xfUser = await userStorage.read('xf_user');
       xfSession = await userStorage.read('xf_session');
@@ -228,8 +229,14 @@ class GlobalController extends GetxController {
   performQueryReaction(dom.Document doc, List reactionList) async {
     if (doc.getElementsByTagName('html')[0].attributes['data-logged-in'] == 'true') {
       controlNotification(
-          int.parse(doc.getElementsByClassName('p-navgroup-link--alerts')[0].attributes['data-badge'].toString()),
-          int.parse(doc.getElementsByClassName('p-navgroup-link--conversations')[0].attributes['data-badge'].toString()),
+          int.parse(doc
+              .getElementsByClassName('p-navgroup-link--alerts')[0]
+              .attributes['data-badge']
+              .toString()),
+          int.parse(doc
+              .getElementsByClassName('p-navgroup-link--conversations')[0]
+              .attributes['data-badge']
+              .toString()),
           doc.getElementsByTagName('html')[0].attributes['data-logged-in'].toString());
     } else
       controlNotification(0, 0, 'false');
@@ -242,7 +249,9 @@ class GlobalController extends GetxController {
         data['rName'] = value.getElementsByClassName('username ')[0].text.trim();
 
         ///Reaction Icon
-        data['rReactIcon'] = value.getElementsByClassName('reaction reaction--right')[0].attributes['data-reaction-id'];
+        data['rReactIcon'] = value
+            .getElementsByClassName('reaction reaction--right')[0]
+            .attributes['data-reaction-id'];
 
         ///User title
         data['rTitle'] = value.getElementsByClassName('userTitle')[0].innerHtml;
@@ -251,17 +260,31 @@ class GlobalController extends GetxController {
         data['rTime'] = value.getElementsByClassName('u-dt')[0].innerHtml;
 
         ///Messages
-        data['rMessage'] = value.getElementsByClassName('pairs pairs--inline')[0].getElementsByTagName('dd')[0].innerHtml;
+        data['rMessage'] = value
+            .getElementsByClassName('pairs pairs--inline')[0]
+            .getElementsByTagName('dd')[0]
+            .innerHtml;
 
         ///Reaction score
-        data['rMessage2'] = value.getElementsByClassName('pairs pairs--inline')[1].getElementsByTagName('dd')[0].innerHtml;
+        data['rMessage2'] = value
+            .getElementsByClassName('pairs pairs--inline')[1]
+            .getElementsByTagName('dd')[0]
+            .innerHtml;
 
         ///Point
-        data['rMessage3'] = value.getElementsByClassName('pairs pairs--inline')[2].getElementsByTagName('dd')[0].innerHtml;
+        data['rMessage3'] = value
+            .getElementsByClassName('pairs pairs--inline')[2]
+            .getElementsByTagName('dd')[0]
+            .innerHtml;
 
         ///Avatar
-        if (value.getElementsByClassName('avatar avatar--s')[0].getElementsByTagName('img').length > 0) {
-          data['_userAvatar'] = value.getElementsByClassName('avatar avatar--s')[0].getElementsByTagName('img')[0].attributes['src'].toString();
+        if (value.getElementsByClassName('avatar avatar--s')[0].getElementsByTagName('img').length >
+            0) {
+          data['_userAvatar'] = value
+              .getElementsByClassName('avatar avatar--s')[0]
+              .getElementsByTagName('img')[0]
+              .attributes['src']
+              .toString();
           data['avatarColor1'] = '0x00000000';
           data['avatarColor2'] = '0x00000000';
           if (data['_userAvatar'].contains('https') == false) {
@@ -269,9 +292,19 @@ class GlobalController extends GetxController {
           }
         } else {
           data['_userAvatar'] = 'no';
-          data['avatarColor1'] =
-              '0xFFF' + value.getElementsByClassName('avatar avatar--s')[0].attributes['style'].toString().split('#')[1].split(';')[0];
-          data['avatarColor2'] = '0xFFF' + value.getElementsByClassName('avatar avatar--s')[0].attributes['style'].toString().split('#')[2];
+          data['avatarColor1'] = '0xFFF' +
+              value
+                  .getElementsByClassName('avatar avatar--s')[0]
+                  .attributes['style']
+                  .toString()
+                  .split('#')[1]
+                  .split(';')[0];
+          data['avatarColor2'] = '0xFFF' +
+              value
+                  .getElementsByClassName('avatar avatar--s')[0]
+                  .attributes['style']
+                  .toString()
+                  .split('#')[2];
         }
 
         reactionList.add({
