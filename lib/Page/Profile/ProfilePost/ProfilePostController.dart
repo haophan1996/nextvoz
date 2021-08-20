@@ -29,11 +29,12 @@ class ProfilePostController extends GetxController {
   void onClose() {
     // TODO: implement onClose
     super.onClose();
-    GlobalController.i.sessionTag.removeLast();
     htmlData.clear();
     data.clear();
     imageList.clear();
-    dios.clear();
+    dios.close(force: true);
+    GlobalController.i.sessionTag.removeLast();
+    this.dispose();
   }
 
   performLoading() async {

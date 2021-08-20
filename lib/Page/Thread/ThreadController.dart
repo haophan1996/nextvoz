@@ -151,17 +151,17 @@ class ThreadController extends GetxController {
               .getElementsByTagName('a')[0]
               .text
               .trim();
-          data['title'] = ' ' + data['title'].toString().replaceAll(data['themeTitle'], '').trim();
+          data['title'] = ' ' + data['title'].toString().replaceAll(data['themeTitle'], '').trim().replaceAll(RegExp('\\s+'), ' ');
           data['linkThread'] = element
               .getElementsByClassName('structItem-title')[0]
               .getElementsByTagName('a')[1]
               .attributes['href'];
         } else {
-          data['title'] = element.getElementsByClassName("structItem-title")[0].text.trim();
+          data['title'] = element.getElementsByClassName("structItem-title")[0].text.trim().replaceAll(RegExp('\\s+'), ' ');
           data['linkThread'] = element
               .getElementsByClassName('structItem-title')[0]
               .getElementsByTagName('a')[0]
-              .attributes['href'];
+              .attributes['href']!.trim();
         }
         data['authorName'] = element.attributes["data-author"];
 
