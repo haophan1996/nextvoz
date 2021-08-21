@@ -11,9 +11,10 @@ import '/Page/NavigationDrawer/NaviDrawerUI.dart';
 import '/Page/Thread/ThreadController.dart';
 
 class ThreadUI extends GetView<ThreadController> {
+  final String tagI = GlobalController.i.sessionTag.last;
+
   @override
-  // TODO: implement tag
-  String? get tag => GlobalController.i.sessionTag.last;
+  String? get tag => tagI;
 
   @override
   Widget build(BuildContext context) {

@@ -9,9 +9,11 @@ import '/Page/View/ViewController.dart';
 import '/GlobalController.dart';
 
 class ViewUI extends GetView<ViewController> {
+  final tagI = GlobalController.i.sessionTag.last;
+
   @override
   // TODO: implement tag
-  String? get tag => GlobalController.i.sessionTag.last;
+  String? get tag => tagI;
 
   @override
   Widget build(BuildContext context) {

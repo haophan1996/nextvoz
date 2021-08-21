@@ -33,8 +33,14 @@ class AppPage {
   static const INITIAL = Routes.Home;
 
   static final pages = [
-    GetPage(name: Routes.Home, page: () => HomePageUI(), transition: Transition.topLevel,
-        transitionDuration: Duration(milliseconds: 200),popGesture: true, binding: HomeBinding(), maintainState: false),
+    GetPage(
+        name: Routes.Home,
+        page: () => HomePageUI(),
+        transition: Transition.topLevel,
+        transitionDuration: Duration(milliseconds: 200),
+        popGesture: true,
+        binding: HomeBinding(),
+        maintainState: false),
     GetPage(
         name: Routes.Thread,
         page: () => ThreadUI(),
