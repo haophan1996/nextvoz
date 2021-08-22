@@ -44,7 +44,7 @@ PreferredSize appBarOnly(String title, List<Widget> action) {
 /// * [header11] - [header12] black/white color depends on Dark/light mode.
 /// * [header21] - [header22] grey color default.
 /// * [header3] orange color default.
-Widget blockItem(BuildContext context, FontWeight themeTitleWeight, FontWeight titleWeight, int index, String header11, String header12,
+Widget blockItem(BuildContext context,FontWeight titleWeight, int index, String header11, String header12,
         String header21, String header22, String header3, Function onTap, Function onLongPress) =>
     Padding(
       padding: EdgeInsets.only(bottom: 5, left: 5, right: 5),
@@ -65,7 +65,7 @@ Widget blockItem(BuildContext context, FontWeight themeTitleWeight, FontWeight t
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    customTitle(titleWeight, Get.theme.primaryColor, null, header11, header12),
+                    customTitle(titleWeight, titleWeight == FontWeight.bold ? Colors.blueAccent : Get.theme.primaryColor, null, header11, header12),
                     Text(
                       "$header21 \u2022 $header22 ${header3 == '' ? '' : '\u2022'} $header3",
                       style: TextStyle(color: Colors.grey, fontSize: 12),
@@ -642,6 +642,7 @@ Widget displayAvatar(double sizeImage, String avatarColor1, String avatarColor2,
             fit: BoxFit.fill,
             width: sizeImage,
             height: sizeImage,
+            enableLoadState: false,
             //maxBytes: 2,
           )
         : Text(

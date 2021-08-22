@@ -438,7 +438,7 @@ class ViewController extends GetxController {
         status['mess'] = '';
       }
     });
-    imageList.clear();
+    //imageList.clear();
 
     ///only update anything below HTML view
     update([index.toString()]);

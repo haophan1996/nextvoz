@@ -60,8 +60,8 @@ class ViewUI extends GetView<ViewController> {
             return controller.htmlData.length != 0
                 ? loadSuccess()
                 : controller.data['loading'] == 'error'
-                    ? loadFailed()
-                    : loading();
+                ? loadFailed()
+                : loading();
           },
         ),
       ),
@@ -105,7 +105,7 @@ class ViewUI extends GetView<ViewController> {
               break;
           }
         },
-            () => controller.reply('', false),
+                () => controller.reply('', false),
             GetBuilder<ViewController>(
               tag: tag,
               builder: (controller) {
@@ -146,11 +146,11 @@ class ViewUI extends GetView<ViewController> {
               itemBuilder: (context, index) {
                 return controller.htmlData.length == index
                     ? GetBuilder<ViewController>(
-                        id: 'lastItemList',
-                        tag: tag,
-                        builder: (controller) {
-                          return loadingBottom(controller.data['isScroll'], 70);
-                        })
+                    id: 'lastItemList',
+                    tag: tag,
+                    builder: (controller) {
+                      return loadingBottom(controller.data['isScroll'], 70);
+                    })
                     : viewContent(index, controller);
               },
             );

@@ -102,7 +102,6 @@ class ThreadUI extends GetView<ThreadController> {
                         : blockItem(
                             context,
                             controller.myThreadList.elementAt(index)['isRead'] == true ? FontWeight.bold : FontWeight.normal,
-                            controller.myThreadList.elementAt(index)['isRead'] == true ? FontWeight.bold : FontWeight.normal,
                             index,
                             controller.myThreadList.elementAt(index)['prefix'],
                             controller.myThreadList.elementAt(index)['title'],

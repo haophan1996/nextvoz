@@ -96,7 +96,6 @@ class HomePageUI extends GetView<HomeController> {
                     blockItem(
                         context,
                         FontWeight.bold,
-                        FontWeight.bold,
                         index,
                         "",
                         controller.myHomePage.elementAt(index)["subHeader"],
