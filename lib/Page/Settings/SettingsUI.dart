@@ -37,13 +37,20 @@ class SettingsUI extends GetView<SettingsController> {
                   ),
                 ],
               ),
-              Row(
-                children: [
-                  Text(
-                    'fontSizeView'.tr,
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  Obx(() => Expanded(
+              Obx(() => Row(
+                    children: [
+                      RichText(
+                        text: TextSpan(children: [
+                          TextSpan(
+                              text: 'fontSizeView'.tr,style: TextStyle(color: Get.theme.primaryColor, fontWeight: FontWeight.bold)
+                          ),
+                          TextSpan(
+                              text: '\n${controller.fontSizeView.value.toInt()}'.tr,style: TextStyle(color: Colors.grey, )
+                          )
+                        ]),
+                      ),
+
+                      Expanded(
                         child: Slider(
                             divisions: 30,
                             label: controller.fontSizeView.string,
@@ -53,9 +60,9 @@ class SettingsUI extends GetView<SettingsController> {
                             onChanged: (value) {
                               controller.fontSizeView.value = value;
                             }),
-                      ))
-                ],
-              ), //fontsize
+                      )
+                    ],
+                  )), //fontsize
               Row(
                 children: [
                   Text(
@@ -111,12 +118,12 @@ class SettingsUI extends GetView<SettingsController> {
                 children: [
                   RichText(
                     text: TextSpan(children: [
+                      TextSpan(text: 'defaultsPage'.tr, style: TextStyle(color: Get.theme.primaryColor, fontWeight: FontWeight.bold)),
                       TextSpan(
-                        text: 'defaultsPage'.tr,style: TextStyle(color: Get.theme.primaryColor, fontWeight: FontWeight.bold)
-                      ),
-                      TextSpan(
-                          text: '\n${GlobalController.i.userStorage.read('defaultsPage_title') ?? 'Home'}'.tr,style: TextStyle(color: Colors.grey, )
-                      )
+                          text: '\n${GlobalController.i.userStorage.read('defaultsPage_title') ?? 'Home'}'.tr,
+                          style: TextStyle(
+                            color: Colors.grey,
+                          ))
                     ]),
                   ),
                   Spacer(),

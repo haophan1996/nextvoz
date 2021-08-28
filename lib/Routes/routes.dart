@@ -3,6 +3,7 @@ part of 'pages.dart';
 abstract class Routes{
   Routes._();
   static const Home = '/HomePage';
+  static const Term = '/Term';
   static const Thread = '/ThreadPage';
   static const View = '/ViewPage';
   static const Alerts = '/Alerts';

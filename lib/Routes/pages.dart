@@ -1,3 +1,6 @@
+import 'package:the_next_voz/Page/TermPolicy/TermBindings.dart';
+import 'package:the_next_voz/Page/TermPolicy/TermUI.dart';
+
 import '/Page/Profile/AlertPlus/AlertPlusBindings.dart';
 import '/Page/Profile/AlertPlus/AlertPlusUI.dart';
 import '/Page/Profile/ProfilePost/ProfilePostBindings.dart';
@@ -36,10 +39,18 @@ class AppPage {
     GetPage(
         name: Routes.Home,
         page: () => HomePageUI(),
-        transition: Transition.topLevel,
-        transitionDuration: Duration(milliseconds: 200),
+        // transition: Transition.topLevel,
+        // transitionDuration: Duration(milliseconds: 200),
         popGesture: true,
         binding: HomeBinding(),
+        maintainState: false),
+    GetPage(
+        name: Routes.Term,
+        page: () => TermUI(),
+        transition: Transition.topLevel,
+        transitionDuration: Duration(milliseconds: 200),
+        popGesture: false,
+        binding: TermBindings(),
         maintainState: false),
     GetPage(
         name: Routes.Thread,

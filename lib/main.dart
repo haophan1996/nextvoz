@@ -32,7 +32,7 @@ class MyPage extends StatelessWidget {
       theme: Themes().lightTheme,
       darkTheme: Themes().darkTheme,
       themeMode: ThemeMode.system,
-      initialRoute: AppPage.INITIAL,
+      initialRoute: GlobalController.i.userStorage.read('isTermAccept') != true ? Routes.Term : AppPage.INITIAL,
       getPages: AppPage.pages,
     );
   }
