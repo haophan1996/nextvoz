@@ -20,7 +20,7 @@ PreferredSize preferredSize(BuildContext context, String title, String prefix) =
       preferredSize: Size.fromHeight(GlobalController.i.heightAppbar),
       child: AppBar(
         automaticallyImplyLeading: false,
-        title: customTitle(FontWeight.normal, Get.theme.primaryColor, 2, prefix, title),
+        title: customTitle(FontWeight.bold, Get.theme.primaryColor, 2, prefix, title),
         leading: (ModalRoute.of(context)?.canPop ?? false) ? BackButton() : null,
       ),
     );
@@ -31,7 +31,7 @@ PreferredSize appBarOnly(String title, List<Widget> action) {
     preferredSize: Size.fromHeight(GlobalController.i.heightAppbar),
     child: AppBar(
       automaticallyImplyLeading: false,
-      title: Text(title.tr),
+      title: Text(title.tr, style: TextStyle(fontWeight: FontWeight.bold)),
       leading: IconButton(
         icon: Icon(Icons.close_rounded),
         onPressed: () => Get.back(),

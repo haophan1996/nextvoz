@@ -94,7 +94,7 @@ Widget controlCenter() {
           Padding(
             padding: EdgeInsets.only(bottom: 5),
             child: Text(
-              'Control Center',
+              'controlCenter'.tr,
               style: TextStyle(fontSize: Get.theme.textTheme.headline5!.fontSize, color: Colors.white, fontWeight: FontWeight.bold),
             ),
           ),
@@ -126,7 +126,7 @@ Widget whatNew() => Container(
           Container(
             padding: EdgeInsets.only(top: 5),
             child: Text(
-              'Latest',
+              'latest'.tr,
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
             ),
           ),

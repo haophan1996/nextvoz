@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
+import 'package:the_next_voz/Routes/pages.dart';
 import '../../GlobalController.dart';
 
 class InboxController extends GetxController {
@@ -26,6 +27,10 @@ class InboxController extends GetxController {
     // TODO: implement onClose
     super.onClose();
     dio.close(force: true);
+  }
+
+  navigateToCreatePost() {
+    Get.toNamed(Routes.CreatePost, arguments: [GlobalController.i.xfCsrfPost, GlobalController.i.token, 'link', '', '','2', '']);
   }
 
   refreshList() async {

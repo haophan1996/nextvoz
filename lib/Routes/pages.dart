@@ -1,6 +1,6 @@
+import 'package:the_next_voz/Page/PostStatus/Create/CreatePostUI.dart';
 import 'package:the_next_voz/Page/TermPolicy/TermBindings.dart';
 import 'package:the_next_voz/Page/TermPolicy/TermUI.dart';
-
 import '/Page/Profile/AlertPlus/AlertPlusBindings.dart';
 import '/Page/Profile/AlertPlus/AlertPlusUI.dart';
 import '/Page/Profile/ProfilePost/ProfilePostBindings.dart';
@@ -11,8 +11,8 @@ import '/Page/Alerts/AlertUI.dart';
 import '/Page/Alerts/AlertsBinding.dart';
 import '/Page/Login/LoginBindings.dart';
 import '/Page/Login/LoginUI.dart';
-import '/Page/PostStatus/PostStatusBindings.dart';
-import '/Page/PostStatus/PostStatusUI.dart';
+import '../Page/PostStatus/Post/PostStatusBindings.dart';
+import '../Page/PostStatus/Post/PostStatusUI.dart';
 import '/Page/Profile/UserProfile/UserProfileBinding.dart';
 import '/Page/Profile/UserProfile/UserProfileUI.dart';
 import '/Page/Search/Search/SearchBinding.dart';
@@ -96,6 +96,14 @@ class AppPage {
     GetPage(
         name: Routes.AddReply,
         page: () => PostStatusUI(),
+        popGesture: false,
+        binding: PostStatusBindings(),
+        transition: Transition.topLevel,
+        transitionDuration: Duration(milliseconds: 200),
+        maintainState: false),
+    GetPage(
+        name: Routes.CreatePost,
+        page: () => CreatePostUI(),
         popGesture: false,
         binding: PostStatusBindings(),
         transition: Transition.topLevel,

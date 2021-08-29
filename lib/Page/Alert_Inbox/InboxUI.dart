@@ -12,7 +12,7 @@ class InboxUI extends GetView<InboxController> {
     return Scaffold(
       appBar: appBarOnly('Inbox', [
         IconButton(icon: Icon(Icons.refresh), onPressed: () async => await controller.refreshList()),
-        IconButton(icon: Icon(Icons.open_in_new), onPressed: () async => {})
+        IconButton(icon: Icon(Icons.open_in_new), onPressed: () async => await controller.navigateToCreatePost())
       ]),
       backgroundColor: Theme.of(context).backgroundColor,
       body: GetBuilder<InboxController>(

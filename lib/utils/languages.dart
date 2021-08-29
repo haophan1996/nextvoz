@@ -48,6 +48,12 @@ class Language extends Translations{
       '/latest-activity' : 'Latest activity',
       '/whats-new/latest-activity' : 'Latest activity',
       '/whats-new/news-feed' : 'New Feed',
+      'controlCenter' : ' Control Center',
+      'latest' : 'Latest',
+      'input' : 'Input',
+      'please' : 'Please',
+      'title' : 'Title',
+      'recipients' : 'Recipients'
     },
     'vi_VN' : {
       'lang'    : 'Ngôn ngữ :',
@@ -92,6 +98,12 @@ class Language extends Translations{
       '/latest-activity' : 'Hoạt động mới nhất',
       '/whats-new/latest-activity' : 'Hoạt động mới nhất',
       '/whats-new/news-feed' : 'Bảng Tin',
+      'controlCenter' : 'Trung Tâm Điều Khiển',
+      'latest' : 'Mới Nhất',
+      'input' : 'Nhập',
+      'title' : 'Tiêu Đề',
+      'please' : 'Vui Lòng',
+      'recipients' : 'Người Nhận'
     }
   };
 

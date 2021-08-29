@@ -12,13 +12,13 @@ import '/utils/emoji.dart';
 import '/GlobalController.dart';
 import '/Page/reuseWidget.dart';
 
-class PostStatusController extends GetxController{
+class PostStatusController extends GetxController {
   static PostStatusController get i => Get.find();
   GlobalKey<RichEditorState> keyEditor = GlobalKey();
   int currentTab = 0;
   Map<String, dynamic> data = {};
   RxBool isToolClicked = false.obs;
-  double heightToolbar = Get.height * 0.07, heightEditor = Get.height*0.3;
+  double heightToolbar = Get.height * 0.07, heightEditor = Get.height * 0.3;
   TextEditingController link = TextEditingController(), label = TextEditingController();
   final picker = ImagePicker();
   late File image;
@@ -30,21 +30,18 @@ class PostStatusController extends GetxController{
     {'id': '5', 'title': '<h5>Heading 5</h5>'},
     {'id': '6', 'title': '<h6>Heading 6</h6>'},
     {'id': 'p', 'title': '<p>Text body</p>'},
-    {
-      'id': 'pre',
-      'title': '<pre><font face=\"courier\">Preformat</font></pre>'
-    },
+    {'id': 'pre', 'title': '<pre><font face=\"courier\">Preformat</font></pre>'},
     {'id': 'blockquote', 'title': '<blockquote>Quote</blockquote>'},
   ];
 
   List formatsSize = [
-    {'id': '1', 'title': 'Tiny', 'size' : '9'},
-    {'id': '2', 'title': 'Very Small', 'size' : '10'},
-    {'id': '3', 'title': 'Small', 'size' : '12'},
-    {'id': '4', 'title': 'Medium', 'size' : '15'},
-    {'id': '5', 'title': 'Large', 'size' : '18'},
-    {'id': '6', 'title': 'Very large', 'size' : '22'},
-    {'id': '7', 'title': 'Huge', 'size' : '26'},
+    {'id': '1', 'title': 'Tiny', 'size': '9'},
+    {'id': '2', 'title': 'Very Small', 'size': '10'},
+    {'id': '3', 'title': 'Small', 'size': '12'},
+    {'id': '4', 'title': 'Medium', 'size': '15'},
+    {'id': '5', 'title': 'Large', 'size': '18'},
+    {'id': '6', 'title': 'Very large', 'size': '22'},
+    {'id': '7', 'title': 'Huge', 'size': '26'},
   ];
 
   List<Color> textColor = [
@@ -88,7 +85,10 @@ class PostStatusController extends GetxController{
     data['isEditPost'] = Get.arguments[4] ??= '';
     data['view'] = Get.arguments[5] ??= '';
     data['value'] = Get.arguments[6] ??= '';
-    print(data['link']);
+
+    ///Optional
+    data['recipients'] = Get.arguments[6] ??= '';
+    data['title'] = '';
   }
 
   @override
@@ -107,7 +107,6 @@ class PostStatusController extends GetxController{
     textColor.clear();
   }
 
-
   post() async {
     String? html = await checkImage();
     var headers = {
@@ -118,7 +117,7 @@ class PostStatusController extends GetxController{
 
     var body = {'_xfWithData': '1', '_xfToken': '${data['token']}', '_xfResponseType': 'json', 'message_html': '$html'};
 
-    await GlobalController.i.getHttpPost(true,headers, body, "${data['link']}add-reply").then((value) {
+    await GlobalController.i.getHttpPost(true, headers, body, "${data['link']}add-reply").then((value) {
       if (Get.isDialogOpen == true) Get.back();
       if (value['status'] == 'ok') {
         Get.back(result: ['ok']);
@@ -137,16 +136,53 @@ class PostStatusController extends GetxController{
       'cookie': '${data['xf_csrf']}; xf_user=${GlobalController.i.xfUser};',
     };
     await GlobalController.i
-        .getHttpPost(true,
-            headers, body, '${data['view'] == 1 ? GlobalController.i.inboxReactLink : GlobalController.i.viewReactLink}${data['postID']}/edit')
+        .getHttpPost(
+            true, headers, body, '${data['view'] == 1 ? GlobalController.i.inboxReactLink : GlobalController.i.viewReactLink}${data['postID']}/edit')
         .then((value) {
-          print(value);
-          if (Get.isDialogOpen == true) Get.back();
-          if (value['status'] == 'ok'){
-            Get.back(result: ['ok']);
-          } else {
-            setDialogError(value.toString());
-          }
+      if (Get.isDialogOpen == true) Get.back();
+      if (value['status'] == 'ok') {
+        Get.back(result: ['ok']);
+      } else {
+        setDialogError(value.toString());
+      }
+    });
+  }
+
+  startConversation() async {
+    if (data['title'].length == 0) {
+      await inputTitNRe('title', '${'please'.tr} ${'input'.tr} ${'title'.tr}');
+
+      if (data['title'].length == 0) return;
+    }
+    if (data['recipients'].length == 0) {
+      await inputTitNRe('recipients', '${'please'.tr} ${'input'.tr} ${'recipients'.tr}');
+      if (data['recipients'].length == 0) return;
+    }
+
+    String? html = await checkImage();
+
+    var body = {
+      '_xfWithData': '1',
+      '_xfToken': '${data['token']}',
+      '_xfResponseType': 'json',
+      'message_html': '$html',
+      'recipients': data['recipients'],
+      'title' : data['title'],
+    };
+
+    var headers = {
+      'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
+      'host': 'voz.vn',
+      'cookie': '${data['xf_csrf']}; xf_user=${GlobalController.i.xfUser};',
+    };
+
+    await GlobalController.i.getHttpPost(true, headers, body, GlobalController.i.url+'/conversations/add').then((value) {
+      if (Get.isDialogOpen == true) Get.back();
+      if (value['status'] == 'ok'){
+        Get.back(result: ['ok']);
+      } else {
+         setDialogError(value.toString().split('<div class="blockMessage">')[1].split('</div>,')[0].trim());
+      }
     });
   }
 
@@ -184,14 +220,32 @@ class PostStatusController extends GetxController{
 
   checkBox(String nameCheck) => keyEditor.currentState!.javascriptExecutor.insertCheckbox(nameCheck);
 
-  insertLink(){
+  inputTitNRe(String value, String title) async {
+    label.text = data[value] ?? '';
+    await Get.defaultDialog(
+        content: Column(
+          children: [
+            inputCustom(TextInputType.text, label, false, value.tr, () {
+              Get.back();
+            })
+          ],
+        ),
+        title: title);
+    if (label.text.length > 0) {
+      data[value] = label.text;
+      update([value]);
+    }
+    label.clear();
+  }
+
+  insertLink() {
     keyEditor.currentState!.javascriptExecutor.insertLink(link.text, label.text == '' ? link.text : label.text);
     link.clear();
     label.clear();
     if (Get.isDialogOpen == true) Get.back();
   }
 
-  editLink(List<dynamic> args) async{
+  editLink(List<dynamic> args) async {
     args[0] = link.text;
     args[1] = label.text;
     if (Get.isDialogOpen == true) Get.back();
@@ -202,8 +256,8 @@ class PostStatusController extends GetxController{
     keyEditor.currentState!.javascriptExecutor.insertCustomEmojiVoz(img.path);
   }
 
-  toolbarActive() async{
-    if (isToolClicked.value == true){
+  toolbarActive() async {
+    if (isToolClicked.value == true) {
       keyEditor.currentState!.focus();
       //await SystemChannels.textInput.invokeMethod('TextInput.show');
       isToolClicked.value = false;
@@ -214,18 +268,16 @@ class PostStatusController extends GetxController{
     }
   }
 
-  keyboard(){
+  keyboard() {
     SystemChannels.textInput.invokeMethod('TextInput.hide');
     isToolClicked.value = false;
   }
 
   getIDYt() async {
     if (link.text.length < 4) return;
-    await keyEditor.currentState!.javascriptExecutor
-        .insertHtml('[MEDIA=youtube]${GlobalController.i.getIDYoutube(link.text)}[/MEDIA] ');
+    await keyEditor.currentState!.javascriptExecutor.insertHtml('[MEDIA=youtube]${GlobalController.i.getIDYoutube(link.text)}[/MEDIA] ');
     link.clear();
     Get.back();
-
   }
 
   uploadImage(String src) async {
@@ -239,7 +291,7 @@ class PostStatusController extends GetxController{
       'image': 'data:image/$type;base64,' + base64Encode(File(src).readAsBytesSync()),
     };
 
-    var response = await GlobalController.i.getHttpPost(true,headers, body, 'https://2.pik.vn/');
+    var response = await GlobalController.i.getHttpPost(true, headers, body, 'https://2.pik.vn/');
 
     return 'https://3.pik.vn/' + response['saved'];
   }
@@ -252,27 +304,22 @@ class PostStatusController extends GetxController{
     }
 
     for (var element in document.getElementsByTagName('img')) {
-      if (element.attributes['src']!.contains('https://', 0) == false){
+      if (element.attributes['src']!.contains('https://', 0) == false) {
         if (element.attributes['class']!.contains('smilie')) {
-          html = html!.replaceAll(
-              element.outerHtml, mapEmojiVoz[element.attributes['src']!.split('/').last.replaceAll('-', '/')].toString());
-        }else if (element.attributes['class']!.contains('bbImage')/*element.attributes['src']!.contains('com.example.vozforums') || */) {
+          html = html!.replaceAll(element.outerHtml, mapEmojiVoz[element.attributes['src']!.split('/').last.replaceAll('-', '/')].toString());
+        } else if (element.attributes['class']!.contains('bbImage') /*element.attributes['src']!.contains('com.example.vozforums') || */) {
           print('hey im not');
           html = html!.replaceAll(element.attributes['src'].toString(), await uploadImage(element.attributes['src'].toString()));
         }
       }
-
     }
-
-
 
     if (Get.isDialogOpen == true) Get.back();
     setDialog();
     return Future.value(html);
   }
 
-  Future<String?> getHtml() async{
-   return await keyEditor.currentState!.getHtml();
+  Future<String?> getHtml() async {
+    return await keyEditor.currentState!.getHtml();
   }
-
 }

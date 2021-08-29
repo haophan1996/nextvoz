@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/painting.dart';
 import 'package:get/get.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -6,86 +7,56 @@ import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:rich_editor/rich_editor.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:the_next_voz/Page/PostStatus/Post/PostStatusController.dart';
 import '/utils/emoji.dart';
 import '/Page/reuseWidget.dart';
-import '/Page/PostStatus/PostStatusController.dart';
 
-class PostStatusUI extends GetView<PostStatusController> {
+class CreatePostUI extends GetView<PostStatusController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: appBarOnly(
-            controller.data['view'] == '0'
-                ? 'createPost'.tr
-                : controller.data['view'] == '1'
-                    ? 'editPost'.tr
-                    : controller.data['view'] == '2'
-                        ? 'newConversation'.tr
-                        : 'newThread'.tr,
-            [
-              PopupMenuButton(
-                child: IconButton(
-                  icon: Icon(Icons.more_vert),
-                  onPressed: null,
-                ),
-                itemBuilder: (context) {
-                  return [
-                    PopupMenuItem(
-                      child: Text(controller.data['isEditPost'] == true ? 'Save' : 'Post'),
-                      value: 0,
-                    ),
-                    PopupMenuItem(
-                      child: Text('Clear content'),
-                      value: 1,
-                    ),
-                    PopupMenuItem(
-                      child: Text('Hide keyboard'),
-                      value: 2,
-                    ),
-                    PopupMenuItem(
-                      child: Text('Show Keyboard'),
-                      value: 3,
-                    ),
-                    PopupMenuItem(
-                      child: Text('View Code'),
-                      value: 4,
-                    ),
-                  ];
-                },
-                onSelected: (val) async {
-                  switch (val) {
-                    case 0:
-                      controller.data['isEditPost'] == true ? await controller.editPost() : await controller.post();
-                      break;
-                    case 1:
-                      await controller.keyEditor.currentState?.clear();
-                      await controller.keyEditor.currentState?.setHtml('</p>');
-                      break;
-                    case 2:
-                      await SystemChannels.textInput.invokeMethod('TextInput.hide'); //controller.keyEditor.currentState?.unFocus();
-                      break;
-                    case 3:
-                      await controller.keyEditor.currentState!.focus(); //controller.keyEditor.currentState?.focus();
-                      break;
-                    case 4:
-                      String? html = await controller.keyEditor.currentState?.getHtml();
-                      print(html);
-                      break;
-                  }
-                },
-              )
-            ]),
-        body: Column(
+      body: SafeArea(
+        child: Column(
           children: [
             Container(
+              width: Get.width,
+              child: customCupertinoButton(
+                  Alignment.centerLeft,
+                  EdgeInsets.zero,
+                  GetBuilder<PostStatusController>(
+                      id: 'title',
+                      builder: (controller) {
+                        return Text(
+                          '${'title'.tr}: ${controller.data['title'].length > 0 ? controller.data['title'] : 'Your Title'}',
+                          textAlign: TextAlign.start,
+                        );
+                      }),
+                  () async => await controller.inputTitNRe('title', '${'input'.tr} ${'title'.tr}')),
+            ),
+            Container(
+              width: Get.width,
+              child: customCupertinoButton(
+                  Alignment.centerLeft,
+                  EdgeInsets.zero,
+                  GetBuilder<PostStatusController>(
+                      id: 'recipients',
+                      builder: (controller) {
+                        return Text(
+                          '${'recipients'.tr}: ${controller.data['recipients'].length > 0 ? controller.data['recipients'] : 'Your recipients'}',
+                          textAlign: TextAlign.start,
+                        );
+                      }),
+                  () async => await controller.inputTitNRe('recipients', '${'input'.tr} ${'recipients'.tr}'),)
+            ),
+            Container(
                 decoration: BoxDecoration(
-                  border: Border(bottom: BorderSide(width: 0.5, color: Theme.of(context).primaryColor)),
+                  border: Border(
+                      bottom: BorderSide(width: 0.5, color: Theme.of(context).primaryColor),
+                      top: BorderSide(width: 0.5, color: Theme.of(context).primaryColor)),
                 ),
                 child: RichEditor(
                   key: controller.keyEditor,
-                  value: '''${controller.data['value']}''',
                   editorOptions: RichEditorOptions(
-                    //backgroundColor: Theme.of(context).backgroundColor,
                     baseTextColor: Theme.of(context).primaryColor,
                     placeholder: '''Start typing''',
                     padding: EdgeInsets.symmetric(horizontal: 5.0),
@@ -105,6 +76,22 @@ class PostStatusUI extends GetView<PostStatusController> {
                   },
                 ),
                 height: controller.heightEditor),
+            Padding(
+              padding: EdgeInsets.only(top: 5),
+              child: Container(
+                decoration: BoxDecoration(color: Color(0xfff5c7099), borderRadius: BorderRadius.all(Radius.circular(5))),
+                child: customCupertinoButton(
+                    Alignment.center,
+                    EdgeInsets.fromLTRB(5, 2, 5, 2),
+                    Text(
+                      'Start conversation',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    () async {
+                      await controller.startConversation();
+                    }),
+              ),
+            ),
             Spacer(),
             Container(
               height: controller.heightToolbar,
@@ -153,7 +140,9 @@ class PostStatusUI extends GetView<PostStatusController> {
               ),
             ),
           ],
-        ));
+        ),
+      ),
+    );
   }
 }
 
@@ -166,9 +155,9 @@ Widget insertLink(BuildContext context, PostStatusController controller, Functio
       children: [
         Padding(
           padding: EdgeInsets.only(bottom: 10),
-          child: inputCustom(TextInputType.text,controller.link, false, 'Link', () {}),
+          child: inputCustom(TextInputType.text, controller.link, false, 'Link', () {}),
         ),
-        inputCustom(TextInputType.text,controller.label, false, 'Label', () {}),
+        inputCustom(TextInputType.text, controller.label, false, 'Label', () {}),
         dialogButtonYesNo(() => onDone()),
       ],
     ),
@@ -181,7 +170,7 @@ Widget insertYoutube(BuildContext context, PostStatusController controller) {
       padding: EdgeInsets.only(left: 15, right: 15),
       color: Colors.transparent,
       child: Column(children: [
-        inputCustom(TextInputType.text,controller.link, false, 'Link', () async {
+        inputCustom(TextInputType.text, controller.link, false, 'Link', () async {
           await controller.getIDYt();
         }),
         dialogButtonYesNo(() async {
@@ -214,7 +203,7 @@ Widget insertImage(BuildContext context, PostStatusController controller) {
                 color: Colors.transparent,
                 child: Column(
                   children: [
-                    inputCustom(TextInputType.text,controller.link, false, 'Image link', () async {
+                    inputCustom(TextInputType.text, controller.link, false, 'Image link', () async {
                       if (controller.link.text.isURL) {
                         await controller.keyEditor.currentState!.javascriptExecutor.insertCustomImage(controller.link.text);
                         controller.link.clear();

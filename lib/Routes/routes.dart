@@ -11,6 +11,7 @@ abstract class Routes{
   static const Profile = '/UserProfile';
   static const Youtube = '/Youtube';
   static const AddReply = '/PostStatus';
+  static const CreatePost = '/CreatePost'; /// Create thread and profile post
   static const Settings = '/Settings';
   static const Login = '/Login';
   static const BrowserLogin = '/BrowserLogin'; ///todo

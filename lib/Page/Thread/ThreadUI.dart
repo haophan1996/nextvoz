@@ -141,7 +141,7 @@ class ThreadUI extends GetView<ThreadController> {
                   break;
               }
             }, () {
-              print('reply');
+              controller.navigateToCreatePost();
             },
                 GetBuilder<ThreadController>(
                     tag: tag,

@@ -29,12 +29,12 @@ class ThreadController extends GetxController {
   }
 
   navigateToThread(int index) {
-    Get.toNamed(Routes.View, arguments: [
-      myThreadList.elementAt(index)['title'],
-      myThreadList.elementAt(index)['link'],
-      myThreadList.elementAt(index)['prefix'],
-      0
-    ]);
+    Get.toNamed(Routes.View,
+        arguments: [myThreadList.elementAt(index)['title'], myThreadList.elementAt(index)['link'], myThreadList.elementAt(index)['prefix'], 0]);
+  }
+
+  navigateToCreatePost() {
+    Get.toNamed(Routes.CreatePost, arguments: [GlobalController.i.xfCsrfPost, GlobalController.i.token, 'link', '', '','2', '']);
   }
 
   @override
@@ -72,7 +72,7 @@ class ThreadController extends GetxController {
   Future<void> loadSubHeader(String url) async {
     await GlobalController.i.getBodyBeta((value) async {
       if (value == 1) {
-         loadSubHeader(url);
+        loadSubHeader(url);
       } else {
         data['loading'] = 'error';
         update(['FirstLoading']);
@@ -100,14 +100,8 @@ class ThreadController extends GetxController {
     GlobalController.i.token = value.getElementsByTagName('html')[0].attributes['data-csrf'];
     if (value.getElementsByTagName('html')[0].attributes['data-logged-in'] == 'true') {
       GlobalController.i.controlNotification(
-          int.parse(value
-              .getElementsByClassName('p-navgroup-link--alerts')[0]
-              .attributes['data-badge']
-              .toString()),
-          int.parse(value
-              .getElementsByClassName('p-navgroup-link--conversations')[0]
-              .attributes['data-badge']
-              .toString()),
+          int.parse(value.getElementsByClassName('p-navgroup-link--alerts')[0].attributes['data-badge'].toString()),
+          int.parse(value.getElementsByClassName('p-navgroup-link--conversations')[0].attributes['data-badge'].toString()),
           value.getElementsByTagName('html')[0].attributes['data-logged-in'].toString());
     } else
       GlobalController.i.controlNotification(0, 0, 'false');
@@ -133,35 +127,20 @@ class ThreadController extends GetxController {
         data['currentPage'] = 1;
         data['totalPage'] = 1;
       } else {
-        var naviPage = element
-            .getElementsByClassName("pageNavSimple-el pageNavSimple-el--current")
-            .first
-            .innerHtml
-            .trim();
+        var naviPage = element.getElementsByClassName("pageNavSimple-el pageNavSimple-el--current").first.innerHtml.trim();
         data['currentPage'] = int.parse(naviPage.replaceAll(RegExp(r'[^0-9]\S*'), ""));
         data['totalPage'] = int.parse(naviPage.replaceAll(RegExp(r'\S*[^0-9]'), ""));
       }
       //Detail SubHeader
       element.getElementsByClassName("structItem structItem--thread").forEach((element) async {
-        if (element.getElementsByClassName("structItem-title")[0].getElementsByTagName('a').length >
-            1) {
+        if (element.getElementsByClassName("structItem-title")[0].getElementsByTagName('a').length > 1) {
           data['title'] = element.getElementsByClassName("structItem-title")[0].text.trim();
-          data['themeTitle'] = element
-              .getElementsByClassName("structItem-title")[0]
-              .getElementsByTagName('a')[0]
-              .text
-              .trim();
+          data['themeTitle'] = element.getElementsByClassName("structItem-title")[0].getElementsByTagName('a')[0].text.trim();
           data['title'] = ' ' + data['title'].toString().replaceAll(data['themeTitle'], '').trim().replaceAll(RegExp('\\s+'), ' ');
-          data['linkThread'] = element
-              .getElementsByClassName('structItem-title')[0]
-              .getElementsByTagName('a')[1]
-              .attributes['href'];
+          data['linkThread'] = element.getElementsByClassName('structItem-title')[0].getElementsByTagName('a')[1].attributes['href'];
         } else {
           data['title'] = element.getElementsByClassName("structItem-title")[0].text.trim().replaceAll(RegExp('\\s+'), ' ');
-          data['linkThread'] = element
-              .getElementsByClassName('structItem-title')[0]
-              .getElementsByTagName('a')[0]
-              .attributes['href']!.trim();
+          data['linkThread'] = element.getElementsByClassName('structItem-title')[0].getElementsByTagName('a')[0].attributes['href']!.trim();
         }
         data['authorName'] = element.attributes["data-author"];
 
@@ -171,15 +150,9 @@ class ThreadController extends GetxController {
           'isRead': data['linkThread'].contains('/unread') ? true : false,
           "authorName": data['authorName'],
           "link": data['linkThread'],
-          "replies": "Replies " +
-              element
-                  .getElementsByClassName("pairs pairs--justified")
-                  .map((e) => e.getElementsByTagName("dd")[0].innerHtml)
-                  .first,
-          "date": element
-              .getElementsByClassName("structItem-latestDate u-dt")
-              .map((e) => e.innerHtml)
-              .first,
+          "replies":
+              "Replies " + element.getElementsByClassName("pairs pairs--justified").map((e) => e.getElementsByTagName("dd")[0].innerHtml).first,
+          "date": element.getElementsByClassName("structItem-latestDate u-dt").map((e) => e.innerHtml).first,
         });
       });
     });
