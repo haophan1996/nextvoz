@@ -143,7 +143,7 @@ Widget whatNew() => Container(
                     ),
                     onPressed: () {
                       if (Get.isBottomSheetOpen == true) Get.back();
-                      Get.toNamed(Routes.Thread, arguments: ['New posts', 'https://voz.vn/whats-new/posts/'], preventDuplicates: false);
+                      Get.toNamed(Routes.Thread, arguments: ['posts'.tr, 'https://voz.vn/whats-new/posts/'], preventDuplicates: false);
                     }),
               ),
               Expanded(

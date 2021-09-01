@@ -9,7 +9,7 @@ import 'package:html/dom.dart' as dom;
 class ThreadController extends GetxController {
   Map<String, dynamic> data = {};
   late ScrollController listViewScrollController = ScrollController();
-  List myThreadList = [];
+  List myThreadList = [], prefixList = [];
   var dio = Dio();
 
   @override
@@ -33,8 +33,12 @@ class ThreadController extends GetxController {
         arguments: [myThreadList.elementAt(index)['title'], myThreadList.elementAt(index)['link'], myThreadList.elementAt(index)['prefix'], 0]);
   }
 
-  navigateToCreatePost() {
-    Get.toNamed(Routes.CreatePost, arguments: [GlobalController.i.xfCsrfPost, GlobalController.i.token, 'link', '', '','2', '']);
+  navigateToCreatePost() async {
+    var result = await Get.toNamed(Routes.CreatePost,
+        arguments: [GlobalController.i.xfCsrfPost, GlobalController.i.token, data['_url'], '', '', '3', '', '', prefixList]);
+    if (result != null && result[0] == 'ok') {
+      await Get.toNamed(Routes.View, arguments: [result[2], result[1], '', 1]);
+    }
   }
 
   @override
@@ -120,6 +124,18 @@ class ThreadController extends GetxController {
           )
           .first;
     }
+
+    if (value.getElementsByClassName('js-prefixSelect u-noJsOnly input').length > 0 && prefixList.isEmpty) {
+      value.getElementsByClassName('js-prefixSelect u-noJsOnly input')[0].getElementsByTagName('option').forEach((element) {
+        prefixList.add({'value': element.attributes['value'], 'text': element.text});
+      });
+    }
+    if (value.getElementsByClassName('button--cta button button--icon button--icon--write').length == 0) {
+      data['ableToPost'] = false;
+    } else
+      data['ableToPost'] = true;
+    print(value.getElementsByClassName('button--cta button button--icon button--icon--write').length);
+    print(data['ableToPost']);
 
     value.getElementsByClassName("p-body-content").forEach((element) async {
       data['lastP'] = element.getElementsByClassName("pageNavSimple");

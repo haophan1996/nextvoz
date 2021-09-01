@@ -108,6 +108,13 @@ class UserProfileUI extends GetView<UserProfileController> {
                 ), //Info
               ],
             ),
+            Row(
+              children: [
+                customCupertinoButton(Alignment.center, EdgeInsets.zero, Text('Send private message'), () async {
+                  await Get.toNamed(Routes.CreatePost, arguments: [GlobalController.i.xfCsrfPost, GlobalController.i.token, 'link', '', '', '2', '',controller.data['userName']]);
+                })
+              ],
+            ),
             Padding(
               padding: EdgeInsets.only(bottom: 10, top: 10),
               child: Stack(
@@ -185,7 +192,7 @@ class UserProfileUI extends GetView<UserProfileController> {
                       {
                         'type': AlertPlusType.ProfileLatestActivity,
                         'userLink': controller.data['linkProfileUser'],
-                        'userName': controller.data['userName']+'\'s '
+                        'userName': controller.data['userName'] + '\'s '
                       }
                     ]);
                   },

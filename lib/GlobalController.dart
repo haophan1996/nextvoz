@@ -146,6 +146,7 @@ class GlobalController extends GetxController {
   }
 
   Future getHttpPost(bool isJson, Map<String, String> header, dynamic body, String link) async {
+
     final response =
         await http.post(Uri.parse(link), headers: header, body: body).catchError((err) {
       print('get http post error: $header \n$body \n$link');
@@ -248,6 +249,8 @@ class GlobalController extends GetxController {
         ///Username
         data['rName'] = value.getElementsByClassName('username ')[0].text.trim();
 
+        data['rLink'] = value.getElementsByClassName('username ')[0].attributes['href'];
+
         ///Reaction Icon
         data['rReactIcon'] = value
             .getElementsByClassName('reaction reaction--right')[0]
@@ -258,24 +261,6 @@ class GlobalController extends GetxController {
 
         ///Time
         data['rTime'] = value.getElementsByClassName('u-dt')[0].innerHtml;
-
-        ///Messages
-        data['rMessage'] = value
-            .getElementsByClassName('pairs pairs--inline')[0]
-            .getElementsByTagName('dd')[0]
-            .innerHtml;
-
-        ///Reaction score
-        data['rMessage2'] = value
-            .getElementsByClassName('pairs pairs--inline')[1]
-            .getElementsByTagName('dd')[0]
-            .innerHtml;
-
-        ///Point
-        data['rMessage3'] = value
-            .getElementsByClassName('pairs pairs--inline')[2]
-            .getElementsByTagName('dd')[0]
-            .innerHtml;
 
         ///Avatar
         if (value.getElementsByClassName('avatar avatar--s')[0].getElementsByTagName('img').length >
@@ -308,11 +293,9 @@ class GlobalController extends GetxController {
         }
 
         reactionList.add({
+          'rLink' : data['rLink'],
           'rName': data['rName'],
           'rTitle': data['rTitle'],
-          'rMessage': data['rMessage'],
-          'rMessage2': data['rMessage2'],
-          'rMessage3': data['rMessage3'],
           'rTime': data['rTime'],
           'rReactIcon': data['rReactIcon'],
           'rAvatar': data['_userAvatar'],

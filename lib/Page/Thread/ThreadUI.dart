@@ -141,7 +141,11 @@ class ThreadUI extends GetView<ThreadController> {
                   break;
               }
             }, () {
-              controller.navigateToCreatePost();
+              if (controller.data['ableToPost'] == true && controller.data['theme'] != 'posts'.tr ){
+                controller.navigateToCreatePost();
+              } else {
+                setDialogError('Unable to create thread or Forums did not allow to post thread');
+              }
             },
                 GetBuilder<ThreadController>(
                     tag: tag,

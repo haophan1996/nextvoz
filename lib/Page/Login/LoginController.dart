@@ -9,12 +9,13 @@ import '/Page/reuseWidget.dart';
 class LoginController extends GetxController {
   RxBool isShowPass = true.obs;
   RxString statusLogin = ''.obs;
-  late TextEditingController textEditingControllerLogin = TextEditingController(), textEditingControllerPassword = TextEditingController();
+  late TextEditingController textEditingControllerLogin = TextEditingController(),
+      textEditingControllerPassword = TextEditingController();
   var dio = Dio();
   Map<String, dynamic> data = {};
 
   @override
-  onClose(){
+  onClose() {
     super.onClose();
     isShowPass.close();
     statusLogin.close();
@@ -65,14 +66,17 @@ class LoginController extends GetxController {
   }
 
   login(String login, String pass, String token, String cookie, String userAgent) async {
+    print(cookie);
+    print(token);
     var headers = {
       'content-type': 'application/json; charset=UTF-8',
       'host': 'vozloginapinode.herokuapp.com',
     };
-    var body = {"login": login, "password": pass, "remember": "1", "_xfToken": token, "userAgent": userAgent, "cookie": cookie};
-
-    final response = await GlobalController.i.getHttpPost(true,headers, jsonEncode(body), 'https://vozloginapinode.herokuapp.com/api/vozlogin');
+    var body = {"login": login, "password": pass, "remember": "1", "_xfToken": token, "userAgent": 'AndroidIosMobileDevices', "cookie": cookie};
+    print(body);
+    final response = await GlobalController.i.getHttpPost(true, headers, jsonEncode(body), 'https://vozloginapinode.herokuapp.com/api/vozlogin');
     return response;
   }
 
 }
+

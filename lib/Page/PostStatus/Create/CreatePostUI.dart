@@ -7,7 +7,8 @@ import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:rich_editor/rich_editor.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:the_next_voz/Page/PostStatus/Post/PostStatusController.dart';
+import 'package:the_next_voz/Page/PostStatus/PostStatusController.dart';
+import 'package:the_next_voz/utils/color.dart';
 import '/utils/emoji.dart';
 import '/Page/reuseWidget.dart';
 
@@ -19,6 +20,7 @@ class CreatePostUI extends GetView<PostStatusController> {
         child: Column(
           children: [
             Container(
+              padding: EdgeInsets.only(left: 5),
               width: Get.width,
               child: customCupertinoButton(
                   Alignment.centerLeft,
@@ -26,28 +28,22 @@ class CreatePostUI extends GetView<PostStatusController> {
                   GetBuilder<PostStatusController>(
                       id: 'title',
                       builder: (controller) {
-                        return Text(
-                          '${'title'.tr}: ${controller.data['title'].length > 0 ? controller.data['title'] : 'Your Title'}',
-                          textAlign: TextAlign.start,
+                        return RichText(
+                          text: TextSpan(children: [
+                            TextSpan(text: '${'title'.tr}: ', style: TextStyle(color: Colors.blue, fontWeight: FontWeight.bold)),
+                            TextSpan(
+                                text: '${controller.data['title'].length > 0 ? controller.data['title'] : 'Your Title'}',
+                                style: TextStyle(color: controller.data['title'].length > 0 ? Theme.of(context).primaryColor : Colors.red)),
+                          ]),
                         );
                       }),
                   () async => await controller.inputTitNRe('title', '${'input'.tr} ${'title'.tr}')),
             ),
-            Container(
-              width: Get.width,
-              child: customCupertinoButton(
-                  Alignment.centerLeft,
-                  EdgeInsets.zero,
-                  GetBuilder<PostStatusController>(
-                      id: 'recipients',
-                      builder: (controller) {
-                        return Text(
-                          '${'recipients'.tr}: ${controller.data['recipients'].length > 0 ? controller.data['recipients'] : 'Your recipients'}',
-                          textAlign: TextAlign.start,
-                        );
-                      }),
-                  () async => await controller.inputTitNRe('recipients', '${'input'.tr} ${'recipients'.tr}'),)
-            ),
+            controller.data['view'] == '2'
+                ? recipients()
+                : controller.data['view'] == '3' && controller.prefixList.length > 0
+                    ? prefix()
+                    : Container(),
             Container(
                 decoration: BoxDecoration(
                   border: Border(
@@ -83,12 +79,19 @@ class CreatePostUI extends GetView<PostStatusController> {
                 child: customCupertinoButton(
                     Alignment.center,
                     EdgeInsets.fromLTRB(5, 2, 5, 2),
-                    Text(
-                      'Start conversation',
-                      style: TextStyle(color: Colors.white),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.open_in_new, color: Colors.white,),
+                        Text(
+                          controller.data['view'] == '2' ? '\tStart conversation' : '\tPost Threads',
+                          style: TextStyle(color: Colors.white),
+                        )
+                      ],
                     ),
                     () async {
-                      await controller.startConversation();
+                      if (controller.data['view'] == '2') await controller.startConversation();
+                      else if (controller.data['view'] == '3') await controller.createThread();
                     }),
               ),
             ),
@@ -143,6 +146,60 @@ class CreatePostUI extends GetView<PostStatusController> {
         ),
       ),
     );
+  }
+
+  Widget recipients() {
+    return Container(
+        padding: EdgeInsets.only(left: 5),
+        width: Get.width,
+        child: customCupertinoButton(
+          Alignment.centerLeft,
+          EdgeInsets.zero,
+          GetBuilder<PostStatusController>(
+              id: 'recipients',
+              builder: (controller) {
+                return RichText(
+                  text: TextSpan(children: [
+                    TextSpan(text: '${'recipients'.tr}: ', style: TextStyle(color: Colors.blue, fontWeight: FontWeight.bold)),
+                    TextSpan(
+                        text: '${controller.data['recipients'].length > 0 ? controller.data['recipients'] : 'Your recipients'}',
+                        style: TextStyle(color: controller.data['recipients'].length > 0 ? Get.theme.primaryColor : Colors.red)),
+                  ]),
+                );
+              }),
+          () async => await controller.inputTitNRe('recipients', '${'input'.tr} ${'recipients'.tr}'),
+        ));
+  }
+
+  Widget prefix() {
+    return Container(
+        padding: EdgeInsets.only(left: 5),
+        width: Get.width,
+        child: customCupertinoButton(
+            Alignment.centerLeft,
+            EdgeInsets.zero,
+            GetBuilder<PostStatusController>(
+                id: 'prefix',
+                builder: (controller) {
+                  return RichText(
+                      text: TextSpan(children: [
+                    WidgetSpan(child: Text('Prefix: ')),
+                    WidgetSpan(
+                        child: Container(
+                      padding: EdgeInsets.fromLTRB(5, 2, 5, 2),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(6),
+                          color: mapColor[controller.prefixList.elementAt(controller.data['prefixIndex'])['text']]),
+                      child: Text(
+                        controller.prefixList.elementAt(controller.data['prefixIndex'])['text'],
+                        style: TextStyle(
+                            fontSize: Get.textTheme.bodyText1!.fontSize,
+                            color: getColorInvert(controller.prefixList.elementAt(controller.data['prefixIndex'])['text'])),
+                      ),
+                    ))
+                  ]));
+                }),
+            () => controller.prefixSelect()));
   }
 }
 

@@ -17,6 +17,7 @@ class PostStatusController extends GetxController {
   GlobalKey<RichEditorState> keyEditor = GlobalKey();
   int currentTab = 0;
   Map<String, dynamic> data = {};
+  List finderMember = [], prefixList = [];
   RxBool isToolClicked = false.obs;
   double heightToolbar = Get.height * 0.07, heightEditor = Get.height * 0.3;
   TextEditingController link = TextEditingController(), label = TextEditingController();
@@ -83,11 +84,24 @@ class PostStatusController extends GetxController {
     data['link'] = Get.arguments[2] ??= '';
     data['postID'] = Get.arguments[3] ??= '';
     data['isEditPost'] = Get.arguments[4] ??= '';
+
+    /// View id
+    ///  0 : add relies x
+    ///  1 : edit post x
+    ///  2 : new Conversation \/
+    ///  3 : create thread \/
+    ///  4 : create post profile \/
+
     data['view'] = Get.arguments[5] ??= '';
     data['value'] = Get.arguments[6] ??= '';
 
     ///Optional
-    data['recipients'] = Get.arguments[6] ??= '';
+    if (data['view'] == '2')
+      data['recipients'] = Get.arguments[7] ?? '';
+    else if (data['view'] == '3') {
+      prefixList = Get.arguments[8];
+      if (prefixList.length > 0) data['prefixIndex'] = 0;
+    }
     data['title'] = '';
   }
 
@@ -101,6 +115,7 @@ class PostStatusController extends GetxController {
     super.onClose();
     isToolClicked.close();
     data.clear();
+    finderMember.clear();
     link.dispose();
     label.dispose();
     formats.clear();
@@ -167,7 +182,7 @@ class PostStatusController extends GetxController {
       '_xfResponseType': 'json',
       'message_html': '$html',
       'recipients': data['recipients'],
-      'title' : data['title'],
+      'title': data['title'],
     };
 
     var headers = {
@@ -176,13 +191,86 @@ class PostStatusController extends GetxController {
       'cookie': '${data['xf_csrf']}; xf_user=${GlobalController.i.xfUser};',
     };
 
-    await GlobalController.i.getHttpPost(true, headers, body, GlobalController.i.url+'/conversations/add').then((value) {
+    await GlobalController.i.getHttpPost(true, headers, body, GlobalController.i.url + '/conversations/add').then((value) {
       if (Get.isDialogOpen == true) Get.back();
-      if (value['status'] == 'ok'){
-        Get.back(result: ['ok']);
+      if (value['status'] == 'ok') {
+        Get.back(result: ['ok',value['redirect'], data['title']]);
       } else {
-         setDialogError(value.toString().split('<div class="blockMessage">')[1].split('</div>,')[0].trim());
+        setDialogError(value
+            .toString()
+            .split('<div class="blockMessage">')[1]
+            .split('</div>,')[0]
+            .replaceAll('<ul>', '')
+            .replaceAll('</ul>', '')
+            .replaceAll('<li>', '')
+            .replaceAll('</li>', '')
+            .trim());
       }
+    });
+  }
+
+  createThread() async {
+    if (data['title'].length == 0) {
+      await inputTitNRe('title', '${'please'.tr} ${'input'.tr} ${'title'.tr}');
+      if (data['title'].length == 0) return;
+    }
+
+    if (data['prefixIndex'] == 0) {
+      await prefixSelect();
+      if (data['recipients'] == 0) return;
+    }
+
+    String? html = await checkImage();
+    var headers = {
+      'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
+      'host': 'voz.vn',
+      'cookie': '${data['xf_csrf']}; xf_user=${GlobalController.i.xfUser};',
+    };
+
+    var body = {
+      '_xfToken': '${data['token']}',
+      '_xfResponseType': 'json',
+      'title': data['title'],
+      'message_html': html,
+      'watch_thread': '1',
+      'discussion_type': 'discussion',
+      'prefix_id': prefixList.length > 0 ? prefixList.elementAt(data['prefixIndex'])['value'] : '',
+    };
+
+    await GlobalController.i.getHttpPost(true, headers, body, data['link'] + 'post-thread?inline-mode=1').then((value) {
+      if (Get.isDialogOpen == true) Get.back();
+      if (value['status'] == 'ok') {
+        print(value);
+        //Get.back(result: ['ok',value['redirect'], data['title']]);
+      } else {
+        setDialogError(value
+            .toString()
+            .split('<div class="blockMessage">')[1]
+            .split('</div>,')[0]
+            .replaceAll('<ul>', '')
+            .replaceAll('</ul>', '')
+            .replaceAll('<li>', '')
+            .replaceAll('</li>', '')
+            .trim());
+      }
+    });
+  }
+
+  membersSearcher(String mem) async {
+    var headers = {
+      'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
+      'host': 'voz.vn',
+      'cookie': '${data['xf_csrf']};',
+    };
+
+    data['memberFinder'] = '_xfResponseType=json&_xfToken=${data['token']}&q=$mem';
+
+    await GlobalController.i.getHttp(true, headers, GlobalController.i.url + '/u/find?' + data['memberFinder']).then((value) {
+      if (value['results'].length > 0) {
+        finderMember = value['results'] as List;
+        update(['updateMember']);
+      }
+      print(value);
     });
   }
 
@@ -223,12 +311,65 @@ class PostStatusController extends GetxController {
   inputTitNRe(String value, String title) async {
     label.text = data[value] ?? '';
     await Get.defaultDialog(
-        content: Column(
-          children: [
-            inputCustom(TextInputType.text, label, false, value.tr, () {
-              Get.back();
-            })
-          ],
+        radius: 6,
+        content: Container(
+          width: Get.width,
+          child: value != 'recipients'
+              ? inputCustom(TextInputType.text, label, false, value.tr, () {
+                  Get.back();
+                })
+              : Column(
+                  children: [
+                    inputCustom(TextInputType.text, label, false, value.tr, () {
+                      Get.back();
+                    }),
+                    Padding(
+                      padding: EdgeInsets.only(top: 5),
+                      child: Container(
+                        decoration: BoxDecoration(color: Color(0xfff5c7099), borderRadius: BorderRadius.all(Radius.circular(5))),
+                        child: customCupertinoButton(
+                            Alignment.center,
+                            EdgeInsets.fromLTRB(5, 2, 5, 2),
+                            Text(
+                              'Find',
+                              style: TextStyle(color: Colors.white),
+                            ), () async {
+                          membersSearcher(label.text.split(',').last);
+                          print(label.text.split(',').last);
+                          //update(['updateMember']);
+                        }),
+                      ),
+                    ),
+                    GetBuilder<PostStatusController>(
+                        id: 'updateMember',
+                        builder: (controller) {
+                          return finderMember.length > 0
+                              ? Container(
+                                  height: 150,
+                                  width: Get.width,
+                                  child: ListView.builder(
+                                      itemCount: finderMember.length,
+                                      shrinkWrap: true,
+                                      itemBuilder: (context, index) {
+                                        return TextButton(
+                                            onPressed: () {
+                                              data['m'] = finderMember.elementAt(index)['id'];
+                                              finderMember.clear();
+                                              finderMember = label.text.split(',');
+                                              finderMember.removeLast();
+                                              finderMember.add(data['m']);
+                                              label.text = finderMember.toString().replaceAll('[', '').replaceAll(']', '');
+                                              label.selection = TextSelection(baseOffset: label.text.length, extentOffset: label.text.length);
+                                              finderMember.clear();
+                                              update(['updateMember']);
+                                            },
+                                            child: Text(finderMember.elementAt(index)['id']));
+                                      }),
+                                )
+                              : Text('No results');
+                        })
+                  ],
+                ),
         ),
         title: title);
     if (label.text.length > 0) {
@@ -236,6 +377,32 @@ class PostStatusController extends GetxController {
       update([value]);
     }
     label.clear();
+  }
+
+  prefixSelect() async {
+    await Get.defaultDialog(
+      radius: 6,
+      title: 'Select prefix',
+      content: Container(
+        height: (prefixList.length * 20) > Get.height ? (Get.height * 0.5) : (prefixList.length * 20),
+        width: Get.width,
+        child: ListView.builder(
+            itemCount: prefixList.length,
+            itemBuilder: (context, index) {
+              return InkWell(
+                child: Text(
+                  prefixList.elementAt(index)['text'],
+                  style: TextStyle(color: data['prefixIndex'] == index ? Colors.blue : Get.theme.primaryColor),
+                ),
+                onTap: () {
+                  data['prefixIndex'] = index;
+                  update(['prefix']);
+                  Get.back();
+                },
+              );
+            }),
+      ),
+    );
   }
 
   insertLink() {

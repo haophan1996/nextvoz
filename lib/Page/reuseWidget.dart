@@ -44,8 +44,8 @@ PreferredSize appBarOnly(String title, List<Widget> action) {
 /// * [header11] - [header12] black/white color depends on Dark/light mode.
 /// * [header21] - [header22] grey color default.
 /// * [header3] orange color default.
-Widget blockItem(BuildContext context,FontWeight titleWeight, int index, String header11, String header12,
-        String header21, String header22, String header3, Function onTap, Function onLongPress) =>
+Widget blockItem(BuildContext context, FontWeight titleWeight, int index, String header11, String header12, String header21, String header22,
+        String header3, Function onTap, Function onLongPress) =>
     Padding(
       padding: EdgeInsets.only(bottom: 5, left: 5, right: 5),
       child: InkWell(
@@ -296,49 +296,53 @@ Widget buildIcon(String path, String text) => Row(
     );
 
 Widget reactionChild(Map reactionMap) {
-  return Row(
-    mainAxisAlignment: MainAxisAlignment.start,
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      SizedBox(
-        width: 50,
-        height: 50,
-        child: Stack(
+  return Padding(
+    padding: EdgeInsets.all(5),
+    child: CupertinoButton(
+      padding: EdgeInsets.zero,
+      child: Container(
+        padding: EdgeInsets.all(5),
+        decoration: BoxDecoration(color: Get.theme.shadowColor, borderRadius: BorderRadius.all(Radius.circular(6))),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            displayAvatar(40, reactionMap['avatarColor1'], reactionMap['avatarColor2'], reactionMap['rName'], reactionMap['rAvatar']),
-            Positioned(
-              right: 0,
-              bottom: 0,
-              child: Container(
-                width: 25,
-                height: 25,
-                decoration: BoxDecoration(
-                    shape: BoxShape.circle, image: DecorationImage(image: AssetImage('assets/reaction/${reactionMap['rReactIcon']}.png'))),
+            SizedBox(
+              width: 50,
+              height: 50,
+              child: Stack(
+                children: [
+                  displayAvatar(40, reactionMap['avatarColor1'], reactionMap['avatarColor2'], reactionMap['rName'], reactionMap['rAvatar']),
+                  Positioned(
+                    right: 0,
+                    bottom: 0,
+                    child: ExtendedImage.asset('assets/reaction/${reactionMap['rReactIcon']}.png', width: 23,height: 23,),
+                  )
+                ],
+              ),
+            ),
+            Expanded(
+              child: Padding(
+                padding: EdgeInsets.only(left: 5),
+                child: RichText(
+                  text: TextSpan(style: TextStyle(height: 1.2), children: [
+                    TextSpan(
+                      text: reactionMap['rName'] + '\n',
+                      style: TextStyle(fontWeight: FontWeight.bold, color: Colors.blue),
+                    ),
+                    TextSpan(text: reactionMap['rTitle'] + '\n', style: TextStyle(color: Get.theme.primaryColor)),
+                    TextSpan(text: reactionMap['rTime'], style: TextStyle(color: Colors.grey))
+                  ]),
+                ),
               ),
             )
           ],
         ),
       ),
-      Expanded(
-        child: Padding(
-          padding: EdgeInsets.only(left: 5),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                reactionMap['rName'],
-                style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xFFFD6E00)),
-              ),
-              Text(reactionMap['rTitle']),
-              Text('Mess: ${reactionMap['rMessage']} • React score: ${reactionMap['rMessage2']} • Points: ${reactionMap['rMessage3']}'),
-              Text(reactionMap['rTime']),
-              Divider()
-            ],
-          ),
-        ),
-      )
-    ],
+      onPressed: (){
+        Get.toNamed(Routes.Profile, arguments: [reactionMap['rLink']], preventDuplicates: false);
+      },
+    ),
   );
 }
 
@@ -349,8 +353,10 @@ Widget listReactionUI(ViewController controller) {
     minChildSize: 0.4,
     builder: (_, dragController) => Container(
       padding: EdgeInsets.only(left: 5, top: 5),
-      decoration:
-          BoxDecoration(color: Get.theme.backgroundColor, borderRadius: BorderRadius.only(topLeft: Radius.circular(6), topRight: Radius.circular(6))),
+      decoration: BoxDecoration(
+        color: Get.theme.cardColor,
+        borderRadius: BorderRadius.only(topLeft: Radius.circular(6), topRight: Radius.circular(6)),
+      ),
       child: GetBuilder<ViewController>(
         id: 'reactionState',
         tag: GlobalController.i.sessionTag.last,
@@ -695,7 +701,7 @@ Widget loadingBottom(String type, double height) {
             ? Icon(Icons.arrow_upward, color: Colors.grey)
             : type == 'Holding'
                 ? Icon(Icons.sync_outlined, color: Colors.grey)
-                : CupertinoActivityIndicator(),
+                : Icon(Icons.file_download),
         Text(
           '\t${type == 'idle' ? 'pullUp'.tr : type == 'Holding' ? 'pullRes'.tr : 'loading'.tr}',
           style: TextStyle(color: Colors.grey),

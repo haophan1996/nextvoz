@@ -4,11 +4,13 @@ import 'package:flutter/material.dart';
 Color getColorInvert(String typeT) {
   if (typeT == 'tin tức' || typeT == 'thảo luận'|| typeT == 'thắc mắc')
     return Colors.black;
+  else if (typeT == '(No prefix)') return Colors.red;
   else
     return Colors.white;
 }
 
 final Map<String, Color> mapColor = {
+  "(No prefix)" : Colors.transparent,
   "báo lỗi": Color(0xffCE0000),
   "chú ý": Color(0xffEBBB00),
   "download": Color(0xff6C6C00),

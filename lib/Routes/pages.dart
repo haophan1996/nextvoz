@@ -11,7 +11,7 @@ import '/Page/Alerts/AlertUI.dart';
 import '/Page/Alerts/AlertsBinding.dart';
 import '/Page/Login/LoginBindings.dart';
 import '/Page/Login/LoginUI.dart';
-import '../Page/PostStatus/Post/PostStatusBindings.dart';
+import '../Page/PostStatus/PostStatusBindings.dart';
 import '../Page/PostStatus/Post/PostStatusUI.dart';
 import '/Page/Profile/UserProfile/UserProfileBinding.dart';
 import '/Page/Profile/UserProfile/UserProfileUI.dart';

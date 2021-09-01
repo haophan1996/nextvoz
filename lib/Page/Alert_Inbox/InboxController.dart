@@ -29,8 +29,13 @@ class InboxController extends GetxController {
     dio.close(force: true);
   }
 
-  navigateToCreatePost() {
-    Get.toNamed(Routes.CreatePost, arguments: [GlobalController.i.xfCsrfPost, GlobalController.i.token, 'link', '', '','2', '']);
+  navigateToCreatePost() async {
+    var result =
+        await Get.toNamed(Routes.CreatePost, arguments: [GlobalController.i.xfCsrfPost, GlobalController.i.token, 'link', '', '', '2', '', '']);
+    if (result != null && result[0] == 'ok') {
+      await Get.toNamed(Routes.View, arguments: [result[2], result[1], '', 1]);
+      await refreshList();
+    }
   }
 
   refreshList() async {
@@ -43,7 +48,7 @@ class InboxController extends GetxController {
     String getName = '', title, link, rep, party, latestDay, latestRep, avatarLink, avatarColor1, avatarColor2, isUnread;
     if (GlobalController.i.isLogged == true) {
       await GlobalController.i.getBodyBeta((value) async {
-        if (value == 1){
+        if (value == 1) {
           print('retry');
           await getInboxAlert();
         }

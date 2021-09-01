@@ -8,20 +8,14 @@ import 'package:rich_editor/rich_editor.dart';
 import 'package:flutter_html/flutter_html.dart';
 import '/utils/emoji.dart';
 import '/Page/reuseWidget.dart';
-import 'PostStatusController.dart';
+import '../PostStatusController.dart';
 
 class PostStatusUI extends GetView<PostStatusController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: appBarOnly(
-            controller.data['view'] == '0'
-                ? 'createPost'.tr
-                : controller.data['view'] == '1'
-                    ? 'editPost'.tr
-                    : controller.data['view'] == '2'
-                        ? 'newConversation'.tr
-                        : 'newThread'.tr,
+            controller.data['isEditPost'] == true ? 'editPost'.tr : 'createPost'.tr,
             [
               PopupMenuButton(
                 child: IconButton(
