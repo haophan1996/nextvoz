@@ -1,5 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_image/network.dart';
 import 'package:get/get.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -731,24 +732,34 @@ Widget customHtml(String postContent, List imageList) {
           );
         } else if ((renderContext.tree.element!.attributes['data-url']?.contains(".gif") == true) ||
             renderContext.tree.element!.attributes['alt']?.contains(".gif") == true) {
-          imageList.add(renderContext.tree.element!.attributes['data-url'] != ''
+          imageList.add(renderContext.tree.element!.attributes['data-src'].toString().length > 4
+              ? renderContext.tree.element!.attributes['data-src'].toString()
+              : renderContext.tree.element!.attributes['data-url'].toString().length > 4
               ? renderContext.tree.element!.attributes['data-url'].toString()
-              : renderContext.tree.element!.attributes['data-src'] != ''
-                  ? renderContext.tree.element!.attributes['data-src'].toString()
-                  : renderContext.tree.element!.attributes['src'].toString());
-          return IconButton(
-              onPressed: () {
-                displayGallery(
-                    imageList,
-                    imageList.indexOf(renderContext.tree.element!.attributes['data-src'].toString().length > 4
-                        ? renderContext.tree.element!.attributes['data-src'].toString()
-                        : renderContext.tree.element!.attributes['data-url'].toString().length > 4
-                            ? renderContext.tree.element!.attributes['data-url'].toString()
-                            : renderContext.tree.element!.attributes['src'].toString()));
-              },
-              icon: Icon(
-                Icons.image,
-              ));
+              : renderContext.tree.element!.attributes['src'].toString());
+
+          return InkWell(child: Image(
+            image: NetworkImageWithRetry(renderContext.tree.element!.attributes['data-src'].toString().length > 4
+                ? renderContext.tree.element!.attributes['data-src'].toString()
+                : renderContext.tree.element!.attributes['data-url'].toString().length > 4
+                ? renderContext.tree.element!.attributes['data-url'].toString()
+                : renderContext.tree.element!.attributes['src'].toString(),),
+            // loadingBuilder: (context, child, loadingProgress){
+            //   return Center(
+            //     child: CircularProgressIndicator()
+            //   );
+            // } ,
+          ),onTap: (){
+            displayGallery(
+                imageList,
+                imageList.indexOf(renderContext.tree.element!.attributes['data-src'].toString().length > 4
+                    ? renderContext.tree.element!.attributes['data-src'].toString()
+                    : renderContext.tree.element!.attributes['data-url'].toString().length > 4
+                    ? renderContext.tree.element!.attributes['data-url'].toString()
+                    : renderContext.tree.element!.attributes['src'].toString()));
+          },);
+
+
         } else {
           imageList.add(renderContext.tree.element!.attributes['data-src'].toString().length > 4
               ? renderContext.tree.element!.attributes['data-src'].toString()
