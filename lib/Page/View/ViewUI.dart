@@ -2,11 +2,13 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:the_next_voz/Page/View/swipe.dart';
 import '/Page/NavigationDrawer/NaviDrawerUI.dart';
 import '/Page/pageNavigation.dart';
 import '/Page/reuseWidget.dart';
 import '/Page/View/ViewController.dart';
 import '/GlobalController.dart';
+// import 'package:swipe_to_action/swipe_to_action.dart';
 
 class ViewUI extends GetView<ViewController> {
   final tagI = GlobalController.i.sessionTag.last;
@@ -60,8 +62,8 @@ class ViewUI extends GetView<ViewController> {
             return controller.htmlData.length != 0
                 ? loadSuccess()
                 : controller.data['loading'] == 'error'
-                ? loadFailed()
-                : loading();
+                    ? loadFailed()
+                    : loading();
           },
         ),
       ),
@@ -105,7 +107,7 @@ class ViewUI extends GetView<ViewController> {
               break;
           }
         },
-                () => controller.reply('', false),
+            () => controller.reply('', false),
             GetBuilder<ViewController>(
               tag: tag,
               builder: (controller) {
@@ -132,29 +134,59 @@ class ViewUI extends GetView<ViewController> {
   }
 
   Widget postContent() {
-    return CupertinoScrollbar(
-        controller: controller.listViewScrollController,
-        child: GetBuilder<ViewController>(
-          tag: tag,
-          builder: (controller) {
-            return ListView.builder(
-              cacheExtent: 999999999,
-              physics: BouncingScrollPhysics(),
-              clipBehavior: Clip.none,
-              controller: controller.listViewScrollController,
-              itemCount: controller.htmlData.length + 1,
-              itemBuilder: (context, index) {
-                return controller.htmlData.length == index
-                    ? GetBuilder<ViewController>(
-                    id: 'lastItemList',
-                    tag: tag,
-                    builder: (controller) {
-                      return loadingBottom(controller.data['isScroll'], 70);
-                    })
-                    : viewContent(index, controller);
-              },
-            );
-          },
-        ));
+    return Swipeable(
+      background: Container(
+        alignment: Alignment.centerLeft,
+        child: Icon(Icons.keyboard_arrow_left),
+      ),
+      secondaryBackground: Container(
+        alignment: Alignment.centerRight,
+        child: Icon(Icons.keyboard_arrow_right),
+      ),
+      key: ValueKey(''),
+      child: CupertinoScrollbar(
+          controller: controller.listViewScrollController,
+          child: GetBuilder<ViewController>(
+            tag: tag,
+            builder: (controller) {
+              return ListView.builder(
+                cacheExtent: 999999999,
+                physics: BouncingScrollPhysics(),
+                clipBehavior: Clip.none,
+                controller: controller.listViewScrollController,
+                itemCount: controller.htmlData.length + 1,
+                itemBuilder: (context, index) {
+                  return controller.htmlData.length == index
+                      ? GetBuilder<ViewController>(
+                          id: 'lastItemList',
+                          tag: tag,
+                          builder: (controller) {
+                            return loadingBottom(controller.data['isScroll'], 70);
+                          })
+                      : viewContent(index, controller);
+                },
+              );
+            },
+          )),
+      onSwipe: (SwipeDirection direction, double dragExtend) {
+        if (controller.data['isScroll'] != 'Release'){
+          controller.data['isScroll'] = 'Release';
+          if (direction == SwipeDirection.startToEnd) {
+            if (controller.data['currentPage'] - 1 == 0) {
+              HapticFeedback.lightImpact();
+              print('sacascsa');
+            } else {
+              controller.setPageOnClick(controller.data['currentPage'] - 1);
+            }
+          } else {
+            if (controller.data['currentPage'] + 1 > controller.data['totalPage']) {
+              HapticFeedback.lightImpact();
+            } else {
+              controller.setPageOnClick(controller.data['currentPage'] + 1);
+            }
+          }
+        }
+      },
+    );
   }
 }
