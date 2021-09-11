@@ -6,7 +6,7 @@ class Language extends Translations{
   Map<String, Map<String, String>> get keys => {
 
     'en_US' : {
-      'lang'    : 'Language :',
+      'lang'    : 'Language',
       'setPage' : 'Settings',
       'blockQuote'   : 'Quote [CLick to expand]: ',
       'notification'    : 'Alerts',
@@ -27,7 +27,7 @@ class Language extends Translations{
       'login'   : 'Log in',
       'forgotPass' : 'Forgot your password?',
       'error'   : 'Error',
-      'fontSizeView' : 'Font size :',
+      'fontSizeView' : 'Font size',
       'unReact' : 'UnReact',
       'react' : 'React ?',
       'sweet' : 'Sweet',
@@ -38,7 +38,7 @@ class Language extends Translations{
       'editPost' : 'Edit Post',
       'newConversation' : 'Start conversation',
       'newThread' : 'Post thread',
-      'scrollToMyRepAfterPost' : 'Enable Scroll To My Post:',
+      'scrollToMyRepAfterPost' : 'Enable Scroll To My Post',
       'showImage' : 'Display Image',
       'appSignature' : 'App Signature',
       'defaultsPage' : 'Default Forum',
@@ -53,10 +53,11 @@ class Language extends Translations{
       'input' : 'Input',
       'please' : 'Please',
       'title' : 'Title',
-      'recipients' : 'Recipients'
+      'recipients' : 'Recipients',
+      'viewSwipeLeftRight' : 'Swipe Left/Right to Next',
     },
     'vi_VN' : {
-      'lang'    : 'Ngôn ngữ :',
+      'lang'    : 'Ngôn ngữ',
       'setPage' : 'Cài Đặt',
       'blockQuote'   : 'Quote [Bấm để xem]: ',
       'notification'    : 'Thông Báo',
@@ -77,7 +78,7 @@ class Language extends Translations{
       'login'   : 'Đăng Nhập',
       'forgotPass' : 'Quên mật khẩu?',
       'error'   : 'Thông Báo Lỗi',
-      'fontSizeView' : 'Kích Cỡ Chữ :',
+      'fontSizeView' : 'Kích Cỡ Chữ',
       'unReact' : 'Bỏ React',
       'react' : 'Ưng ?',
       'sweet' : 'Ưng',
@@ -88,8 +89,8 @@ class Language extends Translations{
       'editPost' : 'Chỉnh sửa Post',
       'newConversation' : 'Start conversation',
       'newThread' : 'Post thread',
-      'scrollToMyRepAfterPost' : 'Tự Động Đến Trang Vừa Trả Lời :',
-      'showImage' : 'Hiển Thị Hình Ảnh:',
+      'scrollToMyRepAfterPost' : 'Tự Động Đến Trang Vừa Trả Lời',
+      'showImage' : 'Hiển Thị Hình Ảnh',
       'appSignature' : 'Chữ Ký Ứng Dụng',
       'defaultsPage' : 'Mặc Định Forum',
       'search' : 'Tìm Kiếm',
@@ -103,7 +104,8 @@ class Language extends Translations{
       'input' : 'Nhập',
       'title' : 'Tiêu Đề',
       'please' : 'Vui Lòng',
-      'recipients' : 'Người Nhận'
+      'recipients' : 'Người Nhận',
+      'viewSwipeLeftRight' : 'Vuốt Trái/Phải',
     }
   };
 

@@ -18,9 +18,12 @@ class Themes {
       titleSpacing: -2,
       brightness: Brightness.light,
       color: Colors.white,
-      backwardsCompatibility: false,
       titleTextStyle: TextStyle(color: Colors.black, fontSize: 16),
-      systemOverlayStyle: SystemUiOverlayStyle(statusBarColor: Colors.white, statusBarIconBrightness: Brightness.dark),
+      // systemOverlayStyle: SystemUiOverlayStyle(
+      //   statusBarColor: Colors.white,
+      //   statusBarIconBrightness: Brightness.dark,
+      //   statusBarBrightness: Brightness.light,
+      // ),
     ),
   );
 
@@ -36,14 +39,18 @@ class Themes {
       elevation: 0,
       iconTheme: IconThemeData(color: Colors.white),
       centerTitle: true,
-      brightness: Brightness.dark,
       color: Colors.black,
-      backwardsCompatibility: false,
       titleTextStyle: TextStyle(
         color: Colors.white,
         fontSize: 16,
       ),
-      systemOverlayStyle: SystemUiOverlayStyle(statusBarColor: Colors.black, statusBarIconBrightness: Brightness.light),
+      //systemOverlayStyle:
+          // SystemUiOverlayStyle(
+          //     statusBarBrightness: Brightness.dark,
+          //     statusBarColor: Colors.white,
+          //     statusBarIconBrightness: Brightness.dark,
+          //     systemNavigationBarIconBrightness: Brightness.light
+          // ),
     ),
   );
 }

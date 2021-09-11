@@ -384,7 +384,7 @@ class PostStatusController extends GetxController {
       radius: 6,
       title: 'Select prefix',
       content: Container(
-        height: (prefixList.length * 20) > Get.height ? (Get.height * 0.5) : (prefixList.length * 20),
+        height: (prefixList.length * 20) > Get.height.toInt() ? (Get.height * 0.5) : (prefixList.length * 20),
         width: Get.width,
         child: ListView.builder(
             itemCount: prefixList.length,

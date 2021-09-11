@@ -317,7 +317,11 @@ Widget reactionChild(Map reactionMap) {
                   Positioned(
                     right: 0,
                     bottom: 0,
-                    child: ExtendedImage.asset('assets/reaction/${reactionMap['rReactIcon']}.png', width: 23,height: 23,),
+                    child: ExtendedImage.asset(
+                      'assets/reaction/${reactionMap['rReactIcon']}.png',
+                      width: 23,
+                      height: 23,
+                    ),
                   )
                 ],
               ),
@@ -340,7 +344,7 @@ Widget reactionChild(Map reactionMap) {
           ],
         ),
       ),
-      onPressed: (){
+      onPressed: () {
         Get.toNamed(Routes.Profile, arguments: [reactionMap['rLink']], preventDuplicates: false);
       },
     ),
@@ -477,9 +481,9 @@ Widget dialogButtonYesNo(Function onDone) => Row(
 Widget viewContent(int index, ViewController controller) => Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        CupertinoButton(
+        InkWell(
+          child: Ink(
             color: Get.theme.shadowColor,
-            padding: EdgeInsets.zero,
             child: Stack(
               children: [
                 Row(
@@ -521,16 +525,26 @@ Widget viewContent(int index, ViewController controller) => Column(
                 ),
               ],
             ),
-            onPressed: () {
-              Get.bottomSheet(
-                  Card(
-                    color: Get.theme.canvasColor,
-                    child: controller.htmlData.elementAt(index)['userName'] == NaviDrawerController.i.data['nameUser']
-                        ? onTapMine(controller, index)
-                        : onTapUser(controller, index),
-                  ),
-                  ignoreSafeArea: false);
-            }),
+          ),
+          onTap: () => Get.bottomSheet(
+              Card(
+                color: Get.theme.canvasColor,
+                child: controller.htmlData.elementAt(index)['userName'] == NaviDrawerController.i.data['nameUser']
+                    ? onTapMine(controller, index)
+                    : onTapUser(controller, index),
+              ),
+              ignoreSafeArea: false),
+          onLongPress: () {
+
+          GlobalController.i.getHttp(true, {'cookie': '${GlobalController.i.xfCsrfPost}; xf_user=${GlobalController.i.xfUser}'},'${GlobalController.i.url+controller.htmlData.elementAt(index)['userLink']}?tooltip=true&_xfToken=${GlobalController.i.token}&_xfResponseType=json').then((value) {
+            if (value['status']== 'ok'){
+              //print(value['html']['content']);
+              GlobalController.i.performTooltipMember(value['html']['content']);
+            }
+          });
+
+          },
+        ),
         customHtml(controller.htmlData.elementAt(index)['postContent'], controller.imageList),
         Padding(
           padding: EdgeInsets.fromLTRB(5, 7, 5, 7),
@@ -735,31 +749,34 @@ Widget customHtml(String postContent, List imageList) {
           imageList.add(renderContext.tree.element!.attributes['data-src'].toString().length > 4
               ? renderContext.tree.element!.attributes['data-src'].toString()
               : renderContext.tree.element!.attributes['data-url'].toString().length > 4
-              ? renderContext.tree.element!.attributes['data-url'].toString()
-              : renderContext.tree.element!.attributes['src'].toString());
+                  ? renderContext.tree.element!.attributes['data-url'].toString()
+                  : renderContext.tree.element!.attributes['src'].toString());
 
-          return InkWell(child: Image(
-            image: NetworkImageWithRetry(renderContext.tree.element!.attributes['data-src'].toString().length > 4
-                ? renderContext.tree.element!.attributes['data-src'].toString()
-                : renderContext.tree.element!.attributes['data-url'].toString().length > 4
-                ? renderContext.tree.element!.attributes['data-url'].toString()
-                : renderContext.tree.element!.attributes['src'].toString(),),
-            // loadingBuilder: (context, child, loadingProgress){
-            //   return Center(
-            //     child: CircularProgressIndicator()
-            //   );
-            // } ,
-          ),onTap: (){
-            displayGallery(
-                imageList,
-                imageList.indexOf(renderContext.tree.element!.attributes['data-src'].toString().length > 4
+          return InkWell(
+            child: Image(
+              image: NetworkImageWithRetry(
+                renderContext.tree.element!.attributes['data-src'].toString().length > 4
                     ? renderContext.tree.element!.attributes['data-src'].toString()
                     : renderContext.tree.element!.attributes['data-url'].toString().length > 4
-                    ? renderContext.tree.element!.attributes['data-url'].toString()
-                    : renderContext.tree.element!.attributes['src'].toString()));
-          },);
-
-
+                        ? renderContext.tree.element!.attributes['data-url'].toString()
+                        : renderContext.tree.element!.attributes['src'].toString(),
+              ),
+              // loadingBuilder: (context, child, loadingProgress){
+              //   return Center(
+              //     child: CircularProgressIndicator()
+              //   );
+              // } ,
+            ),
+            onTap: () {
+              displayGallery(
+                  imageList,
+                  imageList.indexOf(renderContext.tree.element!.attributes['data-src'].toString().length > 4
+                      ? renderContext.tree.element!.attributes['data-src'].toString()
+                      : renderContext.tree.element!.attributes['data-url'].toString().length > 4
+                          ? renderContext.tree.element!.attributes['data-url'].toString()
+                          : renderContext.tree.element!.attributes['src'].toString()));
+            },
+          );
         } else {
           imageList.add(renderContext.tree.element!.attributes['data-src'].toString().length > 4
               ? renderContext.tree.element!.attributes['data-src'].toString()

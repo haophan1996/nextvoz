@@ -6,6 +6,7 @@ import '/Page/reuseWidget.dart';
 class SettingsController extends GetxController {
   RxDouble fontSizeView = 15.0.obs;
   RxBool switchValuePost = true.obs, switchImage = true.obs, switchSignature = true.obs, switchDefaultsPage = true.obs;
+  bool switchSwipeLeftRight = false;
   var langIndex ;
   getLang(){
     return GlobalController.i.userStorage.read('lang') ?? 1;
@@ -21,6 +22,7 @@ class SettingsController extends GetxController {
     switchImage.value = GlobalController.i.userStorage.read('showImage') ?? true;
     switchSignature.value = GlobalController.i.userStorage.read('signature') ?? true;
     switchDefaultsPage.value = GlobalController.i.userStorage.read('defaultsPage') ?? false;
+    switchSwipeLeftRight = GlobalController.i.userStorage.read('switchSwipeLeftRight') ?? false;
   }
 
   @override
@@ -40,6 +42,7 @@ class SettingsController extends GetxController {
     await GlobalController.i.userStorage.write('showImage', switchImage.value);
     await GlobalController.i.userStorage.write('defaultsPage', switchDefaultsPage.value);
     await GlobalController.i.userStorage.write('signature', switchSignature.value);
+    await GlobalController.i.userStorage.write('switchSwipeLeftRight', switchSwipeLeftRight);
     await GlobalController.i.userStorage.write('lang', langIndex).then((value) => Get.back());
   }
 

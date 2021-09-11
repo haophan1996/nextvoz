@@ -13,11 +13,11 @@ class SettingsUI extends GetView<SettingsController> {
       appBar: preferredSize(context, 'setPage'.tr, ''),
       body: Container(
         color: Theme.of(context).backgroundColor,
-        padding: EdgeInsets.only(top: 20, left: 50, right: 50),
+        padding: EdgeInsets.only(top: 20, left: 10, right: 10),
         child: SafeArea(
           child: Column(
             children: [
-              Row(
+              myContainer(Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
@@ -36,20 +36,19 @@ class SettingsUI extends GetView<SettingsController> {
                     boxAlignment: AlignmentDirectional.bottomEnd,
                   ),
                 ],
-              ),
-              Obx(() => Row(
+              )),
+              Obx(() => myContainer(Row(
                     children: [
                       RichText(
                         text: TextSpan(children: [
+                          TextSpan(text: 'fontSizeView'.tr, style: TextStyle(color: Get.theme.primaryColor, fontWeight: FontWeight.bold)),
                           TextSpan(
-                              text: 'fontSizeView'.tr,style: TextStyle(color: Get.theme.primaryColor, fontWeight: FontWeight.bold)
-                          ),
-                          TextSpan(
-                              text: '\n${controller.fontSizeView.value.toInt()}'.tr,style: TextStyle(color: Colors.grey, )
-                          )
+                              text: '\n${controller.fontSizeView.value.toInt()}'.tr,
+                              style: TextStyle(
+                                color: Colors.grey,
+                              ))
                         ]),
                       ),
-
                       Expanded(
                         child: Slider(
                             divisions: 30,
@@ -62,8 +61,8 @@ class SettingsUI extends GetView<SettingsController> {
                             }),
                       )
                     ],
-                  )), //fontsize
-              Row(
+                  ))), //fontsize
+              myContainer(Row(
                 children: [
                   Text(
                     'scrollToMyRepAfterPost'.tr,
@@ -79,8 +78,8 @@ class SettingsUI extends GetView<SettingsController> {
                     ),
                   )
                 ],
-              ), //scroll post
-              Row(
+              )), //scroll post
+              myContainer(Row(
                 children: [
                   Text(
                     'showImage'.tr,
@@ -96,8 +95,8 @@ class SettingsUI extends GetView<SettingsController> {
                     ),
                   )
                 ],
-              ), //show images
-              Row(
+              )), //show images
+              myContainer(Row(
                 children: [
                   Text(
                     'appSignature'.tr,
@@ -113,8 +112,8 @@ class SettingsUI extends GetView<SettingsController> {
                     ),
                   )
                 ],
-              ), //app signature
-              Row(
+              )), //app signature
+              myContainer(Row(
                 children: [
                   RichText(
                     text: TextSpan(children: [
@@ -136,8 +135,24 @@ class SettingsUI extends GetView<SettingsController> {
                     ),
                   )
                 ],
-              ), //app signature
-
+              )), //app signature
+              myContainer(Row(
+                children: [
+                  Text(
+                    'viewSwipeLeftRight'.tr,
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  Spacer(),
+                  GetBuilder<SettingsController>(builder: (controller) {
+                    return CupertinoSwitch(
+                        value: controller.switchSwipeLeftRight,
+                        onChanged: (value) {
+                          controller.switchSwipeLeftRight = value;
+                          controller.update();
+                        });
+                  })
+                ],
+              )), //app signature
               CupertinoButton(
                   child: Text('Save'),
                   onPressed: () {
@@ -146,6 +161,17 @@ class SettingsUI extends GetView<SettingsController> {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget myContainer(Widget child) {
+    return Padding(
+      padding: EdgeInsets.only(bottom: 5),
+      child: Container(
+        child: child,
+        decoration: BoxDecoration(color: Get.theme.shadowColor, borderRadius: BorderRadius.all(Radius.circular(6))),
+        padding: EdgeInsets.all(5),
       ),
     );
   }

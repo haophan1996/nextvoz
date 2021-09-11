@@ -305,4 +305,14 @@ class GlobalController extends GetxController {
       });
     return reactionList;
   }
+
+
+  performTooltipMember(String value){
+    dom.Document document = parser.parse(value);
+
+   // print(document.outerHtml);
+    print(document.getElementsByClassName('memberTooltip-blurb')[0].text.trim());
+    print(document.getElementsByTagName('time')[0].innerHtml);
+    //print(document.getElementsByClassName('memberTooltip-blurb')[2].ge);
+  }
 }

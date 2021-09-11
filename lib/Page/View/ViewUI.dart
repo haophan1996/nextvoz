@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:the_next_voz/Page/View/swipe.dart';
+import 'package:the_next_voz/Routes/pages.dart';
 import '/Page/NavigationDrawer/NaviDrawerUI.dart';
 import '/Page/pageNavigation.dart';
 import '/Page/reuseWidget.dart';
@@ -35,7 +36,8 @@ class ViewUI extends GetView<ViewController> {
               controller.update(['lastItemList']);
             } else if (((notification).metrics.pixels > (notification).metrics.maxScrollExtent + GlobalController.i.overScroll) &&
                 (notification).dragDetails == null &&
-                controller.data['isScroll'] != 'Release') {
+                controller.data['isScroll'] != 'Release' &&
+                Get.currentRoute == Routes.View) {
               ///User overScroll and release finger
               controller.data['isScroll'] = 'Release';
               if (controller.data['currentPage'] + 1 > controller.data['totalPage']) {
@@ -85,7 +87,7 @@ class ViewUI extends GetView<ViewController> {
 
   Widget loadSuccess() {
     return Stack(children: [
-      postContent(),
+      GlobalController.i.userStorage.read('switchSwipeLeftRight') ?? false == true ? enableSwipe() : postContent(),
       loading(),
       Align(
         alignment: Alignment.bottomCenter,
@@ -134,54 +136,67 @@ class ViewUI extends GetView<ViewController> {
   }
 
   Widget postContent() {
+    return GetBuilder<ViewController>(
+      tag: tag,
+      builder: (controller) {
+        return ListView.builder(
+          cacheExtent: 999999999,
+          physics: BouncingScrollPhysics(),
+          clipBehavior: Clip.none,
+          controller: controller.listViewScrollController,
+          itemCount: controller.htmlData.length + 1,
+          itemBuilder: (context, index) {
+            return controller.htmlData.length == index
+                ? GetBuilder<ViewController>(
+                    id: 'lastItemList',
+                    tag: tag,
+                    builder: (controller) {
+                      return loadingBottom(controller.data['isScroll'], 70);
+                    })
+                : viewContent(index, controller);
+          },
+        );
+      },
+    );
+  }
+
+  Widget enableSwipe() {
     return Swipeable(
       background: Container(
         alignment: Alignment.centerLeft,
-        child: Icon(Icons.keyboard_arrow_left),
+        child: Row(
+          children: [
+            Icon(Icons.keyboard_arrow_left),
+            GetBuilder<ViewController>(tag: tag, builder: (controller) => Text((controller.data['currentPage'] - 1).toString()))
+          ],
+        ),
       ),
       secondaryBackground: Container(
         alignment: Alignment.centerRight,
-        child: Icon(Icons.keyboard_arrow_right),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            GetBuilder<ViewController>(tag: tag, builder: (controller) => Text((controller.data['currentPage'] + 1).toString())),
+            Icon(Icons.keyboard_arrow_right)
+          ],
+        ),
       ),
       key: ValueKey(''),
-      child: CupertinoScrollbar(
-          controller: controller.listViewScrollController,
-          child: GetBuilder<ViewController>(
-            tag: tag,
-            builder: (controller) {
-              return ListView.builder(
-                cacheExtent: 999999999,
-                physics: BouncingScrollPhysics(),
-                clipBehavior: Clip.none,
-                controller: controller.listViewScrollController,
-                itemCount: controller.htmlData.length + 1,
-                itemBuilder: (context, index) {
-                  return controller.htmlData.length == index
-                      ? GetBuilder<ViewController>(
-                          id: 'lastItemList',
-                          tag: tag,
-                          builder: (controller) {
-                            return loadingBottom(controller.data['isScroll'], 70);
-                          })
-                      : viewContent(index, controller);
-                },
-              );
-            },
-          )),
+      child: postContent(),
       onSwipe: (SwipeDirection direction, double dragExtend) {
-        if (controller.data['isScroll'] != 'Release'){
-          controller.data['isScroll'] = 'Release';
+        if (controller.data['isScroll'] != 'Release') {
           if (direction == SwipeDirection.startToEnd) {
             if (controller.data['currentPage'] - 1 == 0) {
               HapticFeedback.lightImpact();
-              print('sacascsa');
             } else {
+              controller.data['isScroll'] = 'Release';
               controller.setPageOnClick(controller.data['currentPage'] - 1);
             }
           } else {
             if (controller.data['currentPage'] + 1 > controller.data['totalPage']) {
               HapticFeedback.lightImpact();
             } else {
+              controller.data['isScroll'] = 'Release';
               controller.setPageOnClick(controller.data['currentPage'] + 1);
             }
           }

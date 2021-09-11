@@ -114,7 +114,7 @@ class AppPage {
         page: () => SettingsUI(),
         popGesture: true,
         binding: SettingsBinding(),
-        transition: Transition.topLevel,
+        transition: Transition.upToDown,
         transitionDuration: Duration(milliseconds: 200),
         maintainState: false),
     GetPage(

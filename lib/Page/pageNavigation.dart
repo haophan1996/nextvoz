@@ -84,38 +84,38 @@ Widget pageNavigation(Function(String index) gotoPage, Function reply, Widget ch
 
 Widget controlCenter() {
   return SafeArea(
-      child: Container(
-    decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(6)), color: Colors.grey.shade700),
-    padding: EdgeInsets.only(left: 5, right: 5, top: 5),
-    child: SafeArea(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Padding(
-            padding: EdgeInsets.only(bottom: 5),
-            child: Text(
-              'controlCenter'.tr,
-              style: TextStyle(fontSize: Get.theme.textTheme.headline5!.fontSize, color: Colors.white, fontWeight: FontWeight.bold),
-            ),
-          ),
-          GetBuilder<GlobalController>(
-              id: 'Notification',
-              builder: (controller) {
-                return controller.isLogged == false ? login() : logged();
-              }),
-          whatNew(),
-          GlobalController.i.isLogged == true
-              ? Padding(
-                  padding: EdgeInsets.only(top: 5, bottom: 5),
-                  child: search(),
-                )
-              : Padding(
-                  padding: EdgeInsets.only(top: 5),
+    child: Container(
+        decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(6)), color: Colors.grey.shade700),
+        padding: EdgeInsets.only(left: 5, right: 5, top: 5),
+        child: SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Padding(
+                padding: EdgeInsets.only(bottom: 5),
+                child: Text(
+                  'controlCenter'.tr,
+                  style: TextStyle(fontSize: Get.theme.textTheme.headline5!.fontSize, color: Colors.white, fontWeight: FontWeight.bold),
                 ),
-        ],
-      ),
-    ),
-  ));
+              ),
+              GetBuilder<GlobalController>(
+                  id: 'Notification',
+                  builder: (controller) {
+                    return controller.isLogged == false ? login() : logged();
+                  }),
+              whatNew(),
+              GlobalController.i.isLogged == true
+                  ? Padding(
+                      padding: EdgeInsets.only(top: 5, bottom: 5),
+                      child: search(),
+                    )
+                  : Padding(
+                      padding: EdgeInsets.only(top: 5),
+                    ),
+            ],
+          ),
+        )),
+  );
 }
 
 Widget whatNew() => Container(
