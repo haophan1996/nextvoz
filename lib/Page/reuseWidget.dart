@@ -481,50 +481,47 @@ Widget dialogButtonYesNo(Function onDone) => Row(
 Widget viewContent(int index, ViewController controller) => Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        InkWell(
-          child: Ink(
-            color: Get.theme.shadowColor,
-            child: Stack(
-              children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Padding(
-                      padding: EdgeInsets.only(top: 5, left: 5, bottom: 5),
-                      child: displayAvatar(
-                          40,
-                          controller.htmlData.elementAt(index)["avatarColor1"],
-                          controller.htmlData.elementAt(index)["avatarColor2"],
-                          controller.htmlData.elementAt(index)["userName"],
-                          controller.htmlData.elementAt(index)["userAvatar"]),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(top: 10, left: 10),
-                      child: RichText(
-                        text: TextSpan(children: <TextSpan>[
-                          TextSpan(
-                              text: controller.htmlData.elementAt(index)['userName'] + "\n",
-                              style: TextStyle(
-                                  color: controller.htmlData.elementAt(index)['newPost'] == true ? Color(0xFFFD6E00) : Colors.blue,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16)),
-                          TextSpan(
-                              text: controller.htmlData.elementAt(index)['userTitle'], style: TextStyle(color: Get.theme.primaryColor, fontSize: 13)),
-                        ]),
-                      ),
-                    ),
-                  ],
-                ),
-                Padding(
-                  padding: EdgeInsets.only(top: 10, right: 10),
-                  child: Align(
-                    alignment: Alignment.centerRight,
-                    child: Text('${controller.htmlData.elementAt(index)['userPostDate']}\n ${controller.htmlData.elementAt(index)['orderPost']}',
-                        textAlign: TextAlign.right, style: TextStyle(color: Get.theme.primaryColor, fontSize: 13)),
+        Ink(child: InkWell(
+          child: Stack(
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Padding(
+                    padding: EdgeInsets.only(top: 5, left: 5, bottom: 5),
+                    child: displayAvatar(
+                        40,
+                        controller.htmlData.elementAt(index)["avatarColor1"],
+                        controller.htmlData.elementAt(index)["avatarColor2"],
+                        controller.htmlData.elementAt(index)["userName"],
+                        controller.htmlData.elementAt(index)["userAvatar"]),
                   ),
+                  Padding(
+                    padding: EdgeInsets.only(top: 5, left: 10, bottom: 5),
+                    child: RichText(
+                      text: TextSpan(children: <TextSpan>[
+                        TextSpan(
+                            text: controller.htmlData.elementAt(index)['userName'] + "\n",
+                            style: TextStyle(
+                                color: controller.htmlData.elementAt(index)['newPost'] == true ? Color(0xFFFD6E00) : Colors.blue,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16)),
+                        TextSpan(
+                            text: controller.htmlData.elementAt(index)['userTitle'], style: TextStyle(color: Get.theme.primaryColor, fontSize: 13)),
+                      ]),
+                    ),
+                  ),
+                ],
+              ),
+              Padding(
+                padding: EdgeInsets.only(top: 10, right: 10),
+                child: Align(
+                  alignment: Alignment.centerRight,
+                  child: Text('${controller.htmlData.elementAt(index)['userPostDate']}\n ${controller.htmlData.elementAt(index)['orderPost']}',
+                      textAlign: TextAlign.right, style: TextStyle(color: Get.theme.primaryColor, fontSize: 13)),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
           onTap: () => Get.bottomSheet(
               Card(
@@ -535,16 +532,75 @@ Widget viewContent(int index, ViewController controller) => Column(
               ),
               ignoreSafeArea: false),
           onLongPress: () {
-
-          GlobalController.i.getHttp(true, {'cookie': '${GlobalController.i.xfCsrfPost}; xf_user=${GlobalController.i.xfUser}'},'${GlobalController.i.url+controller.htmlData.elementAt(index)['userLink']}?tooltip=true&_xfToken=${GlobalController.i.token}&_xfResponseType=json').then((value) {
-            if (value['status']== 'ok'){
-              //print(value['html']['content']);
-              GlobalController.i.performTooltipMember(value['html']['content']);
-            }
-          });
-
+            GlobalController.i
+                .getHttp(true, {'cookie': '${GlobalController.i.xfCsrfPost}; xf_user=${GlobalController.i.xfUser}'},
+                '${GlobalController.i.url + controller.htmlData.elementAt(index)['userLink']}?tooltip=true&_xfToken=${GlobalController.i.token}&_xfResponseType=json')
+                .then((value) {
+              if (value['status'] == 'ok') {
+                controller.data['memberTooltip'] = GlobalController.i.performTooltipMember(value['html']['content']);
+                Get.defaultDialog(
+                  radius: 6,
+                  contentPadding: EdgeInsets.zero,
+                  content: Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.only(right: 5),
+                            child: displayAvatar(
+                                70,
+                                controller.htmlData.elementAt(index)["avatarColor1"],
+                                controller.htmlData.elementAt(index)["avatarColor2"],
+                                controller.htmlData.elementAt(index)["userName"],
+                                controller.htmlData.elementAt(index)["userAvatar"]),
+                          ),
+                          Expanded(
+                              child: RichText(
+                                  text: TextSpan(children: [
+                                    TextSpan(
+                                        text: controller.data['memberTooltip']['username'],
+                                        style: TextStyle(fontSize: Get.textTheme.headline6!.fontSize, color: Colors.blue),
+                                        recognizer: TapGestureRecognizer()
+                                          ..onTap = () {
+                                            Get.toNamed(Routes.Profile,
+                                                arguments: [controller.htmlData.elementAt(index)['userLink']], preventDuplicates: false);
+                                          }),
+                                    TextSpan(
+                                        text: controller.data['memberTooltip']['userTitle'], style: TextStyle(fontSize: Get.textTheme.bodyText1!.fontSize)),
+                                    TextSpan(text: controller.data['memberTooltip']['joined'], style: TextStyle(fontSize: Get.textTheme.bodyText1!.fontSize))
+                                  ])))
+                        ],
+                      ),
+                      RichText(
+                        text: TextSpan(children: [
+                          TextSpan(text: 'Messages: ', style: TextStyle(color: Colors.grey)),
+                          TextSpan(text: controller.data['memberTooltip']['message']),
+                          TextSpan(text: 'Reaction score: ', style: TextStyle(color: Colors.grey)),
+                          TextSpan(text: controller.data['memberTooltip']['reaction']),
+                          TextSpan(text: 'Points: ', style: TextStyle(color: Colors.grey)),
+                          TextSpan(text: controller.data['memberTooltip']['point']),
+                        ]),
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          customCupertinoButton(Alignment.center, EdgeInsets.only(left: 20, right: 20), Text('Follow'), () {}),
+                          customCupertinoButton(Alignment.center, EdgeInsets.only(left: 20, right: 20), Text('Ignore'), () {}),
+                        ],
+                      )
+                    ],
+                  ),
+                  title: 'Member profile',
+                );
+                print(controller.data['memberTooltip']['username']);
+              }
+            });
           },
-        ),
+        ),color: Get.theme.shadowColor,),
         customHtml(controller.htmlData.elementAt(index)['postContent'], controller.imageList),
         Padding(
           padding: EdgeInsets.fromLTRB(5, 7, 5, 7),
@@ -794,7 +850,7 @@ Widget customHtml(String postContent, List imageList) {
                         : renderContext.tree.element!.attributes['src'].toString(),
                 clearMemoryCacheWhenDispose: true,
                 cache: true,
-                scale: 2,
+                scale: 3,
                 constraints: BoxConstraints(maxWidth: Get.width, maxHeight: Get.height),
                 clearMemoryCacheIfFailed: true,
                 enableMemoryCache: false,

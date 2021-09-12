@@ -16,14 +16,16 @@ class Themes {
       iconTheme: IconThemeData(color: Colors.black),
       centerTitle: true,
       titleSpacing: -2,
-      brightness: Brightness.light,
       color: Colors.white,
       titleTextStyle: TextStyle(color: Colors.black, fontSize: 16),
-      // systemOverlayStyle: SystemUiOverlayStyle(
-      //   statusBarColor: Colors.white,
-      //   statusBarIconBrightness: Brightness.dark,
-      //   statusBarBrightness: Brightness.light,
-      // ),
+      systemOverlayStyle: SystemUiOverlayStyle(
+        statusBarColor: Colors.white,
+        statusBarIconBrightness: Brightness.light,
+        statusBarBrightness: Brightness.light,
+        systemNavigationBarColor: Colors.white,
+        systemNavigationBarIconBrightness: Brightness.light,
+        systemNavigationBarDividerColor: Colors.white
+      ),
     ),
   );
 
