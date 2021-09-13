@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:math';
 import 'package:get/get.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -238,7 +237,7 @@ Widget insertImage(BuildContext context, PostStatusController controller) {
             child: Text('Upload Image'),
           ),
           onPressed: () async {
-            final pickerFile = await controller.picker.pickImage(source: ImageSource.gallery, maxHeight: 1200, maxWidth: 1200, imageQuality: 25);
+            final pickerFile = await controller.picker.pickImage(source: ImageSource.gallery, maxHeight: 1200, maxWidth: 1200, imageQuality: 50);
 
             if (pickerFile != null) {
               controller.image = File(pickerFile.path);
