@@ -19,12 +19,12 @@ class Themes {
       color: Colors.white,
       titleTextStyle: TextStyle(color: Colors.black, fontSize: 16),
       systemOverlayStyle: SystemUiOverlayStyle(
-        statusBarColor: Colors.white,
-        statusBarIconBrightness: Brightness.light,
-        statusBarBrightness: Brightness.light,
-        systemNavigationBarColor: Colors.white,
-        systemNavigationBarIconBrightness: Brightness.light,
-        systemNavigationBarDividerColor: Colors.white
+          statusBarColor: Colors.white,
+          systemNavigationBarColor: Colors.blue,
+          systemNavigationBarDividerColor: Colors.blue,
+          statusBarIconBrightness: Brightness.dark,
+          statusBarBrightness: Brightness.light,
+          systemNavigationBarIconBrightness: Brightness.light,
       ),
     ),
   );
@@ -46,13 +46,14 @@ class Themes {
         color: Colors.white,
         fontSize: 16,
       ),
-      //systemOverlayStyle:
-          // SystemUiOverlayStyle(
-          //     statusBarBrightness: Brightness.dark,
-          //     statusBarColor: Colors.white,
-          //     statusBarIconBrightness: Brightness.dark,
-          //     systemNavigationBarIconBrightness: Brightness.light
-          // ),
+      systemOverlayStyle: SystemUiOverlayStyle(
+        statusBarColor: Colors.black,
+        systemNavigationBarColor: Colors.white,
+        systemNavigationBarDividerColor: Colors.white,
+        statusBarIconBrightness: Brightness.light,
+        statusBarBrightness: Brightness.dark,
+        systemNavigationBarIconBrightness: Brightness.light,
+        systemStatusBarContrastEnforced: false),
     ),
   );
 }

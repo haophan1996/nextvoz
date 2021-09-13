@@ -12,41 +12,39 @@ class NaviDrawerUI extends GetView<NaviDrawerController> {
   Widget build(BuildContext context) {
     return Drawer(
       child: Container(
-        color: Theme
-            .of(context)
-            .backgroundColor,
+        color: Theme.of(context).backgroundColor,
         child: SafeArea(
           child: Column(
             children: [
               Text(
-                'shortcuts',
-                style: TextStyle(color: Theme
-                    .of(context)
-                    .primaryColor),
+                'shortcuts'.tr,
+                style: TextStyle(color: Theme.of(context).primaryColor),
               ),
               Expanded(
                 child: GetBuilder<NaviDrawerController>(
                   builder: (controller) {
                     return controller.shortcuts.length == 0
-                        ? Container()
+                        ? Center(
+                      child: Text('shortcutsHelper'.tr),
+                    )
                         : ListView.builder(
-                        itemCount: controller.shortcuts.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          return ListTile(
-                            title: customTitle(FontWeight.normal, Get.theme.primaryColor, 1, controller.shortcuts.elementAt(index)['typeTitle'],
-                                controller.shortcuts.elementAt(index)['title']),
-                            onTap: () {
-                              controller.navigateToThread(controller.shortcuts.elementAt(index)['title'],
-                                  controller.shortcuts.elementAt(index)['link'], controller.shortcuts.elementAt(index)['typeTitle']);
-                            },
-                            onLongPress: () async {
-                              controller.shortcuts.removeAt(index);
-                              controller.update();
-                              await GlobalController.i.userStorage.remove('shortcut');
-                              await GlobalController.i.userStorage.write('shortcut', controller.shortcuts);
-                            },
-                          );
-                        });
+                            itemCount: controller.shortcuts.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              return ListTile(
+                                title: customTitle(FontWeight.normal, Get.theme.primaryColor, 1, controller.shortcuts.elementAt(index)['typeTitle'],
+                                    controller.shortcuts.elementAt(index)['title']),
+                                onTap: () {
+                                  controller.navigateToThread(controller.shortcuts.elementAt(index)['title'],
+                                      controller.shortcuts.elementAt(index)['link'], controller.shortcuts.elementAt(index)['typeTitle']);
+                                },
+                                onLongPress: () async {
+                                  controller.shortcuts.removeAt(index);
+                                  controller.update();
+                                  await GlobalController.i.userStorage.remove('shortcut');
+                                  await GlobalController.i.userStorage.write('shortcut', controller.shortcuts);
+                                },
+                              );
+                            });
                   },
                 ),
               ),
@@ -102,6 +100,8 @@ Widget logged() {
                   color: Get.theme.primaryColor,
                 ),
                 onPressed: () async {
+                  if (Get.isBottomSheetOpen == true) Get.back();
+                  Get.toNamed(Routes.UserFollIgr, arguments: ['follow'], preventDuplicates: false);
                 },
               ), //follow
               CupertinoButton(
@@ -111,6 +111,8 @@ Widget logged() {
                   color: Get.theme.primaryColor,
                 ),
                 onPressed: () async {
+                  if (Get.isBottomSheetOpen == true) Get.back();
+                  Get.toNamed(Routes.UserFollIgr, arguments: ['ignore'], preventDuplicates: false);
                 },
               ), //ignore
               CupertinoButton(
@@ -127,16 +129,15 @@ Widget logged() {
               ), //Refresh user data
               //Spacer(),
               CupertinoButton(
-                padding: EdgeInsets.only(right: 10, top: 10),
-                child: Icon(
-                  Icons.logout,
-                  color: Get.theme.primaryColor,
-                ),
+                  padding: EdgeInsets.only(right: 10, top: 10),
+                  child: Icon(
+                    Icons.logout,
+                    color: Get.theme.primaryColor,
+                  ),
                   onPressed: () async {
                     if (Get.isBottomSheetOpen == true) Get.back();
                     await NaviDrawerController.i.logout();
-                  }
-              ), //logout
+                  }), //logout
             ],
           )
         ],
@@ -163,10 +164,12 @@ Widget login() {
                   },
                 ),
               ),
-              CupertinoButton(child: Icon(Icons.settings), onPressed: () {
-                if (Get.isBottomSheetOpen == true) Get.back();
-                NaviDrawerController.i.navigateToSetting();
-              })
+              CupertinoButton(
+                  child: Icon(Icons.settings),
+                  onPressed: () {
+                    if (Get.isBottomSheetOpen == true) Get.back();
+                    NaviDrawerController.i.navigateToSetting();
+                  })
             ],
           ),
           Text(

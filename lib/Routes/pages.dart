@@ -1,4 +1,6 @@
 import 'package:the_next_voz/Page/PostStatus/Create/CreatePostUI.dart';
+import 'package:the_next_voz/Page/Profile/UserFollIgr/UserFollIgrBindings.dart';
+import 'package:the_next_voz/Page/Profile/UserFollIgr/UserFollIgrUI.dart';
 import 'package:the_next_voz/Page/TermPolicy/TermBindings.dart';
 import 'package:the_next_voz/Page/TermPolicy/TermUI.dart';
 import '/Page/Profile/AlertPlus/AlertPlusBindings.dart';
@@ -41,6 +43,7 @@ class AppPage {
         page: () => HomePageUI(),
         // transition: Transition.topLevel,
         // transitionDuration: Duration(milliseconds: 200),
+        fullscreenDialog: true,
         popGesture: true,
         binding: HomeBinding(),
         maintainState: false),
@@ -148,8 +151,6 @@ class AppPage {
       name: Routes.AlertPlus,
       page: () => AlertPlusUI(),
       binding: AlertPlusBindings(),
-      transition: Transition.topLevel,
-      transitionDuration: Duration(milliseconds: 200),
       gestureWidth: (context) => context.width,
       popGesture: true,
     ),
@@ -157,9 +158,13 @@ class AppPage {
       name: Routes.ProfilePost,
       page: () => ProfilePostUI(),
       binding: ProfilePostBindings(),
-      transition: Transition.topLevel,
-      transitionDuration: Duration(milliseconds: 200),
-      //gestureWidth: (context) => context.width,
+      popGesture: true,
+    ),
+    GetPage(
+      name: Routes.UserFollIgr,
+      page: () => UserFollIgrUI(),
+      binding: UserFollIgrBindings(),
+      gestureWidth: (context) => context.width,
       popGesture: true,
     ),
   ];

@@ -70,6 +70,7 @@ class ViewController extends GetxController {
         : await loadInboxView(data['fullUrl'] + GlobalController.i.pageLink + toPage.toString());
 
     await updateLastItemScroll();
+    if (isEdit == false) listViewScrollController.jumpTo(-10.0);
   }
 
   updateLastItemScroll() async {
@@ -175,19 +176,21 @@ class ViewController extends GetxController {
       } else
         GlobalController.i.controlNotification(0, 0, 'false');
 
-      value.getElementsByClassName("block block--messages").forEach((element) {
-        var lastP = element.getElementsByClassName("pageNavSimple");
+      value.getElementsByClassName("block block--messages").forEach((e) {
+        var lastP = e.getElementsByClassName("pageNavSimple");
         if (lastP.length == 0) {
           data['currentPage'] = 1;
           data['totalPage'] = 1;
         } else {
-          var naviPage = element.getElementsByClassName("pageNavSimple-el pageNavSimple-el--current").first.innerHtml.trim();
+          var naviPage = e.getElementsByClassName("pageNavSimple-el pageNavSimple-el--current").first.innerHtml.trim();
           data['currentPage'] = int.parse(naviPage.replaceAll(RegExp(r'[^0-9]\S*'), ""));
           data['totalPage'] = int.parse(naviPage.replaceAll(RegExp(r'\S*[^0-9]'), ""));
         }
 
         //Get post
-        element.getElementsByClassName("message message--post js-post js-inlineModContainer").forEach((element) {
+        e.getElementsByClassName("message message--post js-post js-inlineModContainer").forEach((element) {
+          if (element.attributes['class']!.contains('is-ignored ')) return;
+
           data['_postContent'] = element.getElementsByClassName("message-body js-selectToQuote")[0].outerHtml; //.replaceAll('color: #000000', '');
 
           if (element.getElementsByClassName('message-lastEdit').length > 0) {
@@ -271,7 +274,6 @@ class ViewController extends GetxController {
       if (Get.isDialogOpen == true || data['isScroll'] == 'Release' || isEdit == true) {
         if (Get.isDialogOpen == true) Get.back();
         htmlData.removeRange(0, data['lengthHtmlDataList']);
-        listViewScrollController.jumpTo(-10.0);
       }
       if (data['loading'] == 'loading') {
         data['loading'] = 'ok';
@@ -392,7 +394,6 @@ class ViewController extends GetxController {
       if (Get.isDialogOpen == true || data['isScroll'] == 'Release' || isEdit == true) {
         if (Get.isDialogOpen == true) Get.back();
         htmlData.removeRange(0, data['lengthHtmlDataList']);
-        listViewScrollController.jumpTo(-10.0);
       }
       if (data['loading'] == 'loading') {
         data['loading'] = 'ok';
@@ -446,19 +447,17 @@ class ViewController extends GetxController {
 
   reply(String message, bool isEditPost) async {
     //                                            token               xf_csrf             link
-    var x = await Get.toNamed(Routes.AddReply,
+    data['x'] = await Get.toNamed(Routes.AddReply,
         arguments: [data['xfCsrfPost'], data['dataCsrfPost'], data['fullUrl'], data['postID'], isEditPost, data['view'], message]);
-    if (x?[0] == 'ok') {
+    if (data['x'][0] == 'ok') {
       if (GlobalController.i.userStorage.read('scrollToMyRepAfterPost') ?? true /* == true*/) {
         isEdit = true;
-        int lastPage = data['totalPage'];
-        await setPageOnClick(lastPage);
-        if (data['totalPage'] != lastPage) {
+        await setPageOnClick(data['totalPage']);
+        if (data['totalPage'] != data['currentPage']) {
           await setPageOnClick(data['totalPage']);
         }
         isEdit = false;
-        listViewScrollController.animateTo(listViewScrollController.position.maxScrollExtent + 200,
-            duration: Duration(milliseconds: 200), curve: Curves.slowMiddle);
+        listViewScrollController.jumpTo(listViewScrollController.position.maxScrollExtent +200);
       }
     }
   }

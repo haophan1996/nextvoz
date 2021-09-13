@@ -481,7 +481,9 @@ Widget dialogButtonYesNo(Function onDone) => Row(
 Widget viewContent(int index, ViewController controller) => Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Ink(child: InkWell(
+        Material(
+          color: Get.theme.shadowColor,
+          child: InkWell(
           child: Stack(
             children: [
               Row(
@@ -557,21 +559,20 @@ Widget viewContent(int index, ViewController controller) => Column(
                                 controller.htmlData.elementAt(index)["userName"],
                                 controller.htmlData.elementAt(index)["userAvatar"]),
                           ),
-                          Expanded(
-                              child: RichText(
-                                  text: TextSpan(children: [
-                                    TextSpan(
-                                        text: controller.data['memberTooltip']['username'],
-                                        style: TextStyle(fontSize: Get.textTheme.headline6!.fontSize, color: Colors.blue),
-                                        recognizer: TapGestureRecognizer()
-                                          ..onTap = () {
-                                            Get.toNamed(Routes.Profile,
-                                                arguments: [controller.htmlData.elementAt(index)['userLink']], preventDuplicates: false);
-                                          }),
-                                    TextSpan(
-                                        text: controller.data['memberTooltip']['userTitle'], style: TextStyle(fontSize: Get.textTheme.bodyText1!.fontSize)),
-                                    TextSpan(text: controller.data['memberTooltip']['joined'], style: TextStyle(fontSize: Get.textTheme.bodyText1!.fontSize))
-                                  ])))
+                          RichText(
+                              text: TextSpan(children: [
+                                TextSpan(
+                                    text: controller.data['memberTooltip']['username'],
+                                    style: TextStyle(fontSize: Get.textTheme.bodyText1!.fontSize!+2, color: Colors.blue),
+                                    recognizer: TapGestureRecognizer()
+                                      ..onTap = () {
+                                        Get.toNamed(Routes.Profile,
+                                            arguments: [controller.htmlData.elementAt(index)['userLink']], preventDuplicates: false);
+                                      }),
+                                TextSpan(
+                                    text: controller.data['memberTooltip']['userTitle'], style: TextStyle(color: Get.theme.primaryColor ,fontSize: Get.textTheme.bodyText1!.fontSize)),
+                                TextSpan(text: controller.data['memberTooltip']['joined'], style: TextStyle(color: Get.theme.primaryColor ,fontSize: Get.textTheme.bodyText1!.fontSize))
+                              ]))
                         ],
                       ),
                       RichText(
@@ -600,7 +601,7 @@ Widget viewContent(int index, ViewController controller) => Column(
               }
             });
           },
-        ),color: Get.theme.shadowColor,),
+        ),),
         customHtml(controller.htmlData.elementAt(index)['postContent'], controller.imageList),
         Padding(
           padding: EdgeInsets.fromLTRB(5, 7, 5, 7),

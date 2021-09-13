@@ -7,6 +7,6 @@ class UserFollIgrBindings extends Bindings {
   void dependencies() {
     // TODO: implement dependencies
     GlobalController.i.sessionTag.add(DateTime.now().toString());
-    Get.lazyPut<UserFollIgrController>(() => UserFollIgrController(), tag: GlobalController.i.sessionTag.last);
+    Get.put(UserFollIgrController(),tag: GlobalController.i.sessionTag.last);
   }
 }

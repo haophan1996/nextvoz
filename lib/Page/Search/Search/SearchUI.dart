@@ -18,7 +18,7 @@ class SearchUI extends GetView<SearchController> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              inputCustom(TextInputType.text, controller.keywords, false, 'Keywords', () => controller.search()),
+              inputCustom(TextInputType.text, controller.keywords, false, 'keywords'.tr, () => controller.search()),
               GetBuilder<SearchController>(
                 tag: tag,
                 id: 'visibleTitlesOnly',
@@ -42,13 +42,13 @@ class SearchUI extends GetView<SearchController> {
                                           controller.update(['updateSearchTitlesOnly']);
                                         });
                                   }),
-                              Text('Search titles only'),
+                              Text('searchTitleOnly'.tr),
                             ],
                           ),
                         );
                 },
               ),
-              inputCustom(TextInputType.text, controller.postBy, false, 'Posted by', () => controller.search()),
+              inputCustom(TextInputType.text, controller.postBy, false, 'postBy'.tr, () => controller.search()),
               Text(
                 'You may enter multiple names here.',
                 style: TextStyle(color: Colors.grey),
@@ -78,7 +78,7 @@ class SearchUI extends GetView<SearchController> {
                       builder: (controller) {
                         return Align(
                           alignment: Alignment.topRight,
-                          child: Text(controller.visible == true ? 'Search threads (Optional)' : 'Search profile posts'),
+                          child: Text(controller.visible == true ? 'searchThreads'.tr : 'Search profile posts'),
                         );
                       },
                     ),

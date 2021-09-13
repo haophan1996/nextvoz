@@ -55,6 +55,15 @@ class Language extends Translations{
       'title' : 'Title',
       'recipients' : 'Recipients',
       'viewSwipeLeftRight' : 'Swipe Left/Right to Next',
+      'keywords' : 'Keywords',
+      'searchTitleOnly' : 'Search titles only',
+      'postBy' : 'Posted by',
+      'searchThreads' : 'Search threads (Optional)',
+      'searchProfile' : 'Search profile posts',
+      'follow' : 'Following | theNEXTvoz',
+      'ignore' : 'Ignoring | theNEXTvoz',
+      'shortcuts' : 'Shortcuts',
+      'shortcutsHelper' : 'Long press on thread to save link'
     },
     'vi_VN' : {
       'lang'    : 'Ngôn ngữ',
@@ -106,6 +115,15 @@ class Language extends Translations{
       'please' : 'Vui Lòng',
       'recipients' : 'Người Nhận',
       'viewSwipeLeftRight' : 'Vuốt Trái/Phải',
+      'keywords' : 'Từ Khóa',
+      'searchTitleOnly' : 'Chỉ tìm kiếm tiêu đề',
+      'postBy' : 'Được đăng bởi',
+      'searchThreads' : 'Tìm kiếm thớt (Optional)',
+      'searchProfile' : 'Tìm kiếm profile posts',
+      'follow' : 'Đang Theo Dõi | theNEXTvoz',
+      'ignore' : 'Đang Chặn | theNEXTvoz',
+      'shortcuts' : 'Đường dẫn nhanh',
+      'shortcutsHelper' : 'Nhấn và giữ vào thớt để lưu đường dẫn'
     }
   };
 
