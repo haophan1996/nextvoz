@@ -87,7 +87,7 @@ class GlobalController extends GetxController {
     });
     xfCsrfPost = cookXfCsrf(response.headers['set-cookie'].toString());
     if (isHomePage == true) xfCsrfLogin = cookXfCsrf(response.headers['set-cookie'].toString());
-    return parser.parse(response.toString());
+    return parser.parse(_removeTag(response.toString()));
   }
 
   Future<dom.Document?> getBodyBeta(Function(int) onError, Function(double) onDownload, Dio dios, String url, bool isHomePage) async {
@@ -108,38 +108,10 @@ class GlobalController extends GetxController {
     });
     xfCsrfPost = cookXfCsrf(response.headers['set-cookie'].toString());
     if (isHomePage == true) xfCsrfLogin = cookXfCsrf(response.headers['set-cookie'].toString());
-    return parser.parse(response.toString());
+    return parser.parse(_removeTag(response.toString()));
   }
 
-  Future<dom.Document?> getBodyBetaCancel(Function(int) onError, Function(double) onDownload, Dio dios, String url, bool isHomePage) async {
-    if (isLogged == true) {
-      dios.options.headers['cookie'] = 'xf_user=${xfUser.toString()}; xf_session=${xfSession.toString()}';
-    } else
-      dios.options.headers['cookie'] = '';
-
-    onDownload(0.1);
-    final response = await dios.get(url,
-        options: Options(
-          receiveTimeout: 5000,
-          sendTimeout: 5000,
-        ), onReceiveProgress: (actual, total) {
-      onDownload((actual.bitLength - 4) / total.bitLength);
-    }).whenComplete(() async {
-      onDownload(0.0);
-    }).catchError((err) async {
-      print(DioErrorType);
-      print(err.toString());
-      if (err.type == DioErrorType.other) {
-        onError(1);
-      } else {
-        onError(2);
-      }
-    });
-    xfCsrfPost = cookXfCsrf(response.headers['set-cookie'].toString());
-    if (isHomePage == true) xfCsrfLogin = cookXfCsrf(response.headers['set-cookie'].toString());
-    return parser.parse(response.toString());
-  }
-
+   
   Future getHttpPost(bool isJson, Map<String, String> header, dynamic body, String link) async {
     final response = await http.post(Uri.parse(link), headers: header, body: body).catchError((err) {
       print('get http post error: $header \n$body \n$link');
@@ -292,5 +264,10 @@ class GlobalController extends GetxController {
       'reaction' : document.getElementsByClassName('pairs pairs--rows')[1].getElementsByTagName('dd')[0].text.trim() + '\n',
       'point' : document.getElementsByClassName('pairs pairs--rows')[2].getElementsByTagName('dd')[0].text.trim() + '\n'
     };
+  }
+
+  _removeTag(String content) {
+    return content.replaceAll(
+        RegExp(r'<div class="bbCodeBlock-expandLink js-expandLink"><a role="button" tabindex="0">Click to expand...</a></div>'), "");
   }
 }

@@ -60,11 +60,6 @@ class ViewController extends GetxController {
     this.dispose();
   }
 
-  _removeTag(String content) {
-    return content.replaceAll(
-        RegExp(r'<div class="bbCodeBlock-expandLink js-expandLink"><a role="button" tabindex="0">Click to expand...</a></div>'), "");
-  }
-
   setPageOnClick(int toPage) async {
     data['view'] == 0
         ? await loadUserPost(data['fullUrl'] + GlobalController.i.pageLink + toPage.toString())
@@ -254,7 +249,7 @@ class ViewController extends GetxController {
 
           htmlData.add({
             'newPost': element.getElementsByClassName('message-newIndicator').isNotEmpty == false ? false : true,
-            "postContent": _removeTag(data['_postContent']),
+            "postContent": data['_postContent'],
             "userPostDate": data['_userPostDate'],
             "userName": data['_userName'],
             "userLink": data['_userLink'],
@@ -332,15 +327,14 @@ class ViewController extends GetxController {
       }
 
       value.getElementsByClassName('message message--conversationMessage').forEach((element) {
-        data['_postContent'] =
-            _removeTag(element.getElementsByClassName('message-body js-selectToQuote')[0].getElementsByClassName('bbWrapper')[0].innerHtml);
+        data['_postContent'] = element.getElementsByClassName('message-body js-selectToQuote')[0].getElementsByClassName('bbWrapper')[0].innerHtml;
 
         if (element.getElementsByClassName('message-lastEdit').length > 0) {
           data['_postContent'] = data['_postContent'] + fixLastEditPost(element.getElementsByClassName('message-lastEdit')[0].text);
         }
 
         element.getElementsByClassName('message-body js-selectToQuote')[0].getElementsByClassName('bbImageWrapper').forEach((element) {
-          data['_postContent'] = data['_postContent'].toString().replaceAll(element.outerHtml, element.innerHtml);
+          data['_postContent'] = data['_postContent'].toString().replaceFirst(element.outerHtml, element.innerHtml);
         });
 
 
