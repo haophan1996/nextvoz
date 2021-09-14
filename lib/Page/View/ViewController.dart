@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 import 'package:flutter/cupertino.dart';
@@ -196,6 +197,9 @@ class ViewController extends GetxController {
           if (element.getElementsByClassName('message-lastEdit').length > 0) {
             data['_postContent'] = data['_postContent'] + fixLastEditPost(element.getElementsByClassName('message-lastEdit')[0].text);
           }
+          element.getElementsByClassName('message-body js-selectToQuote')[0].getElementsByClassName('bbImageWrapper').forEach((element) {
+            data['_postContent'] = data['_postContent'].toString().replaceAll(element.outerHtml, element.innerHtml);
+          });
 
           data['_userPostDate'] = element.getElementsByClassName("u-concealed")[0].text.trim();
 
@@ -330,6 +334,16 @@ class ViewController extends GetxController {
       value.getElementsByClassName('message message--conversationMessage').forEach((element) {
         data['_postContent'] =
             _removeTag(element.getElementsByClassName('message-body js-selectToQuote')[0].getElementsByClassName('bbWrapper')[0].innerHtml);
+
+        if (element.getElementsByClassName('message-lastEdit').length > 0) {
+          data['_postContent'] = data['_postContent'] + fixLastEditPost(element.getElementsByClassName('message-lastEdit')[0].text);
+        }
+
+        element.getElementsByClassName('message-body js-selectToQuote')[0].getElementsByClassName('bbImageWrapper').forEach((element) {
+          data['_postContent'] = data['_postContent'].toString().replaceAll(element.outerHtml, element.innerHtml);
+        });
+
+
         data['postID'] =
             element.getElementsByClassName('actionBar-action actionBar-action--mq u-jsOnly js-multiQuote')[0].attributes['data-message-id'];
         data['_userName'] = element.getElementsByClassName('username ')[0].text;
@@ -439,6 +453,7 @@ class ViewController extends GetxController {
         status['mess'] = '';
       }
     });
+
     ///only update anything below HTML view
     update([index.toString()]);
     Get.back();
@@ -457,7 +472,7 @@ class ViewController extends GetxController {
           await setPageOnClick(data['totalPage']);
         }
         isEdit = false;
-        listViewScrollController.jumpTo(listViewScrollController.position.maxScrollExtent +200);
+        listViewScrollController.jumpTo(listViewScrollController.position.maxScrollExtent + 200);
       }
     }
   }
