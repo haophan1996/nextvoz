@@ -32,7 +32,6 @@ dependencies:
   flutter_signin_button: ^2.0.0
   expandable: ^5.0.1
   flutter_image: ^4.1.0
-  scroll_to_index: ^2.0.0
   #swipe_to_action: ^0.2.0
 
   #Editor
