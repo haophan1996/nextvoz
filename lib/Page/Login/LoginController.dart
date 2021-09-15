@@ -36,7 +36,9 @@ class LoginController extends GetxController {
     }
 
     if (GlobalController.i.dataCsrfLogin == null && GlobalController.i.xfCsrfLogin == null) {
-      await GlobalController.i.getBody(() {}, (download) {}, dio, 'https://voz.vn/login/login', true).then((value) {
+      await GlobalController.i.getBodyBeta((value) {
+        ///onError
+      }, (download) {}, dio, 'https://voz.vn/login/login', true).then((value) {
         GlobalController.i.dataCsrfLogin = value!.getElementsByTagName('html')[0].attributes['data-csrf'];
         GlobalController.i.token = value.getElementsByTagName('html')[0].attributes['data-csrf'];
       });

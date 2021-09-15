@@ -18,6 +18,8 @@ class AlertsController extends GetxController {
     // TODO: implement onClose
     super.onClose();
     data.clear();
+    dio.close(force: true);
+    this.dispose();
   }
 
   @override

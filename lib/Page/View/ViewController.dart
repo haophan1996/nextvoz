@@ -113,8 +113,10 @@ class ViewController extends GetxController {
   getDataReactionList(int index) async {
     reactionList.clear();
     await GlobalController.i
-        .getBody(
-            () {},
+        .getBodyBeta(
+            (value) {
+              ///onError
+            },
             (download) {},
             dio,
             '${data['view'] == 0 ? GlobalController.i.viewReactLink : GlobalController.i.inboxReactLink}' +
@@ -284,7 +286,9 @@ class ViewController extends GetxController {
 
   Future<void> loadInboxView(String link) async {
     data['_commentImg'] = '';
-    await GlobalController.i.getBody(() {}, (download) {
+    await GlobalController.i.getBodyBeta((value) {
+      ///onError
+    }, (download) {
       data['percentDownload'] = download;
       update(['download'], true);
     }, dio, link, false).then((value) {

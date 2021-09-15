@@ -42,7 +42,9 @@ class NaviDrawerController extends GetxController {
 
 
   Future<void> getUserProfile() async {
-    await GlobalController.i.getBody(() {}, (download) {}, dio, GlobalController.i.url, false).then((res) async {
+    await GlobalController.i.getBodyBeta((value) {
+      ///onError
+      }, (download) {}, dio, GlobalController.i.url, false).then((res) async {
       GlobalController.i.token = res!.getElementsByTagName('html')[0].attributes['data-csrf'];
       if (res.getElementsByTagName('html')[0].attributes['data-logged-in'] == 'true') {
         GlobalController.i.controlNotification(
@@ -54,7 +56,9 @@ class NaviDrawerController extends GetxController {
 
       String linkProfile = res.getElementsByTagName('form')[1].attributes['action']!.split('/post')[0];
       data['linkUser'] = linkProfile;
-      await GlobalController.i.getBody(() {}, (download) {}, dio, GlobalController.i.url + linkProfile, false).then((value) {
+      await GlobalController.i.getBodyBeta((value) {
+        ///onError
+      }, (download) {}, dio, GlobalController.i.url + linkProfile, false).then((value) {
         data['nameUser'] = value!.documentElement!.getElementsByClassName(' is-stroked')[0].getElementsByTagName('span')[0].innerHtml;
         data['titleUser'] = value.documentElement!.getElementsByClassName('userTitle')[0].innerHtml;
 

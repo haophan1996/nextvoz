@@ -27,6 +27,7 @@ class InboxController extends GetxController {
     // TODO: implement onClose
     super.onClose();
     dio.close(force: true);
+    this.dispose();
   }
 
   navigateToCreatePost() async {

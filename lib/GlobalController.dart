@@ -64,32 +64,6 @@ class GlobalController extends GetxController {
     }
   }
 
-  Future<dom.Document?> getBody(Function onError, Function(double) onDownload, Dio dios, String url, bool isHomePage) async {
-    if (isLogged == true) {
-      dios.options.headers['cookie'] = 'xf_user=${xfUser.toString()}; xf_session=${xfSession.toString()}';
-    } else
-      dios.options.headers['cookie'] = '';
-
-    onDownload(0.1);
-    final response = await dios.get(url,
-        options: Options(
-          receiveTimeout: 5000,
-          sendTimeout: 5000,
-        ), onReceiveProgress: (actual, total) {
-      onDownload((actual.bitLength - 4) / total.bitLength);
-    }).whenComplete(() async {
-      onDownload(0.0);
-    }).catchError((err) async {
-      if (err.type == DioErrorType.other) {
-      } else {
-        onError();
-      }
-    });
-    xfCsrfPost = cookXfCsrf(response.headers['set-cookie'].toString());
-    if (isHomePage == true) xfCsrfLogin = cookXfCsrf(response.headers['set-cookie'].toString());
-    return parser.parse(_removeTag(response.toString()));
-  }
-
   Future<dom.Document?> getBodyBeta(Function(int) onError, Function(double) onDownload, Dio dios, String url, bool isHomePage) async {
     onDownload(0.1);
     final response = await dios.get(url,
@@ -111,7 +85,6 @@ class GlobalController extends GetxController {
     return parser.parse(_removeTag(response.toString()));
   }
 
-   
   Future getHttpPost(bool isJson, Map<String, String> header, dynamic body, String link) async {
     final response = await http.post(Uri.parse(link), headers: header, body: body).catchError((err) {
       print('get http post error: $header \n$body \n$link');
@@ -260,9 +233,9 @@ class GlobalController extends GetxController {
       'username': document.getElementsByClassName('username ')[0].text + '\n',
       'userTitle': document.getElementsByClassName('userTitle')[0].text + '\n',
       'joined': document.getElementsByClassName('u-dt')[0].text,
-      'message' : document.getElementsByClassName('pairs pairs--rows')[0].getElementsByTagName('dd')[0].text.trim() + '\n',
-      'reaction' : document.getElementsByClassName('pairs pairs--rows')[1].getElementsByTagName('dd')[0].text.trim() + '\n',
-      'point' : document.getElementsByClassName('pairs pairs--rows')[2].getElementsByTagName('dd')[0].text.trim() + '\n'
+      'message': document.getElementsByClassName('pairs pairs--rows')[0].getElementsByTagName('dd')[0].text.trim() + '\n',
+      'reaction': document.getElementsByClassName('pairs pairs--rows')[1].getElementsByTagName('dd')[0].text.trim() + '\n',
+      'point': document.getElementsByClassName('pairs pairs--rows')[2].getElementsByTagName('dd')[0].text.trim() + '\n'
     };
   }
 
