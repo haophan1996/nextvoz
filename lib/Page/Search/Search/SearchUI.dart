@@ -142,12 +142,23 @@ class SearchUI extends GetView<SearchController> {
                                 'Search in forums: ',
                                 style: TextStyle(fontWeight: FontWeight.bold),
                               ),
-                                  () => Get.defaultDialog(
-                                  content: listviewOptional('updateSearchInForums', controller.searchInForums, controller.selectSearchInForum, (onTap){
-                                    controller.selectSearchInForum = onTap;
-                                    controller.update(['updateSearchInForums']);
-                                    Get.back();
-                                  }))),
+                                  () {
+                                    Get.defaultDialog(
+                                        content: listviewOptional(
+                                            'updateSearchInForums', controller.searchInForums, controller.selectSearchInForum, (onTap) {
+                                          controller.selectSearchInForum = onTap;
+                                          controller.update(['updateSearchInForums']);
+                                          Get.back();
+                                        }));
+                                    Future.delayed(Duration(milliseconds: 100),(){
+                                      controller.scrollController.position.ensureVisible(
+                                        controller.formKeyList.elementAt(controller.selectSearchInForum).currentContext!.findRenderObject()!,
+                                        // controller.itemKey.currentContext!.findRenderObject()!,
+                                        //alignment: 1, // How far into view the item should be scrolled (between 0 and 1).
+                                        duration: const Duration(seconds: 1),
+                                      );
+                                    });
+                                  }),
                           GetBuilder<SearchController>(
                               id: 'updateSearchInForums',
                               builder: (controller){
@@ -212,9 +223,13 @@ class SearchUI extends GetView<SearchController> {
         id: id,
         builder: (controller) {
           return ListView.builder(
+            physics: BouncingScrollPhysics(),
+            controller: controller.scrollController,
+              cacheExtent: 1000,
               itemCount: list.length,
               itemBuilder: (context, index) {
                 return InkWell(
+                  key: controller.formKeyList.elementAt(index),
                   child: Container(
                     color: select == index ? Colors.blue : Colors.transparent,
                     child: Text(

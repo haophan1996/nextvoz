@@ -15,6 +15,10 @@ class SearchController extends GetxController {
   String dateTime = '', radioGroup = 'relevance';
   DateTime newDateTime = DateTime.now();
   int selectPrefix = 0, selectSearchInForum = 0;
+  ScrollController scrollController = ScrollController();
+  final itemKey = GlobalKey();
+  final List<GlobalObjectKey<FormState>> formKeyList = List.generate(55, (index) => GlobalObjectKey<FormState>(index));
+
 
   @override
   onReady() {
