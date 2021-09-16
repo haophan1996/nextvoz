@@ -2,6 +2,7 @@
 
 - vozForums application, able to view user post, post, quote create thread and login.
 
+- [Available on Play Store](https://play.google.com/store/apps/details?id=com.vozer.nextvoz)
  
          
 <img src="https://github.com/haophan1996/vozForumsApp/blob/main/screenshot/bottom.png" width="280" height="540"/><img src="https://github.com/haophan1996/vozForumsApp/blob/main/screenshot/bottom_dark.png" width="280" height="540"/>
