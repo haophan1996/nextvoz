@@ -479,6 +479,7 @@ Widget dialogButtonYesNo(Function onDone) => Row(
     );
 
 Widget viewContent(int index, ViewController controller) => Column(
+      key: controller.formKeyList.elementAt(index),
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Material(
@@ -606,7 +607,9 @@ Widget viewContent(int index, ViewController controller) => Column(
             },
           ),
         ),
-        customHtml(controller.htmlData.elementAt(index)['postContent'], controller.imageList),
+        customHtml(controller.htmlData.elementAt(index)['postContent'], controller.imageList, (postID){
+          controller.scrollToIndex(controller.htmlData.indexWhere((element) => element['postID'] == postID), 0);
+        }),
         Padding(
           padding: EdgeInsets.fromLTRB(5, 7, 5, 7),
           child: GetBuilder<ViewController>(
@@ -787,7 +790,7 @@ Widget loadingBottom(String type, double height) {
   );
 }
 
-Widget customHtml(String postContent, List imageList) {
+Widget customHtml(String postContent, List imageList,Function(String) onGoToPost) {
   return Html(
     data: Get.isDarkMode == true ? '''<span style="color: rgb(160,160,160)">$postContent</span>''' : postContent,
     tagsList: Html.tags
@@ -1022,6 +1025,8 @@ Widget customHtml(String postContent, List imageList) {
           Get.toNamed(Routes.View, arguments: [url.replaceFirst(GlobalController.i.url + '/t/', '', 0), url, '', 0], preventDuplicates: false);
         } else if (url.contains('https://voz.vn/u/', 0)) {
           Get.toNamed(Routes.Profile, arguments: [url.replaceFirst(GlobalController.i.url, '', 0)], preventDuplicates: false);
+        } else if (url.contains('/goto/post?id', 0)){
+          onGoToPost(url.split('?id=')[1]);
         } else
           // print(url.toString().split('?id=')[1]);
           //

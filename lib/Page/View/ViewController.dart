@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:math';
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 import 'package:flutter/cupertino.dart';
@@ -20,6 +19,8 @@ class ViewController extends GetxController {
   late dom.Document res;
   late ScrollController listViewScrollController = ScrollController();
   TextEditingController input = TextEditingController();
+  final List<GlobalObjectKey<FormState>> formKeyList =
+      List.generate(21, (index) => GlobalObjectKey<FormState>(GlobalController.i.sessionTag.last + index.toString()));
 
   @override
   Future<void> onInit() async {
@@ -30,6 +31,8 @@ class ViewController extends GetxController {
     data['subHeader'] = Get.arguments[0];
     data['subTypeHeader'] = Get.arguments[2] ?? '';
     data['view'] = Get.arguments[3];
+
+    data['scrollToIndex'] = 'null';
   }
 
   @override
@@ -41,6 +44,21 @@ class ViewController extends GetxController {
     data['view'] == 0
         ? await loadUserPost(data['fullUrl'] = GlobalController.i.url + data['subLink'])
         : await loadInboxView(data['fullUrl'] = GlobalController.i.url + data['subLink']);
+
+    if (data['subLink'].contains(RegExp(r'/p/.*?/')) == true){
+      data['scrollToIndex'] = data['subLink'].replaceAll(RegExp('[^0-9]'), '');
+      data['scrollToIndex'] = htmlData.indexWhere((element) => element['postID'] == data['scrollToIndex']);
+      scrollToIndex(data['scrollToIndex'], 1);
+    }
+  }
+
+  scrollToIndex(int index, int delay){
+    Future.delayed(Duration(seconds: delay),(){
+      listViewScrollController.position.ensureVisible(
+        formKeyList.elementAt(index).currentContext!.findRenderObject()!,
+        duration: Duration(seconds: 1)
+      );
+    });
   }
 
   @override
@@ -57,6 +75,7 @@ class ViewController extends GetxController {
     imageList.clear();
     PaintingBinding.instance!.imageCache!.clear();
     PaintingBinding.instance!.imageCache!.clearLiveImages();
+    formKeyList.clear();
     this.dispose();
   }
 
@@ -112,18 +131,15 @@ class ViewController extends GetxController {
 
   getDataReactionList(int index) async {
     reactionList.clear();
-    await GlobalController.i
-        .getBodyBeta(
-            (value) {
-              ///onError
-            },
-            (download) {},
-            dio,
-            '${data['view'] == 0 ? GlobalController.i.viewReactLink : GlobalController.i.inboxReactLink}' +
-                htmlData.elementAt(index)['postID'] +
-                '/reactions',
-            false)
-        .then((value) async {
+    await GlobalController.i.getBodyBeta((value) {
+      ///onError
+    },
+        (download) {},
+        dio,
+        '${data['view'] == 0 ? GlobalController.i.viewReactLink : GlobalController.i.inboxReactLink}' +
+            htmlData.elementAt(index)['postID'] +
+            '/reactions',
+        false).then((value) async {
       reactionList = await GlobalController.i.performQueryReaction(value!, reactionList);
       PaintingBinding.instance!.imageCache!.clear();
       PaintingBinding.instance!.imageCache!.clearLiveImages();
@@ -282,6 +298,7 @@ class ViewController extends GetxController {
       } else
         update();
     });
+
   }
 
   Future<void> loadInboxView(String link) async {
@@ -340,7 +357,6 @@ class ViewController extends GetxController {
         element.getElementsByClassName('message-body js-selectToQuote')[0].getElementsByClassName('bbImageWrapper').forEach((element) {
           data['_postContent'] = data['_postContent'].toString().replaceFirst(element.outerHtml, element.innerHtml);
         });
-
 
         data['postID'] =
             element.getElementsByClassName('actionBar-action actionBar-action--mq u-jsOnly js-multiQuote')[0].attributes['data-message-id'];
