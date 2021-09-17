@@ -72,7 +72,7 @@ class ProfilePostUI extends GetView<ProfilePostController> {
                   ],
                 ),
               ),
-              customHtml(content, controller.imageList, (postID){}),
+              customHtml(content, controller.imageList, (postID, url){}),
               Padding(
                 padding: EdgeInsets.only(top: reaction == '' ? 0 : 10, bottom: reaction == '' ? 0 : 10),
                 child: InkWell(

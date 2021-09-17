@@ -123,7 +123,7 @@ class Language extends Translations{
       'follow' : 'Đang Theo Dõi | theNEXTvoz',
       'ignore' : 'Đang Chặn | theNEXTvoz',
       'shortcuts' : 'Đường dẫn nhanh',
-      'shortcutsHelper' : 'Nhấn và giữ vào thớt để lưu đường dẫn'
+      'shortcutsHelper' : 'Nhấn và giữ vào thớt để lưu đường dẫn',
     }
   };
 

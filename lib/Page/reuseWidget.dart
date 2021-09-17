@@ -21,7 +21,7 @@ PreferredSize preferredSize(BuildContext context, String title, String prefix) =
       preferredSize: Size.fromHeight(GlobalController.i.heightAppbar),
       child: AppBar(
         automaticallyImplyLeading: false,
-        title: customTitle(FontWeight.bold, Get.theme.primaryColor, 2, prefix, title),
+        title: customTitle(FontWeight.bold, Color(0xfff3168b0), 2, prefix, title),
         leading: (ModalRoute.of(context)?.canPop ?? false) ? BackButton() : null,
       ),
     );
@@ -66,7 +66,7 @@ Widget blockItem(BuildContext context, FontWeight titleWeight, int index, String
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    customTitle(titleWeight, titleWeight == FontWeight.bold ? Colors.blueAccent : Get.theme.primaryColor, null, header11, header12),
+                    customTitle(titleWeight, titleWeight == FontWeight.bold ? Color(0xfff3168b0) : Get.theme.primaryColor, null, header11, header12),
                     Text(
                       "$header21 \u2022 $header22 ${header3 == '' ? '' : '\u2022'} $header3",
                       style: TextStyle(color: Colors.grey, fontSize: 12),
@@ -465,7 +465,7 @@ Widget onTapMine(ViewController controller, int index) {
       ));
 }
 
-Widget dialogButtonYesNo(Function onDone) => Row(
+Widget  dialogButtonYesNo(Function onDone) => Row(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
@@ -607,8 +607,16 @@ Widget viewContent(int index, ViewController controller) => Column(
             },
           ),
         ),
-        customHtml(controller.htmlData.elementAt(index)['postContent'], controller.imageList, (postID){
-          controller.scrollToIndex(controller.htmlData.indexWhere((element) => element['postID'] == postID), 0);
+        customHtml(controller.htmlData.elementAt(index)['postContent'], controller.imageList, (postID, url) async {
+          controller.data['index'] = controller.findIndex(postID);
+          if (controller.data['index'] == -1){
+            controller.data['fullURL2'] = url;
+            await controller.scrollToIndex(-1, 0);
+            await controller.scrollToIndex(16, 1);
+          } else {
+            await controller.scrollToIndex(controller.findIndex(postID), 0);
+          }
+
         }),
         Padding(
           padding: EdgeInsets.fromLTRB(5, 7, 5, 7),
@@ -790,7 +798,7 @@ Widget loadingBottom(String type, double height) {
   );
 }
 
-Widget customHtml(String postContent, List imageList,Function(String) onGoToPost) {
+Widget customHtml(String postContent, List imageList,Function(String index, String url) onGoToPost) {
   return Html(
     data: Get.isDarkMode == true ? '''<span style="color: rgb(160,160,160)">$postContent</span>''' : postContent,
     tagsList: Html.tags
@@ -860,7 +868,7 @@ Widget customHtml(String postContent, List imageList,Function(String) onGoToPost
                         : renderContext.tree.element!.attributes['src'].toString(),
                 clearMemoryCacheWhenDispose: true,
                 cache: true,
-                scale: 3,
+                scale: 2,
                 constraints: BoxConstraints(maxWidth: Get.width, maxHeight: Get.height),
                 clearMemoryCacheIfFailed: true,
                 enableMemoryCache: false,
@@ -1026,7 +1034,7 @@ Widget customHtml(String postContent, List imageList,Function(String) onGoToPost
         } else if (url.contains('https://voz.vn/u/', 0)) {
           Get.toNamed(Routes.Profile, arguments: [url.replaceFirst(GlobalController.i.url, '', 0)], preventDuplicates: false);
         } else if (url.contains('/goto/post?id', 0)){
-          onGoToPost(url.split('?id=')[1]);
+          onGoToPost(url.split('?id=')[1],url);
         } else
           // print(url.toString().split('?id=')[1]);
           //

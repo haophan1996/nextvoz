@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -11,6 +12,7 @@ class SettingsUI extends GetView<SettingsController> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: preferredSize(context, 'setPage'.tr, ''),
+      resizeToAvoidBottomInset: false,
       body: Container(
         color: Theme.of(context).backgroundColor,
         padding: EdgeInsets.only(top: 20, left: 10, right: 10),
@@ -20,9 +22,12 @@ class SettingsUI extends GetView<SettingsController> {
               myContainer(Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
-                    'lang'.tr,
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                  Padding(
+                    padding: EdgeInsets.only(top: 10, bottom: 10),
+                    child: Text(
+                      'lang'.tr,
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
                   ),
                   Spacer(),
                   FlutterReactionButton(
@@ -61,7 +66,7 @@ class SettingsUI extends GetView<SettingsController> {
                             }),
                       )
                     ],
-                  ))), //fontsize
+                  ))), //fontSize
               myContainer(Row(
                 children: [
                   Text(
@@ -98,10 +103,54 @@ class SettingsUI extends GetView<SettingsController> {
               )), //show images
               myContainer(Row(
                 children: [
-                  Text(
-                    'appSignature'.tr,
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
+                  GetBuilder<SettingsController>(
+                      id: 'updateAppSignatureName',
+                      builder: (controller) {
+                        return customCupertinoButton(
+                            Alignment.center,
+                            EdgeInsets.zero,
+                            RichText(
+                              text: TextSpan(children: [
+                                TextSpan(text: 'appSignature'.tr, style: TextStyle(color: Get.theme.primaryColor, fontWeight: FontWeight.bold)),
+                                TextSpan(
+                                    text: '\n${GlobalController.i.userStorage.read('appSignatureDevice') ?? 'Device'}'.tr,
+                                    style: TextStyle(
+                                      color: Colors.grey,
+                                    ))
+                              ]),
+                            ), () {
+                          controller.textEditingController.text = GlobalController.i.userStorage.read('appSignatureDevice');
+                          Get.defaultDialog(
+                              content: Column(
+                            children: [
+                              inputCustom(TextInputType.text, controller.textEditingController, false, 'Signature', () {}),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Stack(
+                                children: [
+                                  Align(
+                                    alignment: Alignment.topLeft,
+                                    child: customCupertinoButton(Alignment.center, EdgeInsets.zero, Text(' Cancel'), () => Get.back()),
+                                  ),
+                                  Align(
+                                    alignment: Alignment.topCenter,
+                                    child: customCupertinoButton(Alignment.center, EdgeInsets.zero, Text('Reset'), () async {
+                                      await controller.getDeviceName();
+                                      Get.back();
+                                    }),
+                                  ),
+                                  Align(
+                                    alignment: Alignment.topRight,
+                                    child: customCupertinoButton(
+                                        Alignment.center, EdgeInsets.zero, Text('   OK'), () async => await controller.setDeviceName()),
+                                  ),
+                                ],
+                              )
+                            ],
+                          ));
+                        });
+                      }),
                   Spacer(),
                   Obx(
                     () => CupertinoSwitch(
@@ -135,7 +184,7 @@ class SettingsUI extends GetView<SettingsController> {
                     ),
                   )
                 ],
-              )), //app signature
+              )), //default launch page
               myContainer(Row(
                 children: [
                   Text(
@@ -152,7 +201,7 @@ class SettingsUI extends GetView<SettingsController> {
                         });
                   })
                 ],
-              )), //app signature
+              )), //swipe right/left
               CupertinoButton(
                   child: Text('Save'),
                   onPressed: () {

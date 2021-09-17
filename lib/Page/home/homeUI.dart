@@ -21,8 +21,8 @@ class HomePageUI extends GetView<HomeController> {
         return controller.loadingStatus == 'loading'
             ? loading()
             : controller.loadingStatus == 'loadFailed'
-                ? loadFailed()
-                : loadSucceeded(context);
+            ? loadFailed()
+            : loadSucceeded(context);
       }),
     );
   }
@@ -81,7 +81,6 @@ class HomePageUI extends GetView<HomeController> {
         GetBuilder<HomeController>(
           builder: (controller) {
             return ListView.builder(
-              //physics: BouncingScrollPhysics(),
               padding: EdgeInsets.only(bottom: 40),
               shrinkWrap: false,
               itemCount: controller.myHomePage.length,
@@ -157,11 +156,11 @@ theme(String theme, BuildContext context) {
   return Padding(
     padding: EdgeInsets.only(bottom: 5),
     child: Container(
-      color: Theme.of(context).canvasColor,
+      color: Color(0xfff3168b0),
       child: ListTile(
         title: Text(
           theme,
-          style: TextStyle(color: Theme.of(context).primaryColor, fontWeight: FontWeight.w900),
+          style: TextStyle(color: Colors.grey.shade200, fontWeight: FontWeight.w900),
         ),
       ),
     ),

@@ -37,6 +37,8 @@ dependencies:
   #Editor
   rich_editor:
     path: modify_package/rich_editor/
+
+  device_info_plus: ^2.1.0
   image_picker: ^0.8.2
   get: ^4.3.8
   get_storage: ^2.0.2

@@ -52,13 +52,25 @@ class ViewController extends GetxController {
     }
   }
 
-  scrollToIndex(int index, int delay){
-    Future.delayed(Duration(seconds: delay),(){
-      listViewScrollController.position.ensureVisible(
-        formKeyList.elementAt(index).currentContext!.findRenderObject()!,
-        duration: Duration(seconds: 1)
-      );
-    });
+  scrollToIndex(int index, int delay) async{
+    if (index == -1){
+      isEdit = true;
+      data['view'] == 0
+          ? await loadUserPost(GlobalController.i.url + data['fullURL2'])
+        : await loadInboxView(GlobalController.i.url + data['fullURL2']);
+      isEdit = false;
+    } else{
+      Future.delayed(Duration(seconds: delay),(){
+        listViewScrollController.position.ensureVisible(
+            formKeyList.elementAt(index).currentContext!.findRenderObject()!,
+            duration: Duration(seconds: 1)
+        );
+      });
+    }
+  }
+
+  findIndex(String postID){
+     return htmlData.indexWhere((element) => element['postID'] == postID);
   }
 
   @override
@@ -79,13 +91,15 @@ class ViewController extends GetxController {
     this.dispose();
   }
 
-  setPageOnClick(int toPage) async {
+  setPageOnClick(int toPage, bool scrollToFirst) async {
     data['view'] == 0
         ? await loadUserPost(data['fullUrl'] + GlobalController.i.pageLink + toPage.toString())
         : await loadInboxView(data['fullUrl'] + GlobalController.i.pageLink + toPage.toString());
 
-    await updateLastItemScroll();
-    if (isEdit == false) listViewScrollController.jumpTo(-10.0);
+    await updateLastItemScroll(); 
+    if (scrollToFirst == true){
+      listViewScrollController.jumpTo(-10.0);
+    }
   }
 
   updateLastItemScroll() async {
@@ -481,12 +495,12 @@ class ViewController extends GetxController {
     if (data['x'][0] == 'ok') {
       if (GlobalController.i.userStorage.read('scrollToMyRepAfterPost') ?? true /* == true*/) {
         isEdit = true;
-        await setPageOnClick(data['totalPage']);
+        await setPageOnClick(data['totalPage'], false);
         if (data['totalPage'] != data['currentPage']) {
-          await setPageOnClick(data['totalPage']);
+          await setPageOnClick(data['totalPage'], false);
         }
         isEdit = false;
-        listViewScrollController.jumpTo(listViewScrollController.position.maxScrollExtent + 200);
+        scrollToIndex(htmlData.length-2, 1);
       }
     }
   }
@@ -623,7 +637,7 @@ class ViewController extends GetxController {
         if (Get.isDialogOpen == true) Get.back();
         if (Get.isDialogOpen == true) Get.back();
         setDialog();
-        await setPageOnClick(data['currentPage']);
+        await setPageOnClick(data['currentPage'], false);
         input.clear();
       } else {
         if (Get.isDialogOpen == true) Get.back();

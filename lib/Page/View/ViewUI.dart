@@ -9,7 +9,6 @@ import '/Page/pageNavigation.dart';
 import '/Page/reuseWidget.dart';
 import '/Page/View/ViewController.dart';
 import '/GlobalController.dart';
-// import 'package:swipe_to_action/swipe_to_action.dart';
 
 class ViewUI extends GetView<ViewController> {
   final tagI = GlobalController.i.sessionTag.last;
@@ -44,7 +43,7 @@ class ViewUI extends GetView<ViewController> {
                 HapticFeedback.lightImpact();
               } else {
                 controller.update(['lastItemList']);
-                controller.setPageOnClick(controller.data['currentPage'] + 1);
+                controller.setPageOnClick(controller.data['currentPage'] + 1, true);
               }
             }
           }
@@ -96,16 +95,16 @@ class ViewUI extends GetView<ViewController> {
           setDialog();
           switch (symbol) {
             case 'F':
-              controller.setPageOnClick(1);
+              controller.setPageOnClick(1, true);
               break;
             case 'P':
-              controller.setPageOnClick(controller.data['currentPage'] - 1);
+              controller.setPageOnClick(controller.data['currentPage'] - 1, true);
               break;
             case 'N':
-              controller.setPageOnClick(controller.data['currentPage'] + 1);
+              controller.setPageOnClick(controller.data['currentPage'] + 1, true);
               break;
             case 'L':
-              controller.setPageOnClick(controller.data['totalPage']);
+              controller.setPageOnClick(controller.data['totalPage'], true);
               break;
           }
         },
@@ -190,14 +189,14 @@ class ViewUI extends GetView<ViewController> {
               HapticFeedback.lightImpact();
             } else {
               controller.data['isScroll'] = 'Release';
-              controller.setPageOnClick(controller.data['currentPage'] - 1);
+              controller.setPageOnClick(controller.data['currentPage'] - 1, true);
             }
           } else {
             if (controller.data['currentPage'] + 1 > controller.data['totalPage']) {
               HapticFeedback.lightImpact();
             } else {
               controller.data['isScroll'] = 'Release';
-              controller.setPageOnClick(controller.data['currentPage'] + 1);
+              controller.setPageOnClick(controller.data['currentPage'] + 1, true);
             }
           }
         }

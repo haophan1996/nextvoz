@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:get/get.dart';
+import 'package:get/get_utils/get_utils.dart';
 import 'package:html/parser.dart' as parser;
 import 'package:html/dom.dart' as dom;
 import 'package:flutter/cupertino.dart';
@@ -130,6 +132,10 @@ class PostStatusController extends GetxController {
       'cookie': '${data['xf_csrf']}; xf_user=${GlobalController.i.xfUser};',
     };
 
+    if (GlobalController.i.userStorage.read('signature') ?? true){
+      html = (html! + await applySignatureToPost());
+    }
+
     var body = {'_xfWithData': '1', '_xfToken': '${data['token']}', '_xfResponseType': 'json', 'message_html': '$html'};
 
     await GlobalController.i.getHttpPost(true, headers, body, "${data['link']}add-reply").then((value) {
@@ -140,6 +146,22 @@ class PostStatusController extends GetxController {
         setDialogError(value['errors'].toString());
       }
     });
+  }
+
+  applySignatureToPost() async {
+    if (GlobalController.i.userStorage.read('appSignatureDevice') == null){
+      DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+      if (GetPlatform.isAndroid){
+        AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+        GlobalController.i.userStorage.write('appSignatureDevice', androidInfo.device);
+      } else {
+        IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
+        GlobalController.i.userStorage.write('appSignatureDevice', iosInfo.name);
+      }
+    }
+
+    return
+        '''<br><p><span style="font-size: 12px;"><em>Sent from ${GlobalController.i.userStorage.read('appSignatureDevice')} by&nbsp;</em></span><a href="https://play.google.com/store/apps/details?id=com.vozer.nextvoz" target="_blank" rel="noopener noreferrer"><span style="font-size: 12px;"><em>NEXTvoz for android</em></span></a></p>''';
   }
 
   editPost() async {
@@ -175,6 +197,9 @@ class PostStatusController extends GetxController {
     }
 
     String? html = await checkImage();
+    if (GlobalController.i.userStorage.read('signature') ?? true){
+      html = (html! + await applySignatureToPost());
+    }
 
     var body = {
       '_xfWithData': '1',
@@ -194,7 +219,7 @@ class PostStatusController extends GetxController {
     await GlobalController.i.getHttpPost(true, headers, body, GlobalController.i.url + '/conversations/add').then((value) {
       if (Get.isDialogOpen == true) Get.back();
       if (value['status'] == 'ok') {
-        Get.back(result: ['ok',value['redirect'], data['title']]);
+        Get.back(result: ['ok', value['redirect'], data['title']]);
       } else {
         setDialogError(value
             .toString()
@@ -221,6 +246,11 @@ class PostStatusController extends GetxController {
     }
 
     String? html = await checkImage();
+
+    if (GlobalController.i.userStorage.read('signature') ?? true){
+      html = (html! + await applySignatureToPost());
+    }
+
     var headers = {
       'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
       'host': 'voz.vn',
