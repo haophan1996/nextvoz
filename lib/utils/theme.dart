@@ -5,9 +5,9 @@ import 'package:flutter/services.dart';
 class Themes {
   final lightTheme = ThemeData.light().copyWith(
     primaryColor: Colors.black,
-    backgroundColor: Colors.white,
+    backgroundColor: Color(0xfffebeced),//Colors.grey.shade100,
     canvasColor: Color(0xFFEEE3E3),
-    shadowColor: Colors.grey.shade200,
+    shadowColor: Colors.grey.shade300,
     cardColor: Colors.grey.shade300,
     dividerColor: Colors.grey,
     secondaryHeaderColor: Colors.grey.shade700,
@@ -16,10 +16,10 @@ class Themes {
       iconTheme: IconThemeData(color: Colors.grey.shade900),
       centerTitle: true,
       titleSpacing: -2,
-      color: Colors.white,
+      color: Color(0xfffebeced),
       titleTextStyle: TextStyle(color: Colors.black, fontSize: 16),
       systemOverlayStyle: SystemUiOverlayStyle(
-          statusBarColor: Colors.white,
+          statusBarColor: Color(0xfffebeced),
           systemNavigationBarColor: Colors.blue,
           systemNavigationBarDividerColor: Colors.blue,
           statusBarIconBrightness: Brightness.dark,

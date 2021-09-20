@@ -21,8 +21,8 @@ class HomePageUI extends GetView<HomeController> {
         return controller.loadingStatus == 'loading'
             ? loading()
             : controller.loadingStatus == 'loadFailed'
-            ? loadFailed()
-            : loadSucceeded(context);
+                ? loadFailed()
+                : loadSucceeded(context);
       }),
     );
   }
@@ -86,16 +86,22 @@ class HomePageUI extends GetView<HomeController> {
               itemCount: controller.myHomePage.length,
               itemBuilder: (BuildContext context, int index) {
                 return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     (index != 0)
                         ? (controller.myHomePage.elementAt(index - 1)["header"] != controller.myHomePage.elementAt(index)["header"]
                             ? theme(controller.myHomePage.elementAt(index)["header"], context)
-                            : SizedBox.shrink())
+                            : SizedBox())
                         : theme(controller.myHomePage.elementAt(index)["header"], context),
                     blockItem(
                         context,
                         FontWeight.bold,
                         index,
+                        (index != controller.myHomePage.length - 1 &&
+                                controller.myHomePage.elementAt(index)["header"] == controller.myHomePage.elementAt(index + 1)["header"])
+                            ? Theme.of(context).secondaryHeaderColor
+                            : Colors.transparent,
                         "",
                         controller.myHomePage.elementAt(index)["subHeader"],
                         controller.myHomePage.elementAt(index)["threads"],

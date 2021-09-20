@@ -45,10 +45,10 @@ PreferredSize appBarOnly(String title, List<Widget> action) {
 /// * [header11] - [header12] black/white color depends on Dark/light mode.
 /// * [header21] - [header22] grey color default.
 /// * [header3] orange color default.
-Widget blockItem(BuildContext context, FontWeight titleWeight, int index, String header11, String header12, String header21, String header22,
+Widget blockItem(BuildContext context, FontWeight titleWeight, int index, Color divider, String header11, String header12, String header21, String header22,
         String header3, Function onTap, Function onLongPress) =>
     Padding(
-      padding: EdgeInsets.only(bottom: 5, left: 5, right: 5),
+      padding: EdgeInsets.only(left: 5, right: 5),
       child: InkWell(
         splashFactory: InkRipple.splashFactory,
         onTap: () => onTap(),
@@ -56,24 +56,16 @@ Widget blockItem(BuildContext context, FontWeight titleWeight, int index, String
         child: Ink(
           width: double.infinity,
           decoration: BoxDecoration(
-            color: Get.theme.shadowColor,
-            borderRadius: BorderRadius.all(Radius.circular(6)),
+            border: Border(bottom: BorderSide(color: divider, width: 0.2))
           ),
           padding: EdgeInsets.all(5),
-          child: Row(
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    customTitle(titleWeight, titleWeight == FontWeight.bold ? Color(0xfff3168b0) : Get.theme.primaryColor, null, header11, header12),
-                    Text(
-                      "$header21 \u2022 $header22 ${header3 == '' ? '' : '\u2022'} $header3",
-                      style: TextStyle(color: Colors.grey, fontSize: 12),
-                    ),
-                  ],
-                ),
-                //flex: 1,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              customTitle(titleWeight, titleWeight == FontWeight.bold ? Color(0xfff3168b0) : Get.theme.primaryColor, null, header11, header12),
+              Text(
+                "$header21 \u2022 $header22 ${header3 == '' ? '' : '\u2022'} $header3",
+                style: TextStyle(color: Colors.grey, fontSize: 12),
               ),
             ],
           ),

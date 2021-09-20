@@ -97,6 +97,10 @@ class PostStatusController extends GetxController {
     data['view'] = Get.arguments[5] ??= '';
     data['value'] = Get.arguments[6] ??= '';
 
+    if (data['value'].toString().length > 0){
+      data['value'] = data['value'].toString().replaceAll('<p></p>', '<br>');
+    }
+
     ///Optional
     if (data['view'] == '2')
       data['recipients'] = Get.arguments[7] ?? '';
@@ -160,8 +164,9 @@ class PostStatusController extends GetxController {
       }
     }
 
+
     return
-        '''<br><p><span style="font-size: 12px;"><em>Sent from ${GlobalController.i.userStorage.read('appSignatureDevice')} by&nbsp;</em></span><a href="https://play.google.com/store/apps/details?id=com.vozer.nextvoz" target="_blank" rel="noopener noreferrer"><span style="font-size: 12px;"><em>NEXTvoz for android</em></span></a></p>''';
+        '''<p><br><span style="font-size: 12px;"><em>Sent from ${GlobalController.i.userStorage.read('appSignatureDevice')} by&nbsp;</em></span><a href="https://play.google.com/store/apps/details?id=com.vozer.nextvoz" target="_blank" rel="noopener noreferrer"><span style="font-size: 12px;"><em>NEXTvoz for android</em></span></a></p>''';
   }
 
   editPost() async {
