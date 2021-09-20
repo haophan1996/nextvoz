@@ -1,0 +1,75 @@
+{
+  "buildCommand" : "prepareForIndexing",
+  "configuredTargets" : [
+    {
+      "guid" : "2f911d807619916bf708bef110a0e7f19da425bb6d6d5d8dbb95e4afffb82217"
+    },
+    {
+      "guid" : "2f911d807619916bf708bef110a0e7f15f0ec3a68eeed5241cb87afb05bcc380"
+    },
+    {
+      "guid" : "2f911d807619916bf708bef110a0e7f1312b4bc59bbbe2c06c205bf4da6737f5"
+    },
+    {
+      "guid" : "2f911d807619916bf708bef110a0e7f1670bf6b8a9625bcdd40268a2eb6eaa2f"
+    },
+    {
+      "guid" : "2f911d807619916bf708bef110a0e7f1d41ce0bf2141365ff0288286787936d9"
+    },
+    {
+      "guid" : "2f911d807619916bf708bef110a0e7f1c7ebed9850410f0ecfa73453f68494d7"
+    },
+    {
+      "guid" : "2f911d807619916bf708bef110a0e7f1c381c740a31c924b4a53b5fb315a1ab1"
+    },
+    {
+      "guid" : "2f911d807619916bf708bef110a0e7f1bf764fd5de43d0e244cbe6e2f69c1731"
+    },
+    {
+      "guid" : "2f911d807619916bf708bef110a0e7f1d6b4f9cd0664e4caf87e0ca8814c7d76"
+    },
+    {
+      "guid" : "2f911d807619916bf708bef110a0e7f1e8cd2c510461aaa30819666e6706f51b"
+    },
+    {
+      "guid" : "2f911d807619916bf708bef110a0e7f144e7c30f967758063ef1581c62ef72e2"
+    },
+    {
+      "guid" : "2f911d807619916bf708bef110a0e7f1857bd5cc69376a994ea9cb4969e9388e"
+    },
+    {
+      "guid" : "2f911d807619916bf708bef110a0e7f122ec4dd39c676b6a04edc68704df6cd0"
+    }
+  ],
+  "continueBuildingAfterErrors" : true,
+  "enableIndexBuildArena" : false,
+  "hideShellScriptEnvironment" : false,
+  "parameters" : {
+    "action" : "build",
+    "arenaInfo" : {
+      "buildIntermediatesPath" : "",
+      "buildProductsPath" : "",
+      "derivedDataPath" : "/Users/haophan/Library/Developer/Xcode/DerivedData",
+      "indexDataStoreFolderPath" : "/Users/haophan/Library/Developer/Xcode/DerivedData/Pods-bjxwcziiiyqxgthenwozrtjipzgz/Index/DataStore",
+      "indexEnableDataStore" : true,
+      "indexPCHPath" : "/Users/haophan/Library/Developer/Xcode/DerivedData/Pods-bjxwcziiiyqxgthenwozrtjipzgz/Index/PrecompiledHeaders",
+      "pchPath" : ""
+    },
+    "configurationName" : "Release",
+    "overrides" : {
+      "synthesized" : {
+        "table" : {
+          "ENABLE_PREVIEWS" : "NO"
+        }
+      }
+    }
+  },
+  "qos" : "default",
+  "schemeCommand" : "launch",
+  "shouldCollectMetrics" : false,
+  "showNonLoggedProgress" : true,
+  "useDryRun" : true,
+  "useImplicitDependencies" : false,
+  "useLegacyBuildLocations" : false,
+  "useParallelTargets" : false
+}

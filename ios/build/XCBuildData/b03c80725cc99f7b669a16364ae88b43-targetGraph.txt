@@ -1,0 +1,37 @@
+Target dependency graph (13 targets)
+Flutter in Pods
+OrderedSet in Pods
+YoutubeKit in Pods
+device_info_plus in Pods, depends on:
+Flutter in Pods (explicit)
+flutter_inappwebview in Pods, depends on:
+Flutter in Pods (explicit)
+OrderedSet in Pods (explicit)
+flutter_youtube_view in Pods, depends on:
+Flutter in Pods (explicit)
+YoutubeKit in Pods (explicit)
+image_picker in Pods, depends on:
+Flutter in Pods (explicit)
+path_provider in Pods, depends on:
+Flutter in Pods (explicit)
+url_launcher in Pods, depends on:
+Flutter in Pods (explicit)
+video_player in Pods, depends on:
+Flutter in Pods (explicit)
+wakelock in Pods, depends on:
+Flutter in Pods (explicit)
+webview_flutter in Pods, depends on:
+Flutter in Pods (explicit)
+Pods-Runner in Pods, depends on:
+Flutter in Pods (explicit)
+OrderedSet in Pods (explicit)
+YoutubeKit in Pods (explicit)
+device_info_plus in Pods (explicit)
+flutter_inappwebview in Pods (explicit)
+flutter_youtube_view in Pods (explicit)
+image_picker in Pods (explicit)
+path_provider in Pods (explicit)
+url_launcher in Pods (explicit)
+video_player in Pods (explicit)
+wakelock in Pods (explicit)
+webview_flutter in Pods (explicit)
