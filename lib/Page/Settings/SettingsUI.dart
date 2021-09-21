@@ -41,66 +41,54 @@ class SettingsUI extends GetView<SettingsController> {
                     boxAlignment: AlignmentDirectional.bottomEnd,
                   ),
                 ],
-              )),
+              )),//Lang
+              myContainer(Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(top: 10, bottom: 10),
+                    child: Text(
+                      'darkMode'.tr,
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  Spacer(),
+                  FlutterReactionButton(
+                    onReactionChanged: (reaction, i) {
+                      controller.darkModeIndex = i;
+                    },
+                    reactions: controller.darkMode,
+                    initialReaction: controller.darkMode[GlobalController.i.userStorage.read('darkMode') ?? 0],
+                    boxRadius: 10,
+                    boxAlignment: AlignmentDirectional.bottomEnd,
+                  ),
+                ],
+              )),//Darkmode
               Obx(() => myContainer(Row(
-                    children: [
-                      RichText(
-                        text: TextSpan(children: [
-                          TextSpan(text: 'fontSizeView'.tr, style: TextStyle(color: Get.theme.primaryColor, fontWeight: FontWeight.bold)),
-                          TextSpan(
-                              text: '\n${controller.fontSizeView.value.toInt()}'.tr,
-                              style: TextStyle(
-                                color: Colors.grey,
-                              ))
-                        ]),
-                      ),
-                      Expanded(
-                        child: Slider(
-                            divisions: 30,
-                            label: controller.fontSizeView.string,
-                            value: controller.fontSizeView.value,
-                            max: 40.0,
-                            min: 10.0,
-                            onChanged: (value) {
-                              controller.fontSizeView.value = value;
-                            }),
-                      )
-                    ],
-                  ))), //fontSize
-              myContainer(Row(
                 children: [
-                  Text(
-                    'scrollToMyRepAfterPost'.tr,
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                  RichText(
+                    text: TextSpan(children: [
+                      TextSpan(text: 'fontSizeView'.tr, style: TextStyle(color: Get.theme.primaryColor, fontWeight: FontWeight.bold)),
+                      TextSpan(
+                          text: '\n${controller.fontSizeView.value.toInt()}'.tr,
+                          style: TextStyle(
+                            color: Colors.grey,
+                          ))
+                    ]),
                   ),
-                  Spacer(),
-                  Obx(
-                    () => CupertinoSwitch(
-                      value: controller.switchValuePost.value,
-                      onChanged: (value) {
-                        controller.switchValuePost.value = value;
-                      },
-                    ),
+                  Expanded(
+                    child: Slider(
+                        divisions: 30,
+                        label: controller.fontSizeView.string,
+                        value: controller.fontSizeView.value,
+                        max: 40.0,
+                        min: 10.0,
+                        onChanged: (value) {
+                          controller.fontSizeView.value = value;
+                        }),
                   )
                 ],
-              )), //scroll post
-              myContainer(Row(
-                children: [
-                  Text(
-                    'showImage'.tr,
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  Spacer(),
-                  Obx(
-                    () => CupertinoSwitch(
-                      value: controller.switchImage.value,
-                      onChanged: (value) {
-                        controller.switchImage.value = value;
-                      },
-                    ),
-                  )
-                ],
-              )), //show images
+              ))), //fontSize
               myContainer(Row(
                 children: [
                   GetBuilder<SettingsController>(
@@ -115,45 +103,45 @@ class SettingsUI extends GetView<SettingsController> {
                                 TextSpan(
                                     text: '\n${GlobalController.i.userStorage.read('appSignatureDevice') ?? 'Device'}'.tr,
                                     style: TextStyle(
-                                      color: Colors.grey,
+                                      color: Colors.blueAccent,
                                     ))
                               ]),
                             ), () {
                           controller.textEditingController.text = GlobalController.i.userStorage.read('appSignatureDevice');
                           Get.defaultDialog(
                               content: Column(
-                            children: [
-                              inputCustom(TextInputType.text, controller.textEditingController, false, 'Signature', () {}),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Stack(
                                 children: [
-                                  Align(
-                                    alignment: Alignment.topLeft,
-                                    child: customCupertinoButton(Alignment.center, EdgeInsets.zero, Text(' Cancel'), () => Get.back()),
+                                  inputCustom(TextInputType.text, controller.textEditingController, false, 'Signature', () {}),
+                                  SizedBox(
+                                    height: 10,
                                   ),
-                                  Align(
-                                    alignment: Alignment.topCenter,
-                                    child: customCupertinoButton(Alignment.center, EdgeInsets.zero, Text('Reset'), () async {
-                                      await controller.getDeviceName();
-                                      Get.back();
-                                    }),
-                                  ),
-                                  Align(
-                                    alignment: Alignment.topRight,
-                                    child: customCupertinoButton(
-                                        Alignment.center, EdgeInsets.zero, Text('   OK'), () async => await controller.setDeviceName()),
-                                  ),
+                                  Stack(
+                                    children: [
+                                      Align(
+                                        alignment: Alignment.topLeft,
+                                        child: customCupertinoButton(Alignment.center, EdgeInsets.zero, Text(' Cancel'), () => Get.back()),
+                                      ),
+                                      Align(
+                                        alignment: Alignment.topCenter,
+                                        child: customCupertinoButton(Alignment.center, EdgeInsets.zero, Text('Reset'), () async {
+                                          await controller.getDeviceName();
+                                          Get.back();
+                                        }),
+                                      ),
+                                      Align(
+                                        alignment: Alignment.topRight,
+                                        child: customCupertinoButton(
+                                            Alignment.center, EdgeInsets.zero, Text('   OK'), () async => await controller.setDeviceName()),
+                                      ),
+                                    ],
+                                  )
                                 ],
-                              )
-                            ],
-                          ));
+                              ));
                         });
                       }),
                   Spacer(),
                   Obx(
-                    () => CupertinoSwitch(
+                        () => CupertinoSwitch(
                       value: controller.switchSignature.value,
                       onChanged: (value) {
                         controller.switchSignature.value = value;
@@ -176,7 +164,7 @@ class SettingsUI extends GetView<SettingsController> {
                   ),
                   Spacer(),
                   Obx(
-                    () => CupertinoSwitch(
+                        () => CupertinoSwitch(
                       value: controller.switchDefaultsPage.value,
                       onChanged: (value) {
                         controller.switchDefaultsPage.value = value;
@@ -185,6 +173,23 @@ class SettingsUI extends GetView<SettingsController> {
                   )
                 ],
               )), //default launch page
+              myContainer(Row(
+                children: [
+                  Text(
+                    'showImage'.tr,
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  Spacer(),
+                  Obx(
+                        () => CupertinoSwitch(
+                      value: controller.switchImage.value,
+                      onChanged: (value) {
+                        controller.switchImage.value = value;
+                      },
+                    ),
+                  )
+                ],
+              )), //show images
               myContainer(Row(
                 children: [
                   Text(
@@ -202,6 +207,23 @@ class SettingsUI extends GetView<SettingsController> {
                   })
                 ],
               )), //swipe right/left
+              myContainer(Row(
+                children: [
+                  Text(
+                    'scrollToMyRepAfterPost'.tr,
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  Spacer(),
+                  Obx(
+                        () => CupertinoSwitch(
+                      value: controller.switchValuePost.value,
+                      onChanged: (value) {
+                        controller.switchValuePost.value = value;
+                      },
+                    ),
+                  )
+                ],
+              )), //scroll post
               CupertinoButton(
                   child: Text('Save'),
                   onPressed: () {

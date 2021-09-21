@@ -134,8 +134,6 @@ class ThreadController extends GetxController {
       data['ableToPost'] = false;
     } else
       data['ableToPost'] = true;
-    print(value.getElementsByClassName('button--cta button button--icon button--icon--write').length);
-    print(data['ableToPost']);
 
     value.getElementsByClassName("p-body-content").forEach((element) async {
       data['lastP'] = element.getElementsByClassName("pageNavSimple");
@@ -149,6 +147,7 @@ class ThreadController extends GetxController {
       }
       //Detail SubHeader
       element.getElementsByClassName("structItem structItem--thread").forEach((element) async {
+        data['sticky'] = element.getElementsByClassName('structItem-status structItem-status--sticky').length > 0 ? true : false;
         if (element.getElementsByClassName("structItem-title")[0].getElementsByTagName('a').length > 1) {
           data['title'] = element.getElementsByClassName("structItem-title")[0].text.trim();
           data['themeTitle'] = element.getElementsByClassName("structItem-title")[0].getElementsByTagName('a')[0].text.trim();
@@ -161,6 +160,7 @@ class ThreadController extends GetxController {
         data['authorName'] = element.attributes["data-author"];
 
         myThreadList.add({
+          "sticky" : data['sticky'],
           "title": data['title'],
           "prefix": data['themeTitle'] ?? '',
           'isRead': data['linkThread'].contains('/unread') ? true : false,

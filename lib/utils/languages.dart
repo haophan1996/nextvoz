@@ -63,10 +63,11 @@ class Language extends Translations{
       'follow' : 'Following | theNEXTvoz',
       'ignore' : 'Ignoring | theNEXTvoz',
       'shortcuts' : 'Shortcuts',
-      'shortcutsHelper' : 'Long press on thread to save link'
+      'shortcutsHelper' : 'Long press on thread to save link',
+      'darkMode' : 'Dark Mode',
     },
     'vi_VN' : {
-      'lang'    : 'Ngôn ngữ',
+      'lang'    : 'Ngôn Ngữ',
       'setPage' : 'Cài Đặt',
       'blockQuote'   : 'Quote [Bấm để xem]: ',
       'notification'    : 'Thông Báo',
@@ -124,6 +125,7 @@ class Language extends Translations{
       'ignore' : 'Đang Chặn | theNEXTvoz',
       'shortcuts' : 'Đường dẫn nhanh',
       'shortcutsHelper' : 'Nhấn và giữ vào thớt để lưu đường dẫn',
+      'darkMode' : 'Chế Độ Nền Tối',
     }
   };
 

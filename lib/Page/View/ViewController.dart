@@ -227,6 +227,12 @@ class ViewController extends GetxController {
           element.getElementsByClassName('message-body js-selectToQuote')[0].getElementsByClassName('bbImageWrapper').forEach((element) {
             data['_postContent'] = data['_postContent'].toString().replaceAll(element.outerHtml, element.innerHtml);
           });
+          
+          element.getElementsByClassName('bbCodeBlock-expandContent js-expandContent is-ignored').forEach((e) {
+            data['_postContent'] = data['_postContent'].replaceAll(e.outerHtml, '')
+                .replaceAll(element.getElementsByClassName('messageNotice messageNotice--ignored')[0].outerHtml, 'You are ignoring content by this member');
+
+          });
 
           data['_userPostDate'] = element.getElementsByClassName("u-concealed")[0].text.trim();
 
@@ -312,9 +318,9 @@ class ViewController extends GetxController {
       } else
         update();
     });
-
   }
-
+  
+  
   Future<void> loadInboxView(String link) async {
     data['_commentImg'] = '';
     await GlobalController.i.getBodyBeta((value) {

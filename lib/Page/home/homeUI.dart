@@ -102,6 +102,7 @@ class HomePageUI extends GetView<HomeController> {
                                 controller.myHomePage.elementAt(index)["header"] == controller.myHomePage.elementAt(index + 1)["header"])
                             ? Theme.of(context).secondaryHeaderColor
                             : Colors.transparent,
+                        Color(0xfff3168b0),
                         "",
                         controller.myHomePage.elementAt(index)["subHeader"],
                         controller.myHomePage.elementAt(index)["threads"],

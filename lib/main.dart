@@ -31,7 +31,7 @@ class MyPage extends StatelessWidget {
       locale: GlobalController.i.langList.elementAt(GlobalController.i.userStorage.read('lang') ?? 1),
       theme: Themes().lightTheme,
       darkTheme: Themes().darkTheme,
-      themeMode: ThemeMode.system,
+      themeMode: ThemeMode.values[GlobalController.i.userStorage.read('darkMode') ?? 0],
       initialRoute: GlobalController.i.userStorage.read('isTermAccept') != true ? Routes.Term : AppPage.INITIAL,
       getPages: AppPage.pages,
     );

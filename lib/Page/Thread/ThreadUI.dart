@@ -104,6 +104,7 @@ class ThreadUI extends GetView<ThreadController> {
                             controller.myThreadList.elementAt(index)['isRead'] == true ? FontWeight.bold : FontWeight.normal,
                             index,
                             index != controller.myThreadList.length-1 ? Theme.of(context).secondaryHeaderColor : Colors.transparent,
+                            controller.myThreadList.elementAt(index)['sticky'] == true ? Colors.red : Color(0xfff3168b0),
                             controller.myThreadList.elementAt(index)['prefix'],
                             controller.myThreadList.elementAt(index)['title'],
                             controller.myThreadList.elementAt(index)['replies'],
