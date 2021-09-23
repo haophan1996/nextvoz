@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:get/get.dart';
+import '../GlobalController.dart';
 
 class ScrollToHideWidget extends StatefulWidget {
   final Widget child;
@@ -55,7 +57,7 @@ class _ScrollToHideWidgetState extends State<ScrollToHideWidget> {
   @override
   Widget build(BuildContext context) => AnimatedContainer(
     duration: widget.duration,
-    height: isVisible ? kBottomNavigationBarHeight : 0,
+    height: isVisible ? kBottomNavigationBarHeight+(GlobalController.i.userStorage.read('heightBottomBar') ?? (GetPlatform.isAndroid ? 0 : 20)) : 0,
     child: widget.child,
   );
 }

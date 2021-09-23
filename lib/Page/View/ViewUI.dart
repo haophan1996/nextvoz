@@ -23,33 +23,44 @@ class ViewUI extends GetView<ViewController> {
     return Scaffold(
       endDrawer: NaviDrawerUI(),
       endDrawerEnableOpenDragGesture: true,
-      appBar: preferredSize(context, controller.data['subHeader'], controller.data['subTypeHeader'], []),
+      appBar: preferredSize(context, controller.data['subHeader'],
+          controller.data['subTypeHeader'], []),
       backgroundColor: Theme.of(context).backgroundColor,
       body: NotificationListener(
         onNotification: (Notification notification) {
-          if (notification is ScrollUpdateNotification && controller.data['isScroll'] != 'Release') {
-            if (((notification).metrics.pixels > (notification).metrics.maxScrollExtent + GlobalController.i.overScroll) &&
+          if (notification is ScrollUpdateNotification &&
+              controller.data['isScroll'] != 'Release') {
+            if (((notification).metrics.pixels >
+                    (notification).metrics.maxScrollExtent +
+                        GlobalController.i.overScroll) &&
                 (notification).dragDetails != null &&
                 controller.data['isScroll'] != 'Holding') {
               ///detect user overScroll
               controller.data['isScroll'] = "Holding";
               controller.update(['lastItemList']);
-            } else if (((notification).metrics.pixels > (notification).metrics.maxScrollExtent + GlobalController.i.overScroll) &&
+            } else if (((notification).metrics.pixels >
+                    (notification).metrics.maxScrollExtent +
+                        GlobalController.i.overScroll) &&
                 (notification).dragDetails == null &&
                 controller.data['isScroll'] != 'Release' &&
                 Get.currentRoute == Routes.View) {
               ///User overScroll and release finger
               controller.data['isScroll'] = 'Release';
-              if (controller.data['currentPage'] + 1 > controller.data['totalPage']) {
+              if (controller.data['currentPage'] + 1 >
+                  controller.data['totalPage']) {
                 HapticFeedback.lightImpact();
               } else {
                 controller.update(['lastItemList']);
-                controller.setPageOnClick(controller.data['currentPage'] + 1, true);
+                controller.setPageOnClick(
+                    controller.data['currentPage'] + 1, true);
               }
             }
           }
-          if (notification is ScrollEndNotification && controller.data['isScroll'] != 'idle') {
-            if (controller.data['isScroll'] != 'Release' || (controller.data['currentPage'] + 1) > controller.data['totalPage']) {
+          if (notification is ScrollEndNotification &&
+              controller.data['isScroll'] != 'idle') {
+            if (controller.data['isScroll'] != 'Release' ||
+                (controller.data['currentPage'] + 1) >
+                    controller.data['totalPage']) {
               ///return to idle
               controller.data['isScroll'] = 'idle';
               controller.update(['lastItemList']);
@@ -73,72 +84,87 @@ class ViewUI extends GetView<ViewController> {
           controller: controller.listViewScrollController,
           child: BottomAppBar(
             color: Theme.of(context).backgroundColor,
-            child: Row(mainAxisSize: MainAxisSize.max, mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-              Expanded(
-                  child: customCupertinoButton(
-                      Alignment.center,
-                      EdgeInsets.zero,
-                      Icon(
-                        Icons.textsms_outlined,
-                        color: Theme.of(context).primaryColor,
+            child: Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  Expanded(
+                      child: customCupertinoButton(
+                          Alignment.center,
+                          EdgeInsets.zero,
+                          Icon(
+                            Icons.textsms_outlined,
+                            color: Theme.of(context).primaryColor,
+                            size: GlobalController.i.userStorage
+                                    .read('sizeIconBottomBar') ??
+                                35.0,
+                          ),
+                          () => controller.reply('', false))),
+                  Expanded(
+                      child: Container(
+                    height: 50,
+                    child: Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        onTap: () => controller.navigatePage('P'),
+                        onLongPress: () => controller.navigatePage('F'),
+                        child: Icon(Icons.arrow_back_ios_outlined,
+                            size: GlobalController.i.userStorage
+                                    .read('sizeIconBottomBar') ??
+                                35.0),
                       ),
-                      () => controller.reply('', false))),
-              Expanded(
-                  child: Container(
-                height: 50,
-                child: Material(
-                  color: Colors.transparent,
-                  child: InkWell(
-                    onTap: () => controller.navigatePage('P'),
-                    onLongPress: () => controller.navigatePage('F'),
-                    child: Icon(
-                      Icons.arrow_back_ios_outlined,
                     ),
-                  ),
-                ),
-              )),
-              Expanded(
-                  child: customCupertinoButton(
-                      Alignment.center,
-                      EdgeInsets.zero,
-                      GetBuilder<ViewController>(
-                          tag: tag,
-                          id: 'updatePageNum',
-                          builder: (controller) {
-                            return Text('${controller.data['currentPage'] ?? ''} of ${controller.data['totalPage'] ?? ''}');
-                          }),
-                      () {})),
-              Expanded(
-                  child: Container(
-                height: 50,
-                child: Material(
-                  color: Colors.transparent,
-                  child: InkWell(
-                    onTap: () => controller.navigatePage('N'),
-                    onLongPress: () => controller.navigatePage('L'),
-                    child: Icon(
-                      Icons.arrow_forward_ios_rounded,
-                    ),
-                  ),
-                ),
-              )),
-              Expanded(
-                  child: customCupertinoButton(
-                      Alignment.center,
-                      EdgeInsets.zero,
-                      GetBuilder<GlobalController>(
-                        id: 'Notification',
-                        builder: (controller) {
-                          return Icon(
-                            Icons.dashboard_rounded,
-                            color: controller.inboxNotifications != 0 || controller.alertNotifications != 0 ? Colors.red : Get.theme.primaryColor,
-                          );
-                        },
+                  )),
+                  Expanded(
+                      child: customCupertinoButton(
+                          Alignment.center,
+                          EdgeInsets.zero,
+                          GetBuilder<ViewController>(
+                              tag: tag,
+                              id: 'updatePageNum',
+                              builder: (controller) {
+                                return Text(
+                                    '${controller.data['currentPage'] ?? ''} of ${controller.data['totalPage'] ?? ''}');
+                              }),
+                          () {})),
+                  Expanded(
+                      child: Container(
+                    height: 50,
+                    child: Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        onTap: () => controller.navigatePage('N'),
+                        onLongPress: () => controller.navigatePage('L'),
+                        child: Icon(Icons.arrow_forward_ios_rounded,
+                            size: GlobalController.i.userStorage
+                                    .read('sizeIconBottomBar') ??
+                                35.0),
                       ),
-                      () => Get.bottomSheet(
-                            controlCenter(),
-                          ))),
-            ]),
+                    ),
+                  )),
+                  Expanded(
+                      child: customCupertinoButton(
+                          Alignment.center,
+                          EdgeInsets.zero,
+                          GetBuilder<GlobalController>(
+                            id: 'Notification',
+                            builder: (controller) {
+                              return Icon(
+                                Icons.dashboard_rounded,
+                                size: GlobalController.i.userStorage
+                                        .read('sizeIconBottomBar') ??
+                                    35.0,
+                                color: controller.inboxNotifications != 0 ||
+                                        controller.alertNotifications != 0
+                                    ? Colors.red
+                                    : Get.theme.primaryColor,
+                              );
+                            },
+                          ),
+                          () => Get.bottomSheet(
+                                controlCenter(),
+                              ))),
+                ]),
           )),
     );
   }
@@ -158,7 +184,10 @@ class ViewUI extends GetView<ViewController> {
 
   Widget loadSuccess() {
     return Stack(children: [
-      GlobalController.i.userStorage.read('switchSwipeLeftRight') ?? false == true ? enableSwipe() : postContent(),
+      GlobalController.i.userStorage.read('switchSwipeLeftRight') ??
+              false == true
+          ? enableSwipe()
+          : postContent(),
       loading(),
       // Align(
       //   alignment: Alignment.bottomCenter,
@@ -198,8 +227,14 @@ class ViewUI extends GetView<ViewController> {
         text: TextSpan(
           children: <TextSpan>[
             TextSpan(
-                text: 'Oops! We ran into some problems.\n', style: TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold, fontSize: 16)),
-            TextSpan(text: 'The requested thread could not be found.', style: TextStyle(color: Get.theme.primaryColor, fontSize: 16)),
+                text: 'Oops! We ran into some problems.\n',
+                style: TextStyle(
+                    color: Colors.redAccent,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16)),
+            TextSpan(
+                text: 'The requested thread could not be found.',
+                style: TextStyle(color: Get.theme.primaryColor, fontSize: 16)),
           ],
         ),
       ),
@@ -238,7 +273,10 @@ class ViewUI extends GetView<ViewController> {
         child: Row(
           children: [
             Icon(Icons.keyboard_arrow_left),
-            GetBuilder<ViewController>(tag: tag, builder: (controller) => Text((controller.data['currentPage'] - 1).toString()))
+            GetBuilder<ViewController>(
+                tag: tag,
+                builder: (controller) =>
+                    Text((controller.data['currentPage'] - 1).toString()))
           ],
         ),
       ),
@@ -247,7 +285,10 @@ class ViewUI extends GetView<ViewController> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            GetBuilder<ViewController>(tag: tag, builder: (controller) => Text((controller.data['currentPage'] + 1).toString())),
+            GetBuilder<ViewController>(
+                tag: tag,
+                builder: (controller) =>
+                    Text((controller.data['currentPage'] + 1).toString())),
             Icon(Icons.keyboard_arrow_right)
           ],
         ),
@@ -261,14 +302,17 @@ class ViewUI extends GetView<ViewController> {
               HapticFeedback.lightImpact();
             } else {
               controller.data['isScroll'] = 'Release';
-              controller.setPageOnClick(controller.data['currentPage'] - 1, true);
+              controller.setPageOnClick(
+                  controller.data['currentPage'] - 1, true);
             }
           } else {
-            if (controller.data['currentPage'] + 1 > controller.data['totalPage']) {
+            if (controller.data['currentPage'] + 1 >
+                controller.data['totalPage']) {
               HapticFeedback.lightImpact();
             } else {
               controller.data['isScroll'] = 'Release';
-              controller.setPageOnClick(controller.data['currentPage'] + 1, true);
+              controller.setPageOnClick(
+                  controller.data['currentPage'] + 1, true);
             }
           }
         }

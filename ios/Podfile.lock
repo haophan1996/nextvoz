@@ -73,11 +73,11 @@ SPEC CHECKSUMS:
   flutter_youtube_view: ea93f139b374c5e2b869b3e84190c4ba9668601b
   image_picker: 9aa50e1d8cdacdbed739e925b7eea16d014367e6
   OrderedSet: aaeb196f7fef5a9edf55d89760da9176ad40b93c
-  path_provider: abfe2b5c733d04e238b0d8691db0cfd63a27a93c
-  url_launcher: 6fef411d543ceb26efce54b05a0a40bfd74cbbef
-  video_player: 9cc823b1d9da7e8427ee591e8438bfbcde500e6e
+  path_provider: d1e9807085df1f9cc9318206cd649dc0b76be3de
+  url_launcher: b6e016d912f04be9f5bf6e8e82dc599b7ba59649
+  video_player: ecd305f42e9044793efd34846e1ce64c31ea6fcb
   wakelock: d0fc7c864128eac40eba1617cb5264d9c940b46f
-  webview_flutter: 3603125dfd3bcbc9d8d418c3f80aeecf331c068b
+  webview_flutter: 5fb4def2bbd4339889ee14d045b605cefc5bc232
   YoutubeKit: 9f66eba839211158f2aac7ad3833593bd56fa8f9
 
 PODFILE CHECKSUM: aafe91acc616949ddb318b77800a7f51bffa2a4c

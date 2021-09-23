@@ -82,27 +82,29 @@ class ThreadUI extends GetView<ThreadController> {
                       Icon(
                         Icons.textsms_outlined,
                         color: Theme.of(context).primaryColor,
+                          size: GlobalController.i.userStorage.read('sizeIconBottomBar') ?? 35.0
                       ), () {
-                if (controller.data['ableToPost'] == true && controller.data['theme'] != 'posts'.tr) {
-                  controller.navigateToCreatePost();
-                } else {
-                  setDialogError('Unable to create thread or Forums did not allow to post thread');
-                }
-              })),
+                    if (controller.data['ableToPost'] == true && controller.data['theme'] != 'posts'.tr) {
+                      controller.navigateToCreatePost();
+                    } else {
+                      setDialogError('Unable to create thread or Forums did not allow to post thread');
+                    }
+                  })),
               Expanded(
                   child: Container(
-                height: 50,
-                child: Material(
-                  color: Colors.transparent,
-                  child: InkWell(
-                    onTap: () => controller.navigatePage('P'),
-                    onLongPress: () => controller.navigatePage('F'),
-                    child: Icon(
-                      Icons.arrow_back_ios_outlined,
+                    height: 50,
+                    child: Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        onTap: () => controller.navigatePage('P'),
+                        onLongPress: () => controller.navigatePage('F'),
+                        child: Icon(
+                          Icons.arrow_back_ios_outlined,
+                            size: GlobalController.i.userStorage.read('sizeIconBottomBar') ?? 35.0
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-              )),
+                  )),
               Expanded(
                   child: customCupertinoButton(
                       Alignment.center,
@@ -113,21 +115,22 @@ class ThreadUI extends GetView<ThreadController> {
                           builder: (controller) {
                             return Text('${controller.data['currentPage'] ?? ''} of ${controller.data['totalPage'] ?? ''}');
                           }),
-                      () {})),
+                          () {})),
               Expanded(
                   child: Container(
-                height: 50,
-                child: Material(
-                  color: Colors.transparent,
-                  child: InkWell(
-                    onTap: () => controller.navigatePage('N'),
-                    onLongPress: () => controller.navigatePage('L'),
-                    child: Icon(
-                      Icons.arrow_forward_ios_rounded,
+                    height: 50,
+                    child: Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        onTap: () => controller.navigatePage('N'),
+                        onLongPress: () => controller.navigatePage('L'),
+                        child: Icon(
+                          Icons.arrow_forward_ios_rounded,
+                            size: GlobalController.i.userStorage.read('sizeIconBottomBar') ?? 35.0
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-              )),
+                  )),
               Expanded(
                   child: customCupertinoButton(
                       Alignment.center,
@@ -137,11 +140,12 @@ class ThreadUI extends GetView<ThreadController> {
                         builder: (controller) {
                           return Icon(
                             Icons.dashboard_rounded,
+                            size: GlobalController.i.userStorage.read('sizeIconBottomBar') ?? 35.0,
                             color: controller.inboxNotifications != 0 || controller.alertNotifications != 0 ? Colors.red : Get.theme.primaryColor,
                           );
                         },
                       ),
-                      () => Get.bottomSheet(
+                          () => Get.bottomSheet(
                         controlCenter(),
                       ))),
             ]),

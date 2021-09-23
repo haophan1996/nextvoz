@@ -42,6 +42,7 @@ class SettingsUI extends GetView<SettingsController> {
                   ),
                 ],
               )),//Lang
+              Divider(),
               myContainer(Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -152,6 +153,41 @@ class SettingsUI extends GetView<SettingsController> {
               )), //app signature
               myContainer(Row(
                 children: [
+                  Text(
+                    'showImage'.tr,
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  Spacer(),
+                  Obx(
+                        () => CupertinoSwitch(
+                      value: controller.switchImage.value,
+                      onChanged: (value) {
+                        controller.switchImage.value = value;
+                      },
+                    ),
+                  )
+                ],
+              )), //show images
+              myContainer(Row(
+                children: [
+                  Text(
+                    'scrollToMyRepAfterPost'.tr,
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  Spacer(),
+                  Obx(
+                        () => CupertinoSwitch(
+                      value: controller.switchValuePost.value,
+                      onChanged: (value) {
+                        controller.switchValuePost.value = value;
+                      },
+                    ),
+                  )
+                ],
+              )), //scroll post
+              Divider(),
+              myContainer(Row(
+                children: [
                   RichText(
                     text: TextSpan(children: [
                       TextSpan(text: 'defaultsPage'.tr, style: TextStyle(color: Get.theme.primaryColor, fontWeight: FontWeight.bold)),
@@ -176,23 +212,6 @@ class SettingsUI extends GetView<SettingsController> {
               myContainer(Row(
                 children: [
                   Text(
-                    'showImage'.tr,
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  Spacer(),
-                  Obx(
-                        () => CupertinoSwitch(
-                      value: controller.switchImage.value,
-                      onChanged: (value) {
-                        controller.switchImage.value = value;
-                      },
-                    ),
-                  )
-                ],
-              )), //show images
-              myContainer(Row(
-                children: [
-                  Text(
                     'viewSwipeLeftRight'.tr,
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
@@ -207,23 +226,67 @@ class SettingsUI extends GetView<SettingsController> {
                   })
                 ],
               )), //swipe right/left
-              myContainer(Row(
-                children: [
-                  Text(
-                    'scrollToMyRepAfterPost'.tr,
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  Spacer(),
-                  Obx(
-                        () => CupertinoSwitch(
-                      value: controller.switchValuePost.value,
-                      onChanged: (value) {
-                        controller.switchValuePost.value = value;
-                      },
-                    ),
-                  )
-                ],
-              )), //scroll post
+              Divider(),
+              myContainer(GetBuilder<SettingsController>(
+                id: 'iconSizeBottom',
+                builder: (controller){
+                  return Row(
+                    children: [
+                      RichText(
+                        text: TextSpan(children: [
+                          TextSpan(text: 'iconBottomBarSize'.tr, style: TextStyle(color: Get.theme.primaryColor, fontWeight: FontWeight.bold)),
+                          TextSpan(
+                              text: '\n${controller.sizeIconBottomBar.toStringAsFixed(2)}'.tr,
+                              style: TextStyle(
+                                color: Colors.grey,
+                              ))
+                        ]),
+                      ),
+                      Expanded(
+                        child: Slider(
+                            label: controller.sizeIconBottomBar.toString(),
+                            value: controller.sizeIconBottomBar.toDouble(),
+                            max: 50.0,
+                            min: 20.0,
+                            onChanged: (value) {
+                              controller.sizeIconBottomBar = value;
+                              controller.update(['iconSizeBottom']);
+                            }),
+                      )
+                    ],
+                  );
+                },
+              )),
+              myContainer(GetBuilder<SettingsController>(
+                id: 'heightBottom',
+                builder: (controller){
+                  return Row(
+                    children: [
+                      RichText(
+                        text: TextSpan(children: [
+                          TextSpan(text: 'heightBottom'.tr, style: TextStyle(color: Get.theme.primaryColor, fontWeight: FontWeight.bold)),
+                          TextSpan(
+                              text: '\n${controller.heightBottomBar.round()}'.tr,
+                              style: TextStyle(
+                                color: Colors.grey,
+                              ))
+                        ]),
+                      ),
+                      Expanded(
+                        child: Slider(
+                            label: controller.heightBottomBar.toString(),
+                            value: controller.heightBottomBar.toDouble(),
+                            max: 30.0,
+                            min: 0.0,
+                            onChanged: (value) {
+                              controller.heightBottomBar = value.toInt();
+                              controller.update(['heightBottom']);
+                            }),
+                      )
+                    ],
+                  );
+                },
+              )),
               CupertinoButton(
                   child: Text('Save'),
                   onPressed: () {

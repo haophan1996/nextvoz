@@ -65,6 +65,8 @@ class Language extends Translations{
       'shortcuts' : 'Shortcuts',
       'shortcutsHelper' : 'Long press on thread to save link',
       'darkMode' : 'Dark Mode',
+      'iconBottomBarSize' : 'Icon Bottom Size',
+      'heightBottom' : 'Height Bottom Bar',
     },
     'vi_VN' : {
       'lang'    : 'Ngôn Ngữ',
@@ -126,6 +128,8 @@ class Language extends Translations{
       'shortcuts' : 'Đường dẫn nhanh',
       'shortcutsHelper' : 'Nhấn và giữ vào thớt để lưu đường dẫn',
       'darkMode' : 'Chế Độ Nền Tối',
+      'iconBottomBarSize' : 'Kích Cỡ Icon Bottom',
+      'heightBottom' : 'Kích cỡ Bottom Bar',
     }
   };
 
