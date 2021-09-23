@@ -102,6 +102,26 @@ class ViewController extends GetxController {
     }
   }
 
+
+  navigatePage(String symbol){
+    if (data['isScroll'] == 'Release') return;
+    setDialog();
+    switch (symbol) {
+      case 'F':
+        setPageOnClick(1, true);
+        break;
+      case 'P':
+        setPageOnClick(data['currentPage'] - 1, true);
+        break;
+      case 'N':
+        setPageOnClick(data['currentPage'] + 1, true);
+        break;
+      case 'L':
+        setPageOnClick(data['totalPage'], true);
+        break;
+    }
+  }
+
   updateLastItemScroll() async {
     if (data['isScroll'] != 'idle') {
       data['isScroll'] = 'idle';
@@ -317,6 +337,8 @@ class ViewController extends GetxController {
         update(['firstLoading']);
       } else
         update();
+
+      update(['updatePageNum']);
     });
   }
   
@@ -448,6 +470,8 @@ class ViewController extends GetxController {
         update(['firstLoading']);
       } else
         update();
+
+      update(['updatePageNum']);
     });
   }
 

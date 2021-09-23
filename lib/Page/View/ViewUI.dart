@@ -4,8 +4,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:the_next_voz/Page/View/swipe.dart';
 import 'package:the_next_voz/Routes/pages.dart';
+import '../ScrollToHideWidget.dart';
+import '../pageNavigation.dart';
 import '/Page/NavigationDrawer/NaviDrawerUI.dart';
-import '/Page/pageNavigation.dart';
 import '/Page/reuseWidget.dart';
 import '/Page/View/ViewController.dart';
 import '/GlobalController.dart';
@@ -22,7 +23,7 @@ class ViewUI extends GetView<ViewController> {
     return Scaffold(
       endDrawer: NaviDrawerUI(),
       endDrawerEnableOpenDragGesture: true,
-      appBar: preferredSize(context, controller.data['subHeader'], controller.data['subTypeHeader']),
+      appBar: preferredSize(context, controller.data['subHeader'], controller.data['subTypeHeader'], []),
       backgroundColor: Theme.of(context).backgroundColor,
       body: NotificationListener(
         onNotification: (Notification notification) {
@@ -68,6 +69,77 @@ class ViewUI extends GetView<ViewController> {
           },
         ),
       ),
+      bottomNavigationBar: ScrollToHideWidget(
+          controller: controller.listViewScrollController,
+          child: BottomAppBar(
+            color: Theme.of(context).backgroundColor,
+            child: Row(mainAxisSize: MainAxisSize.max, mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
+              Expanded(
+                  child: customCupertinoButton(
+                      Alignment.center,
+                      EdgeInsets.zero,
+                      Icon(
+                        Icons.textsms_outlined,
+                        color: Theme.of(context).primaryColor,
+                      ),
+                      () => controller.reply('', false))),
+              Expanded(
+                  child: Container(
+                height: 50,
+                child: Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    onTap: () => controller.navigatePage('P'),
+                    onLongPress: () => controller.navigatePage('F'),
+                    child: Icon(
+                      Icons.arrow_back_ios_outlined,
+                    ),
+                  ),
+                ),
+              )),
+              Expanded(
+                  child: customCupertinoButton(
+                      Alignment.center,
+                      EdgeInsets.zero,
+                      GetBuilder<ViewController>(
+                          tag: tag,
+                          id: 'updatePageNum',
+                          builder: (controller) {
+                            return Text('${controller.data['currentPage'] ?? ''} of ${controller.data['totalPage'] ?? ''}');
+                          }),
+                      () {})),
+              Expanded(
+                  child: Container(
+                height: 50,
+                child: Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    onTap: () => controller.navigatePage('N'),
+                    onLongPress: () => controller.navigatePage('L'),
+                    child: Icon(
+                      Icons.arrow_forward_ios_rounded,
+                    ),
+                  ),
+                ),
+              )),
+              Expanded(
+                  child: customCupertinoButton(
+                      Alignment.center,
+                      EdgeInsets.zero,
+                      GetBuilder<GlobalController>(
+                        id: 'Notification',
+                        builder: (controller) {
+                          return Icon(
+                            Icons.dashboard_rounded,
+                            color: controller.inboxNotifications != 0 || controller.alertNotifications != 0 ? Colors.red : Get.theme.primaryColor,
+                          );
+                        },
+                      ),
+                      () => Get.bottomSheet(
+                            controlCenter(),
+                          ))),
+            ]),
+          )),
     );
   }
 
@@ -88,34 +160,34 @@ class ViewUI extends GetView<ViewController> {
     return Stack(children: [
       GlobalController.i.userStorage.read('switchSwipeLeftRight') ?? false == true ? enableSwipe() : postContent(),
       loading(),
-      Align(
-        alignment: Alignment.bottomCenter,
-        child: pageNavigation((String symbol) {
-          if (controller.data['isScroll'] == 'Release') return;
-          setDialog();
-          switch (symbol) {
-            case 'F':
-              controller.setPageOnClick(1, true);
-              break;
-            case 'P':
-              controller.setPageOnClick(controller.data['currentPage'] - 1, true);
-              break;
-            case 'N':
-              controller.setPageOnClick(controller.data['currentPage'] + 1, true);
-              break;
-            case 'L':
-              controller.setPageOnClick(controller.data['totalPage'], true);
-              break;
-          }
-        },
-            () => controller.reply('', false),
-            GetBuilder<ViewController>(
-              tag: tag,
-              builder: (controller) {
-                return Text('${controller.data['currentPage'].toString()} of ${controller.data['totalPage'].toString()}');
-              },
-            )),
-      )
+      // Align(
+      //   alignment: Alignment.bottomCenter,
+      //   child: pageNavigation((String symbol) {
+      //     if (controller.data['isScroll'] == 'Release') return;
+      //     setDialog();
+      //     switch (symbol) {
+      //       case 'F':
+      //         controller.setPageOnClick(1, true);
+      //         break;
+      //       case 'P':
+      //         controller.setPageOnClick(controller.data['currentPage'] - 1, true);
+      //         break;
+      //       case 'N':
+      //         controller.setPageOnClick(controller.data['currentPage'] + 1, true);
+      //         break;
+      //       case 'L':
+      //         controller.setPageOnClick(controller.data['totalPage'], true);
+      //         break;
+      //     }
+      //   },
+      //       () => controller.reply('', false),
+      //       GetBuilder<ViewController>(
+      //         tag: tag,
+      //         builder: (controller) {
+      //           return Text('${controller.data['currentPage'].toString()} of ${controller.data['totalPage'].toString()}');
+      //         },
+      //       )),
+      // )
     ]);
   }
 

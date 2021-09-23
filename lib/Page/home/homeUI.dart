@@ -16,7 +16,9 @@ class HomePageUI extends GetView<HomeController> {
       endDrawer: NaviDrawerUI(),
       endDrawerEnableOpenDragGesture: true,
       backgroundColor: Theme.of(context).backgroundColor,
-      appBar: preferredSize(context, "theNEXTvoz", ''),
+      appBar: AppBar(
+        title: Text('theNEXTvoz', style: TextStyle(fontWeight: FontWeight.bold, color: Theme.of(context).secondaryHeaderColor),),
+      ),
       body: GetBuilder<HomeController>(builder: (controller) {
         return controller.loadingStatus == 'loading'
             ? loading()

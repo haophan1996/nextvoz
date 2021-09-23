@@ -1,8 +1,10 @@
 import 'dart:ui';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import '../ScrollToHideWidget.dart';
 import '../pageNavigation.dart';
 import '/GlobalController.dart';
 import '/Page/reuseWidget.dart';
@@ -22,7 +24,7 @@ class ThreadUI extends GetView<ThreadController> {
       endDrawer: NaviDrawerUI(),
       endDrawerEnableOpenDragGesture: true,
       backgroundColor: Theme.of(context).backgroundColor,
-      appBar: preferredSize(context, controller.data['theme'], ''),
+      appBar: preferredSize(context, controller.data['theme'], '', []),
       body: NotificationListener(
         onNotification: (Notification notification) {
           if (notification is ScrollUpdateNotification && controller.data['isScroll'] != 'Release') {
@@ -68,6 +70,82 @@ class ThreadUI extends GetView<ThreadController> {
                       : loadingSuccess();
             }),
       ),
+      bottomNavigationBar: ScrollToHideWidget(
+          controller: controller.listViewScrollController,
+          child: BottomAppBar(
+            color: Theme.of(context).backgroundColor,
+            child: Row(mainAxisSize: MainAxisSize.max, mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
+              Expanded(
+                  child: customCupertinoButton(
+                      Alignment.center,
+                      EdgeInsets.zero,
+                      Icon(
+                        Icons.textsms_outlined,
+                        color: Theme.of(context).primaryColor,
+                      ), () {
+                if (controller.data['ableToPost'] == true && controller.data['theme'] != 'posts'.tr) {
+                  controller.navigateToCreatePost();
+                } else {
+                  setDialogError('Unable to create thread or Forums did not allow to post thread');
+                }
+              })),
+              Expanded(
+                  child: Container(
+                height: 50,
+                child: Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    onTap: () => controller.navigatePage('P'),
+                    onLongPress: () => controller.navigatePage('F'),
+                    child: Icon(
+                      Icons.arrow_back_ios_outlined,
+                    ),
+                  ),
+                ),
+              )),
+              Expanded(
+                  child: customCupertinoButton(
+                      Alignment.center,
+                      EdgeInsets.zero,
+                      GetBuilder<ThreadController>(
+                          tag: tag,
+                          id: 'updatePageNum',
+                          builder: (controller) {
+                            return Text('${controller.data['currentPage'] ?? ''} of ${controller.data['totalPage'] ?? ''}');
+                          }),
+                      () {})),
+              Expanded(
+                  child: Container(
+                height: 50,
+                child: Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    onTap: () => controller.navigatePage('N'),
+                    onLongPress: () => controller.navigatePage('L'),
+                    child: Icon(
+                      Icons.arrow_forward_ios_rounded,
+                    ),
+                  ),
+                ),
+              )),
+              Expanded(
+                  child: customCupertinoButton(
+                      Alignment.center,
+                      EdgeInsets.zero,
+                      GetBuilder<GlobalController>(
+                        id: 'Notification',
+                        builder: (controller) {
+                          return Icon(
+                            Icons.dashboard_rounded,
+                            color: controller.inboxNotifications != 0 || controller.alertNotifications != 0 ? Colors.red : Get.theme.primaryColor,
+                          );
+                        },
+                      ),
+                      () => Get.bottomSheet(
+                        controlCenter(),
+                      ))),
+            ]),
+          )),
     );
   }
 
@@ -103,7 +181,7 @@ class ThreadUI extends GetView<ThreadController> {
                             context,
                             controller.myThreadList.elementAt(index)['isRead'] == true ? FontWeight.bold : FontWeight.normal,
                             index,
-                            index != controller.myThreadList.length-1 ? Theme.of(context).secondaryHeaderColor : Colors.transparent,
+                            index != controller.myThreadList.length - 1 ? Theme.of(context).secondaryHeaderColor : Colors.transparent,
                             controller.myThreadList.elementAt(index)['sticky'] == true ? Colors.red : Color(0xfff3168b0),
                             controller.myThreadList.elementAt(index)['prefix'],
                             controller.myThreadList.elementAt(index)['title'],
@@ -123,38 +201,38 @@ class ThreadUI extends GetView<ThreadController> {
                 );
               }),
           download(),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: pageNavigation((String symbol) {
-              if (controller.data['isScroll'] == 'Release') return;
-              setDialog();
-              switch (symbol) {
-                case 'F':
-                  controller.setPageOnClick(1);
-                  break;
-                case 'P':
-                  controller.setPageOnClick(controller.data['currentPage'] - 1);
-                  break;
-                case 'N':
-                  controller.setPageOnClick(controller.data['currentPage'] + 1);
-                  break;
-                case 'L':
-                  controller.setPageOnClick(controller.data['totalPage']);
-                  break;
-              }
-            }, () {
-              if (controller.data['ableToPost'] == true && controller.data['theme'] != 'posts'.tr ){
-                controller.navigateToCreatePost();
-              } else {
-                setDialogError('Unable to create thread or Forums did not allow to post thread');
-              }
-            },
-                GetBuilder<ThreadController>(
-                    tag: tag,
-                    builder: (controller) {
-                      return Text('${controller.data['currentPage'] ?? ''} of ${controller.data['totalPage'] ?? ''}');
-                    })),
-          )
+          // Align(
+          //   alignment: Alignment.bottomCenter,
+          //   child: pageNavigation((String symbol) {
+          //     if (controller.data['isScroll'] == 'Release') return;
+          //     setDialog();
+          //     switch (symbol) {
+          //       case 'F':
+          //         controller.setPageOnClick(1);
+          //         break;
+          //       case 'P':
+          //         controller.setPageOnClick(controller.data['currentPage'] - 1);
+          //         break;
+          //       case 'N':
+          //         controller.setPageOnClick(controller.data['currentPage'] + 1);
+          //         break;
+          //       case 'L':
+          //         controller.setPageOnClick(controller.data['totalPage']);
+          //         break;
+          //     }
+          //   }, () {
+          //     if (controller.data['ableToPost'] == true && controller.data['theme'] != 'posts'.tr ){
+          //       controller.navigateToCreatePost();
+          //     } else {
+          //       setDialogError('Unable to create thread or Forums did not allow to post thread');
+          //     }
+          //   },
+          //       GetBuilder<ThreadController>(
+          //           tag: tag,
+          //           builder: (controller) {
+          //             return Text('${controller.data['currentPage'] ?? ''} of ${controller.data['totalPage'] ?? ''}');
+          //           })),
+          // )
         ],
       );
 }

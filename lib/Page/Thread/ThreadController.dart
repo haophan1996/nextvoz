@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../reuseWidget.dart';
 import '/Routes/pages.dart';
 import '/GlobalController.dart';
 import 'package:html/dom.dart' as dom;
@@ -66,6 +67,25 @@ class ThreadController extends GetxController {
     await updateLastItemScroll();
   }
 
+  navigatePage(String symbol){
+    if (data['isScroll'] == 'Release') return;
+    setDialog();
+    switch (symbol) {
+      case 'F':
+        setPageOnClick(1);
+        break;
+      case 'P':
+        setPageOnClick(data['currentPage'] - 1);
+        break;
+      case 'N':
+        setPageOnClick(data['currentPage'] + 1);
+        break;
+      case 'L':
+        setPageOnClick(data['totalPage']);
+        break;
+    }
+  }
+
   updateLastItemScroll() async {
     if (data['isScroll'] != 'idle') {
       data['isScroll'] = 'idle';
@@ -86,6 +106,7 @@ class ThreadController extends GetxController {
       update(['download'], true);
     }, dio, url, false).then((value) async {
       await performQueryData(value!);
+      update(['updatePageNum']);
       if (data['loading'] == 'firstLoading') {
         data['loading'] = 'ok';
         update(['FirstLoading']);

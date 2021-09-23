@@ -23,8 +23,8 @@ Widget pageNavigation(Function(String index) gotoPage, Function reply, Widget ch
               child: CupertinoButton(
                 padding: EdgeInsets.zero,
                 child: Icon(
-                  Icons.reply_outlined,
-                  color: Get.theme.primaryColor,
+                  Icons.message,
+                  color: Color(0xeb018cfc),
                 ),
                 onPressed: () {
                   if (GlobalController.i.isLogged == false) {

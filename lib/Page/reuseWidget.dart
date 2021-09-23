@@ -17,12 +17,13 @@ import '/Page/NavigationDrawer/NaviDrawerController.dart';
 import '/Page/View/ViewController.dart';
 
 ///  * Global appbar
-PreferredSize preferredSize(BuildContext context, String title, String prefix) => PreferredSize(
+PreferredSize preferredSize(BuildContext context, String title, String prefix, List<Widget> action) => PreferredSize(
       preferredSize: Size.fromHeight(GlobalController.i.heightAppbar),
       child: AppBar(
         automaticallyImplyLeading: false,
         title: customTitle(FontWeight.bold, Color(0xfff3168b0), 2, prefix, title),
         leading: (ModalRoute.of(context)?.canPop ?? false) ? BackButton() : null,
+        actions: action,
       ),
     );
 
