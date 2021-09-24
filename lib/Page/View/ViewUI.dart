@@ -23,8 +23,7 @@ class ViewUI extends GetView<ViewController> {
     return Scaffold(
       endDrawer: NaviDrawerUI(),
       endDrawerEnableOpenDragGesture: true,
-      appBar: preferredSize(context, controller.data['subHeader'],
-          controller.data['subTypeHeader'], []),
+      //appBar: preferredSize(context, controller.data['subHeader'], controller.data['subTypeHeader'], []),
       backgroundColor: Theme.of(context).backgroundColor,
       body: NotificationListener(
         onNotification: (Notification notification) {
@@ -68,16 +67,57 @@ class ViewUI extends GetView<ViewController> {
           }
           return false;
         },
-        child: GetBuilder<ViewController>(
-          id: 'firstLoading',
-          tag: tag,
-          builder: (controller) {
-            return controller.htmlData.length != 0
-                ? loadSuccess()
-                : controller.data['loading'] == 'error'
+        child: CustomScrollView(
+          cacheExtent: 999999999,
+          controller: controller.listViewScrollController,
+          physics: BouncingScrollPhysics(),
+          slivers: [
+            SliverAppBar(
+              leading: BackButton(),
+              automaticallyImplyLeading: true,
+              title: customTitle(FontWeight.bold, Color(0xfff3168b0), 2, controller.data['subTypeHeader'], controller.data['subHeader']),
+              floating: true,
+            ),
+            GetBuilder<ViewController>(
+              id: 'firstLoading',
+              tag: tag,
+              builder: (controller) {
+                return controller.htmlData.length != 0
+                    ? GetBuilder<ViewController>(
+                    tag: tag,
+                    builder: (controller) {
+                      // return SliverList(
+                      //   delegate: SliverChildBuilderDelegate(
+                      //           (context, index){
+                      //     return controller.htmlData.length == index
+                      //         ? GetBuilder<ViewController>(
+                      //         id: 'lastItemList',
+                      //         tag: tag,
+                      //         builder: (controller) {
+                      //           return loadingBottom(controller.data['isScroll'], 70);
+                      //         })
+                      //         : viewContent(index, controller);
+                      //   }, childCount: controller.htmlData.length + 1)
+                      //
+                      // );
+                      return SliverList(
+                          delegate: SliverChildListDelegate(
+                              List.generate(controller.htmlData.length + 1, (index) {
+                                return controller.htmlData.length == index ?
+                                    GetBuilder<ViewController>(id: 'lastItemList',tag: tag,builder: (controller){
+                                      return loadingBottom(controller.data['isScroll'], 70);
+                                    }) : viewContent(index, controller);
+                              })
+                          )
+                         
+                      );
+                    })
+                    : controller.data['loading'] == 'error'
                     ? loadFailed()
-                    : loading();
-          },
+                    : SliverFillRemaining();
+              },
+            )
+          ],
         ),
       ),
       bottomNavigationBar: ScrollToHideWidget(
@@ -195,34 +235,6 @@ class ViewUI extends GetView<ViewController> {
           ? enableSwipe()
           : postContent(),
       loading(),
-      // Align(
-      //   alignment: Alignment.bottomCenter,
-      //   child: pageNavigation((String symbol) {
-      //     if (controller.data['isScroll'] == 'Release') return;
-      //     setDialog();
-      //     switch (symbol) {
-      //       case 'F':
-      //         controller.setPageOnClick(1, true);
-      //         break;
-      //       case 'P':
-      //         controller.setPageOnClick(controller.data['currentPage'] - 1, true);
-      //         break;
-      //       case 'N':
-      //         controller.setPageOnClick(controller.data['currentPage'] + 1, true);
-      //         break;
-      //       case 'L':
-      //         controller.setPageOnClick(controller.data['totalPage'], true);
-      //         break;
-      //     }
-      //   },
-      //       () => controller.reply('', false),
-      //       GetBuilder<ViewController>(
-      //         tag: tag,
-      //         builder: (controller) {
-      //           return Text('${controller.data['currentPage'].toString()} of ${controller.data['totalPage'].toString()}');
-      //         },
-      //       )),
-      // )
     ]);
   }
 
