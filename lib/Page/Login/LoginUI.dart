@@ -1,9 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:the_next_voz/Page/NavigationDrawer/NaviDrawerController.dart';
+import 'package:the_next_voz/Routes/pages.dart';
 import '/Page/reuseWidget.dart';
 import '/GlobalController.dart';
-import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'LoginController.dart';
 
 class LoginUI extends GetView<LoginController> {
@@ -65,15 +66,47 @@ class LoginUI extends GetView<LoginController> {
                 Container(
                     padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
                     decoration: BoxDecoration(color: Colors.grey.shade300, borderRadius: BorderRadius.all(Radius.circular(6))),
-                    child: Text('login'.tr)),
-                () async{
-                //setDialog();
-                  await controller.loginFunction();
-                }),
+                    child: Text('login'.tr)), () async {
+              //setDialog();
+              await controller.loginFunction();
+            }),
             Text('or'.tr),
             Spacer(),
-            SignInButton(Buttons.Google, onPressed: () {}),
-            SignInButton(Buttons.FacebookNew, onPressed: () {}),
+            Padding(
+              padding: EdgeInsets.only(bottom: 6),
+              child: customCupertinoButton(
+                Alignment.center,
+                EdgeInsets.zero,
+                Container(
+                  padding: EdgeInsets.only(top: 5, bottom: 5),
+                  decoration: BoxDecoration(color: Color(0xFFF7a8db1), borderRadius: BorderRadius.all(Radius.circular(6))),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.lock_outline,
+                        color: Colors.white,
+                      ),
+                      Text(
+                        '\t\tWebView Login',
+                        style: TextStyle(color: Colors.white),
+                      )
+                    ],
+                  ),
+                ),
+                () async {
+                  var result = await Get.toNamed(Routes.BrowserLogin);
+                  if (result[0] == 'ok'){
+                    setDialog();
+                    await GlobalController.i.setDataUser();
+                    await NaviDrawerController.i.getUserProfile();
+                    Get.back();
+                    Get.back();
+                  }
+                },
+              ),
+            )
           ],
         ),
       ),

@@ -84,87 +84,93 @@ class ViewUI extends GetView<ViewController> {
           controller: controller.listViewScrollController,
           child: BottomAppBar(
             color: Theme.of(context).backgroundColor,
-            child: Row(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  Expanded(
-                      child: customCupertinoButton(
-                          Alignment.center,
-                          EdgeInsets.zero,
-                          Icon(
-                            Icons.textsms_outlined,
-                            color: Theme.of(context).primaryColor,
-                            size: GlobalController.i.userStorage
-                                    .read('sizeIconBottomBar') ??
-                                35.0,
+            child: Padding(
+              padding: EdgeInsets.only(top: GetPlatform.isAndroid ? 0 : 5),
+              child: Row(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Expanded(
+                        child: customCupertinoButton(
+                            Alignment.center,
+                            EdgeInsets.zero,
+                            Icon(
+                              Icons.textsms_outlined,
+                              color: Theme.of(context).primaryColor,
+                              size: GlobalController.i.userStorage
+                                  .read('sizeIconBottomBar') ??
+                                  30.0,
+                            ),
+                                () => controller.reply('', false))),
+                    Expanded(
+                        child: Container(
+                          height: 50,
+                          child: Material(
+                            color: Colors.transparent,
+                            child: InkWell(
+                              onTap: () => controller.navigatePage('P'),
+                              onLongPress: () => controller.navigatePage('F'),
+                              child: Icon(Icons.arrow_back_ios_outlined,
+                                  size: GlobalController.i.userStorage
+                                      .read('sizeIconBottomBar') ??
+                                      30.0),
+                            ),
                           ),
-                          () => controller.reply('', false))),
-                  Expanded(
-                      child: Container(
-                    height: 50,
-                    child: Material(
-                      color: Colors.transparent,
-                      child: InkWell(
-                        onTap: () => controller.navigatePage('P'),
-                        onLongPress: () => controller.navigatePage('F'),
-                        child: Icon(Icons.arrow_back_ios_outlined,
-                            size: GlobalController.i.userStorage
-                                    .read('sizeIconBottomBar') ??
-                                35.0),
-                      ),
-                    ),
-                  )),
-                  Expanded(
-                      child: customCupertinoButton(
-                          Alignment.center,
-                          EdgeInsets.zero,
-                          GetBuilder<ViewController>(
-                              tag: tag,
-                              id: 'updatePageNum',
+                        )),
+                    Expanded(
+                        child: customCupertinoButton(
+                            Alignment.center,
+                            EdgeInsets.zero,
+                            GetBuilder<ViewController>(
+                                tag: tag,
+                                id: 'updatePageNum',
+                                builder: (controller) {
+                                  return Text(
+                                      '${controller.data['currentPage'] ?? ''} / ${controller.data['totalPage'] ?? ''}', style: TextStyle(
+                                      color: Theme.of(context).primaryColor,
+                                    fontWeight: FontWeight.bold
+                                  ));
+                                }),
+                                () {})),
+                    Expanded(
+                        child: Container(
+                          height: 50,
+                          child: Material(
+                            color: Colors.transparent,
+                            child: InkWell(
+                              onTap: () => controller.navigatePage('N'),
+                              onLongPress: () => controller.navigatePage('L'),
+                              child: Icon(Icons.arrow_forward_ios_rounded,
+                                  size: GlobalController.i.userStorage
+                                      .read('sizeIconBottomBar') ??
+                                      30.0),
+                            ),
+                          ),
+                        )),
+                    Expanded(
+                        child: customCupertinoButton(
+                            Alignment.center,
+                            EdgeInsets.zero,
+                            GetBuilder<GlobalController>(
+                              id: 'Notification',
                               builder: (controller) {
-                                return Text(
-                                    '${controller.data['currentPage'] ?? ''} of ${controller.data['totalPage'] ?? ''}');
-                              }),
-                          () {})),
-                  Expanded(
-                      child: Container(
-                    height: 50,
-                    child: Material(
-                      color: Colors.transparent,
-                      child: InkWell(
-                        onTap: () => controller.navigatePage('N'),
-                        onLongPress: () => controller.navigatePage('L'),
-                        child: Icon(Icons.arrow_forward_ios_rounded,
-                            size: GlobalController.i.userStorage
-                                    .read('sizeIconBottomBar') ??
-                                35.0),
-                      ),
-                    ),
-                  )),
-                  Expanded(
-                      child: customCupertinoButton(
-                          Alignment.center,
-                          EdgeInsets.zero,
-                          GetBuilder<GlobalController>(
-                            id: 'Notification',
-                            builder: (controller) {
-                              return Icon(
-                                Icons.dashboard_rounded,
-                                size: GlobalController.i.userStorage
-                                        .read('sizeIconBottomBar') ??
-                                    35.0,
-                                color: controller.inboxNotifications != 0 ||
-                                        controller.alertNotifications != 0
-                                    ? Colors.red
-                                    : Get.theme.primaryColor,
-                              );
-                            },
-                          ),
-                          () => Get.bottomSheet(
-                                controlCenter(),
-                              ))),
-                ]),
+                                return Icon(
+                                  Icons.dashboard_rounded,
+                                  size: GlobalController.i.userStorage
+                                      .read('sizeIconBottomBar') ??
+                                      30.0,
+                                  color: controller.inboxNotifications != 0 ||
+                                      controller.alertNotifications != 0
+                                      ? Colors.red
+                                      : Get.theme.primaryColor,
+                                );
+                              },
+                            ),
+                                () => Get.bottomSheet(
+                              controlCenter(),
+                            ))),
+                  ]),
+            ),
           )),
     );
   }
