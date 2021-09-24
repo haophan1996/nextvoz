@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../ScrollToHideWidget.dart';
+import '../SliverPersistent.dart';
 import '../pageNavigation.dart';
 import '/GlobalController.dart';
 import '/Page/reuseWidget.dart';
@@ -67,7 +68,19 @@ class ThreadUI extends GetView<ThreadController> {
                 floating: true,
               ),
               SliverPersistentHeader(
-                delegate: SectionHeaderDelegate("Section B", tagI),
+                delegate: SectionHeaderDelegate(
+                    "Section B",
+                    tagI,
+                    GetBuilder<ThreadController>(
+                        tag: tag,
+                        id: 'download',
+                        builder: (controller) {
+                          return LinearProgressIndicator(
+                            value: controller.data['percentDownload'],
+                            valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF0CF301)),
+                            backgroundColor: Colors.transparent,
+                          );
+                        })),
                 pinned: true,
               ),
               GetBuilder<ThreadController>(
@@ -217,38 +230,4 @@ class ThreadUI extends GetView<ThreadController> {
           ),
         );
       });
-}
-
-class SectionHeaderDelegate extends SliverPersistentHeaderDelegate {
-  final String title;
-  final double height;
-  final String tag;
-
-  SectionHeaderDelegate(this.title, this.tag, [this.height = 10]);
-
-  @override
-  Widget build(context, double shrinkOffset, bool overlapsContent) {
-    return Container(
-      alignment: Alignment.center,
-      child: GetBuilder<ThreadController>(
-          tag: tag,
-          id: 'download',
-          builder: (controller) {
-            return LinearProgressIndicator(
-              value: controller.data['percentDownload'],
-              valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF0CF301)),
-              backgroundColor: Colors.transparent,
-            );
-          }),
-    );
-  }
-
-  @override
-  double get maxExtent => height;
-
-  @override
-  double get minExtent => height;
-
-  @override
-  bool shouldRebuild(SliverPersistentHeaderDelegate oldDelegate) => false;
 }

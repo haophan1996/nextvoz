@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:the_next_voz/Page/View/swipe.dart';
 import 'package:the_next_voz/Routes/pages.dart';
 import '../ScrollToHideWidget.dart';
+import '../SliverPersistent.dart';
 import '../pageNavigation.dart';
 import '/Page/NavigationDrawer/NaviDrawerUI.dart';
 import '/Page/reuseWidget.dart';
@@ -25,99 +26,40 @@ class ViewUI extends GetView<ViewController> {
       endDrawerEnableOpenDragGesture: true,
       //appBar: preferredSize(context, controller.data['subHeader'], controller.data['subTypeHeader'], []),
       backgroundColor: Theme.of(context).backgroundColor,
-      body: NotificationListener(
-        onNotification: (Notification notification) {
-          if (notification is ScrollUpdateNotification &&
-              controller.data['isScroll'] != 'Release') {
-            if (((notification).metrics.pixels >
-                    (notification).metrics.maxScrollExtent +
-                        GlobalController.i.overScroll) &&
-                (notification).dragDetails != null &&
-                controller.data['isScroll'] != 'Holding') {
-              ///detect user overScroll
-              controller.data['isScroll'] = "Holding";
-              controller.update(['lastItemList']);
-            } else if (((notification).metrics.pixels >
-                    (notification).metrics.maxScrollExtent +
-                        GlobalController.i.overScroll) &&
-                (notification).dragDetails == null &&
-                controller.data['isScroll'] != 'Release' &&
-                Get.currentRoute == Routes.View) {
-              ///User overScroll and release finger
-              controller.data['isScroll'] = 'Release';
-              if (controller.data['currentPage'] + 1 >
-                  controller.data['totalPage']) {
-                HapticFeedback.lightImpact();
-              } else {
+      body: SafeArea(
+        child: NotificationListener(
+          onNotification: (Notification notification) {
+            if (notification is ScrollUpdateNotification && controller.data['isScroll'] != 'Release') {
+              if (((notification).metrics.pixels > (notification).metrics.maxScrollExtent + GlobalController.i.overScroll) &&
+                  (notification).dragDetails != null &&
+                  controller.data['isScroll'] != 'Holding') {
+                ///detect user overScroll
+                controller.data['isScroll'] = "Holding";
                 controller.update(['lastItemList']);
-                controller.setPageOnClick(
-                    controller.data['currentPage'] + 1, true);
+              } else if (((notification).metrics.pixels > (notification).metrics.maxScrollExtent + GlobalController.i.overScroll) &&
+                  (notification).dragDetails == null &&
+                  controller.data['isScroll'] != 'Release' &&
+                  Get.currentRoute == Routes.View) {
+                ///User overScroll and release finger
+                controller.data['isScroll'] = 'Release';
+                if (controller.data['currentPage'] + 1 > controller.data['totalPage']) {
+                  HapticFeedback.lightImpact();
+                } else {
+                  controller.update(['lastItemList']);
+                  controller.setPageOnClick(controller.data['currentPage'] + 1, true);
+                }
               }
             }
-          }
-          if (notification is ScrollEndNotification &&
-              controller.data['isScroll'] != 'idle') {
-            if (controller.data['isScroll'] != 'Release' ||
-                (controller.data['currentPage'] + 1) >
-                    controller.data['totalPage']) {
-              ///return to idle
-              controller.data['isScroll'] = 'idle';
-              controller.update(['lastItemList']);
+            if (notification is ScrollEndNotification && controller.data['isScroll'] != 'idle') {
+              if (controller.data['isScroll'] != 'Release' || (controller.data['currentPage'] + 1) > controller.data['totalPage']) {
+                ///return to idle
+                controller.data['isScroll'] = 'idle';
+                controller.update(['lastItemList']);
+              }
             }
-          }
-          return false;
-        },
-        child: CustomScrollView(
-          cacheExtent: 999999999,
-          controller: controller.listViewScrollController,
-          physics: BouncingScrollPhysics(),
-          slivers: [
-            SliverAppBar(
-              leading: BackButton(),
-              automaticallyImplyLeading: true,
-              title: customTitle(FontWeight.bold, Color(0xfff3168b0), 2, controller.data['subTypeHeader'], controller.data['subHeader']),
-              floating: true,
-            ),
-            GetBuilder<ViewController>(
-              id: 'firstLoading',
-              tag: tag,
-              builder: (controller) {
-                return controller.htmlData.length != 0
-                    ? GetBuilder<ViewController>(
-                    tag: tag,
-                    builder: (controller) {
-                      // return SliverList(
-                      //   delegate: SliverChildBuilderDelegate(
-                      //           (context, index){
-                      //     return controller.htmlData.length == index
-                      //         ? GetBuilder<ViewController>(
-                      //         id: 'lastItemList',
-                      //         tag: tag,
-                      //         builder: (controller) {
-                      //           return loadingBottom(controller.data['isScroll'], 70);
-                      //         })
-                      //         : viewContent(index, controller);
-                      //   }, childCount: controller.htmlData.length + 1)
-                      //
-                      // );
-                      return SliverList(
-                          delegate: SliverChildListDelegate(
-                              List.generate(controller.htmlData.length + 1, (index) {
-                                return controller.htmlData.length == index ?
-                                    GetBuilder<ViewController>(id: 'lastItemList',tag: tag,builder: (controller){
-                                      return loadingBottom(controller.data['isScroll'], 70);
-                                    }) : viewContent(index, controller);
-                              })
-                          )
-                         
-                      );
-                    })
-                    : controller.data['loading'] == 'error'
-                    ? loadFailed()
-                    : SliverFillRemaining();
-              },
-            )
-          ],
+            return false;
+          },
+          child: GlobalController.i.userStorage.read('switchSwipeLeftRight') ?? false == true ? enableSwipe() : mainBody(),
         ),
       ),
       bottomNavigationBar: ScrollToHideWidget(
@@ -126,116 +68,74 @@ class ViewUI extends GetView<ViewController> {
             color: Theme.of(context).backgroundColor,
             child: Padding(
               padding: EdgeInsets.only(top: GetPlatform.isAndroid ? 0 : 5),
-              child: Row(
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    Expanded(
-                        child: customCupertinoButton(
-                            Alignment.center,
-                            EdgeInsets.zero,
-                            Icon(
-                              Icons.textsms_outlined,
-                              color: Theme.of(context).primaryColor,
-                              size: GlobalController.i.userStorage
-                                  .read('sizeIconBottomBar') ??
-                                  30.0,
-                            ),
-                                () => controller.reply('', false))),
-                    Expanded(
-                        child: Container(
-                          height: 50,
-                          child: Material(
-                            color: Colors.transparent,
-                            child: InkWell(
-                              onTap: () => controller.navigatePage('P'),
-                              onLongPress: () => controller.navigatePage('F'),
-                              child: Icon(Icons.arrow_back_ios_outlined,
-                                  size: GlobalController.i.userStorage
-                                      .read('sizeIconBottomBar') ??
-                                      30.0),
-                            ),
-                          ),
-                        )),
-                    Expanded(
-                        child: customCupertinoButton(
-                            Alignment.center,
-                            EdgeInsets.zero,
-                            GetBuilder<ViewController>(
-                                tag: tag,
-                                id: 'updatePageNum',
-                                builder: (controller) {
-                                  return Text(
-                                      '${controller.data['currentPage'] ?? ''} / ${controller.data['totalPage'] ?? ''}', style: TextStyle(
-                                      color: Theme.of(context).primaryColor,
-                                    fontWeight: FontWeight.bold
-                                  ));
-                                }),
-                                () {})),
-                    Expanded(
-                        child: Container(
-                          height: 50,
-                          child: Material(
-                            color: Colors.transparent,
-                            child: InkWell(
-                              onTap: () => controller.navigatePage('N'),
-                              onLongPress: () => controller.navigatePage('L'),
-                              child: Icon(Icons.arrow_forward_ios_rounded,
-                                  size: GlobalController.i.userStorage
-                                      .read('sizeIconBottomBar') ??
-                                      30.0),
-                            ),
-                          ),
-                        )),
-                    Expanded(
-                        child: customCupertinoButton(
-                            Alignment.center,
-                            EdgeInsets.zero,
-                            GetBuilder<GlobalController>(
-                              id: 'Notification',
-                              builder: (controller) {
-                                return Icon(
-                                  Icons.dashboard_rounded,
-                                  size: GlobalController.i.userStorage
-                                      .read('sizeIconBottomBar') ??
-                                      30.0,
-                                  color: controller.inboxNotifications != 0 ||
-                                      controller.alertNotifications != 0
-                                      ? Colors.red
-                                      : Get.theme.primaryColor,
-                                );
-                              },
-                            ),
-                                () => Get.bottomSheet(
+              child: Row(mainAxisSize: MainAxisSize.max, mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
+                Expanded(
+                    child: customCupertinoButton(
+                        Alignment.center,
+                        EdgeInsets.zero,
+                        Icon(
+                          Icons.textsms_outlined,
+                          color: Theme.of(context).primaryColor,
+                          size: GlobalController.i.userStorage.read('sizeIconBottomBar') ?? 30.0,
+                        ),
+                        () => controller.reply('', false))),
+                Expanded(
+                    child: Container(
+                  height: 50,
+                  child: Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      onTap: () => controller.navigatePage('P'),
+                      onLongPress: () => controller.navigatePage('F'),
+                      child: Icon(Icons.arrow_back_ios_outlined, size: GlobalController.i.userStorage.read('sizeIconBottomBar') ?? 30.0),
+                    ),
+                  ),
+                )),
+                Expanded(
+                    child: customCupertinoButton(
+                        Alignment.center,
+                        EdgeInsets.zero,
+                        GetBuilder<ViewController>(
+                            tag: tag,
+                            id: 'updatePageNum',
+                            builder: (controller) {
+                              return Text('${controller.data['currentPage'] ?? ''} / ${controller.data['totalPage'] ?? ''}',
+                                  style: TextStyle(color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold));
+                            }),
+                        () {})),
+                Expanded(
+                    child: Container(
+                  height: 50,
+                  child: Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      onTap: () => controller.navigatePage('N'),
+                      onLongPress: () => controller.navigatePage('L'),
+                      child: Icon(Icons.arrow_forward_ios_rounded, size: GlobalController.i.userStorage.read('sizeIconBottomBar') ?? 30.0),
+                    ),
+                  ),
+                )),
+                Expanded(
+                    child: customCupertinoButton(
+                        Alignment.center,
+                        EdgeInsets.zero,
+                        GetBuilder<GlobalController>(
+                          id: 'Notification',
+                          builder: (controller) {
+                            return Icon(
+                              Icons.dashboard_rounded,
+                              size: GlobalController.i.userStorage.read('sizeIconBottomBar') ?? 30.0,
+                              color: controller.inboxNotifications != 0 || controller.alertNotifications != 0 ? Colors.red : Get.theme.primaryColor,
+                            );
+                          },
+                        ),
+                        () => Get.bottomSheet(
                               controlCenter(),
                             ))),
-                  ]),
+              ]),
             ),
           )),
     );
-  }
-
-  Widget loading() {
-    return GetBuilder<ViewController>(
-        id: 'download',
-        tag: tag,
-        builder: (controller) {
-          return LinearProgressIndicator(
-            value: controller.data['percentDownload'],
-            valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF0CF301)),
-            backgroundColor: Colors.transparent,
-          );
-        });
-  }
-
-  Widget loadSuccess() {
-    return Stack(children: [
-      GlobalController.i.userStorage.read('switchSwipeLeftRight') ??
-              false == true
-          ? enableSwipe()
-          : postContent(),
-      loading(),
-    ]);
   }
 
   Widget loadFailed() {
@@ -245,42 +145,72 @@ class ViewUI extends GetView<ViewController> {
         text: TextSpan(
           children: <TextSpan>[
             TextSpan(
-                text: 'Oops! We ran into some problems.\n',
-                style: TextStyle(
-                    color: Colors.redAccent,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16)),
-            TextSpan(
-                text: 'The requested thread could not be found.',
-                style: TextStyle(color: Get.theme.primaryColor, fontSize: 16)),
+                text: 'Oops! We ran into some problems.\n', style: TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold, fontSize: 16)),
+            TextSpan(text: 'The requested thread could not be found.', style: TextStyle(color: Get.theme.primaryColor, fontSize: 16)),
           ],
         ),
       ),
     );
   }
 
-  Widget postContent() {
-    return GetBuilder<ViewController>(
-      tag: tag,
-      builder: (controller) {
-        return ListView.builder(
-          cacheExtent: 999999999,
-          physics: BouncingScrollPhysics(),
-          clipBehavior: Clip.none,
-          controller: controller.listViewScrollController,
-          itemCount: controller.htmlData.length + 1,
-          itemBuilder: (context, index) {
-            return controller.htmlData.length == index
+  SliverList customSliverList() {
+    return SliverList(
+        delegate: SliverChildListDelegate(List.generate(controller.htmlData.length + 1, (index) {
+      return controller.htmlData.length == index
+          ? GetBuilder<ViewController>(
+              id: 'lastItemList',
+              tag: tag,
+              builder: (controller) {
+                return loadingBottom(controller.data['isScroll'], 70);
+              })
+          : viewContent(index, controller);
+    })));
+  }
+
+  Widget mainBody() {
+    return CustomScrollView(
+      cacheExtent: 999999999,
+      controller: controller.listViewScrollController,
+      physics: BouncingScrollPhysics(),
+      slivers: [
+        SliverAppBar(
+          leading: BackButton(),
+          automaticallyImplyLeading: true,
+          title: customTitle(FontWeight.bold, Color(0xfff3168b0), 2, controller.data['subTypeHeader'], controller.data['subHeader']),
+          floating: true,
+        ),
+        SliverPersistentHeader(
+          delegate: SectionHeaderDelegate(
+              "Section B",
+              tagI,
+              GetBuilder<ViewController>(
+                  id: 'download',
+                  tag: tag,
+                  builder: (controller) {
+                    return LinearProgressIndicator(
+                      value: controller.data['percentDownload'],
+                      valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF0CF301)),
+                      backgroundColor: Colors.transparent,
+                    );
+                  })),
+          pinned: true,
+        ),
+        GetBuilder<ViewController>(
+          id: 'firstLoading',
+          tag: tag,
+          builder: (controller) {
+            return controller.htmlData.length != 0
                 ? GetBuilder<ViewController>(
-                    id: 'lastItemList',
                     tag: tag,
                     builder: (controller) {
-                      return loadingBottom(controller.data['isScroll'], 70);
+                      return customSliverList();
                     })
-                : viewContent(index, controller);
+                : controller.data['loading'] == 'error'
+                    ? loadFailed()
+                    : SliverFillRemaining();
           },
-        );
-      },
+        )
+      ],
     );
   }
 
@@ -291,10 +221,7 @@ class ViewUI extends GetView<ViewController> {
         child: Row(
           children: [
             Icon(Icons.keyboard_arrow_left),
-            GetBuilder<ViewController>(
-                tag: tag,
-                builder: (controller) =>
-                    Text((controller.data['currentPage'] - 1).toString()))
+            GetBuilder<ViewController>(tag: tag, builder: (controller) => Text((controller.data['currentPage'] - 1).toString()))
           ],
         ),
       ),
@@ -303,16 +230,13 @@ class ViewUI extends GetView<ViewController> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            GetBuilder<ViewController>(
-                tag: tag,
-                builder: (controller) =>
-                    Text((controller.data['currentPage'] + 1).toString())),
+            GetBuilder<ViewController>(tag: tag, builder: (controller) => Text((controller.data['currentPage'] + 1).toString())),
             Icon(Icons.keyboard_arrow_right)
           ],
         ),
       ),
       key: ValueKey(''),
-      child: postContent(),
+      child: mainBody(),
       onSwipe: (SwipeDirection direction, double dragExtend) {
         if (controller.data['isScroll'] != 'Release') {
           if (direction == SwipeDirection.startToEnd) {
@@ -320,17 +244,14 @@ class ViewUI extends GetView<ViewController> {
               HapticFeedback.lightImpact();
             } else {
               controller.data['isScroll'] = 'Release';
-              controller.setPageOnClick(
-                  controller.data['currentPage'] - 1, true);
+              controller.setPageOnClick(controller.data['currentPage'] - 1, true);
             }
           } else {
-            if (controller.data['currentPage'] + 1 >
-                controller.data['totalPage']) {
+            if (controller.data['currentPage'] + 1 > controller.data['totalPage']) {
               HapticFeedback.lightImpact();
             } else {
               controller.data['isScroll'] = 'Release';
-              controller.setPageOnClick(
-                  controller.data['currentPage'] + 1, true);
+              controller.setPageOnClick(controller.data['currentPage'] + 1, true);
             }
           }
         }
