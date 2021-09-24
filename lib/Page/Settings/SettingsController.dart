@@ -32,7 +32,7 @@ class SettingsController extends GetxController {
 
     sizeIconBottomBar = GlobalController.i.userStorage.read('sizeIconBottomBar') ?? 35;
     heightBottomBar = GlobalController.i.userStorage.read('heightBottomBar') ?? (GetPlatform.isAndroid ? 0 : 20);
-    darkModeIndex = await GlobalController.i.userStorage.read('darkMode') ?? 0;
+    darkModeIndex =  GlobalController.i.userStorage.read('darkMode') ?? 0;
     langIndex = GlobalController.i.userStorage.read('lang') ?? 1;
     fontSizeView.value = (GlobalController.i.userStorage.read('fontSizeView') ?? Get.textTheme.button!.fontSize)!;
     switchValuePost.value = GlobalController.i.userStorage.read('scrollToMyRepAfterPost') ?? true;

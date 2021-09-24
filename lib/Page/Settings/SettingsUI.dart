@@ -215,12 +215,14 @@ class SettingsUI extends GetView<SettingsController> {
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                     Spacer(),
-                    GetBuilder<SettingsController>(builder: (controller) {
+                    GetBuilder<SettingsController>(
+                        id: 'updateSwitchSwipeLeftRight',
+                        builder: (controller) {
                       return CupertinoSwitch(
                           value: controller.switchSwipeLeftRight,
                           onChanged: (value) {
                             controller.switchSwipeLeftRight = value;
-                            controller.update();
+                            controller.update(['updateSwitchSwipeLeftRight']);
                           });
                     })
                   ],
