@@ -212,3 +212,22 @@ Widget search() => Container(
           ),
           () => Get.toNamed(Routes.SearchPage, preventDuplicates: false)),
     );
+
+Widget changeAccount() => Container(
+  width: Get.width,
+  decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(6)), color: Get.theme.backgroundColor),
+  child: customCupertinoButton(
+      Alignment.center,
+      EdgeInsets.zero,
+      Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.change_circle,
+            color: Get.theme.primaryColor,
+          ),
+          Text('\t${'search'.tr}')
+        ],
+      ),
+          () => Get.toNamed(Routes.SearchPage, preventDuplicates: false)),
+);

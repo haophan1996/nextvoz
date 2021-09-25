@@ -41,7 +41,7 @@ class BrowserLoginController extends GetxController {
       await GlobalController.i.userStorage.write("userLoggedIn", true);
       await GlobalController.i.userStorage.write("xf_user", xf_user);
       await GlobalController.i.userStorage.write("xf_session", xf_session);
-      await GlobalController.i.userStorage.write("date_expire", '24-Sep-2030 03:08:21 GMT');
+      await GlobalController.i.userStorage.write("date_expire", '24-Sep-2022 03:08:21 GMT');
       if(Get.isDialogOpen ==true) Get.back();
       Get.back(result: ['ok']);
     }

@@ -97,10 +97,18 @@ class LoginUI extends GetView<LoginController> {
                 ),
                 () async {
                   var result = await Get.toNamed(Routes.BrowserLogin);
-                  if (result[0] == 'ok'){
+                  if (result[0] == 'ok') {
                     setDialog();
                     await GlobalController.i.setDataUser();
                     await NaviDrawerController.i.getUserProfile();
+
+                    controller.data['xf_user'] = GlobalController.i.userStorage.read('xf_user') ?? '';
+                    controller.data['xf_session'] = GlobalController.i.userStorage.read('xf_session') ?? '';
+                    controller.data['date_expire'] = GlobalController.i.userStorage.read('date_expire') ?? '';
+                    if (controller.data['xf_user'] != '' && controller.data['xf_session'] != '' && controller.data['date_expire'] != '') {
+                      await controller.saveAccountToList(controller.data['xf_user'], controller.data['xf_session'], controller.data['date_expire']);
+                    }
+
                     Get.back();
                     Get.back();
                   }

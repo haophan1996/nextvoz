@@ -67,6 +67,8 @@ class Language extends Translations{
       'darkMode' : 'Dark Mode',
       'iconBottomBarSize' : 'Icon Bottom Size',
       'heightBottom' : 'Height Bottom Bar',
+      'accountListHelper' : 'There are no accounts saved. Account will automatic save once you login',
+      'accounts' : 'Accounts',
     },
     'vi_VN' : {
       'lang'    : 'Ngôn Ngữ',
@@ -130,6 +132,8 @@ class Language extends Translations{
       'darkMode' : 'Chế Độ Nền Tối',
       'iconBottomBarSize' : 'Kích Cỡ Icon Bottom',
       'heightBottom' : 'Kích cỡ Bottom Bar',
+      'accountListHelper' : 'Không có tài khoảng nào được lưu. Tài khoản sẻ lưu tự động khi bạn đăng nhập',
+      'accounts' : 'Tài Khoản',
     }
   };
 

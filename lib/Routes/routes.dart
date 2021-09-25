@@ -14,11 +14,12 @@ abstract class Routes{
   static const CreatePost = '/CreatePost'; /// Create thread and profile post
   static const Settings = '/Settings';
   static const Login = '/Login';
-  static const BrowserLogin = '/BrowserLogin'; ///todo
+  static const BrowserLogin = '/BrowserLogin';
   static const SearchPage = '/searchPage';
   static const SearchResult = '/searchResult';
   static const AlertPlus = '/AlertPlus';
-  static const UserFollIgr = '/UserFollowAndIgnore'; ///todo Display who is following, follower, ignoring
+  static const UserFollIgr = '/UserFollowAndIgnore';
+  static const AccountLoginList = '/AccountLoginList';
   static const ProfilePost = '/ProfilePost'; ///todo Latest profile post
 }
 

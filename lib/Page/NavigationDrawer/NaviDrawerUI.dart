@@ -25,8 +25,8 @@ class NaviDrawerUI extends GetView<NaviDrawerController> {
                   builder: (controller) {
                     return controller.shortcuts.length == 0
                         ? Center(
-                      child: Text('shortcutsHelper'.tr),
-                    )
+                            child: Text('shortcutsHelper'.tr),
+                          )
                         : ListView.builder(
                             itemCount: controller.shortcuts.length,
                             itemBuilder: (BuildContext context, int index) {
@@ -127,11 +127,21 @@ Widget logged() {
                   Get.back();
                 },
               ), //Refresh user data
+              customCupertinoButton(
+                  Alignment.center,
+                  EdgeInsets.only(right: 10, top: 10),
+                  Icon(
+                    Icons.change_circle_sharp,
+                    color: Get.theme.primaryColor,
+                  ), () {
+                if (Get.isBottomSheetOpen == true) Get.back();
+                Get.toNamed(Routes.AccountLoginList);
+              }),
               //Spacer(),
               CupertinoButton(
                   padding: EdgeInsets.only(right: 10, top: 10),
                   child: Icon(
-                    Icons.logout,
+                    Icons.logout_outlined,
                     color: Get.theme.primaryColor,
                   ),
                   onPressed: () async {
@@ -172,10 +182,10 @@ Widget login() {
                   })
             ],
           ),
-          Text(
-            'version 6.0',
-            style: TextStyle(height: 3),
-          )
+          customCupertinoButton(Alignment.center, EdgeInsets.zero, Icon(Icons.change_circle_sharp), () {
+            if (Get.isBottomSheetOpen == true) Get.back();
+            Get.toNamed(Routes.AccountLoginList);
+          })
         ],
       ),
     ),

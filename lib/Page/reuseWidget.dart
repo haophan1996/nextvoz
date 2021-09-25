@@ -723,7 +723,8 @@ Widget displayAvatar(double sizeImage, String avatarColor1, String avatarColor2,
           )
         : Text(
             userName!.toUpperCase()[0],
-            style: TextStyle(color: Color(int.parse(avatarColor2)), fontWeight: FontWeight.bold, fontSize: Get.theme.textTheme.headline5!.fontSize),
+            textAlign: TextAlign.center,
+            style: TextStyle(color: Color(int.parse(avatarColor2)), fontWeight: FontWeight.bold),
           ),
   );
 }

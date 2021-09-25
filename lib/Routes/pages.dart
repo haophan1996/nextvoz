@@ -1,3 +1,5 @@
+import 'package:the_next_voz/Page/Login/AccountList/AccountListBindings.dart';
+import 'package:the_next_voz/Page/Login/AccountList/AccountListUI.dart';
 import 'package:the_next_voz/Page/Login/BrowserLogin/BrowserLoginBindings.dart';
 import 'package:the_next_voz/Page/Login/BrowserLogin/BrowserLoginSigninUI.dart';
 
@@ -35,6 +37,7 @@ import '/Page/home/homeUI.dart';
 import '/Page/youtubeView/ViewYoutube.dart';
 import '/Page/youtubeView/YoutubeBinding.dart';
 import 'package:get/get.dart';
+
 part 'routes.dart';
 
 class AppPage {
@@ -115,12 +118,7 @@ class AppPage {
         transition: Transition.topLevel,
         transitionDuration: Duration(milliseconds: 200),
         maintainState: false),
-    GetPage(
-        name: Routes.Settings,
-        page: () => SettingsUI(),
-        popGesture: true,
-        binding: SettingsBinding(),
-        maintainState: false),
+    GetPage(name: Routes.Settings, page: () => SettingsUI(), popGesture: true, binding: SettingsBinding(), maintainState: false),
     GetPage(
       name: Routes.Login,
       page: () => LoginUI(),
@@ -171,5 +169,12 @@ class AppPage {
       //gestureWidth: (context) => context.width,
       popGesture: true,
     ),
+    GetPage(
+      name: Routes.AccountLoginList,
+      page: () => AccountListUI(),
+      binding: AccountListBindings(),
+      gestureWidth: (context) => context.width,
+      popGesture: true,
+    )
   ];
 }
