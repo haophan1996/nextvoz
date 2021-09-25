@@ -22,6 +22,9 @@ class ScrollToHideWidget extends StatefulWidget {
 
 class _ScrollToHideWidgetState extends State<ScrollToHideWidget> {
   bool isVisible = true;
+  bool isShow = true;
+  bool isHide = false;
+  final height = kBottomNavigationBarHeight + (GlobalController.i.userStorage.read('heightBottomBar') ?? (GetPlatform.isAndroid ? 0 : 20));
 
   @override
   void initState() {
@@ -39,9 +42,13 @@ class _ScrollToHideWidgetState extends State<ScrollToHideWidget> {
 
   void listen() {
     final direction = widget.controller.position.userScrollDirection;
-    if (direction == ScrollDirection.forward) {
+    if (direction == ScrollDirection.forward && isShow != true) {
+      isShow = true;
+      isHide = false;
       show();
-    } else if (direction == ScrollDirection.reverse) {
+    } else if (direction == ScrollDirection.reverse && isHide != true) {
+      isShow = false;
+      isHide = true;
       hide();
     }
   }
@@ -56,8 +63,9 @@ class _ScrollToHideWidgetState extends State<ScrollToHideWidget> {
 
   @override
   Widget build(BuildContext context) => AnimatedContainer(
-    duration: widget.duration,
-    height: isVisible ? kBottomNavigationBarHeight+(GlobalController.i.userStorage.read('heightBottomBar') ?? (GetPlatform.isAndroid ? 0 : 20)) : 0,
-    child: widget.child,
-  );
+        duration: widget.duration,
+        height:
+            isVisible ? height : 0,
+        child: widget.child,
+      );
 }

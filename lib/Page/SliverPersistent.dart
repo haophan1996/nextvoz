@@ -7,11 +7,11 @@ class SectionHeaderDelegate extends SliverPersistentHeaderDelegate {
   final String tag;
   final Widget child;
 
-  SectionHeaderDelegate(this.title, this.tag, this.child, [this.height = 10]);
+  SectionHeaderDelegate(this.title, this.tag, this.child, [this.height = 2]);
 
   @override
   Widget build(context, double shrinkOffset, bool overlapsContent) {
-    return Container(alignment: Alignment.center,color: Theme.of(context).backgroundColor, child: this.child);
+    return Container(alignment: Alignment.center,child: this.child);
   }
 
   @override

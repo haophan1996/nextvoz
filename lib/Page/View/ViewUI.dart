@@ -24,7 +24,10 @@ class ViewUI extends GetView<ViewController> {
     return Scaffold(
       endDrawer: NaviDrawerUI(),
       endDrawerEnableOpenDragGesture: true,
-      //appBar: preferredSize(context, controller.data['subHeader'], controller.data['subTypeHeader'], []),
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(0),
+        child: AppBar(),
+      ),
       backgroundColor: Theme.of(context).backgroundColor,
       body: SafeArea(
         child: NotificationListener(
@@ -153,18 +156,33 @@ class ViewUI extends GetView<ViewController> {
     );
   }
 
+  // SliverList customSliverList() {
+  //   return SliverList(
+  //       delegate: SliverChildListDelegate(List.generate(controller.htmlData.length + 1, (index) {
+  //     return controller.htmlData.length == index
+  //         ? GetBuilder<ViewController>(
+  //             id: 'lastItemList',
+  //             tag: tag,
+  //             builder: (controller) {
+  //               return loadingBottom(controller.data['isScroll'], 70);
+  //             })
+  //         : viewContent(index, controller);
+  //   })));
+  // }
+
   SliverList customSliverList() {
     return SliverList(
-        delegate: SliverChildListDelegate(List.generate(controller.htmlData.length + 1, (index) {
-      return controller.htmlData.length == index
-          ? GetBuilder<ViewController>(
-              id: 'lastItemList',
-              tag: tag,
-              builder: (controller) {
-                return loadingBottom(controller.data['isScroll'], 70);
-              })
-          : viewContent(index, controller);
-    })));
+      delegate: SliverChildBuilderDelegate(
+          (context, index) => controller.htmlData.length == index
+              ? GetBuilder<ViewController>(
+                  id: 'lastItemList',
+                  tag: tag,
+                  builder: (controller) {
+                    return loadingBottom(controller.data['isScroll'], 70);
+                  })
+              : viewContent(index, controller),
+          childCount: controller.htmlData.length + 1),
+    );
   }
 
   Widget mainBody() {
@@ -177,7 +195,7 @@ class ViewUI extends GetView<ViewController> {
           leading: BackButton(),
           automaticallyImplyLeading: true,
           title: customTitle(FontWeight.bold, Color(0xfff3168b0), 2, controller.data['subTypeHeader'], controller.data['subHeader']),
-          floating: true,
+          floating: false,
         ),
         SliverPersistentHeader(
           delegate: SectionHeaderDelegate(

@@ -66,7 +66,7 @@ class ThreadUI extends GetView<ThreadController> {
               SliverAppBar(
                 leading: BackButton(),
                 title: Text(controller.data['theme'] ?? 'sa',style: TextStyle(fontFamily: 'BeVietNam'),),
-                floating: true,
+                floating: false,
               ),
               SliverPersistentHeader(
                 delegate: SectionHeaderDelegate(
