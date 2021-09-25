@@ -148,7 +148,7 @@ class HomePageUI extends GetView<HomeController> {
                       return Text(
                         controller.isLogged == false ? 'guestUser'.tr : NaviDrawerController.i.data['nameUser'] ?? 'null',
                         style: TextStyle(
-                            color: controller.alertNotifications != 0 || controller.inboxNotifications != 0 ? Colors.redAccent : Colors.blue),
+                            color: controller.alertNotifications != 0 || controller.inboxNotifications != 0 ? Colors.redAccent : Colors.blue,fontFamily: 'BeVietNam'),
                       );
                     }),
                 () => Get.bottomSheet(controlCenter()),
@@ -169,7 +169,7 @@ theme(String theme, BuildContext context) {
       child: ListTile(
         title: Text(
           theme,
-          style: TextStyle(color: Colors.grey.shade200, fontWeight: FontWeight.w900),
+          style: TextStyle(color: Colors.grey.shade200, fontWeight: FontWeight.bold, fontFamily: 'BeVietNam'),
         ),
       ),
     ),

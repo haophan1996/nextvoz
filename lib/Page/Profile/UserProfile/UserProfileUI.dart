@@ -54,8 +54,8 @@ class UserProfileUI extends GetView<UserProfileController> {
         text: TextSpan(
           children: <TextSpan>[
             TextSpan(
-                text: 'Oops! We ran into some problems.\n', style: TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold, fontSize: 16)),
-            TextSpan(text: 'This member limits who may view their full profile.', style: TextStyle(color: Get.theme.primaryColor, fontSize: 16)),
+                text: 'Oops! We ran into some problems.\n', style: TextStyle(color: Colors.redAccent, fontFamily: 'BeVietNam',fontWeight: FontWeight.bold, fontSize: 16)),
+            TextSpan(text: 'This member limits who may view their full profile.', style: TextStyle(color: Get.theme.primaryColor, fontFamily: 'BeVietNam',fontSize: 16)),
           ],
         ),
       ),
@@ -88,19 +88,19 @@ class UserProfileUI extends GetView<UserProfileController> {
                       children: <TextSpan>[
                         TextSpan(
                             text: '${controller.data['userName'] ??= 'Loading Username...'}\n',
-                            style: TextStyle(color: Color(0xFFFD6E00), fontWeight: FontWeight.bold, fontSize: 16)),
+                            style: TextStyle(fontFamily: 'BeVietNam',color: Color(0xFFFD6E00), fontWeight: FontWeight.bold, fontSize: 16)),
                         TextSpan(
                             text: '${controller.data['title'] ??= 'Loading Title...'}\n',
-                            style: TextStyle(color: Get.theme.primaryColor, fontSize: 16)),
+                            style: TextStyle(fontFamily: 'BeVietNam',color: Get.theme.primaryColor, fontSize: 16)),
                         TextSpan(
                             text: controller.data['from'] != '' ? '${controller.data['from']}\n' : '',
-                            style: TextStyle(color: Get.theme.primaryColor, fontSize: 16)),
+                            style: TextStyle(fontFamily: 'BeVietNam',color: Get.theme.primaryColor, fontSize: 16)),
                         TextSpan(
                             text: 'Joined: ${controller.data['joined'] ??= 'Loading...'}\n',
-                            style: TextStyle(color: Get.theme.primaryColor, fontSize: 16)),
+                            style: TextStyle(fontFamily: 'BeVietNam',color: Get.theme.primaryColor, fontSize: 16)),
                         TextSpan(
                             text: 'Last seen: ${controller.data['lastSeen'] ??= 'Loading...'}',
-                            style: TextStyle(color: Get.theme.primaryColor, fontSize: 16)),
+                            style: TextStyle(fontFamily: 'BeVietNam',color: Get.theme.primaryColor, fontSize: 16)),
                       ],
                     ),
                   ),
@@ -123,7 +123,7 @@ class UserProfileUI extends GetView<UserProfileController> {
                     textAlign: TextAlign.start,
                     text: TextSpan(
                       children: <TextSpan>[
-                        TextSpan(text: '\t\t\tTOTAL POSTS\n', style: TextStyle(color: Colors.grey, fontSize: 16)),
+                        TextSpan(text: '\t\t\tTOTAL POSTS\n', style: TextStyle(fontFamily: 'BeVietNam',color: Colors.grey, fontSize: 16)),
                         TextSpan(
                             text: 'Messages \n',
                             recognizer: TapGestureRecognizer()
@@ -136,9 +136,9 @@ class UserProfileUI extends GetView<UserProfileController> {
                                   }
                                 ]);
                               },
-                            style: TextStyle(color: Colors.blue, fontSize: 16)),
-                        TextSpan(text: 'Reaction score\n', style: TextStyle(color: Get.theme.primaryColor, fontSize: 16)),
-                        TextSpan(text: 'Points\n', style: TextStyle(color: Get.theme.primaryColor, fontSize: 16)),
+                            style: TextStyle(fontFamily: 'BeVietNam',color: Colors.blue, fontSize: 16)),
+                        TextSpan(text: 'Reaction score\n', style: TextStyle(fontFamily: 'BeVietNam',color: Get.theme.primaryColor, fontSize: 16)),
+                        TextSpan(text: 'Points\n', style: TextStyle(fontFamily: 'BeVietNam',color: Get.theme.primaryColor, fontSize: 16)),
                       ],
                     ),
                   ),
@@ -153,13 +153,13 @@ class UserProfileUI extends GetView<UserProfileController> {
                             children: <TextSpan>[
                               TextSpan(
                                   text: '\n${controller.data['messages'] ??= 'Loading...'}\n',
-                                  style: TextStyle(color: Get.theme.primaryColor, fontSize: 16)),
+                                  style: TextStyle(fontFamily: 'BeVietNam',color: Get.theme.primaryColor, fontSize: 16)),
                               TextSpan(
                                   text: '${controller.data['reactionScore'] ??= 'Loading...'}\n',
-                                  style: TextStyle(color: Get.theme.primaryColor, fontSize: 16)),
+                                  style: TextStyle(fontFamily: 'BeVietNam',color: Get.theme.primaryColor, fontSize: 16)),
                               TextSpan(
                                   text: '${controller.data['pointTrophies'] ??= 'Loading...'}\n',
-                                  style: TextStyle(color: Get.theme.primaryColor, fontSize: 16)),
+                                  style: TextStyle(fontFamily: 'BeVietNam',color: Get.theme.primaryColor, fontSize: 16)),
                             ],
                           ),
                         ),
@@ -172,7 +172,7 @@ class UserProfileUI extends GetView<UserProfileController> {
                 text: TextSpan(children: [
               TextSpan(
                 text: 'All Threads\n',
-                style: TextStyle(color: Colors.blue, fontSize: 16),
+                style: TextStyle(fontFamily: 'BeVietNam',color: Colors.blue, fontSize: 16),
                 recognizer: TapGestureRecognizer()
                   ..onTap = () {
                     Get.toNamed(Routes.SearchResult, arguments: [
@@ -181,10 +181,10 @@ class UserProfileUI extends GetView<UserProfileController> {
                     ]);
                   },
               ),
-              TextSpan(text: 'Profile posts\n', style: TextStyle(color: Get.theme.primaryColor, fontSize: 16)),
+              TextSpan(text: 'Profile posts\n', style: TextStyle(fontFamily: 'BeVietNam',color: Get.theme.primaryColor, fontSize: 16)),
               TextSpan(
                 text: 'Latest activity\n',
-                style: TextStyle(color: Colors.blue, fontSize: 16),
+                style: TextStyle(fontFamily: 'BeVietNam',color: Colors.blue, fontSize: 16),
                 recognizer: TapGestureRecognizer()
                   ..onTap = () {
                     //print(controller.data['linkProfileUser'] + AlertPlusType.ProfileLatestActivity);
@@ -197,7 +197,7 @@ class UserProfileUI extends GetView<UserProfileController> {
                     ]);
                   },
               ),
-              TextSpan(text: 'About\n', style: TextStyle(color: Get.theme.primaryColor, fontSize: 16)),
+              TextSpan(text: 'About\n', style: TextStyle(fontFamily: 'BeVietNam',color: Get.theme.primaryColor, fontSize: 16)),
             ])),
           ],
         ),

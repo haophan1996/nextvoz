@@ -27,7 +27,7 @@ class SettingsUI extends GetView<SettingsController> {
                       padding: EdgeInsets.only(top: 10, bottom: 10),
                       child: Text(
                         'lang'.tr,
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                        style: TextStyle(fontFamily: 'BeVietNam',fontWeight: FontWeight.bold),
                       ),
                     ),
                     Spacer(),
@@ -50,7 +50,7 @@ class SettingsUI extends GetView<SettingsController> {
                       padding: EdgeInsets.only(top: 10, bottom: 10),
                       child: Text(
                         'darkMode'.tr,
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                        style: TextStyle(fontFamily: 'BeVietNam',fontWeight: FontWeight.bold),
                       ),
                     ),
                     Spacer(),
@@ -69,7 +69,7 @@ class SettingsUI extends GetView<SettingsController> {
                   children: [
                     RichText(
                       text: TextSpan(children: [
-                        TextSpan(text: 'fontSizeView'.tr, style: TextStyle(color: Get.theme.primaryColor, fontWeight: FontWeight.bold)),
+                        TextSpan(text: 'fontSizeView'.tr, style: TextStyle(fontFamily: 'BeVietNam',color: Get.theme.primaryColor, fontWeight: FontWeight.bold)),
                         TextSpan(
                             text: '\n${controller.fontSizeView.value.toInt()}'.tr,
                             style: TextStyle(
@@ -100,10 +100,10 @@ class SettingsUI extends GetView<SettingsController> {
                               EdgeInsets.zero,
                               RichText(
                                 text: TextSpan(children: [
-                                  TextSpan(text: 'appSignature'.tr, style: TextStyle(color: Get.theme.primaryColor, fontWeight: FontWeight.bold)),
+                                  TextSpan(text: 'appSignature'.tr, style: TextStyle(fontFamily: 'BeVietNam',color: Get.theme.primaryColor, fontWeight: FontWeight.bold)),
                                   TextSpan(
                                       text: '\n${GlobalController.i.userStorage.read('appSignatureDevice') ?? 'Device'}'.tr,
-                                      style: TextStyle(
+                                      style: TextStyle(fontFamily: 'BeVietNam',
                                         color: Colors.blueAccent,
                                       ))
                                 ]),
@@ -155,7 +155,7 @@ class SettingsUI extends GetView<SettingsController> {
                   children: [
                     Text(
                       'showImage'.tr,
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                      style: TextStyle(fontFamily: 'BeVietNam',fontWeight: FontWeight.bold),
                     ),
                     Spacer(),
                     Obx(
@@ -172,7 +172,7 @@ class SettingsUI extends GetView<SettingsController> {
                   children: [
                     Text(
                       'scrollToMyRepAfterPost'.tr,
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                      style: TextStyle(fontFamily: 'BeVietNam',fontWeight: FontWeight.bold),
                     ),
                     Spacer(),
                     Obx(
@@ -189,7 +189,7 @@ class SettingsUI extends GetView<SettingsController> {
                   children: [
                     RichText(
                       text: TextSpan(children: [
-                        TextSpan(text: 'defaultsPage'.tr, style: TextStyle(color: Get.theme.primaryColor, fontWeight: FontWeight.bold)),
+                        TextSpan(text: 'defaultsPage'.tr, style: TextStyle(fontFamily: 'BeVietNam',color: Get.theme.primaryColor, fontWeight: FontWeight.bold)),
                         TextSpan(
                             text: '\n${GlobalController.i.userStorage.read('defaultsPage_title') ?? 'Home'}'.tr,
                             style: TextStyle(
@@ -234,10 +234,11 @@ class SettingsUI extends GetView<SettingsController> {
                       children: [
                         RichText(
                           text: TextSpan(children: [
-                            TextSpan(text: 'iconBottomBarSize'.tr, style: TextStyle(color: Get.theme.primaryColor, fontWeight: FontWeight.bold)),
+                            TextSpan(text: 'iconBottomBarSize'.tr, style: TextStyle(fontFamily: 'BeVietNam',color: Get.theme.primaryColor, fontWeight: FontWeight.bold)),
                             TextSpan(
                                 text: '\n${controller.sizeIconBottomBar.toStringAsFixed(2)}'.tr,
                                 style: TextStyle(
+                                  fontFamily: 'BeVietNam',
                                   color: Colors.grey,
                                 ))
                           ]),
@@ -264,10 +265,11 @@ class SettingsUI extends GetView<SettingsController> {
                       children: [
                         RichText(
                           text: TextSpan(children: [
-                            TextSpan(text: 'heightBottom'.tr, style: TextStyle(color: Get.theme.primaryColor, fontWeight: FontWeight.bold)),
+                            TextSpan(text: 'heightBottom'.tr, style: TextStyle(fontFamily: 'BeVietNam',color: Get.theme.primaryColor, fontWeight: FontWeight.bold)),
                             TextSpan(
                                 text: '\n${controller.heightBottomBar.round()}'.tr,
                                 style: TextStyle(
+                                  fontFamily: 'BeVietNam',
                                   color: Colors.grey,
                                 ))
                           ]),

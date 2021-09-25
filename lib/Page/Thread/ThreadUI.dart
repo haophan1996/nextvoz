@@ -25,7 +25,8 @@ class ThreadUI extends GetView<ThreadController> {
       endDrawer: NaviDrawerUI(),
       endDrawerEnableOpenDragGesture: true,
       backgroundColor: Theme.of(context).backgroundColor,
-      //appBar: preferredSize(context, controller.data['theme'], '', []),
+      appBar: PreferredSize(preferredSize: Size.fromHeight(0),
+      child: AppBar(), ),
       body: NotificationListener(
         onNotification: (Notification notification) {
           if (notification is ScrollUpdateNotification && controller.data['isScroll'] != 'Release') {
@@ -64,7 +65,7 @@ class ThreadUI extends GetView<ThreadController> {
             slivers: [
               SliverAppBar(
                 leading: BackButton(),
-                title: Text(controller.data['theme'] ?? 'sa'),
+                title: Text(controller.data['theme'] ?? 'sa',style: TextStyle(fontFamily: 'BeVietNam'),),
                 floating: true,
               ),
               SliverPersistentHeader(

@@ -75,6 +75,14 @@ flutter:
     - assets/darkmode/
     - modify_package/rich_editor/assets/editor/
 
+
+  fonts:
+    - family: BeVietNam
+      fonts:
+        - asset: assets/fonts/Be_Vietnam-Regular.ttf
+        - asset: assets/fonts/Be_Vietnam-Italic.ttf
+          style: italic
+
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
 

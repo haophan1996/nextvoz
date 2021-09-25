@@ -64,7 +64,7 @@ Widget blockItem(BuildContext context, FontWeight titleWeight, int index, Color 
               customTitle(titleWeight, title /*Color(0xfff3168b0)*/, null, header11, header12),
               Text(
                 "$header21 \u2022 $header22 ${header3 == '' ? '' : '\u2022'} $header3",
-                style: TextStyle(color: Colors.grey, fontSize: 12),
+                style: TextStyle(color: Colors.grey, fontSize: 12)
               ),
             ],
           ),
@@ -116,7 +116,7 @@ TextSpan customTitleChild(FontWeight titleWeight, Color titleColor, String heade
     ),
     TextSpan(
       text: header12,
-      style: TextStyle(color: titleColor /*Get.theme.primaryColor*/, fontSize: 15, fontWeight: titleWeight),
+      style: TextStyle(color: titleColor,fontFamily: 'BeVietNam', fontSize: 15, fontWeight: titleWeight),
     )
   ]);
 }
