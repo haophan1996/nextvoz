@@ -66,6 +66,9 @@ class ThreadUI extends GetView<ThreadController> {
               SliverAppBar(
                 leading: BackButton(),
                 title: Text(controller.data['theme'] ?? 'sa',style: TextStyle(fontFamily: 'BeVietNam'),),
+                actions: [
+                  IconButton(onPressed: () async => await controller.onRefresh(), icon: Icon(Icons.refresh))
+                ],
                 floating: false,
               ),
               SliverPersistentHeader(
@@ -178,6 +181,40 @@ class ThreadUI extends GetView<ThreadController> {
               ]),
             ),
           )),
+        // floatingActionButtonLocation:
+        // FloatingActionButtonLocation.miniEndDocked,
+        // floatingActionButton: Padding(
+        //   padding: EdgeInsets.only(bottom: 50),
+        //   child: Column(
+        //     mainAxisAlignment: MainAxisAlignment.end,
+        //     children: [
+        //       Container(
+        //         child: GetBuilder<GlobalController>(
+        //           id: 'alertNotification',
+        //           builder: (controller){
+        //             return controller.alertNotifications != 0 ? FloatingActionButton(
+        //               mini: true,
+        //               onPressed: (){},
+        //               child: Icon(Icons.notifications_none_outlined, color: Colors.red,),
+        //             ) : Text('');
+        //           },
+        //         ),
+        //       ),
+        //       Container(
+        //         child: GetBuilder<GlobalController>(
+        //           id: 'inboxNotification',
+        //           builder: (controller){
+        //             return controller.inboxNotifications != 0 ? FloatingActionButton(
+        //               mini: true,
+        //               onPressed: (){},
+        //               child: Icon(Icons.mail_outline, color: Colors.red,),
+        //             ) : Text('');
+        //           },
+        //         ),
+        //       ),
+        //     ],
+        //   ),
+        // )
     );
   }
 

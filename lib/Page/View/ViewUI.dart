@@ -196,6 +196,9 @@ class ViewUI extends GetView<ViewController> {
           automaticallyImplyLeading: true,
           title: customTitle(FontWeight.bold, Color(0xfff3168b0), 2, controller.data['subTypeHeader'], controller.data['subHeader']),
           floating: false,
+          actions: [
+            IconButton(onPressed: () async => await controller.onRefresh(), icon: Icon(Icons.refresh))
+          ],
         ),
         SliverPersistentHeader(
           delegate: SectionHeaderDelegate(

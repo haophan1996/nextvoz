@@ -55,11 +55,14 @@ class ThreadController extends GetxController {
   }
 
   onRefresh() async {
-    data['loading'] = 'firstLoading';
-    if (data['currentPage'] == null)
+    data['isScroll'] = 'Release';
+    if (data['currentPage'] == null) {
+      data['loading'] = 'firstLoading';
       await loadSubHeader(data['_url']);
-    else
+    } else {
       await setPageOnClick(data['currentPage']);
+    }
+    data['isScroll'] = 'idle';
   }
 
   setPageOnClick(int toPage) async {
@@ -89,7 +92,6 @@ class ThreadController extends GetxController {
   updateLastItemScroll() async {
     if (data['isScroll'] != 'idle') {
       data['isScroll'] = 'idle';
-      update(['lastItemList']);
     }
   }
 

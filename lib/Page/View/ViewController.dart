@@ -102,6 +102,19 @@ class ViewController extends GetxController {
     }
   }
 
+  onRefresh() async {
+    data['isScroll'] = 'Release';
+    if (data['currentPage'] == null) {
+      data['loading'] = 'loading';
+      data['view'] == 0
+          ? await loadUserPost(data['fullUrl'] = GlobalController.i.url + data['subLink'])
+          : await loadInboxView(data['fullUrl'] = GlobalController.i.url + data['subLink']);
+    } else {
+      await setPageOnClick(data['currentPage'], true);
+    }
+    data['isScroll'] = 'idle';
+  }
+
 
   navigatePage(String symbol){
     if (data['isScroll'] == 'Release') return;
@@ -125,7 +138,6 @@ class ViewController extends GetxController {
   updateLastItemScroll() async {
     if (data['isScroll'] != 'idle') {
       data['isScroll'] = 'idle';
-      update(['lastItemList']);
     }
   }
 
