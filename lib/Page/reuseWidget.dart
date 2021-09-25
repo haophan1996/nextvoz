@@ -62,10 +62,7 @@ Widget blockItem(BuildContext context, FontWeight titleWeight, int index, Color 
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               customTitle(titleWeight, title /*Color(0xfff3168b0)*/, null, header11, header12),
-              Text(
-                "$header21 \u2022 $header22 ${header3 == '' ? '' : '\u2022'} $header3",
-                style: TextStyle(color: Colors.grey, fontSize: 12)
-              ),
+              Text("$header21 \u2022 $header22 ${header3 == '' ? '' : '\u2022'} $header3", style: TextStyle(color: Colors.grey, fontSize: 12)),
             ],
           ),
         ),
@@ -116,7 +113,7 @@ TextSpan customTitleChild(FontWeight titleWeight, Color titleColor, String heade
     ),
     TextSpan(
       text: header12,
-      style: TextStyle(color: titleColor,fontFamily: 'BeVietNam', fontSize: 15, fontWeight: titleWeight),
+      style: TextStyle(color: titleColor, fontFamily: 'BeVietNam', fontSize: 15, fontWeight: titleWeight),
     )
   ]);
 }
@@ -273,7 +270,6 @@ Widget buildFlagsPreviewIcon(String path, String text) => Padding(
       ),
     );
 
-
 Widget buildIcon(String path, String text) => Row(
       children: [
         Image.asset(
@@ -386,13 +382,18 @@ Widget onTapUser(ViewController controller, int index) {
               width: Get.width,
               child: Text('Start conversation'),
             ),
-            onPressed: () {}),
-        CupertinoButton(
-            child: Container(
-              width: Get.width,
-              child: Text('Ignore'),
-            ),
-            onPressed: () {}),
+            onPressed: () async {
+              await Get.toNamed(Routes.CreatePost, arguments: [
+                GlobalController.i.xfCsrfPost,
+                GlobalController.i.token,
+                'link',
+                '',
+                '',
+                '2',
+                '',
+                controller.htmlData.elementAt(index)['userName']
+              ]);
+            }),
         CupertinoButton(
             child: Container(
               width: Get.width,
@@ -477,39 +478,30 @@ Widget viewContent(int index, ViewController controller) => Column(
         Material(
           color: Get.theme.shadowColor,
           child: InkWell(
-            child: Stack(
-              children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Padding(
-                      padding: EdgeInsets.only(top: 5, left: 5, bottom: 5),
-                      child: displayAvatar(
-                          40,
-                          controller.htmlData.elementAt(index)["avatarColor1"],
-                          controller.htmlData.elementAt(index)["avatarColor2"],
-                          controller.htmlData.elementAt(index)["userName"],
-                          controller.htmlData.elementAt(index)["userAvatar"]),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(top: 5, left: 10, bottom: 5),
-                      child: RichText(
-                        text: TextSpan(children: <TextSpan>[
-                          TextSpan(
-                              text: controller.htmlData.elementAt(index)['userName'] + "\n",
-                              style: TextStyle(
-                                  color: controller.htmlData.elementAt(index)['newPost'] == true ? Color(0xFFFD6E00) : Colors.blue,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16)),
-                          TextSpan(
-                              text: controller.htmlData.elementAt(index)['userTitle'], style: TextStyle(color: Get.theme.primaryColor, fontSize: 13)),
-                        ]),
-                      ),
-                    ),
-                  ],
-                ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
                 Padding(
-                  padding: EdgeInsets.only(top: 10, right: 10),
+                  padding: EdgeInsets.all(5),
+                  child: displayAvatar(40, controller.htmlData.elementAt(index)["avatarColor1"], controller.htmlData.elementAt(index)["avatarColor2"],
+                      controller.htmlData.elementAt(index)["userName"], controller.htmlData.elementAt(index)["userAvatar"]),
+                ),
+                RichText(
+                  text: TextSpan(children: <TextSpan>[
+                    TextSpan(
+                        text: controller.htmlData.elementAt(index)['userName'] + "\n",
+                        style: TextStyle(
+                            color: controller.htmlData.elementAt(index)['newPost'] == true ? Color(0xFFFD6E00) : Colors.blue,
+                            fontWeight: FontWeight.bold,
+                            fontSize: Get.textTheme.bodyText1!.fontSize)),
+                    TextSpan(
+                        text: controller.htmlData.elementAt(index)['userTitle'],
+                        style: TextStyle(color: Get.theme.primaryColor, fontSize: Get.textTheme.bodyText1!.fontSize)),
+                  ]),
+                ),
+                Spacer(),
+                Padding(
+                  padding: EdgeInsets.all(5),
                   child: Align(
                     alignment: Alignment.centerRight,
                     child: Text('${controller.htmlData.elementAt(index)['userPostDate']}\n ${controller.htmlData.elementAt(index)['orderPost']}',
@@ -546,7 +538,7 @@ Widget viewContent(int index, ViewController controller) => Column(
                             Padding(
                               padding: EdgeInsets.only(right: 5),
                               child: displayAvatar(
-                                  70,
+                                  50,
                                   controller.htmlData.elementAt(index)["avatarColor1"],
                                   controller.htmlData.elementAt(index)["avatarColor2"],
                                   controller.htmlData.elementAt(index)["userName"],
@@ -571,16 +563,16 @@ Widget viewContent(int index, ViewController controller) => Column(
                             ]))
                           ],
                         ),
-                        RichText(
+                        Padding(padding: EdgeInsets.only(top: 10),child: RichText(
                           text: TextSpan(children: [
                             TextSpan(text: 'Messages: ', style: TextStyle(color: Colors.grey)),
-                            TextSpan(text: controller.data['memberTooltip']['message']),
+                            TextSpan(text: controller.data['memberTooltip']['message'].toString(), style: TextStyle(color: Get.theme.primaryColor)),
                             TextSpan(text: 'Reaction score: ', style: TextStyle(color: Colors.grey)),
-                            TextSpan(text: controller.data['memberTooltip']['reaction']),
+                            TextSpan(text: controller.data['memberTooltip']['reaction'], style: TextStyle(color: Get.theme.primaryColor)),
                             TextSpan(text: 'Points: ', style: TextStyle(color: Colors.grey)),
-                            TextSpan(text: controller.data['memberTooltip']['point']),
+                            TextSpan(text: controller.data['memberTooltip']['point'], style: TextStyle(color: Get.theme.primaryColor)),
                           ]),
-                        ),
+                        ),),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,

@@ -221,11 +221,6 @@ class GlobalController extends GetxController {
   performTooltipMember(String value) {
     dom.Document document = parser.parse(value);
 
-    // print(document.outerHtml);
-    //print(document.getElementsByClassName('memberTooltip-blurb')[0].text.trim());
-    //print(document.getElementsByTagName('time')[0].innerHtml);
-    //print(document.getElementsByClassName('memberTooltip-blurb')[2].ge);
-    //print(document.getElementsByClassName('username ')[0].text);
     print(document.getElementsByClassName('pairs pairs--rows')[0].getElementsByTagName('dd')[0].text.trim());
     print(document.getElementsByClassName('pairs pairs--rows')[1].getElementsByTagName('dd')[0].text.trim());
     print(document.getElementsByClassName('pairs pairs--rows')[2].getElementsByTagName('dd')[0].text.trim());

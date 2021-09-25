@@ -162,15 +162,12 @@ class HomePageUI extends GetView<HomeController> {
 }
 
 theme(String theme, BuildContext context) {
-  return Padding(
-    padding: EdgeInsets.only(bottom: 5),
-    child: Container(
-      color: Color(0xfff3168b0),
-      child: ListTile(
-        title: Text(
-          theme,
-          style: TextStyle(color: Colors.grey.shade200, fontWeight: FontWeight.bold, fontFamily: 'BeVietNam'),
-        ),
+  return Container(
+    color: Color(0xfff3168b0),
+    child: ListTile(
+      title: Text(
+        theme,
+        style: TextStyle(color: Colors.grey.shade200, fontWeight: FontWeight.bold, fontFamily: 'BeVietNam'),
       ),
     ),
   );
