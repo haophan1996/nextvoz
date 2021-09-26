@@ -139,10 +139,46 @@ class LoginController extends GetxController {
                       style: TextStyle(color: Colors.white),
                     ), () {
 
-                  loginVerifyCode(checkBoxTrust.value, textEditingCode.text, data['xf_session'], GlobalController.i.xfCsrfLogin,
+                  loginVerifyCode(checkBoxTrust.value, 'totp',textEditingCode.text, data['xf_session'], GlobalController.i.xfCsrfLogin,
                       GlobalController.i.dataCsrfLogin);
                 }),
-              )
+              ), //Code via app
+              Padding(
+                padding: EdgeInsets.all(10),
+                child: Container(
+                  width: Get.width * 0.5,
+                  height: Get.textTheme.headline5!.fontSize! + 10.0,
+                  decoration: BoxDecoration(color: Color(0xfff5c7099), borderRadius: BorderRadius.all(Radius.circular(5))),
+                  child: customCupertinoButton(
+                      Alignment.center,
+                      EdgeInsets.fromLTRB(5, 2, 5, 2),
+                      Text(
+                        'Code via Email',
+                        style: TextStyle(color: Colors.white),
+                      ), () {
+
+                    loginVerifyCode(checkBoxTrust.value, 'email',textEditingCode.text, data['xf_session'], GlobalController.i.xfCsrfLogin,
+                        GlobalController.i.dataCsrfLogin);
+                  }),
+                ),
+              ), //Code via email
+              Container(
+                width: Get.width * 0.5,
+                height: Get.textTheme.headline5!.fontSize! + 10.0,
+                decoration: BoxDecoration(color: Color(0xfff5c7099), borderRadius: BorderRadius.all(Radius.circular(5))),
+                child: customCupertinoButton(
+                    Alignment.center,
+                    EdgeInsets.fromLTRB(5, 2, 5, 2),
+                    Text(
+                      'Code via Backup Code',
+                      style: TextStyle(color: Colors.white),
+                    ), () {
+
+                  loginVerifyCode(checkBoxTrust.value, 'backup', textEditingCode.text, data['xf_session'], GlobalController.i.xfCsrfLogin,
+                      GlobalController.i.dataCsrfLogin);
+                }),
+              ), //Code via backup
+              Text('Nếu bạn đã sử dụng TÀI KHOẢN ĐĂNG NHẬP này băng email, thì bạn nên xem email và chọn CODE VIA EMAIL, và ngươc lại')
             ],
           ),
         ),
@@ -183,7 +219,7 @@ class LoginController extends GetxController {
     return response;
   }
 
-  loginVerifyCode(bool trust, String code, String session, String csrf, String token) async {
+  loginVerifyCode(bool trust, String provider, String code, String session, String csrf, String token) async {
     var headers = {
       'content-type': 'application/json; charset=UTF-8',
       'host': 'vozloginapinode.herokuapp.com',
@@ -195,7 +231,7 @@ class LoginController extends GetxController {
       'code': code,
       'trust': trust == true ? '1' : '0',
       'confirm': '1',
-      'provider': 'totp',
+      'provider': provider,
       'remember': '1',
       'xf_session': session,
       'xf_csrf': csrf
