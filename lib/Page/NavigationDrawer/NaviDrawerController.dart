@@ -17,8 +17,8 @@ class NaviDrawerController extends GetxController {
     GlobalController.i.isLogged = false;
     GlobalController.i.inboxNotifications = 0;
     GlobalController.i.alertNotifications = 0;
-    //GlobalController.i.alertList.clear();
-    //GlobalController.i.inboxList.clear();
+    GlobalController.i.alertList.clear();
+    GlobalController.i.inboxList.clear();
     data.clear();
     await GlobalController.i.userStorage.remove("userLoggedIn");
     await GlobalController.i.userStorage.remove("xf_user");

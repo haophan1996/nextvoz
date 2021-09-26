@@ -96,7 +96,21 @@ class LoginController extends GetxController {
       'host': 'vozloginapinode.herokuapp.com',
     };
     var body = {"login": login, "password": pass, "remember": "1", "_xfToken": token, "userAgent": 'AndroidIosMobileDevices', "cookie": cookie};
+
+    print(body);
     final response = await GlobalController.i.getHttpPost(true, headers, jsonEncode(body), 'https://vozloginapinode.herokuapp.com/api/vozlogin');
+
     return response;
   }
 }
+
+
+
+
+/*
+Ip testing
+http://10.0.0.55:3000/
+
+Real link
+https://vozloginapinode.herokuapp.com/api/vozlogin
+ */
