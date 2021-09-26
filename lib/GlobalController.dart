@@ -82,7 +82,7 @@ class GlobalController extends GetxController {
     });
     xfCsrfPost = cookXfCsrf(response.headers['set-cookie'].toString());
     if (isHomePage == true) xfCsrfLogin = cookXfCsrf(response.headers['set-cookie'].toString());
-    return parser.parse(_removeTag(response.toString()));
+     return parser.parse(_removeTag(response.toString()));
   }
 
   Future getHttpPost(bool isJson, Map<String, String> header, dynamic body, String link) async {

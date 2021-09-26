@@ -17,15 +17,15 @@ class NaviDrawerController extends GetxController {
     GlobalController.i.isLogged = false;
     GlobalController.i.inboxNotifications = 0;
     GlobalController.i.alertNotifications = 0;
-    GlobalController.i.alertList.clear();
-    GlobalController.i.inboxList.clear();
+    //GlobalController.i.alertList.clear();
+    //GlobalController.i.inboxList.clear();
     data.clear();
     await GlobalController.i.userStorage.remove("userLoggedIn");
     await GlobalController.i.userStorage.remove("xf_user");
     await GlobalController.i.userStorage.remove("xf_session");
     await GlobalController.i.userStorage.remove("date_expire");
-    update();
     GlobalController.i.update(['Notification'], true);
+    update();
     if(Get.isDialogOpen==true) Get.back();
   }
 
@@ -39,7 +39,6 @@ class NaviDrawerController extends GetxController {
   navigateToSetting() {
     Get.toNamed(Routes.Settings, preventDuplicates: false);
   }
-
 
   Future<void> getUserProfile() async {
     await GlobalController.i.getBodyBeta((value) {
