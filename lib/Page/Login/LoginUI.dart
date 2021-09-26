@@ -69,6 +69,7 @@ class LoginUI extends GetView<LoginController> {
                     child: Text('login'.tr)), () async {
               //setDialog();
               await controller.loginFunction();
+              //await controller.loginVerification();
             }),
             Text('or'.tr),
             Spacer(),
