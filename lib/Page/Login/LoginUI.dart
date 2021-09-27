@@ -68,8 +68,9 @@ class LoginUI extends GetView<LoginController> {
                     decoration: BoxDecoration(color: Colors.grey.shade300, borderRadius: BorderRadius.all(Radius.circular(6))),
                     child: Text('login'.tr)), () async {
               //setDialog();
-              //await controller.loginFunction();
-              await controller.loginVerification();
+              await controller.loginFunction();
+              //await controller.loginVerification();
+              //controller.promptCodeProvider();
             }),
             Text('or'.tr),
             Spacer(),
@@ -122,3 +123,7 @@ class LoginUI extends GetView<LoginController> {
     );
   }
 }
+
+
+
+

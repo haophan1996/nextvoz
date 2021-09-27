@@ -43,7 +43,7 @@ class NaviDrawerController extends GetxController {
   Future<void> getUserProfile() async {
     await GlobalController.i.getBodyBeta((value) {
       ///onError
-      }, (download) {}, dio, GlobalController.i.url, false).then((res) async {
+    }, (download) {}, dio, GlobalController.i.url +'/account/', false).then((res) async {
       GlobalController.i.token = res!.getElementsByTagName('html')[0].attributes['data-csrf'];
       if (res.getElementsByTagName('html')[0].attributes['data-logged-in'] == 'true') {
         GlobalController.i.controlNotification(
@@ -52,8 +52,12 @@ class NaviDrawerController extends GetxController {
             res.getElementsByTagName('html')[0].attributes['data-logged-in'].toString());
       } else
         GlobalController.i.controlNotification(0, 0, 'false');
-
-      String linkProfile = res.getElementsByTagName('form')[1].attributes['action']!.split('/post')[0];
+      String linkProfile = res
+          .getElementsByClassName('p-navEl-link ')
+          .where((element) => element.attributes['data-nav-id'] == 'defaultYourProfile')
+          .first
+          .attributes['href']
+          .toString();
       data['linkUser'] = linkProfile;
       await GlobalController.i.getBodyBeta((value) {
         ///onError
