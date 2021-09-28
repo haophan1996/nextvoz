@@ -21,7 +21,7 @@ PreferredSize preferredSize(BuildContext context, String title, String prefix, L
       preferredSize: Size.fromHeight(GlobalController.i.heightAppbar),
       child: AppBar(
         automaticallyImplyLeading: false,
-        title: customTitle(FontWeight.bold, Color(0xfff3168b0), 2, prefix, title),
+        title: customTitle(FontWeight.bold, Color(0xfff3168b0), 2, prefix, title, null),
         leading: (ModalRoute.of(context)?.canPop ?? false) ? BackButton() : null,
         actions: action,
       ),
@@ -46,10 +46,10 @@ PreferredSize appBarOnly(String title, List<Widget> action) {
 /// * [header11] - [header12] black/white color depends on Dark/light mode.
 /// * [header21] - [header22] grey color default.
 /// * [header3] orange color default.
-Widget blockItem(BuildContext context, FontWeight titleWeight, int index, Color divider, Color title, String header11, String header12,
+Widget blockItem(BuildContext context, bool? isLock, FontWeight titleWeight, int index, Color divider, Color title, String header11, String header12,
         String header21, String header22, String header3, Function onTap, Function onLongPress) =>
     Padding(
-      padding: EdgeInsets.only(left: 5, right: 5),
+      padding: EdgeInsets.only(left: 0, right: 5),
       child: InkWell(
         splashFactory: InkRipple.splashFactory,
         onTap: () => onTap(),
@@ -57,12 +57,13 @@ Widget blockItem(BuildContext context, FontWeight titleWeight, int index, Color 
         child: Ink(
           width: double.infinity,
           decoration: BoxDecoration(border: Border(bottom: BorderSide(color: divider, width: 0.2))),
-          padding: EdgeInsets.all(5),
+          padding: EdgeInsets.fromLTRB(10, 5, 5, 5),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              customTitle(titleWeight, title /*Color(0xfff3168b0)*/, null, header11, header12),
-              Text("$header21 \u2022 $header22 ${header3 == '' ? '' : '\u2022'} $header3", style: TextStyle(color: Colors.grey, fontSize: Theme.of(context).textTheme.bodyText2!.fontSize)),
+              customTitle(titleWeight, title /*Color(0xfff3168b0)*/, null, header11, header12, isLock),
+              Text("$header21 \u2022 $header22 ${header3 == '' ? '' : '\u2022'} $header3",
+                  style: TextStyle(color: Colors.grey, fontSize: Theme.of(context).textTheme.bodyText2!.fontSize)),
             ],
           ),
         ),
@@ -86,7 +87,6 @@ Widget buttonToolHtml(IconData iconData, String message, Function onPressed) => 
     ),
     () => onPressed());
 
-
 setNavigateToPageOnInput(Function(int) callback) async {
   await Get.bottomSheet(Container(
     decoration: BoxDecoration(
@@ -101,24 +101,24 @@ setNavigateToPageOnInput(Function(int) callback) async {
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
-        customCupertinoButton(Alignment.center, EdgeInsets.zero, Text('Back'), ()=> Get.back()),
+        customCupertinoButton(Alignment.center, EdgeInsets.zero, Text('Back'), () => Get.back()),
         Container(
           height: 80,
           padding: EdgeInsets.all(10),
           child: TextField(
-            onEditingComplete: (){
-              Get.back();
-              if (GlobalController.i.inputNavigatePage.text.length != 0){
-                callback(int.parse(GlobalController.i.inputNavigatePage.text));
-                GlobalController.i.inputNavigatePage.clear();
-              }
-            },
-            autofocus: true,
+              onEditingComplete: () {
+                Get.back();
+                if (GlobalController.i.inputNavigatePage.text.length != 0) {
+                  callback(int.parse(GlobalController.i.inputNavigatePage.text));
+                  GlobalController.i.inputNavigatePage.clear();
+                }
+              },
+              autofocus: true,
               controller: GlobalController.i.inputNavigatePage,
               keyboardType: TextInputType.number,
               decoration: InputDecoration(
                   labelText: 'Go to page',
-                  labelStyle: TextStyle(fontWeight: FontWeight.bold,color: Get.theme.primaryColor, fontSize: Get.textTheme.headline6!.fontSize),
+                  labelStyle: TextStyle(fontWeight: FontWeight.bold, color: Get.theme.primaryColor, fontSize: Get.textTheme.headline6!.fontSize),
                   fillColor: Get.theme.canvasColor,
                   filled: true,
                   focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Get.theme.primaryColor, width: 1)),
@@ -126,9 +126,9 @@ setNavigateToPageOnInput(Function(int) callback) async {
         ),
         Container(
           alignment: Alignment.center,
-          child: customCupertinoButton(Alignment.center, EdgeInsets.zero, Text('OK'), (){
+          child: customCupertinoButton(Alignment.center, EdgeInsets.zero, Text('OK'), () {
             Get.back();
-            if (GlobalController.i.inputNavigatePage.text.length != 0){
+            if (GlobalController.i.inputNavigatePage.text.length != 0) {
               callback(int.parse(GlobalController.i.inputNavigatePage.text));
               GlobalController.i.inputNavigatePage.clear();
             }
@@ -139,17 +139,46 @@ setNavigateToPageOnInput(Function(int) callback) async {
   ));
 }
 
-Widget customTitle(FontWeight titleWeight, Color titleColor, int? maxLines, String header11, String header12) {
+Widget customTitle(
+  FontWeight titleWeight,
+  Color titleColor,
+  int? maxLines,
+  String header11,
+  String header12,
+  bool? isLock,
+) {
   return RichText(
     maxLines: maxLines,
     overflow: maxLines == 1 || maxLines == 2 ? TextOverflow.ellipsis : TextOverflow.clip,
     textAlign: maxLines == 2 ? TextAlign.center : TextAlign.start,
-    text: customTitleChild(titleWeight, titleColor, header11, header12),
+    text: customTitleChild(titleWeight, titleColor, header11, header12, isLock),
   );
 }
 
-TextSpan customTitleChild(FontWeight titleWeight, Color titleColor, String header11, String header12) {
+TextSpan customTitleChild(
+  FontWeight titleWeight,
+  Color titleColor,
+  String header11,
+  String header12,
+  bool? isLock,
+) {
   return TextSpan(children: [
+    WidgetSpan(
+        child: Container(
+          padding: EdgeInsets.only(right: 5),
+          child: isLock == true
+              ? Icon(
+                  Icons.lock_outline,
+                  size: Get.textTheme.bodyText1!.fontSize,
+                )
+              : titleColor == Colors.red
+                  ? Icon(
+                      Icons.push_pin,
+                      size: Get.textTheme.bodyText1!.fontSize,
+                    )
+                  : null,
+        ),
+        alignment: PlaceholderAlignment.middle),
     WidgetSpan(
       child: Container(
         padding: EdgeInsets.only(left: header11 == '' ? 0 : 4, right: header11 == '' ? 0 : 4),
@@ -170,7 +199,6 @@ TextSpan customTitleChild(FontWeight titleWeight, Color titleColor, String heade
     )
   ]);
 }
-
 
 Widget settings() => Row(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -574,7 +602,12 @@ Widget viewContent(int index, ViewController controller) => Column(
                 ignoreSafeArea: false),
             onLongPress: () {
               GlobalController.i
-                  .getHttp(true, {'cookie': '${GlobalController.i.xfCsrfPost}; xf_user=${GlobalController.i.xfUser}; xf_session=${GlobalController.i.xfSession};'},
+                  .getHttp(
+                      true,
+                      {
+                        'cookie':
+                            '${GlobalController.i.xfCsrfPost}; xf_user=${GlobalController.i.xfUser}; xf_session=${GlobalController.i.xfSession};'
+                      },
                       '${GlobalController.i.url + controller.htmlData.elementAt(index)['userLink']}?tooltip=true&_xfToken=${GlobalController.i.token}&_xfResponseType=json')
                   .then((value) {
                 if (value['status'] == 'ok') {
@@ -617,16 +650,19 @@ Widget viewContent(int index, ViewController controller) => Column(
                             ]))
                           ],
                         ),
-                        Padding(padding: EdgeInsets.only(top: 10),child: RichText(
-                          text: TextSpan(children: [
-                            TextSpan(text: 'Messages: ', style: TextStyle(color: Colors.grey)),
-                            TextSpan(text: controller.data['memberTooltip']['message'].toString(), style: TextStyle(color: Get.theme.primaryColor)),
-                            TextSpan(text: 'Reaction score: ', style: TextStyle(color: Colors.grey)),
-                            TextSpan(text: controller.data['memberTooltip']['reaction'], style: TextStyle(color: Get.theme.primaryColor)),
-                            TextSpan(text: 'Points: ', style: TextStyle(color: Colors.grey)),
-                            TextSpan(text: controller.data['memberTooltip']['point'], style: TextStyle(color: Get.theme.primaryColor)),
-                          ]),
-                        ),),
+                        Padding(
+                          padding: EdgeInsets.only(top: 10),
+                          child: RichText(
+                            text: TextSpan(children: [
+                              TextSpan(text: 'Messages: ', style: TextStyle(color: Colors.grey)),
+                              TextSpan(text: controller.data['memberTooltip']['message'].toString(), style: TextStyle(color: Get.theme.primaryColor)),
+                              TextSpan(text: 'Reaction score: ', style: TextStyle(color: Colors.grey)),
+                              TextSpan(text: controller.data['memberTooltip']['reaction'], style: TextStyle(color: Get.theme.primaryColor)),
+                              TextSpan(text: 'Points: ', style: TextStyle(color: Colors.grey)),
+                              TextSpan(text: controller.data['memberTooltip']['point'], style: TextStyle(color: Get.theme.primaryColor)),
+                            ]),
+                          ),
+                        ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
@@ -1027,10 +1063,7 @@ Widget customHtml(String postContent, List imageList, Function(String index, Str
     style: {
       "code": Style(color: Colors.blue),
       "table": Style(backgroundColor: Get.theme.cardColor),
-      "body": Style(
-          fontSize: FontSize(Get.textTheme.bodyText1!.fontSize),
-          padding: EdgeInsets.zero,
-          margin: EdgeInsets.only(left: 3, right: 3)),
+      "body": Style(fontSize: FontSize(Get.textTheme.bodyText1!.fontSize), padding: EdgeInsets.zero, margin: EdgeInsets.only(left: 3, right: 3)),
       //"div": Style(display: Display.INLINE, margin: EdgeInsets.zero),
       "blockquote": Style(
           padding: EdgeInsets.all(5),

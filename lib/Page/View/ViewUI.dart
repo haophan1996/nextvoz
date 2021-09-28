@@ -103,7 +103,10 @@ class ViewUI extends GetView<ViewController> {
                             id: 'updatePageNum',
                             builder: (controller) {
                               return Text('${controller.data['currentPage'] ?? ''} / ${controller.data['totalPage'] ?? ''}',
-                                  style: TextStyle(color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold, fontSize: Get.theme.textTheme.bodyText2!.fontSize));
+                                  style: TextStyle(
+                                      color: Theme.of(context).primaryColor,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: Get.theme.textTheme.bodyText2!.fontSize));
                             }), () {
                   setNavigateToPageOnInput((value) {
                     setDialog();
@@ -200,10 +203,7 @@ class ViewUI extends GetView<ViewController> {
           automaticallyImplyLeading: true,
           title: Text(
             controller.data['subTypeHeader'] + controller.data['subHeader'],
-            style: TextStyle(
-              fontSize: Get.theme.textTheme.bodyText2!.fontSize,
-              //fontWeight: FontWeight.bold
-            ),
+            style: TextStyle(fontSize: Get.theme.textTheme.bodyText2!.fontSize, color: Get.theme.primaryColor),
           ),
           floating: false,
           actions: [IconButton(onPressed: () async => await controller.onRefresh(), icon: Icon(Icons.refresh))],

@@ -17,7 +17,10 @@ class HomePageUI extends GetView<HomeController> {
       endDrawerEnableOpenDragGesture: true,
       backgroundColor: Theme.of(context).backgroundColor,
       appBar: AppBar(
-        title: Text('theNEXTvoz', style: TextStyle(fontWeight: FontWeight.bold, color: Theme.of(context).secondaryHeaderColor),),
+        title: Text(
+          'theNEXTvoz',
+          style: TextStyle(fontWeight: FontWeight.bold, color: Theme.of(context).secondaryHeaderColor),
+        ),
       ),
       body: GetBuilder<HomeController>(builder: (controller) {
         return controller.loadingStatus == 'loading'
@@ -98,6 +101,7 @@ class HomePageUI extends GetView<HomeController> {
                         : theme(controller.myHomePage.elementAt(index)["header"], context),
                     blockItem(
                         context,
+                        null,
                         FontWeight.bold,
                         index,
                         (index != controller.myHomePage.length - 1 &&
@@ -148,7 +152,8 @@ class HomePageUI extends GetView<HomeController> {
                       return Text(
                         controller.isLogged == false ? 'guestUser'.tr : NaviDrawerController.i.data['nameUser'] ?? 'null',
                         style: TextStyle(
-                            color: controller.alertNotifications != 0 || controller.inboxNotifications != 0 ? Colors.redAccent : Colors.blue,fontFamily: 'BeVietNam'),
+                            color: controller.alertNotifications != 0 || controller.inboxNotifications != 0 ? Colors.redAccent : Colors.blue,
+                            fontFamily: 'BeVietNam'),
                       );
                     }),
                 () => Get.bottomSheet(controlCenter()),
@@ -167,7 +172,11 @@ theme(String theme, BuildContext context) {
     child: ListTile(
       title: Text(
         theme,
-        style: TextStyle(color: Colors.grey.shade200, fontWeight: FontWeight.bold, fontFamily: 'BeVietNam', fontSize: Theme.of(context).textTheme.headline6!.fontSize),
+        style: TextStyle(
+            color: Colors.grey.shade200,
+            fontWeight: FontWeight.bold,
+            fontFamily: 'BeVietNam',
+            fontSize: Theme.of(context).textTheme.headline6!.fontSize),
       ),
     ),
   );

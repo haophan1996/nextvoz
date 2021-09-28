@@ -251,7 +251,7 @@ class SettingsUI extends GetView<SettingsController> {
                           text: TextSpan(children: [
                             TextSpan(
                                 text: 'iconBottomBarSize'.tr,
-                                style: TextStyle(fontFamily: 'BeVietNam', color: Get.theme.primaryColor, fontWeight: FontWeight.bold)),
+                                style: TextStyle(fontFamily: 'BeVietNam', color: Get.theme.primaryColor, fontWeight: FontWeight.bold, fontSize: Theme.of(context).textTheme.bodyText1!.fontSize)),
                             TextSpan(
                                 text: '\n${controller.sizeIconBottomBar}'.tr,
                                 style: TextStyle(
@@ -284,7 +284,7 @@ class SettingsUI extends GetView<SettingsController> {
                           text: TextSpan(children: [
                             TextSpan(
                                 text: 'heightBottom'.tr,
-                                style: TextStyle(fontFamily: 'BeVietNam', color: Get.theme.primaryColor, fontWeight: FontWeight.bold)),
+                                style: TextStyle(fontFamily: 'BeVietNam', color: Get.theme.primaryColor, fontWeight: FontWeight.bold, fontSize: Theme.of(context).textTheme.bodyText1!.fontSize)),
                             TextSpan(
                                 text: '\n${controller.heightBottomBar.round()}'.tr,
                                 style: TextStyle(

@@ -125,7 +125,7 @@ class LoginController extends GetxController {
     };
     var body = {"login": login, "password": pass, "remember": "1", "_xfToken": token, "userAgent": 'AndroidIosMobileDevices', "cookie": cookie};
 
-    final response = await GlobalController.i.getHttpPost(true, headers, jsonEncode(body), 'http://10.0.0.55:3000/api/vozlogin');
+    final response = await GlobalController.i.getHttpPost(true, headers, jsonEncode(body), 'https://vozloginapinode.herokuapp.com/api/vozlogin');
     return response;
   }
 
@@ -192,7 +192,7 @@ class LoginController extends GetxController {
       'xf_csrf': csrf
     };
 
-    final response = await http.post(Uri.parse('http://10.0.0.55:3000/api/vozverification'), headers: headers, body: jsonEncode(body));
+    final response = await http.post(Uri.parse('https://vozloginapinode.herokuapp.com/api/vozverification'), headers: headers, body: jsonEncode(body));
     final jsonRes = jsonDecode(response.body);
     print('return success verification');
     if (response.statusCode == 200) {

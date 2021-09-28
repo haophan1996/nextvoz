@@ -23,8 +23,8 @@ class Themes {
       caption: TextStyle(fontFamily: 'BeVietNam', color: Colors.black),
       button: TextStyle(fontFamily: 'BeVietNam', color: Colors.black),
       overline: TextStyle(fontFamily: 'BeVietNam', color: Colors.black),
-      bodyText1:TextStyle(fontFamily: 'BeVietNam', color: Colors.black,fontSize: GlobalController.i.userStorage.read('fontSizeView') ?? 16), // 16
-      bodyText2: TextStyle(fontFamily: 'BeVietNam', color: Colors.black,fontSize: (GlobalController.i.userStorage.read('fontSizeView') ?? 16)! -2), //14
+      bodyText1:TextStyle(fontFamily: 'BeVietNam', color: Colors.black,fontSize: GlobalController.i.userStorage.read('fontSizeView') ?? 16.0), // 16
+      bodyText2: TextStyle(fontFamily: 'BeVietNam', color: Colors.black,fontSize: (GlobalController.i.userStorage.read('fontSizeView') ?? 16.0)! -2.0), //14
     ),
     dividerColor: Colors.grey,
     secondaryHeaderColor: Colors.grey.shade700,
@@ -66,8 +66,8 @@ class Themes {
       caption: TextStyle(fontFamily: 'BeVietNam', color: Colors.grey.shade400),
       button: TextStyle(fontFamily: 'BeVietNam', color: Colors.grey.shade400),
       overline: TextStyle(fontFamily: 'BeVietNam', color: Colors.grey.shade400),
-      bodyText1:TextStyle(fontFamily: 'BeVietNam', color: Colors.grey.shade400),
-      bodyText2: TextStyle(fontFamily: 'BeVietNam', color: Colors.grey.shade400),
+      bodyText1:TextStyle(fontFamily: 'BeVietNam', color: Colors.grey.shade400,fontSize: GlobalController.i.userStorage.read('fontSizeView') ?? 16.0),
+      bodyText2: TextStyle(fontFamily: 'BeVietNam', color: Colors.grey.shade400,fontSize: (GlobalController.i.userStorage.read('fontSizeView') ?? 16.0)! -2.0),
     ),
     appBarTheme: AppBarTheme(
       elevation: 0,

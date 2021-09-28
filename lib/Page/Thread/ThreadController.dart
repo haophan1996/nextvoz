@@ -182,7 +182,10 @@ class ThreadController extends GetxController {
         }
         data['authorName'] = element.attributes["data-author"];
 
+        data['lockReply'] = element.getElementsByClassName('structItem-status structItem-status--locked').length;
+
         myThreadList.add({
+          'lockReply' : data['lockReply'] == 1 ? true : false,
           "sticky" : data['sticky'],
           "title": data['title'],
           "prefix": data['themeTitle'] ?? '',

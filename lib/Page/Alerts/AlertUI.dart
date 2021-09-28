@@ -57,7 +57,7 @@ class AlertsUI extends GetView<AlertsController> {
             TextSpan(text: GlobalController.i.alertList.elementAt(index)['username'], style: TextStyle(color: Colors.blue)),
             TextSpan(text: GlobalController.i.alertList.elementAt(index)['status'], style: TextStyle(color: Get.theme.primaryColor)),
             customTitleChild(FontWeight.normal, Colors.blue, GlobalController.i.alertList.elementAt(index)['prefix'] ?? '',
-                GlobalController.i.alertList.elementAt(index)['threadName']),
+                GlobalController.i.alertList.elementAt(index)['threadName'], null),
             GlobalController.i.alertList.elementAt(index)['reaction'] == ''
                 ? TextSpan()
                 : TextSpan(

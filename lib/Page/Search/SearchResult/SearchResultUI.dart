@@ -64,7 +64,7 @@ class SearchResultUI extends GetView<SearchResultController> {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                customTitle(FontWeight.normal, Colors.blue, 2, controller.htmlData.elementAt(index)['prefix'], controller.htmlData.elementAt(index)['title']),
+                customTitle(FontWeight.normal, Colors.blue, 2, controller.htmlData.elementAt(index)['prefix'], controller.htmlData.elementAt(index)['title'], null),
                 Html(
                   data: controller.htmlData.elementAt(index)['content'],
                   style: {'body': Style(color: Colors.grey, margin: EdgeInsets.only(top: 5, bottom: 2))},

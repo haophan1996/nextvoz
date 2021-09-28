@@ -69,7 +69,7 @@ class ThreadUI extends GetView<ThreadController> {
                 leading: BackButton(),
                 title: Text(
                   controller.data['theme'] ?? 'sa',
-                  style: TextStyle(fontFamily: 'BeVietNam'),
+                  style: TextStyle(fontFamily: 'BeVietNam', color: Theme.of(context).primaryColor),
                 ),
                 actions: [IconButton(onPressed: () async => await controller.onRefresh(), icon: Icon(Icons.refresh))],
                 floating: false,
@@ -259,6 +259,7 @@ class ThreadUI extends GetView<ThreadController> {
                       })
                   : blockItem(
                       context,
+                  controller.myThreadList.elementAt(index)['lockReply'],
                       controller.myThreadList.elementAt(index)['isRead'] == true ? FontWeight.bold : FontWeight.normal,
                       index,
                       index != controller.myThreadList.length - 1 ? Theme.of(context).secondaryHeaderColor : Colors.transparent,
