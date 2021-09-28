@@ -12,7 +12,7 @@ class SettingsUI extends GetView<SettingsController> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).backgroundColor,
-      appBar: preferredSize(context, 'setPage'.tr, '',[]),
+      appBar: preferredSize(context, 'setPage'.tr, '', []),
       resizeToAvoidBottomInset: false,
       body: Container(
         padding: EdgeInsets.only(top: 20, left: 10, right: 10),
@@ -27,7 +27,8 @@ class SettingsUI extends GetView<SettingsController> {
                       padding: EdgeInsets.only(top: 10, bottom: 10),
                       child: Text(
                         'lang'.tr,
-                        style: TextStyle(fontFamily: 'BeVietNam',fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                            fontFamily: 'BeVietNam', fontWeight: FontWeight.bold, fontSize: Theme.of(context).textTheme.bodyText1!.fontSize),
                       ),
                     ),
                     Spacer(),
@@ -42,7 +43,7 @@ class SettingsUI extends GetView<SettingsController> {
                       boxAlignment: AlignmentDirectional.bottomEnd,
                     ),
                   ],
-                )),//Lang
+                )), //Lang
                 myContainer(Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -50,7 +51,8 @@ class SettingsUI extends GetView<SettingsController> {
                       padding: EdgeInsets.only(top: 10, bottom: 10),
                       child: Text(
                         'darkMode'.tr,
-                        style: TextStyle(fontFamily: 'BeVietNam',fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                            fontFamily: 'BeVietNam', fontWeight: FontWeight.bold, fontSize: Theme.of(context).textTheme.bodyText1!.fontSize),
                       ),
                     ),
                     Spacer(),
@@ -64,32 +66,36 @@ class SettingsUI extends GetView<SettingsController> {
                       boxAlignment: AlignmentDirectional.bottomEnd,
                     ),
                   ],
-                )),//Darkmode
+                )), //Darkmode
                 Obx(() => myContainer(Row(
-                  children: [
-                    RichText(
-                      text: TextSpan(children: [
-                        TextSpan(text: 'fontSizeView'.tr, style: TextStyle(fontFamily: 'BeVietNam',color: Get.theme.primaryColor, fontWeight: FontWeight.bold)),
-                        TextSpan(
-                            text: '\n${controller.fontSizeView.value.toInt()}'.tr,
-                            style: TextStyle(
-                              color: Colors.grey,
-                            ))
-                      ]),
-                    ),
-                    Expanded(
-                      child: Slider(
-                          divisions: 30,
-                          label: controller.fontSizeView.string,
-                          value: controller.fontSizeView.value,
-                          max: 40.0,
-                          min: 10.0,
-                          onChanged: (value) {
-                            controller.fontSizeView.value = value;
-                          }),
-                    )
-                  ],
-                ))), //fontSize
+                      children: [
+                        RichText(
+                          text: TextSpan(children: [
+                            TextSpan(
+                                text: 'fontSizeView'.tr,
+                                style: TextStyle(
+                                    fontFamily: 'BeVietNam',
+                                    color: Get.theme.primaryColor,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: Theme.of(context).textTheme.bodyText1!.fontSize)),
+                            TextSpan(
+                                text: '\n${controller.fontSizeView.value.toInt()}'.tr,
+                                style: TextStyle(color: Colors.grey, fontSize: Theme.of(context).textTheme.bodyText1!.fontSize))
+                          ]),
+                        ),
+                        Expanded(
+                          child: Slider(
+                              divisions: 30,
+                              label: controller.fontSizeView.string,
+                              value: controller.fontSizeView.value,
+                              max: 40.0,
+                              min: 10.0,
+                              onChanged: (value) {
+                                controller.fontSizeView.value = value;
+                              }),
+                        )
+                      ],
+                    ))), //fontSize
                 myContainer(Row(
                   children: [
                     GetBuilder<SettingsController>(
@@ -100,10 +106,17 @@ class SettingsUI extends GetView<SettingsController> {
                               EdgeInsets.zero,
                               RichText(
                                 text: TextSpan(children: [
-                                  TextSpan(text: 'appSignature'.tr, style: TextStyle(fontFamily: 'BeVietNam',color: Get.theme.primaryColor, fontWeight: FontWeight.bold)),
+                                  TextSpan(
+                                      text: 'appSignature'.tr,
+                                      style: TextStyle(
+                                          fontFamily: 'BeVietNam',
+                                          color: Get.theme.primaryColor,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: Theme.of(context).textTheme.bodyText1!.fontSize)),
                                   TextSpan(
                                       text: '\n${GlobalController.i.userStorage.read('appSignatureDevice') ?? 'Device'}'.tr,
-                                      style: TextStyle(fontFamily: 'BeVietNam',
+                                      style: TextStyle(
+                                        fontFamily: 'BeVietNam',
                                         color: Colors.blueAccent,
                                       ))
                                 ]),
@@ -111,38 +124,38 @@ class SettingsUI extends GetView<SettingsController> {
                             controller.textEditingController.text = GlobalController.i.userStorage.read('appSignatureDevice');
                             Get.defaultDialog(
                                 content: Column(
+                              children: [
+                                inputCustom(TextInputType.text, controller.textEditingController, false, 'Signature', () {}),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                Stack(
                                   children: [
-                                    inputCustom(TextInputType.text, controller.textEditingController, false, 'Signature', () {}),
-                                    SizedBox(
-                                      height: 10,
+                                    Align(
+                                      alignment: Alignment.topLeft,
+                                      child: customCupertinoButton(Alignment.center, EdgeInsets.zero, Text(' Cancel'), () => Get.back()),
                                     ),
-                                    Stack(
-                                      children: [
-                                        Align(
-                                          alignment: Alignment.topLeft,
-                                          child: customCupertinoButton(Alignment.center, EdgeInsets.zero, Text(' Cancel'), () => Get.back()),
-                                        ),
-                                        Align(
-                                          alignment: Alignment.topCenter,
-                                          child: customCupertinoButton(Alignment.center, EdgeInsets.zero, Text('Reset'), () async {
-                                            await controller.getDeviceName();
-                                            Get.back();
-                                          }),
-                                        ),
-                                        Align(
-                                          alignment: Alignment.topRight,
-                                          child: customCupertinoButton(
-                                              Alignment.center, EdgeInsets.zero, Text('   OK'), () async => await controller.setDeviceName()),
-                                        ),
-                                      ],
-                                    )
+                                    Align(
+                                      alignment: Alignment.topCenter,
+                                      child: customCupertinoButton(Alignment.center, EdgeInsets.zero, Text('Reset'), () async {
+                                        await controller.getDeviceName();
+                                        Get.back();
+                                      }),
+                                    ),
+                                    Align(
+                                      alignment: Alignment.topRight,
+                                      child: customCupertinoButton(
+                                          Alignment.center, EdgeInsets.zero, Text('   OK'), () async => await controller.setDeviceName()),
+                                    ),
                                   ],
-                                ));
+                                )
+                              ],
+                            ));
                           });
                         }),
                     Spacer(),
                     Obx(
-                          () => CupertinoSwitch(
+                      () => CupertinoSwitch(
                         value: controller.switchSignature.value,
                         onChanged: (value) {
                           controller.switchSignature.value = value;
@@ -155,11 +168,11 @@ class SettingsUI extends GetView<SettingsController> {
                   children: [
                     Text(
                       'showImage'.tr,
-                      style: TextStyle(fontFamily: 'BeVietNam',fontWeight: FontWeight.bold),
+                      style: TextStyle(fontFamily: 'BeVietNam', fontWeight: FontWeight.bold, fontSize: Theme.of(context).textTheme.bodyText1!.fontSize),
                     ),
                     Spacer(),
                     Obx(
-                          () => CupertinoSwitch(
+                      () => CupertinoSwitch(
                         value: controller.switchImage.value,
                         onChanged: (value) {
                           controller.switchImage.value = value;
@@ -172,11 +185,11 @@ class SettingsUI extends GetView<SettingsController> {
                   children: [
                     Text(
                       'scrollToMyRepAfterPost'.tr,
-                      style: TextStyle(fontFamily: 'BeVietNam',fontWeight: FontWeight.bold),
+                      style: TextStyle(fontFamily: 'BeVietNam', fontWeight: FontWeight.bold, fontSize: Theme.of(context).textTheme.bodyText1!.fontSize),
                     ),
                     Spacer(),
                     Obx(
-                          () => CupertinoSwitch(
+                      () => CupertinoSwitch(
                         value: controller.switchValuePost.value,
                         onChanged: (value) {
                           controller.switchValuePost.value = value;
@@ -189,17 +202,19 @@ class SettingsUI extends GetView<SettingsController> {
                   children: [
                     RichText(
                       text: TextSpan(children: [
-                        TextSpan(text: 'defaultsPage'.tr, style: TextStyle(fontFamily: 'BeVietNam',color: Get.theme.primaryColor, fontWeight: FontWeight.bold)),
+                        TextSpan(
+                            text: 'defaultsPage'.tr,
+                            style: TextStyle(fontFamily: 'BeVietNam', color: Get.theme.primaryColor, fontWeight: FontWeight.bold, fontSize: Theme.of(context).textTheme.bodyText1!.fontSize)),
                         TextSpan(
                             text: '\n${GlobalController.i.userStorage.read('defaultsPage_title') ?? 'Home'}'.tr,
                             style: TextStyle(
-                              color: Colors.grey,
+                              color: Colors.grey, fontSize: Theme.of(context).textTheme.bodyText1!.fontSize
                             ))
                       ]),
                     ),
                     Spacer(),
                     Obx(
-                          () => CupertinoSwitch(
+                      () => CupertinoSwitch(
                         value: controller.switchDefaultsPage.value,
                         onChanged: (value) {
                           controller.switchDefaultsPage.value = value;
@@ -212,31 +227,33 @@ class SettingsUI extends GetView<SettingsController> {
                   children: [
                     Text(
                       'viewSwipeLeftRight'.tr,
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: Theme.of(context).textTheme.bodyText1!.fontSize),
                     ),
                     Spacer(),
                     GetBuilder<SettingsController>(
                         id: 'updateSwitchSwipeLeftRight',
                         builder: (controller) {
-                      return CupertinoSwitch(
-                          value: controller.switchSwipeLeftRight,
-                          onChanged: (value) {
-                            controller.switchSwipeLeftRight = value;
-                            controller.update(['updateSwitchSwipeLeftRight']);
-                          });
-                    })
+                          return CupertinoSwitch(
+                              value: controller.switchSwipeLeftRight,
+                              onChanged: (value) {
+                                controller.switchSwipeLeftRight = value;
+                                controller.update(['updateSwitchSwipeLeftRight']);
+                              });
+                        })
                   ],
                 )), //swipe right/left
                 myContainer(GetBuilder<SettingsController>(
                   id: 'iconSizeBottom',
-                  builder: (controller){
+                  builder: (controller) {
                     return Row(
                       children: [
                         RichText(
                           text: TextSpan(children: [
-                            TextSpan(text: 'iconBottomBarSize'.tr, style: TextStyle(fontFamily: 'BeVietNam',color: Get.theme.primaryColor, fontWeight: FontWeight.bold)),
                             TextSpan(
-                                text: '\n${controller.sizeIconBottomBar.toStringAsFixed(2)}'.tr,
+                                text: 'iconBottomBarSize'.tr,
+                                style: TextStyle(fontFamily: 'BeVietNam', color: Get.theme.primaryColor, fontWeight: FontWeight.bold)),
+                            TextSpan(
+                                text: '\n${controller.sizeIconBottomBar}'.tr,
                                 style: TextStyle(
                                   fontFamily: 'BeVietNam',
                                   color: Colors.grey,
@@ -250,7 +267,7 @@ class SettingsUI extends GetView<SettingsController> {
                               max: 50.0,
                               min: 20.0,
                               onChanged: (value) {
-                                controller.sizeIconBottomBar = value;
+                                controller.sizeIconBottomBar = value.toInt();
                                 controller.update(['iconSizeBottom']);
                               }),
                         )
@@ -260,12 +277,14 @@ class SettingsUI extends GetView<SettingsController> {
                 )),
                 myContainer(GetBuilder<SettingsController>(
                   id: 'heightBottom',
-                  builder: (controller){
+                  builder: (controller) {
                     return Row(
                       children: [
                         RichText(
                           text: TextSpan(children: [
-                            TextSpan(text: 'heightBottom'.tr, style: TextStyle(fontFamily: 'BeVietNam',color: Get.theme.primaryColor, fontWeight: FontWeight.bold)),
+                            TextSpan(
+                                text: 'heightBottom'.tr,
+                                style: TextStyle(fontFamily: 'BeVietNam', color: Get.theme.primaryColor, fontWeight: FontWeight.bold)),
                             TextSpan(
                                 text: '\n${controller.heightBottomBar.round()}'.tr,
                                 style: TextStyle(

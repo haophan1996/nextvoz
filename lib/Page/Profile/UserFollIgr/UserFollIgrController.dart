@@ -108,7 +108,7 @@ class UserFollIgrController extends GetxController {
     var headers = {
       'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
       'host': 'voz.vn',
-      'cookie': '${GlobalController.i.xfCsrfPost}; xf_user=${GlobalController.i.xfUser};',
+      'cookie': '${GlobalController.i.xfCsrfPost}; xf_user=${GlobalController.i.xfUser}; xf_session=${GlobalController.i.xfSession};',
     };
 
     var body = {'_xfWithData': '1', '_xfToken': '${data['token']}', '_xfResponseType': 'json'};
@@ -117,14 +117,12 @@ class UserFollIgrController extends GetxController {
         .getHttpPost(true, headers, body, GlobalController.i.url + htmlData.elementAt(index)['usernameLink'] + 'ignore')
         .then((value) {
       if (Get.isDialogOpen == true) Get.back();
-      print(value);
       if (value['status'] == 'ok') {
         if (value['switchKey'] == 'ignore') {
           //Following
           htmlData.elementAt(index)['follow'] = false;
         } else
           htmlData.elementAt(index)['follow'] = true;
-        print(htmlData.elementAt(index));
         update(['$index']);
       } else {
         setDialogError(value['message']);

@@ -103,9 +103,13 @@ class ViewUI extends GetView<ViewController> {
                             id: 'updatePageNum',
                             builder: (controller) {
                               return Text('${controller.data['currentPage'] ?? ''} / ${controller.data['totalPage'] ?? ''}',
-                                  style: TextStyle(color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold));
-                            }),
-                        () {})),
+                                  style: TextStyle(color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold, fontSize: Get.theme.textTheme.bodyText2!.fontSize));
+                            }), () {
+                  setNavigateToPageOnInput((value) {
+                    setDialog();
+                    controller.setPageOnClick(value, true);
+                  });
+                })),
                 Expanded(
                     child: Container(
                   height: 50,
@@ -194,11 +198,15 @@ class ViewUI extends GetView<ViewController> {
         SliverAppBar(
           leading: BackButton(),
           automaticallyImplyLeading: true,
-          title: customTitle(FontWeight.bold, Color(0xfff3168b0), 2, controller.data['subTypeHeader'], controller.data['subHeader']),
+          title: Text(
+            controller.data['subTypeHeader'] + controller.data['subHeader'],
+            style: TextStyle(
+              fontSize: Get.theme.textTheme.bodyText2!.fontSize,
+              //fontWeight: FontWeight.bold
+            ),
+          ),
           floating: false,
-          actions: [
-            IconButton(onPressed: () async => await controller.onRefresh(), icon: Icon(Icons.refresh))
-          ],
+          actions: [IconButton(onPressed: () async => await controller.onRefresh(), icon: Icon(Icons.refresh))],
         ),
         SliverPersistentHeader(
           delegate: SectionHeaderDelegate(

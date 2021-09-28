@@ -133,7 +133,7 @@ class PostStatusController extends GetxController {
     var headers = {
       'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
       'host': 'voz.vn',
-      'cookie': '${data['xf_csrf']}; xf_user=${GlobalController.i.xfUser};',
+      'cookie': '${data['xf_csrf']}; xf_user=${GlobalController.i.xfUser};xf_session=${GlobalController.i.xfSession};',
     };
 
     if (GlobalController.i.userStorage.read('signature') ?? true){
@@ -175,7 +175,7 @@ class PostStatusController extends GetxController {
     var headers = {
       'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
       'host': 'voz.vn',
-      'cookie': '${data['xf_csrf']}; xf_user=${GlobalController.i.xfUser};',
+      'cookie': '${data['xf_csrf']}; xf_user=${GlobalController.i.xfUser}; xf_session=${GlobalController.i.xfSession};',
     };
     await GlobalController.i
         .getHttpPost(
@@ -218,7 +218,7 @@ class PostStatusController extends GetxController {
     var headers = {
       'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
       'host': 'voz.vn',
-      'cookie': '${data['xf_csrf']}; xf_user=${GlobalController.i.xfUser};',
+      'cookie': '${data['xf_csrf']}; xf_user=${GlobalController.i.xfUser}; xf_session=${GlobalController.i.xfSession};',
     };
 
     await GlobalController.i.getHttpPost(true, headers, body, GlobalController.i.url + '/conversations/add').then((value) {
@@ -259,7 +259,7 @@ class PostStatusController extends GetxController {
     var headers = {
       'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
       'host': 'voz.vn',
-      'cookie': '${data['xf_csrf']}; xf_user=${GlobalController.i.xfUser};',
+      'cookie': '${data['xf_csrf']}; xf_user=${GlobalController.i.xfUser}; xf_session=${GlobalController.i.xfSession};',
     };
 
     var body = {

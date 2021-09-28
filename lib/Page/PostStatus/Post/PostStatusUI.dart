@@ -17,57 +17,57 @@ class PostStatusUI extends GetView<PostStatusController> {
         appBar: appBarOnly(
             controller.data['isEditPost'] == true ? 'editPost'.tr : 'createPost'.tr,
             [
-              PopupMenuButton(
-                child: IconButton(
-                  icon: Icon(Icons.more_vert),
-                  onPressed: null,
-                ),
-                itemBuilder: (context) {
-                  return [
-                    PopupMenuItem(
-                      child: Text(controller.data['isEditPost'] == true ? 'Save' : 'Post'),
-                      value: 0,
-                    ),
-                    PopupMenuItem(
-                      child: Text('Clear content'),
-                      value: 1,
-                    ),
-                    PopupMenuItem(
-                      child: Text('Hide keyboard'),
-                      value: 2,
-                    ),
-                    PopupMenuItem(
-                      child: Text('Show Keyboard'),
-                      value: 3,
-                    ),
-                    PopupMenuItem(
-                      child: Text('View Code'),
-                      value: 4,
-                    ),
-                  ];
-                },
-                onSelected: (val) async {
-                  switch (val) {
-                    case 0:
-                      controller.data['isEditPost'] == true ? await controller.editPost() : await controller.post();
-                      break;
-                    case 1:
-                      await controller.keyEditor.currentState?.clear();
-                      await controller.keyEditor.currentState?.setHtml('</p>');
-                      break;
-                    case 2:
-                      await SystemChannels.textInput.invokeMethod('TextInput.hide'); //controller.keyEditor.currentState?.unFocus();
-                      break;
-                    case 3:
-                      await controller.keyEditor.currentState!.focus(); //controller.keyEditor.currentState?.focus();
-                      break;
-                    case 4:
-                      String? html = await controller.keyEditor.currentState?.getHtml();
-                      print(html);
-                      break;
-                  }
-                },
-              )
+              // PopupMenuButton(
+              //   child: IconButton(
+              //     icon: Icon(Icons.more_vert),
+              //     onPressed: null,
+              //   ),
+              //   itemBuilder: (context) {
+              //     return [
+              //       PopupMenuItem(
+              //         child: Text(controller.data['isEditPost'] == true ? 'Save' : 'Post'),
+              //         value: 0,
+              //       ),
+              //       PopupMenuItem(
+              //         child: Text('Clear content'),
+              //         value: 1,
+              //       ),
+              //       PopupMenuItem(
+              //         child: Text('Hide keyboard'),
+              //         value: 2,
+              //       ),
+              //       PopupMenuItem(
+              //         child: Text('Show Keyboard'),
+              //         value: 3,
+              //       ),
+              //       PopupMenuItem(
+              //         child: Text('View Code'),
+              //         value: 4,
+              //       ),
+              //     ];
+              //   },
+              //   onSelected: (val) async {
+              //     switch (val) {
+              //       case 0:
+              //         controller.data['isEditPost'] == true ? await controller.editPost() : await controller.post();
+              //         break;
+              //       case 1:
+              //         await controller.keyEditor.currentState?.clear();
+              //         await controller.keyEditor.currentState?.setHtml('</p>');
+              //         break;
+              //       case 2:
+              //         await SystemChannels.textInput.invokeMethod('TextInput.hide'); //controller.keyEditor.currentState?.unFocus();
+              //         break;
+              //       case 3:
+              //         await controller.keyEditor.currentState!.focus(); //controller.keyEditor.currentState?.focus();
+              //         break;
+              //       case 4:
+              //         String? html = await controller.keyEditor.currentState?.getHtml();
+              //         print(html);
+              //         break;
+              //     }
+              //   },
+              // )
             ]),
         body: Column(
           children: [
@@ -99,6 +99,28 @@ class PostStatusUI extends GetView<PostStatusController> {
                   },
                 ),
                 height: controller.heightEditor),
+            Padding(
+              padding: EdgeInsets.only(top: 5),
+              child: Container(
+                decoration: BoxDecoration(color: Color(0xfff5c7099), borderRadius: BorderRadius.all(Radius.circular(5))),
+                child: customCupertinoButton(
+                    Alignment.center,
+                    EdgeInsets.fromLTRB(5, 2, 5, 2),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.open_in_new, color: Colors.white,),
+                        Text(
+                          '\t\t'+(controller.data['isEditPost'] == true ? 'editPost'.tr : 'createPost'.tr),
+                          style: TextStyle(color: Colors.white),
+                        )
+                      ],
+                    ),
+                        () async {
+                          controller.data['isEditPost'] == true ? await controller.editPost() : await controller.post();
+                    }),
+              ),
+            ),
             Spacer(),
             Container(
               height: controller.heightToolbar,

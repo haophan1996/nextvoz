@@ -25,8 +25,10 @@ class ThreadUI extends GetView<ThreadController> {
       endDrawer: NaviDrawerUI(),
       endDrawerEnableOpenDragGesture: true,
       backgroundColor: Theme.of(context).backgroundColor,
-      appBar: PreferredSize(preferredSize: Size.fromHeight(0),
-      child: AppBar(), ),
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(0),
+        child: AppBar(),
+      ),
       body: NotificationListener(
         onNotification: (Notification notification) {
           if (notification is ScrollUpdateNotification && controller.data['isScroll'] != 'Release') {
@@ -65,10 +67,11 @@ class ThreadUI extends GetView<ThreadController> {
             slivers: [
               SliverAppBar(
                 leading: BackButton(),
-                title: Text(controller.data['theme'] ?? 'sa',style: TextStyle(fontFamily: 'BeVietNam'),),
-                actions: [
-                  IconButton(onPressed: () async => await controller.onRefresh(), icon: Icon(Icons.refresh))
-                ],
+                title: Text(
+                  controller.data['theme'] ?? 'sa',
+                  style: TextStyle(fontFamily: 'BeVietNam'),
+                ),
+                actions: [IconButton(onPressed: () async => await controller.onRefresh(), icon: Icon(Icons.refresh))],
                 floating: false,
               ),
               SliverPersistentHeader(
@@ -105,26 +108,27 @@ class ThreadUI extends GetView<ThreadController> {
         ),
       ),
       bottomNavigationBar: ScrollToHideWidget(
-          controller: controller.listViewScrollController,
-          child: BottomAppBar(
-            color: Theme.of(context).backgroundColor,
-            child: Padding(
-              padding: EdgeInsets.only(top: GetPlatform.isAndroid ? 0 : 5),
-              child: Row(mainAxisSize: MainAxisSize.max, mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-                Expanded(
-                    child: customCupertinoButton(
-                        Alignment.center,
-                        EdgeInsets.zero,
-                        Icon(Icons.textsms_outlined,
-                            color: Theme.of(context).primaryColor, size: GlobalController.i.userStorage.read('sizeIconBottomBar') ?? 30.0), () {
+        controller: controller.listViewScrollController,
+        child: BottomAppBar(
+          color: Theme.of(context).backgroundColor,
+          child: Padding(
+            padding: EdgeInsets.only(top: GetPlatform.isAndroid ? 0 : 5),
+            child: Row(mainAxisSize: MainAxisSize.max, mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
+              Expanded(
+                child: customCupertinoButton(
+                    Alignment.center,
+                    EdgeInsets.zero,
+                    Icon(Icons.textsms_outlined,
+                        color: Theme.of(context).primaryColor, size: GlobalController.i.userStorage.read('sizeIconBottomBar') ?? 30.0), () {
                   if (controller.data['ableToPost'] == true && controller.data['theme'] != 'posts'.tr) {
                     controller.navigateToCreatePost();
                   } else {
                     setDialogError('Unable to create thread or Forums did not allow to post thread');
                   }
-                })),
-                Expanded(
-                    child: Container(
+                }),
+              ),
+              Expanded(
+                child: Container(
                   height: 50,
                   child: Material(
                     color: Colors.transparent,
@@ -134,23 +138,30 @@ class ThreadUI extends GetView<ThreadController> {
                       child: Icon(Icons.arrow_back_ios_outlined, size: GlobalController.i.userStorage.read('sizeIconBottomBar') ?? 30.0),
                     ),
                   ),
-                )),
-                Expanded(
-                    child: customCupertinoButton(
-                        Alignment.center,
-                        EdgeInsets.zero,
-                        GetBuilder<ThreadController>(
-                            tag: tag,
-                            id: 'updatePageNum',
-                            builder: (controller) {
-                              return Text(
-                                '${controller.data['currentPage'] ?? ''} / ${controller.data['totalPage'] ?? ''}',
-                                style: TextStyle(color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold),
-                              );
-                            }),
-                        () {})),
-                Expanded(
-                    child: Container(
+                ),
+              ),
+              Expanded(
+                child: customCupertinoButton(
+                    Alignment.center,
+                    EdgeInsets.zero,
+                    GetBuilder<ThreadController>(
+                        tag: tag,
+                        id: 'updatePageNum',
+                        builder: (controller) {
+                          return Text(
+                            '${controller.data['currentPage'] ?? ''} / ${controller.data['totalPage'] ?? ''}',
+                            style: TextStyle(color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold, fontSize: Get.theme.textTheme.bodyText2!.fontSize),
+                          );
+                        }),
+                    () {
+                      setNavigateToPageOnInput((value) {
+                        setDialog();
+                        controller.setPageOnClick(value);
+                      });
+                    }),
+              ),
+              Expanded(
+                child: Container(
                   height: 50,
                   child: Material(
                     color: Colors.transparent,
@@ -160,61 +171,65 @@ class ThreadUI extends GetView<ThreadController> {
                       child: Icon(Icons.arrow_forward_ios_rounded, size: GlobalController.i.userStorage.read('sizeIconBottomBar') ?? 30.0),
                     ),
                   ),
-                )),
-                Expanded(
-                    child: customCupertinoButton(
-                        Alignment.center,
-                        EdgeInsets.zero,
-                        GetBuilder<GlobalController>(
-                          id: 'Notification',
-                          builder: (controller) {
-                            return Icon(
-                              Icons.dashboard_rounded,
-                              size: GlobalController.i.userStorage.read('sizeIconBottomBar') ?? 30.0,
-                              color: controller.inboxNotifications != 0 || controller.alertNotifications != 0 ? Colors.red : Get.theme.primaryColor,
-                            );
-                          },
-                        ),
-                        () => Get.bottomSheet(
-                              controlCenter(),
-                            ))),
-              ]),
-            ),
-          )),
-        // floatingActionButtonLocation:
-        // FloatingActionButtonLocation.miniEndDocked,
-        // floatingActionButton: Padding(
-        //   padding: EdgeInsets.only(bottom: 50),
-        //   child: Column(
-        //     mainAxisAlignment: MainAxisAlignment.end,
-        //     children: [
-        //       Container(
-        //         child: GetBuilder<GlobalController>(
-        //           id: 'alertNotification',
-        //           builder: (controller){
-        //             return controller.alertNotifications != 0 ? FloatingActionButton(
-        //               mini: true,
-        //               onPressed: (){},
-        //               child: Icon(Icons.notifications_none_outlined, color: Colors.red,),
-        //             ) : Text('');
-        //           },
-        //         ),
-        //       ),
-        //       Container(
-        //         child: GetBuilder<GlobalController>(
-        //           id: 'inboxNotification',
-        //           builder: (controller){
-        //             return controller.inboxNotifications != 0 ? FloatingActionButton(
-        //               mini: true,
-        //               onPressed: (){},
-        //               child: Icon(Icons.mail_outline, color: Colors.red,),
-        //             ) : Text('');
-        //           },
-        //         ),
-        //       ),
-        //     ],
-        //   ),
-        // )
+                ),
+              ),
+              Expanded(
+                child: customCupertinoButton(
+                  Alignment.center,
+                  EdgeInsets.zero,
+                  GetBuilder<GlobalController>(
+                    id: 'Notification',
+                    builder: (controller) {
+                      return Icon(
+                        Icons.dashboard_rounded,
+                        size: GlobalController.i.userStorage.read('sizeIconBottomBar') ?? 30.0,
+                        color: controller.inboxNotifications != 0 || controller.alertNotifications != 0 ? Colors.red : Get.theme.primaryColor,
+                      );
+                    },
+                  ),
+                  () => Get.bottomSheet(
+                    controlCenter(),
+                  ),
+                ),
+              ),
+            ]),
+          ),
+        ),
+      ),
+      // floatingActionButtonLocation:
+      // FloatingActionButtonLocation.miniEndDocked,
+      // floatingActionButton: Padding(
+      //   padding: EdgeInsets.only(bottom: 50),
+      //   child: Column(
+      //     mainAxisAlignment: MainAxisAlignment.end,
+      //     children: [
+      //       Container(
+      //         child: GetBuilder<GlobalController>(
+      //           id: 'alertNotification',
+      //           builder: (controller){
+      //             return controller.alertNotifications != 0 ? FloatingActionButton(
+      //               mini: true,
+      //               onPressed: (){},
+      //               child: Icon(Icons.notifications_none_outlined, color: Colors.red,),
+      //             ) : Text('');
+      //           },
+      //         ),
+      //       ),
+      //       Container(
+      //         child: GetBuilder<GlobalController>(
+      //           id: 'inboxNotification',
+      //           builder: (controller){
+      //             return controller.inboxNotifications != 0 ? FloatingActionButton(
+      //               mini: true,
+      //               onPressed: (){},
+      //               child: Icon(Icons.mail_outline, color: Colors.red,),
+      //             ) : Text('');
+      //           },
+      //         ),
+      //       ),
+      //     ],
+      //   ),
+      // )
     );
   }
 

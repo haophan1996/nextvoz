@@ -3,8 +3,6 @@ import '/Routes/pages.dart';
 import 'package:get/get.dart';
 import '../reuseWidget.dart';
 import '/GlobalController.dart';
-import 'package:html/dom.dart' as dom;
-import 'package:html/parser.dart' as parser;
 
 class HomeController extends GetxController {
   String loadingStatus = 'loading';

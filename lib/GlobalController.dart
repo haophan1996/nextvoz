@@ -24,6 +24,7 @@ class GlobalController extends GetxController {
   List alertList = [], inboxList = [], sessionTag = [];
   String xfSession = '', dateExpire = '', xfUser = '';
   int alertNotifications = 0, inboxNotifications = 0;
+  TextEditingController inputNavigatePage = TextEditingController();
 
   ///Default settings
   double heightAppbar = 45, overScroll = 100;
@@ -41,6 +42,16 @@ class GlobalController extends GetxController {
   controlNotification(int alt, int ib, String login) {
     if (login == 'false') {
       if (login != isLogged.toString()) {
+        NaviDrawerController.i.logout();
+        data['accountList'] = userStorage.read('accountList') ?? [];
+        for(int i = 0; i < data['accountList'].length; i++){
+          if (data['accountList'].elementAt(i)['nameUser'] == NaviDrawerController.i.data['nameUser']){
+            data['accountList'].removeAt(i);
+          }
+        }
+        GlobalController.i.userStorage.write('accountList', data['accountList']);
+        data['accountList'].clear();
+
         isLogged = false;
         update();
       }
@@ -220,10 +231,6 @@ class GlobalController extends GetxController {
 
   performTooltipMember(String value) {
     dom.Document document = parser.parse(value);
-
-    print(document.getElementsByClassName('pairs pairs--rows')[0].getElementsByTagName('dd')[0].text.trim());
-    print(document.getElementsByClassName('pairs pairs--rows')[1].getElementsByTagName('dd')[0].text.trim());
-    print(document.getElementsByClassName('pairs pairs--rows')[2].getElementsByTagName('dd')[0].text.trim());
     return {
       'username': document.getElementsByClassName('username ')[0].text + '\n',
       'userTitle': document.getElementsByClassName('userTitle')[0].text + '\n',

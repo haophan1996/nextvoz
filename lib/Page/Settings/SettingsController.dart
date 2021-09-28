@@ -11,8 +11,9 @@ class SettingsController extends GetxController {
   RxDouble fontSizeView = 15.0.obs;
   RxBool switchValuePost = true.obs, switchImage = true.obs, switchSignature = true.obs, switchDefaultsPage = true.obs;
   bool switchSwipeLeftRight = false;
+  late double sizeIconBottomBarDouble;
   var langIndex, darkModeIndex;
-  double sizeIconBottomBar = 0.0;
+  int sizeIconBottomBar = 0;
       int heightBottomBar = 0;
   late TextEditingController textEditingController = TextEditingController();
   DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
@@ -29,12 +30,12 @@ class SettingsController extends GetxController {
     if (GlobalController.i.userStorage.read('appSignatureDevice') == null) {
       await getDeviceName();
     }
-
-    sizeIconBottomBar = GlobalController.i.userStorage.read('sizeIconBottomBar') ?? 35;
+    sizeIconBottomBarDouble = GlobalController.i.userStorage.read('sizeIconBottomBar') ?? 35.0;
+    sizeIconBottomBar = sizeIconBottomBarDouble.toInt();
     heightBottomBar = GlobalController.i.userStorage.read('heightBottomBar') ?? (GetPlatform.isAndroid ? 0 : 20);
     darkModeIndex =  GlobalController.i.userStorage.read('darkMode') ?? 0;
     langIndex = GlobalController.i.userStorage.read('lang') ?? 1;
-    fontSizeView.value = (GlobalController.i.userStorage.read('fontSizeView') ?? Get.textTheme.button!.fontSize)!;
+    fontSizeView.value = (GlobalController.i.userStorage.read('fontSizeView') ?? Get.textTheme.bodyText1!.fontSize)!;
     switchValuePost.value = GlobalController.i.userStorage.read('scrollToMyRepAfterPost') ?? true;
     switchImage.value = GlobalController.i.userStorage.read('showImage') ?? true;
     switchSignature.value = GlobalController.i.userStorage.read('signature') ?? true;

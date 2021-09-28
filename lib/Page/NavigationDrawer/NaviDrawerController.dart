@@ -14,16 +14,17 @@ class NaviDrawerController extends GetxController {
   logout() async {
     setDialog();
     GlobalController.i.xfUser = '';
+    GlobalController.i.xfSession = '';
     GlobalController.i.isLogged = false;
     GlobalController.i.inboxNotifications = 0;
     GlobalController.i.alertNotifications = 0;
     GlobalController.i.alertList.clear();
     GlobalController.i.inboxList.clear();
     data.clear();
-    await GlobalController.i.userStorage.remove("userLoggedIn");
-    await GlobalController.i.userStorage.remove("xf_user");
-    await GlobalController.i.userStorage.remove("xf_session");
-    await GlobalController.i.userStorage.remove("date_expire");
+    await GlobalController.i.userStorage.write("userLoggedIn",false);
+    await GlobalController.i.userStorage.write("xf_user",'');
+    await GlobalController.i.userStorage.write("xf_session",'');
+    await GlobalController.i.userStorage.write("date_expire",'');
     GlobalController.i.update(['Notification'], true);
     update();
     if(Get.isDialogOpen==true) Get.back();

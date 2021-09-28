@@ -62,7 +62,7 @@ Widget blockItem(BuildContext context, FontWeight titleWeight, int index, Color 
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               customTitle(titleWeight, title /*Color(0xfff3168b0)*/, null, header11, header12),
-              Text("$header21 \u2022 $header22 ${header3 == '' ? '' : '\u2022'} $header3", style: TextStyle(color: Colors.grey, fontSize: 12)),
+              Text("$header21 \u2022 $header22 ${header3 == '' ? '' : '\u2022'} $header3", style: TextStyle(color: Colors.grey, fontSize: Theme.of(context).textTheme.bodyText2!.fontSize)),
             ],
           ),
         ),
@@ -86,6 +86,59 @@ Widget buttonToolHtml(IconData iconData, String message, Function onPressed) => 
     ),
     () => onPressed());
 
+
+setNavigateToPageOnInput(Function(int) callback) async {
+  await Get.bottomSheet(Container(
+    decoration: BoxDecoration(
+      color: Get.theme.shadowColor,
+      borderRadius: BorderRadius.only(
+        topLeft: Radius.circular(6),
+        topRight: Radius.circular(6),
+      ),
+    ),
+    padding: EdgeInsets.all(20),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        customCupertinoButton(Alignment.center, EdgeInsets.zero, Text('Back'), ()=> Get.back()),
+        Container(
+          height: 80,
+          padding: EdgeInsets.all(10),
+          child: TextField(
+            onEditingComplete: (){
+              Get.back();
+              if (GlobalController.i.inputNavigatePage.text.length != 0){
+                callback(int.parse(GlobalController.i.inputNavigatePage.text));
+                GlobalController.i.inputNavigatePage.clear();
+              }
+            },
+            autofocus: true,
+              controller: GlobalController.i.inputNavigatePage,
+              keyboardType: TextInputType.number,
+              decoration: InputDecoration(
+                  labelText: 'Go to page',
+                  labelStyle: TextStyle(fontWeight: FontWeight.bold,color: Get.theme.primaryColor, fontSize: Get.textTheme.headline6!.fontSize),
+                  fillColor: Get.theme.canvasColor,
+                  filled: true,
+                  focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Get.theme.primaryColor, width: 1)),
+                  enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.transparent)))),
+        ),
+        Container(
+          alignment: Alignment.center,
+          child: customCupertinoButton(Alignment.center, EdgeInsets.zero, Text('OK'), (){
+            Get.back();
+            if (GlobalController.i.inputNavigatePage.text.length != 0){
+              callback(int.parse(GlobalController.i.inputNavigatePage.text));
+              GlobalController.i.inputNavigatePage.clear();
+            }
+          }),
+        )
+      ],
+    ),
+  ));
+}
+
 Widget customTitle(FontWeight titleWeight, Color titleColor, int? maxLines, String header11, String header12) {
   return RichText(
     maxLines: maxLines,
@@ -104,7 +157,7 @@ TextSpan customTitleChild(FontWeight titleWeight, Color titleColor, String heade
         child: Text(
           header11,
           style: TextStyle(
-            fontSize: 14,
+            fontSize: Get.textTheme.bodyText1!.fontSize,
             fontWeight: titleWeight,
             color: getColorInvert(header11),
           ),
@@ -113,10 +166,11 @@ TextSpan customTitleChild(FontWeight titleWeight, Color titleColor, String heade
     ),
     TextSpan(
       text: header12,
-      style: TextStyle(color: titleColor, fontFamily: 'BeVietNam', fontSize: 15, fontWeight: titleWeight),
+      style: TextStyle(color: titleColor, fontFamily: 'BeVietNam', fontSize: Get.textTheme.bodyText1!.fontSize, fontWeight: titleWeight),
     )
   ]);
 }
+
 
 Widget settings() => Row(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -279,7 +333,7 @@ Widget buildIcon(String path, String text) => Row(
         ),
         Text(
           text.tr,
-          style: TextStyle(color: Colors.blue),
+          style: TextStyle(color: Colors.blue, fontSize: Get.textTheme.bodyText2!.fontSize),
         )
       ],
     );
@@ -493,10 +547,10 @@ Widget viewContent(int index, ViewController controller) => Column(
                         style: TextStyle(
                             color: controller.htmlData.elementAt(index)['newPost'] == true ? Color(0xFFFD6E00) : Colors.blue,
                             fontWeight: FontWeight.bold,
-                            fontSize: Get.textTheme.bodyText1!.fontSize)),
+                            fontSize: Get.textTheme.bodyText2!.fontSize)),
                     TextSpan(
                         text: controller.htmlData.elementAt(index)['userTitle'],
-                        style: TextStyle(color: Get.theme.primaryColor, fontSize: Get.textTheme.bodyText1!.fontSize)),
+                        style: TextStyle(color: Get.theme.primaryColor, fontSize: Get.textTheme.bodyText2!.fontSize)),
                   ]),
                 ),
                 Spacer(),
@@ -505,7 +559,7 @@ Widget viewContent(int index, ViewController controller) => Column(
                   child: Align(
                     alignment: Alignment.centerRight,
                     child: Text('${controller.htmlData.elementAt(index)['userPostDate']}\n ${controller.htmlData.elementAt(index)['orderPost']}',
-                        textAlign: TextAlign.right, style: TextStyle(color: Get.theme.primaryColor, fontSize: 13)),
+                        textAlign: TextAlign.right, style: TextStyle(color: Get.theme.primaryColor, fontSize: Get.textTheme.bodyText2!.fontSize)),
                   ),
                 ),
               ],
@@ -520,7 +574,7 @@ Widget viewContent(int index, ViewController controller) => Column(
                 ignoreSafeArea: false),
             onLongPress: () {
               GlobalController.i
-                  .getHttp(true, {'cookie': '${GlobalController.i.xfCsrfPost}; xf_user=${GlobalController.i.xfUser}'},
+                  .getHttp(true, {'cookie': '${GlobalController.i.xfCsrfPost}; xf_user=${GlobalController.i.xfUser}; xf_session=${GlobalController.i.xfSession};'},
                       '${GlobalController.i.url + controller.htmlData.elementAt(index)['userLink']}?tooltip=true&_xfToken=${GlobalController.i.token}&_xfResponseType=json')
                   .then((value) {
                 if (value['status'] == 'ok') {
@@ -636,7 +690,7 @@ Widget viewContent(int index, ViewController controller) => Column(
                               alignment: PlaceholderAlignment.middle),
                           TextSpan(
                               text: '\t' + controller.htmlData.elementAt(index)['commentName'],
-                              style: TextStyle(color: Colors.blueAccent, fontSize: Get.textTheme.bodyText1!.fontSize! + 2.0),
+                              style: TextStyle(color: Colors.blueAccent, fontSize: Get.textTheme.bodyText2!.fontSize),
                               recognizer: TapGestureRecognizer()
                                 ..onTap = () {
                                   controller.getDataReactionList(index);
@@ -974,7 +1028,7 @@ Widget customHtml(String postContent, List imageList, Function(String index, Str
       "code": Style(color: Colors.blue),
       "table": Style(backgroundColor: Get.theme.cardColor),
       "body": Style(
-          fontSize: FontSize(GlobalController.i.userStorage.read('fontSizeView') ?? Get.textTheme.button!.fontSize),
+          fontSize: FontSize(Get.textTheme.bodyText1!.fontSize),
           padding: EdgeInsets.zero,
           margin: EdgeInsets.only(left: 3, right: 3)),
       //"div": Style(display: Display.INLINE, margin: EdgeInsets.zero),

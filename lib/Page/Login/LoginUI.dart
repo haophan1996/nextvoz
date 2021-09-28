@@ -124,6 +124,172 @@ class LoginUI extends GetView<LoginController> {
   }
 }
 
+loginVerification(String userName, String provider, TextEditingController input, Function callback) async {
+  await Get.bottomSheet(
+      SafeArea(
+          child: Container(
+        height: Get.height * 0.8,
+        decoration: BoxDecoration(
+          color: Get.theme.backgroundColor,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(6),
+            topRight: Radius.circular(6),
+          ),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Flexible(
+                child: Text(
+              '\t\tTwo-step verification required',
+              style: TextStyle(fontSize: Get.textTheme.headline6!.fontSize, fontWeight: FontWeight.bold),
+            )),
+            Flexible(
+                child: Padding(
+              padding: EdgeInsets.only(top: 10, bottom: 10),
+              child: RichText(
+                  text: TextSpan(children: [
+                TextSpan(text: 'Logging in as: ', style: TextStyle(color: Get.theme.primaryColor)),
+                TextSpan(text: userName, style: TextStyle(color: Get.theme.primaryColor, fontWeight: FontWeight.bold)),
+              ])),
+            )),
+            Flexible(
+                child: Container(
+              height: 80,
+              padding: EdgeInsets.all(10),
+              child: TextField(
+                  controller: input,
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(
+                      labelText: 'Verification code',
+                      labelStyle: TextStyle(color: Get.theme.primaryColor.withOpacity(0.7)),
+                      fillColor: Get.theme.canvasColor,
+                      filled: true,
+                      focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Get.theme.primaryColor, width: 1)),
+                      enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.transparent)))),
+            )),
+            GetBuilder<LoginController>(
+                id: 'updateCheckBox',
+                builder: (controller) {
+                  return CheckboxListTile(
+                      contentPadding: EdgeInsets.only(left: Get.width / 4),
+                      controlAffinity: ListTileControlAffinity.leading,
+                      title: Text('Trust this device'),
+                      value: controller.checkBoxTrust.value,
+                      onChanged: (value) {
+                        controller.checkBoxTrust.value = value!;
+                        controller.update(['updateCheckBox']);
+                      });
+                }),
+            Container(
+              width: Get.width * 0.5,
+              height: Get.textTheme.headline5!.fontSize! + 10.0,
+              decoration: BoxDecoration(color: Color(0xfff5c7099), borderRadius: BorderRadius.all(Radius.circular(5))),
+              child: customCupertinoButton(
+                  Alignment.center,
+                  EdgeInsets.fromLTRB(5, 2, 5, 2),
+                  Text(
+                    provider == 'totp'
+                        ? 'Code via App'
+                        : provider == 'email'
+                            ? 'Code via Email'
+                            : 'Code via Backup Code',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  () async => callback()),
+            ), //Input code
+            Padding(
+              padding: EdgeInsets.only(top: 50),
+              child: GetBuilder<LoginController>(
+                builder: (controller) {
+                  return Container(
+                    width: Get.width * 0.5,
+                    height: Get.textTheme.headline5!.fontSize! + 10.0,
+                    decoration: BoxDecoration(color: Color(0xfff5c7099), borderRadius: BorderRadius.all(Radius.circular(5))),
+                    child: customCupertinoButton(
+                        Alignment.center,
+                        EdgeInsets.fromLTRB(5, 2, 5, 2),
+                        Text(
+                          'Back to select Code',
+                          style: TextStyle(color: Colors.orange),
+                        ), () {
+                      Get.back();
+                      promptCodeProvider((provider) {
+                        controller.promptCodeProviderLogin(provider);
+                      });
+                    }),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      )),
+      enableDrag: false,
+      ignoreSafeArea: false,
+      isScrollControlled: true);
+}
 
-
-
+promptCodeProvider(Function(int) callback) async {
+  await Get.defaultDialog(
+      title: 'Two-step verification provider',
+      radius: 6,
+      barrierDismissible: false,
+      content: GetBuilder<LoginController>(builder: (controller) {
+        return Column(
+          children: [
+            Text(
+              'Nếu bạn đã sử dụng TÀI KHOẢN ĐĂNG NHẬP này băng email, thì bạn nên xem email và chọn CODE VIA EMAIL, và ngươc lại\n\n',
+              textAlign: TextAlign.center,
+              style: TextStyle(color: Colors.grey),
+            ),
+            Container(
+              width: Get.width * 0.5,
+              height: Get.textTheme.headline5!.fontSize! + 10.0,
+              decoration: BoxDecoration(color: Color(0xfff5c7099), borderRadius: BorderRadius.all(Radius.circular(5))),
+              child: customCupertinoButton(
+                  Alignment.center,
+                  EdgeInsets.fromLTRB(5, 2, 5, 2),
+                  Text(
+                    'Code via App',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  () async => callback(1)),
+            ), //Code via app
+            Padding(
+              padding: EdgeInsets.all(10),
+              child: Container(
+                width: Get.width * 0.5,
+                height: Get.textTheme.headline5!.fontSize! + 10.0,
+                decoration: BoxDecoration(color: Color(0xfff5c7099), borderRadius: BorderRadius.all(Radius.circular(5))),
+                child: customCupertinoButton(
+                    Alignment.center,
+                    EdgeInsets.fromLTRB(5, 2, 5, 2),
+                    Text(
+                      'Code via Email',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    () async => callback(2)),
+              ),
+            ), //Code via email
+            Container(
+              width: Get.width * 0.5,
+              height: Get.textTheme.headline5!.fontSize! + 10.0,
+              decoration: BoxDecoration(color: Color(0xfff5c7099), borderRadius: BorderRadius.all(Radius.circular(5))),
+              child: customCupertinoButton(
+                  Alignment.center,
+                  EdgeInsets.fromLTRB(5, 2, 5, 2),
+                  Text(
+                    'Code via Backup Code',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  () async => callback(3)),
+            ), //Code via backup,
+            Padding(
+              padding: EdgeInsets.only(top: 50),
+              child: customCupertinoButton(Alignment.center, EdgeInsets.zero, Text('Close'), () => Get.back()),
+            )
+          ],
+        );
+      }));
+}

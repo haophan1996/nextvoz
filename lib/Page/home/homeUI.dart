@@ -167,7 +167,7 @@ theme(String theme, BuildContext context) {
     child: ListTile(
       title: Text(
         theme,
-        style: TextStyle(color: Colors.grey.shade200, fontWeight: FontWeight.bold, fontFamily: 'BeVietNam'),
+        style: TextStyle(color: Colors.grey.shade200, fontWeight: FontWeight.bold, fontFamily: 'BeVietNam', fontSize: Theme.of(context).textTheme.headline6!.fontSize),
       ),
     ),
   );

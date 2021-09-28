@@ -8,6 +8,8 @@ import '/GlobalController.dart';
 import '/Page/reuseWidget.dart';
 import 'package:http/http.dart' as http;
 
+import 'LoginUI.dart';
+
 /// If api return type
 ///  0 : account without Verification
 ///  1 : account with Verification ON
@@ -33,6 +35,8 @@ class LoginController extends GetxController {
     dio.close(force: true);
     textEditingControllerPassword.dispose();
     textEditingControllerLogin.dispose();
+    checkBoxTrust.close();
+    this.dispose();
   }
 
   Future<void> loginFunction() async {
@@ -44,7 +48,8 @@ class LoginController extends GetxController {
       return;
     }
 
-    if (GlobalController.i.dataCsrfLogin == null && GlobalController.i.xfCsrfLogin == null) {
+    if (GlobalController.i.dataCsrfLogin == null && GlobalController.i.xfCsrfLogin == null  || GlobalController.i.xfCsrfLogin == 'xf_user=deleted') {
+      await NaviDrawerController.i.logout();
       await GlobalController.i.getBodyBeta((value) {
         ///onError
       }, (download) {}, dio, 'https://voz.vn/login/login', true).then((value) {
@@ -64,21 +69,19 @@ class LoginController extends GetxController {
     } else {
       if (getMyData['type'] == 0) {
         statusLogin.value = 'statusLoginOK'.tr;
-        await saveAccountCookieToFile(getMyData['xf_user'],getMyData['xf_session'],getMyData['date_expire']);
-        await Future.delayed(Duration(milliseconds: 3000), () async {
-          Get.back();
-          Get.back();
-        });
+        await saveAccountCookieToFile(getMyData['xf_user'], getMyData['xf_session'], getMyData['date_expire']);
       } else {
         statusLogin.value = 'Two-step verification';
         if (Get.isDialogOpen == true) Get.back();
         data['xf_session'] = getMyData['xf_session'];
-        await promptCodeProvider();
+        await promptCodeProvider((provider) {
+          promptCodeProviderLogin(provider);
+        });
       }
     }
   }
 
-  saveAccountCookieToFile(String xfUser,String session, String dataExpire) async {
+  saveAccountCookieToFile(String xfUser, String session, String dataExpire) async {
     await GlobalController.i.userStorage.write("userLoggedIn", true);
     await GlobalController.i.userStorage.write("xf_user", xfUser);
     await GlobalController.i.userStorage.write("xf_session", session);
@@ -86,6 +89,12 @@ class LoginController extends GetxController {
     await GlobalController.i.setDataUser();
     await NaviDrawerController.i.getUserProfile();
     await saveAccountToList(xfUser, session, dataExpire);
+    await Future.delayed(Duration(milliseconds: 3000), () async {
+      if (Get.isDialogOpen == true) Get.back();
+      if (Get.isBottomSheetOpen == true) Get.back();
+      if (Get.isDialogOpen == true) Get.back();
+      Get.back();
+    });
   }
 
   saveAccountToList(String user, String session, String dataExp) async {
@@ -93,7 +102,7 @@ class LoginController extends GetxController {
 
     for (int i = 0; i < accountList.length; i++) {
       if (accountList.elementAt(i)['nameUser'] == (GlobalController.i.userStorage.read('nameUser') ?? 'NoData')) {
-        print(accountList.removeAt(i));
+        accountList.removeAt(i);
       }
     }
     accountList.insert(0, {
@@ -106,7 +115,6 @@ class LoginController extends GetxController {
       'avatarColor2': GlobalController.i.userStorage.read('avatarColor2') ?? '0x00000000'
     });
 
-    GlobalController.i.userStorage.read('accountList');
     GlobalController.i.userStorage.write('accountList', accountList);
   }
 
@@ -121,81 +129,31 @@ class LoginController extends GetxController {
     return response;
   }
 
-  promptCodeProvider() async {
-    await Get.defaultDialog(
-        title: 'Two-step verification provider',
-        radius: 6,
-        barrierDismissible: false,
-        content: Column(
-          children: [
-            Text(
-              'Nếu bạn đã sử dụng TÀI KHOẢN ĐĂNG NHẬP này băng email, thì bạn nên xem email và chọn CODE VIA EMAIL, và ngươc lại\n\n',
-              textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.grey),
-            ),
-            Container(
-              width: Get.width * 0.5,
-              height: Get.textTheme.headline5!.fontSize! + 10.0,
-              decoration: BoxDecoration(color: Color(0xfff5c7099), borderRadius: BorderRadius.all(Radius.circular(5))),
-              child: customCupertinoButton(
-                  Alignment.center,
-                  EdgeInsets.fromLTRB(5, 2, 5, 2),
-                  Text(
-                    'Code via App',
-                    style: TextStyle(color: Colors.white),
-                  ), () async {
-                data['provider'] = 'totp';
-                if (Get.isDialogOpen == true) Get.back();
-                await loginVerification();
-              }),
-            ), //Code via app
-            Padding(
-              padding: EdgeInsets.all(10),
-              child: Container(
-                width: Get.width * 0.5,
-                height: Get.textTheme.headline5!.fontSize! + 10.0,
-                decoration: BoxDecoration(color: Color(0xfff5c7099), borderRadius: BorderRadius.all(Radius.circular(5))),
-                child: customCupertinoButton(
-                    Alignment.center,
-                    EdgeInsets.fromLTRB(5, 2, 5, 2),
-                    Text(
-                      'Code via Email',
-                      style: TextStyle(color: Colors.white),
-                    ), () async {
-                  setDialog();
-                  data['provider'] = 'email';
-                  await sendEmailVerification().then((value) {
-                    if (Get.isDialogOpen == true) Get.back();
-                    if (value != 200) {
-                      setDialogError('Cant send connect to server to send code via EMAIL');
-                    } else
-                      loginVerification();
-                  });
-                }),
-              ),
-            ), //Code via email
-            Container(
-              width: Get.width * 0.5,
-              height: Get.textTheme.headline5!.fontSize! + 10.0,
-              decoration: BoxDecoration(color: Color(0xfff5c7099), borderRadius: BorderRadius.all(Radius.circular(5))),
-              child: customCupertinoButton(
-                  Alignment.center,
-                  EdgeInsets.fromLTRB(5, 2, 5, 2),
-                  Text(
-                    'Code via Backup Code',
-                    style: TextStyle(color: Colors.white),
-                  ), () {
-                data['provider'] = 'backup';
-                if (Get.isDialogOpen == true) Get.back();
-                loginVerification();
-              }),
-            ), //Code via backup,
-            Padding(
-              padding: EdgeInsets.only(top: 50),
-              child: customCupertinoButton(Alignment.center, EdgeInsets.zero, Text('Close'), () => Get.back()),
-            )
-          ],
-        ));
+  promptCodeProviderLogin(int provider) async {
+    if (provider == 1) {
+      //totp
+      data['provider'] = 'totp';
+      if (Get.isDialogOpen == true) Get.back();
+      await loginVerificationLogic();
+    } else if (provider == 2) {
+      //email
+      setDialog();
+      data['provider'] = 'email';
+      await sendEmailVerification().then((value) async {
+        if (Get.isDialogOpen == true) Get.back();
+        if (value != 200) {
+          setDialogError('Cant send connect to server to send code via EMAIL');
+        } else {
+          if (Get.isDialogOpen == true) Get.back();
+          await loginVerificationLogic();
+        }
+      });
+    } else if (provider == 3) {
+      //backup
+      data['provider'] = 'backup';
+      if (Get.isDialogOpen == true) Get.back();
+      await loginVerificationLogic();
+    }
   }
 
   Future<int> sendEmailVerification() async {
@@ -207,77 +165,13 @@ class LoginController extends GetxController {
     return response.statusCode;
   }
 
-  loginVerification() async {
-    await Get.bottomSheet(
-        Container(
-          height: Get.height * 0.8,
-          decoration: BoxDecoration(
-            color: Get.theme.backgroundColor,
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(6),
-              topRight: Radius.circular(6),
-            ),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text('\t\tTwo-step verification required', style: TextStyle(fontSize: Get.textTheme.headline6!.fontSize, fontWeight: FontWeight.bold)),
-              Padding(
-                padding: EdgeInsets.only(top: 10, bottom: 10),
-                child: RichText(
-                    text: TextSpan(children: [
-                      TextSpan(text: 'Logging in as: ', style: TextStyle(color: Get.theme.primaryColor)),
-                      TextSpan(text: textEditingControllerLogin.text, style: TextStyle(color: Get.theme.primaryColor, fontWeight: FontWeight.bold)),
-                    ])),
-              ),
-              Container(
-                height: 80,
-                padding: EdgeInsets.all(10),
-                child: TextField(
-                    controller: textEditingCode,
-                    keyboardType: TextInputType.number,
-                    decoration: InputDecoration(
-                        labelText: 'Verification code',
-                        labelStyle: TextStyle(color: Get.theme.primaryColor.withOpacity(0.7)),
-                        fillColor: Get.theme.canvasColor,
-                        filled: true,
-                        focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Get.theme.primaryColor, width: 1)),
-                        enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.transparent)))),
-              ),
-              Obx(
-                    () => CheckboxListTile(
-                    contentPadding: EdgeInsets.only(left: Get.width / 4),
-                    controlAffinity: ListTileControlAffinity.leading,
-                    title: Text('Trust this device'),
-                    value: checkBoxTrust.value,
-                    onChanged: (value) => checkBoxTrust.value = value!),
-              ),
-              Container(
-                width: Get.width * 0.5,
-                height: Get.textTheme.headline5!.fontSize! + 10.0,
-                decoration: BoxDecoration(color: Color(0xfff5c7099), borderRadius: BorderRadius.all(Radius.circular(5))),
-                child: customCupertinoButton(
-                    Alignment.center,
-                    EdgeInsets.fromLTRB(5, 2, 5, 2),
-                    Text(
-                      data['provider'] == 'totp'
-                          ? 'Code via App'
-                          : data['provider'] == 'email'
-                          ? 'Code via Email'
-                          : 'Code via Backup Code',
-                      style: TextStyle(color: Colors.white),
-                    ), () async {
-                  setDialog();
-                  await loginVerifyCode(checkBoxTrust.value, data['provider'], textEditingCode.text, data['xf_session'],
-                      GlobalController.i.xfCsrfLogin, GlobalController.i.dataCsrfLogin);
-                  if (Get.isDialogOpen == true) Get.back();
-                }),
-              ), //Code via app
-            ],
-          ),
-        ),
-        enableDrag: false,
-        isScrollControlled: true);
+  loginVerificationLogic() async {
+    textEditingCode.clear();
+    await loginVerification(textEditingControllerLogin.text, data['provider'], textEditingCode, () async {
+      setDialog();
+      await loginVerifyCode(checkBoxTrust.value, data['provider'], textEditingCode.text, data['xf_session'], GlobalController.i.xfCsrfLogin,
+          GlobalController.i.dataCsrfLogin);
+    });
   }
 
   loginVerifyCode(bool trust, String provider, String code, String session, String csrf, String token) async {
@@ -298,15 +192,15 @@ class LoginController extends GetxController {
       'xf_csrf': csrf
     };
 
-    final response = await http.post(Uri.parse('http://10.0.0.55:3000/api/vozverification'),headers: headers,body: jsonEncode(body));
+    final response = await http.post(Uri.parse('http://10.0.0.55:3000/api/vozverification'), headers: headers, body: jsonEncode(body));
     final jsonRes = jsonDecode(response.body);
-    if (response.statusCode == 200){
-       await saveAccountCookieToFile(jsonRes['xf_user'], jsonRes['xf_session'], jsonRes['date_expire']);
-     } else {
-       if (Get.isDialogOpen == true) Get.back();
-       setDialogError(jsonRes['error']);
-     }
-
+    print('return success verification');
+    if (response.statusCode == 200) {
+      await saveAccountCookieToFile(jsonRes['xf_user'], jsonRes['xf_session'], jsonRes['date_expire']);
+    } else {
+      if (Get.isDialogOpen == true) Get.back();
+      setDialogError(jsonRes['error']);
+    }
   }
 }
 

@@ -29,7 +29,7 @@ class SearchResultController extends GetxController {
     headers = {
       'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
       'host': 'voz.vn',
-      'cookie': '${GlobalController.i.xfCsrfPost}; xf_user=${GlobalController.i.xfUser};',
+      'cookie': '${GlobalController.i.xfCsrfPost}; xf_user=${GlobalController.i.xfUser}; xf_session=${GlobalController.i.xfSession};',
     };
     switch (data['SearchType']) {
       case SearchType.SearchEverything:
