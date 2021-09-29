@@ -7,7 +7,7 @@ import '../../../GlobalController.dart';
 
 class BrowserLoginController extends GetxController {
   List<Map> data = [];
-  String xf_user = '', xf_session = '';
+  String cookie = '', html = '';
   InAppWebViewController? inAppWebViewController;
 
   @override
@@ -21,27 +21,28 @@ class BrowserLoginController extends GetxController {
   onClose() async {
     super.onClose();
     inAppWebViewController = null;
+    this.dispose();
   }
 
   getData() async {
     Directory appDocDir = (await getApplicationDocumentsDirectory()).parent;
+    print(appDocDir.path);
     File file = File(appDocDir.absolute.path + '/app_webview/Default/Cookies');
     if (await file.exists() == false) return;
     var db = await openDatabase(appDocDir.absolute.path + '/app_webview/Default/Cookies');
     data = await db.rawQuery('SELECT name,value FROM "cookies" where HOST_KEY = "voz.vn"');
     for (int i = 0; i < data.length; i++) {
       if (data[i]['name'] == 'xf_user' && data[i]['value'] != null) {
-        xf_user = data[i]['value'];
-      } else if (data[i]['name'] == 'xf_session' && data[i]['value'] != null) {
-        xf_session = data[i]['value'];
+        cookie += data[i]['name'] + '=' + data[i]['value'] + '; ';
+      }  if (data[i]['name'] == 'xf_session' && data[i]['value'] != null) {
+        cookie += data[i]['name'] + '=' + data[i]['value'] + '; ';
+      } else if (data[i]['name'] == 'xf_tfa_trust' && data[i]['value'] != null) {
+        cookie += data[i]['name'] + '=' + data[i]['value'] + '; ';
       }
     }
-
-    if (xf_user != '' && xf_session != '') {
+    if (cookie != '') {
       await GlobalController.i.userStorage.write("userLoggedIn", true);
-      await GlobalController.i.userStorage.write("xf_user", xf_user);
-      await GlobalController.i.userStorage.write("xf_session", xf_session);
-      await GlobalController.i.userStorage.write("date_expire", '24-Sep-2022 03:08:21 GMT');
+      await GlobalController.i.userStorage.write("userLoginCookie", cookie);
       if(Get.isDialogOpen ==true) Get.back();
       Get.back(result: ['ok']);
     }

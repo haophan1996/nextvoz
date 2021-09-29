@@ -31,8 +31,17 @@ class NaviDrawerUI extends GetView<NaviDrawerController> {
                             itemCount: controller.shortcuts.length,
                             itemBuilder: (BuildContext context, int index) {
                               return ListTile(
-                                title: customTitle(FontWeight.normal, Get.theme.primaryColor, 1, controller.shortcuts.elementAt(index)['typeTitle'],
-                                    controller.shortcuts.elementAt(index)['title'], null),
+                               title: RichText(
+                                 text: TextSpan(
+                                   children: [
+                                     TextSpan(text: controller.shortcuts.elementAt(index)['title'], style: TextStyle(
+                                       color: Theme.of(context).primaryColor
+                                     ))
+                                   ]
+                                 ),
+                               ),
+                               // title: customTitle(FontWeight.normal, Get.theme.primaryColor, 1, controller.shortcuts.elementAt(index)['typeTitle'],
+                                 //   controller.shortcuts.elementAt(index)['title'], null),
                                 onTap: () {
                                   controller.navigateToThread(controller.shortcuts.elementAt(index)['title'],
                                       controller.shortcuts.elementAt(index)['link'], controller.shortcuts.elementAt(index)['typeTitle']);

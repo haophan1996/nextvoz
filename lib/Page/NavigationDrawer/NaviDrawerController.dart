@@ -13,8 +13,7 @@ class NaviDrawerController extends GetxController {
 
   logout() async {
     setDialog();
-    GlobalController.i.xfUser = '';
-    GlobalController.i.xfSession = '';
+    GlobalController.i.userLoginCookie = '';
     GlobalController.i.isLogged = false;
     GlobalController.i.inboxNotifications = 0;
     GlobalController.i.alertNotifications = 0;

@@ -101,7 +101,7 @@ Widget controlCenter() {
               GetBuilder<GlobalController>(
                   id: 'Notification',
                   builder: (controller) {
-                    return controller.isLogged == false ? login() : logged();
+                     return controller.isLogged == false ? login() : logged();
                   }),
               whatNew(),
               GlobalController.i.isLogged == true

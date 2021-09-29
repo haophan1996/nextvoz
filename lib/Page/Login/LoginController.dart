@@ -7,7 +7,6 @@ import '/Page/NavigationDrawer/NaviDrawerController.dart';
 import '/GlobalController.dart';
 import '/Page/reuseWidget.dart';
 import 'package:http/http.dart' as http;
-
 import 'LoginUI.dart';
 
 /// If api return type
@@ -61,15 +60,13 @@ class LoginController extends GetxController {
     final getMyData = await login(textEditingControllerLogin.text, textEditingControllerPassword.text, GlobalController.i.dataCsrfLogin,
         GlobalController.i.xfCsrfLogin, textEditingControllerLogin.text);
 
-    if (getMyData['xf_user'] == 'incorrect password / or id') {
-      await Future.delayed(Duration(milliseconds: 3000), () async {
-        Get.back();
-      });
-      statusLogin.value = 'statusLoginFail'.tr;
+    if (getMyData['status'] == 'errors') {
+      statusLogin.value = getMyData['errors'];
+      if (Get.isDialogOpen == true) Get.back();
     } else {
       if (getMyData['type'] == 0) {
         statusLogin.value = 'statusLoginOK'.tr;
-        await saveAccountCookieToFile(getMyData['xf_user'], getMyData['xf_session'], getMyData['date_expire']);
+        await saveAccountCookieToFile(getMyData['cookie']);
       } else {
         statusLogin.value = 'Two-step verification';
         if (Get.isDialogOpen == true) Get.back();
@@ -81,14 +78,12 @@ class LoginController extends GetxController {
     }
   }
 
-  saveAccountCookieToFile(String xfUser, String session, String dataExpire) async {
+  saveAccountCookieToFile(String userLoginCookies) async {
     await GlobalController.i.userStorage.write("userLoggedIn", true);
-    await GlobalController.i.userStorage.write("xf_user", xfUser);
-    await GlobalController.i.userStorage.write("xf_session", session);
-    await GlobalController.i.userStorage.write("date_expire", dataExpire);
+    await GlobalController.i.userStorage.write("userLoginCookie", userLoginCookies);
     await GlobalController.i.setDataUser();
     await NaviDrawerController.i.getUserProfile();
-    await saveAccountToList(xfUser, session, dataExpire);
+    await saveAccountToList(userLoginCookies);
     await Future.delayed(Duration(milliseconds: 3000), () async {
       if (Get.isDialogOpen == true) Get.back();
       if (Get.isBottomSheetOpen == true) Get.back();
@@ -97,7 +92,7 @@ class LoginController extends GetxController {
     });
   }
 
-  saveAccountToList(String user, String session, String dataExp) async {
+  saveAccountToList(String userLoginCookies) async {
     accountList = GlobalController.i.userStorage.read('accountList') ?? [];
 
     for (int i = 0; i < accountList.length; i++) {
@@ -106,9 +101,7 @@ class LoginController extends GetxController {
       }
     }
     accountList.insert(0, {
-      'xf_user': user,
-      'xf_session': session,
-      'date_expire': dataExp,
+      'userLoginCookie': userLoginCookies,
       'nameUser': GlobalController.i.userStorage.read('nameUser') ?? 'NoData',
       'avatarUser': GlobalController.i.userStorage.read('avatarUser') ?? 'no',
       'avatarColor1': GlobalController.i.userStorage.read('avatarColor1') ?? '0x00000000',
@@ -118,38 +111,36 @@ class LoginController extends GetxController {
     GlobalController.i.userStorage.write('accountList', accountList);
   }
 
-  login(String login, String pass, String token, String cookie, String userAgent) async {
+  login(String login, String pass, String token, String xfCsrfLogin, String userAgent) async {
     var headers = {
       'content-type': 'application/json; charset=UTF-8',
-      'host': 'vozloginapinode.herokuapp.com',
+      'host': 'nextvozloginapi.herokuapp.com',
     };
-    var body = {"login": login, "password": pass, "remember": "1", "_xfToken": token, "userAgent": 'AndroidIosMobileDevices', "cookie": cookie};
+    var body = {"login": login, "password": pass, "_xfToken": token, "userAgent": 'AndroidIosMobileDevices', "cookie": xfCsrfLogin};
 
-    final response = await GlobalController.i.getHttpPost(true, headers, jsonEncode(body), 'https://vozloginapinode.herokuapp.com/api/vozlogin');
+    final response = await GlobalController.i.getHttpPost(true, headers, jsonEncode(body), 'https://nextvozloginapi.herokuapp.com/api/login');
+    print(response);
     return response;
   }
 
   promptCodeProviderLogin(int provider) async {
     if (provider == 1) {
-      //totp
       data['provider'] = 'totp';
       if (Get.isDialogOpen == true) Get.back();
       await loginVerificationLogic();
     } else if (provider == 2) {
-      //email
       setDialog();
       data['provider'] = 'email';
       await sendEmailVerification().then((value) async {
         if (Get.isDialogOpen == true) Get.back();
         if (value != 200) {
-          setDialogError('Cant send connect to server to send code via EMAIL');
+          setDialogError('Cant send connect to server to send code via EMAIL/ try again');
         } else {
           if (Get.isDialogOpen == true) Get.back();
           await loginVerificationLogic();
         }
       });
     } else if (provider == 3) {
-      //backup
       data['provider'] = 'backup';
       if (Get.isDialogOpen == true) Get.back();
       await loginVerificationLogic();
@@ -169,37 +160,36 @@ class LoginController extends GetxController {
     textEditingCode.clear();
     await loginVerification(textEditingControllerLogin.text, data['provider'], textEditingCode, () async {
       setDialog();
-      await loginVerifyCode(checkBoxTrust.value, data['provider'], textEditingCode.text, data['xf_session'], GlobalController.i.xfCsrfLogin,
+      await loginVerifyCode(data['provider'], textEditingCode.text, data['xf_session'], GlobalController.i.xfCsrfLogin,
           GlobalController.i.dataCsrfLogin);
     });
   }
 
-  loginVerifyCode(bool trust, String provider, String code, String session, String csrf, String token) async {
+  loginVerifyCode(String provider, String code, String session, String csrf, String token) async {
     var headers = {
       'content-type': 'application/json; charset=UTF-8',
-      'host': 'vozloginapinode.herokuapp.com',
+      'host': 'nextvozloginapi.herokuapp.com',
     };
 
     var body = {
       '_xfToken': token,
-      '_xfResponseType': 'json',
       'code': code,
-      'trust': trust == true ? '1' : '0',
-      'confirm': '1',
       'provider': provider,
-      'remember': '1',
       'xf_session': session,
-      'xf_csrf': csrf
+      'xf_csrf': csrf,
+      'userAgent' : 'AndroidIosMobileDevices'
     };
+    print('request$body');
 
-    final response = await http.post(Uri.parse('https://vozloginapinode.herokuapp.com/api/vozverification'), headers: headers, body: jsonEncode(body));
+    final response = await http.post(Uri.parse('https://nextvozloginapi.herokuapp.com/api/verification'), headers: headers, body: jsonEncode(body));
+
     final jsonRes = jsonDecode(response.body);
-    print('return success verification');
+
     if (response.statusCode == 200) {
-      await saveAccountCookieToFile(jsonRes['xf_user'], jsonRes['xf_session'], jsonRes['date_expire']);
+      await saveAccountCookieToFile(jsonRes['cookie']);
     } else {
       if (Get.isDialogOpen == true) Get.back();
-      setDialogError(jsonRes['error']);
+      setDialogError(jsonRes['errors']);
     }
   }
 }

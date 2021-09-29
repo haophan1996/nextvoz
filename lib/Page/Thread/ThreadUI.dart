@@ -275,6 +275,7 @@ class ThreadUI extends GetView<ThreadController> {
                         'typeTitle': controller.myThreadList.elementAt(index)['prefix'],
                         'link': controller.myThreadList.elementAt(index)['link']
                       });
+                      print(NaviDrawerController.i.shortcuts);
                       NaviDrawerController.i.update();
                       GlobalController.i.userStorage.write('shortcut', NaviDrawerController.i.shortcuts);
                     });

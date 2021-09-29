@@ -23,18 +23,22 @@ class AccountListController extends GetxController{
   }
 
   onSelectAccount(int index) async{
-    setDialog();
-    GlobalController.i.alertList.clear();
-    GlobalController.i.inboxList.clear();
-    await GlobalController.i.userStorage.write("userLoggedIn", true);
-    await GlobalController.i.userStorage.write("xf_user", accountList.elementAt(index)['xf_user']);
-    await GlobalController.i.userStorage.write("xf_session", accountList.elementAt(index)['xf_session']);
-    await GlobalController.i.userStorage.write("date_expire", accountList.elementAt(index)['date_expire']);
-    await GlobalController.i.setDataUser();
-    await NaviDrawerController.i.getUserProfile();
-    if (Get.isDialogOpen == true){
-      Get.offAllNamed(Routes.Home);
+    if (accountList.elementAt(index)['userLoginCookie'] == null){
+      accountList.removeAt(index);
+      setDialogError('Đây là cookie của ứng dụng version 8 trở xuống, hiện tại không hổ trợ');
+    } else {
+      setDialog();
+      GlobalController.i.alertList.clear();
+      GlobalController.i.inboxList.clear();
+      await GlobalController.i.userStorage.write("userLoggedIn", true);
+      await GlobalController.i.userStorage.write("userLoginCookie", accountList.elementAt(index)['userLoginCookie']);
+      await GlobalController.i.setDataUser();
+      await NaviDrawerController.i.getUserProfile();
+      if (Get.isDialogOpen == true){
+        Get.offAllNamed(Routes.Home);
+      }
     }
+
   }
 
   removeAccount(int index) {

@@ -57,7 +57,7 @@ Widget blockItem(BuildContext context, bool? isLock, FontWeight titleWeight, int
         child: Ink(
           width: double.infinity,
           decoration: BoxDecoration(border: Border(bottom: BorderSide(color: divider, width: 0.2))),
-          padding: EdgeInsets.fromLTRB(10, 5, 5, 5),
+          padding: EdgeInsets.fromLTRB(10, 5, 5, 10),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
@@ -186,13 +186,12 @@ TextSpan customTitleChild(
         child: Text(
           header11,
           style: TextStyle(
-            fontSize: Get.textTheme.bodyText1!.fontSize,
-            fontWeight: titleWeight,
+            fontSize: header11 == '' ? 0 : Get.textTheme.bodyText2!.fontSize!,
             color: getColorInvert(header11),
           ),
         ),
       ),
-    ),
+        alignment: PlaceholderAlignment.bottom),
     TextSpan(
       text: header12,
       style: TextStyle(color: titleColor, fontFamily: 'BeVietNam', fontSize: Get.textTheme.bodyText1!.fontSize, fontWeight: titleWeight),
@@ -606,7 +605,7 @@ Widget viewContent(int index, ViewController controller) => Column(
                       true,
                       {
                         'cookie':
-                            '${GlobalController.i.xfCsrfPost}; xf_user=${GlobalController.i.xfUser}; xf_session=${GlobalController.i.xfSession};'
+                            GlobalController.i.userLoginCookie
                       },
                       '${GlobalController.i.url + controller.htmlData.elementAt(index)['userLink']}?tooltip=true&_xfToken=${GlobalController.i.token}&_xfResponseType=json')
                   .then((value) {

@@ -493,7 +493,7 @@ class ViewController extends GetxController {
     var headers = {
       'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
       'host': 'voz.vn',
-      'cookie': '${data['xfCsrfPost']}; xf_user=${GlobalController.i.xfUser}; xf_session=${GlobalController.i.xfSession};',
+      'cookie': '${data['xfCsrfPost']}; ${GlobalController.i.userLoginCookie}',
     };
     var body = {'_xfWithData': '1', '_xfToken': '${data['dataCsrfPost']}', '_xfResponseType': 'json'};
 
@@ -556,7 +556,7 @@ class ViewController extends GetxController {
     var headers = {
       'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
       'host': 'voz.vn',
-      'cookie': '${data['xfCsrfPost']}; xf_user=${GlobalController.i.xfUser}; xf_session=${GlobalController.i.xfSession};',
+      'cookie': '${data['xfCsrfPost']}; ${GlobalController.i.userLoginCookie}',
     };
 
     await GlobalController.i.getHttp(true, headers, url).then((value) async {
@@ -575,7 +575,7 @@ class ViewController extends GetxController {
     var headers = {
       'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
       'host': 'voz.vn',
-      'cookie': '${data['xfCsrfPost']}; xf_user=${GlobalController.i.xfUser}; xf_session=${GlobalController.i.xfSession};',
+      'cookie': '${data['xfCsrfPost']}; ${GlobalController.i.userLoginCookie}',
     };
     var body = {'_xfWithData': '1', '_xfToken': '${data['dataCsrfPost']}', '_xfResponseType': 'json'};
 
@@ -668,7 +668,7 @@ class ViewController extends GetxController {
     var headers = {
       'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
       'host': 'voz.vn',
-      'cookie': '${data['xfCsrfPost']}; xf_user=${GlobalController.i.xfUser}; xf_session=${GlobalController.i.xfSession};',
+      'cookie': '${data['xfCsrfPost']}; ${GlobalController.i.userLoginCookie}',
     };
     var body = {'_xfToken': '${data['dataCsrfPost']}', '_xfResponseType': 'json', 'reason': response};
 

@@ -22,7 +22,7 @@ class GlobalController extends GetxController {
   Map<String, dynamic> data = {};
   bool isLogged = false;
   List alertList = [], inboxList = [], sessionTag = [];
-  String xfSession = '', dateExpire = '', xfUser = '';
+  String userLoginCookie = '';
   int alertNotifications = 0, inboxNotifications = 0;
   TextEditingController inputNavigatePage = TextEditingController();
 
@@ -79,7 +79,7 @@ class GlobalController extends GetxController {
     onDownload(0.1);
     final response = await dios.get(url,
         options: Options(
-          headers: {'cookie': 'xf_user=${xfUser.toString()}; xf_session=${xfSession.toString()}'},
+          headers: {'cookie': userLoginCookie},
         ), onReceiveProgress: (actual, total) {
       onDownload((actual.bitLength - 4) / total.bitLength);
     }).whenComplete(() async {
@@ -126,10 +126,9 @@ class GlobalController extends GetxController {
     if (userStorage.read('shortcut') != null) {
       NaviDrawerController.i.shortcuts = await userStorage.read('shortcut');
     }
-    if (userStorage.read('userLoggedIn') != null && userStorage.read('xf_user') != null && userStorage.read('xf_session') != null) {
+    if (userStorage.read('userLoggedIn') == true && userStorage.read('userLoginCookie') != null) {
       isLogged = await userStorage.read('userLoggedIn');
-      xfUser = await userStorage.read('xf_user');
-      xfSession = await userStorage.read('xf_session');
+      userLoginCookie = await userStorage.read('userLoginCookie');
     }
   }
 
