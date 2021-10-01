@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:dio/dio.dart';
+import 'package:dio_http/dio_http.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -16,7 +16,6 @@ import 'LoginUI.dart';
 class LoginController extends GetxController {
   RxBool isShowPass = true.obs;
   RxString statusLogin = ''.obs;
-  RxBool checkBoxTrust = true.obs;
   late TextEditingController textEditingControllerLogin = TextEditingController(),
       textEditingControllerPassword = TextEditingController(),
       textEditingCode = TextEditingController();
@@ -34,7 +33,6 @@ class LoginController extends GetxController {
     dio.close(force: true);
     textEditingControllerPassword.dispose();
     textEditingControllerLogin.dispose();
-    checkBoxTrust.close();
     this.dispose();
   }
 

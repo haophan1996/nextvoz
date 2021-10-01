@@ -1,4 +1,4 @@
-import 'package:dio/dio.dart';
+import 'package:dio_http/dio_http.dart';
 import 'package:get/get.dart';
 import '/Page/Search/SearchType.dart';
 import '../../../GlobalController.dart';

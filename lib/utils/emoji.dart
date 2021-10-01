@@ -83,7 +83,7 @@ final List bigVozEmoji = [
   {'dir': "popopo/what.png", 'symbol': ":what:"}
 ];
 
-//https://raw.githubusercontent.com/haophan69/pogif/main/pogif1.gif
+// https://raw.githubusercontent.com/haophan69/Pepe/main/Pepe4.webp
 final List mapEmojiVozGif = [
   {'dir': '', 'symbol': ''},
 ];

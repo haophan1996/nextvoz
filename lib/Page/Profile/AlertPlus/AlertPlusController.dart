@@ -1,4 +1,4 @@
-import 'package:dio/dio.dart';
+import 'package:dio_http/dio_http.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import '/Page/reuseWidget.dart';

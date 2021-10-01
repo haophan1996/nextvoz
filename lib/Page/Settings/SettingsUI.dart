@@ -12,7 +12,7 @@ class SettingsUI extends GetView<SettingsController> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).backgroundColor,
-      appBar: preferredSize(context, 'setPage'.tr, '', []),
+      appBar: appBarOnly('setPage'.tr, []),
       resizeToAvoidBottomInset: false,
       body: Container(
         padding: EdgeInsets.only(top: 20, left: 10, right: 10),
@@ -164,6 +164,27 @@ class SettingsUI extends GetView<SettingsController> {
                     )
                   ],
                 )), //app signature
+                myContainer(Row(
+                  children: [
+                    Text(
+                        'memberSignature'.tr,
+                        style: TextStyle(
+                            fontFamily: 'BeVietNam',
+                            color: Get.theme.primaryColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: Theme.of(context).textTheme.bodyText1!.fontSize)),
+                    Spacer(),
+                    GetBuilder<SettingsController>(id: 'memberSignatureUpdate',builder: (controller){
+                      return CupertinoSwitch(
+                        value: controller.memberSignature,
+                        onChanged: (value) {
+                          controller.memberSignature = value;
+                          controller.update(['memberSignatureUpdate']);
+                        },
+                      );
+                    })
+                  ],
+                )), //member signature
                 myContainer(Row(
                   children: [
                     Text(

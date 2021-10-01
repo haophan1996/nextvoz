@@ -362,7 +362,18 @@ Widget emoji(BuildContext context, PostStatusController controller) {
                         });
                   },
                 ),
-                Text('c')
+                GridView.builder(
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 5),
+                  itemCount: 76,
+                  itemBuilder: (BuildContext context, int index) {
+                    return CupertinoButton(
+                        padding: EdgeInsets.zero,
+                        child: Image.asset('assets/Pepe/Pepe${index+1}.webp', width: 60, height: 60,),
+                        onPressed: () async {
+                          controller.insertImageSticker('Pepe/Pepe${index+1}.webp', 60, 60, 'Pepe${index+1}.webp');
+                        });
+                  },
+                )
               ],
             ),
           ),

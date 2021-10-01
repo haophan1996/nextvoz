@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:dio/dio.dart';
+import 'package:dio_http/dio_http.dart';
 import 'package:get/get.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -16,6 +16,7 @@ class ViewController extends GetxController {
   Map<String, dynamic> data = {};
   bool isEdit = false;
   var dio = Dio();
+  late final bool memberSignature;
   late dom.Document res;
   late ScrollController listViewScrollController = ScrollController();
   TextEditingController input = TextEditingController();
@@ -25,6 +26,9 @@ class ViewController extends GetxController {
   @override
   Future<void> onInit() async {
     super.onInit();
+
+    memberSignature = GlobalController.i.userStorage.read('memberSignature') ?? false;
+
     data['percentDownload'] = 0.0;
     data['isScroll'] = 'idle';
 
@@ -253,18 +257,22 @@ class ViewController extends GetxController {
 
           data['_postContent'] = element.getElementsByClassName("message-body js-selectToQuote")[0].outerHtml; //.replaceAll('color: #000000', '');
 
-          if (element.getElementsByClassName('message-lastEdit').length > 0) {
-            data['_postContent'] = data['_postContent'] + fixLastEditPost(element.getElementsByClassName('message-lastEdit')[0].text);
-          }
           element.getElementsByClassName('message-body js-selectToQuote')[0].getElementsByClassName('bbImageWrapper').forEach((element) {
             data['_postContent'] = data['_postContent'].toString().replaceAll(element.outerHtml, element.innerHtml);
           });
-          
+
           element.getElementsByClassName('bbCodeBlock-expandContent js-expandContent is-ignored').forEach((e) {
             data['_postContent'] = data['_postContent'].replaceAll(e.outerHtml, '')
                 .replaceAll(element.getElementsByClassName('messageNotice messageNotice--ignored')[0].outerHtml, 'You are ignoring content by this member');
-
           });
+
+          if (element.getElementsByClassName('message-lastEdit').length > 0) {
+            data['_postContent'] = data['_postContent'] + fixLastEditPost(element.getElementsByClassName('message-lastEdit')[0].text);
+          }
+
+          if (element.getElementsByClassName('message-signature').length != 0 && memberSignature == true){
+            data['signature'] = '<hr>' + element.getElementsByClassName('message-signature')[0].getElementsByClassName('bbWrapper')[0].innerHtml;
+          } else data['signature'] = '';
 
           data['_userPostDate'] = element.getElementsByClassName("u-concealed")[0].text.trim();
 
@@ -317,9 +325,10 @@ class ViewController extends GetxController {
             data['_commentByMe'] = '0';
           }
 
+
           htmlData.add({
             'newPost': element.getElementsByClassName('message-newIndicator').isNotEmpty == false ? false : true,
-            "postContent": data['_postContent'],
+            "postContent": data['_postContent'] + data['signature'],
             "userPostDate": data['_userPostDate'],
             "userName": data['_userName'],
             "userLink": data['_userLink'],
@@ -412,6 +421,10 @@ class ViewController extends GetxController {
           data['_postContent'] = data['_postContent'].toString().replaceFirst(element.outerHtml, element.innerHtml);
         });
 
+        if (element.getElementsByClassName('message-signature').length != 0 && memberSignature == true){
+          data['signature'] = '<hr>' + element.getElementsByClassName('message-signature')[0].getElementsByClassName('bbWrapper')[0].innerHtml;
+        } else data['signature'] = '';
+
         data['postID'] =
             element.getElementsByClassName('actionBar-action actionBar-action--mq u-jsOnly js-multiQuote')[0].attributes['data-message-id'];
         data['_userName'] = element.getElementsByClassName('username ')[0].text;
@@ -456,7 +469,7 @@ class ViewController extends GetxController {
         }
         htmlData.add({
           'newPost': false,
-          'postContent': data['_postContent'],
+          'postContent': data['_postContent'] + data['signature'],
           'userPostDate': data['_userPostDate'],
           'postID': data['postID'],
           'userName': data['_userName'],
@@ -595,7 +608,7 @@ class ViewController extends GetxController {
   }
 
   fixLastEditPost(String text) {
-    return '''<p style="text-align: right;"><span style="font-family: arial; color: rgb(143, 145, 147); font-size: 12px;">$text</span></p>''';
+    return '''<div style="text-align: right;"><span style="font-family: arial; color: rgb(143, 145, 147); font-size: 12px;">$text</span></div>''';
   }
 
   fixQuote(String html) async {

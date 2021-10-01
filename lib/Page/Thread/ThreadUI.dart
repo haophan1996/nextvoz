@@ -69,7 +69,7 @@ class ThreadUI extends GetView<ThreadController> {
                 leading: BackButton(),
                 title: Text(
                   controller.data['theme'] ?? 'sa',
-                  style: TextStyle(fontFamily: 'BeVietNam', color: Theme.of(context).primaryColor),
+                  style: TextStyle(fontFamily: 'BeVietNam', color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold),
                 ),
                 actions: [IconButton(onPressed: () async => await controller.onRefresh(), icon: Icon(Icons.refresh))],
                 floating: false,

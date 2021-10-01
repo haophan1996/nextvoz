@@ -54,8 +54,8 @@ class AlertsUI extends GetView<AlertsController> {
       child: RichText(
         text: TextSpan(
           children: [
-            TextSpan(text: GlobalController.i.alertList.elementAt(index)['username'], style: TextStyle(color: Colors.blue)),
-            TextSpan(text: GlobalController.i.alertList.elementAt(index)['status'], style: TextStyle(color: Get.theme.primaryColor)),
+            TextSpan(text: GlobalController.i.alertList.elementAt(index)['username'], style: TextStyle(color: Colors.blue,fontSize: Get.textTheme.bodyText1!.fontSize,)),
+            TextSpan(text: GlobalController.i.alertList.elementAt(index)['status'], style: TextStyle(color: Get.theme.primaryColor,fontSize: Get.textTheme.bodyText1!.fontSize,)),
             customTitleChild(FontWeight.normal, Colors.blue, GlobalController.i.alertList.elementAt(index)['prefix'] ?? '',
                 GlobalController.i.alertList.elementAt(index)['threadName'], null),
             GlobalController.i.alertList.elementAt(index)['reaction'] == ''
@@ -64,6 +64,7 @@ class AlertsUI extends GetView<AlertsController> {
                 text: 'with ${GlobalController.i.alertList.elementAt(index)['reaction'] == '1' ? 'Ưng ' : 'Gạch '}',
                 style: TextStyle(
                     fontWeight: FontWeight.bold,
+                    fontSize: Get.textTheme.bodyText1!.fontSize,
                     color: GlobalController.i.alertList.elementAt(index)['reaction'] == '1' ? Colors.pinkAccent : Colors.red)),
             GlobalController.i.alertList.elementAt(index)['reaction'] == ''
                 ? TextSpan()

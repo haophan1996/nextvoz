@@ -77,9 +77,9 @@ class InboxUI extends GetView<InboxController> {
                     overflow: TextOverflow.ellipsis,
                     text: TextSpan(
                       children: [
-                        TextSpan(text: GlobalController.i.inboxList.elementAt(index)['title'] + ' \u2022 ', style: TextStyle(color: Colors.blue)),
+                        TextSpan(text: GlobalController.i.inboxList.elementAt(index)['title'] + ' \u2022 ', style: TextStyle(color: Colors.blue,fontSize: Get.textTheme.bodyText1!.fontSize,)),
                         TextSpan(
-                            text: GlobalController.i.inboxList.elementAt(index)['latestRep'] + ' \u2022 ', style: TextStyle(color: Colors.redAccent)),
+                            text: GlobalController.i.inboxList.elementAt(index)['latestRep'] + ' \u2022 ', style: TextStyle(color: Colors.redAccent,fontSize: Get.textTheme.bodyText1!.fontSize,)),
                         TextSpan(
                             text: GlobalController.i.inboxList.elementAt(index)['latestDay'] + '\n', style: TextStyle(color: Colors.grey.shade600)),
                         TextSpan(

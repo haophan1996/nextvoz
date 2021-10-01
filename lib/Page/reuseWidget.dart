@@ -4,6 +4,7 @@ import 'package:flutter_image/network.dart';
 import 'package:get/get.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:gif_view/gif_view.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_html/shims/dart_ui_real.dart';
@@ -21,6 +22,7 @@ PreferredSize preferredSize(BuildContext context, String title, String prefix, L
       preferredSize: Size.fromHeight(GlobalController.i.heightAppbar),
       child: AppBar(
         automaticallyImplyLeading: false,
+        centerTitle: true,
         title: customTitle(FontWeight.bold, Color(0xfff3168b0), 2, prefix, title, null),
         leading: (ModalRoute.of(context)?.canPop ?? false) ? BackButton() : null,
         actions: action,
@@ -151,7 +153,9 @@ Widget customTitle(
     maxLines: maxLines,
     overflow: maxLines == 1 || maxLines == 2 ? TextOverflow.ellipsis : TextOverflow.clip,
     textAlign: maxLines == 2 ? TextAlign.center : TextAlign.start,
-    text: customTitleChild(titleWeight, titleColor, header11, header12, isLock),
+    text: (header11 == '' && isLock == false && titleColor != Colors.red)
+        ? customTitleChildNoPrefixNoLock(titleWeight, titleColor, header12)
+        : customTitleChild(titleWeight, titleColor, header11, header12, isLock),
   );
 }
 
@@ -180,18 +184,31 @@ TextSpan customTitleChild(
         ),
         alignment: PlaceholderAlignment.middle),
     WidgetSpan(
-      child: Container(
-        padding: EdgeInsets.only(left: header11 == '' ? 0 : 4, right: header11 == '' ? 0 : 4),
-        decoration: BoxDecoration(color: mapColor[header11], borderRadius: BorderRadius.all(Radius.circular(6))),
-        child: Text(
-          header11,
-          style: TextStyle(
-            fontSize: header11 == '' ? 0 : Get.textTheme.bodyText2!.fontSize!,
-            color: getColorInvert(header11),
+        child: Container(
+          padding: EdgeInsets.only(left: header11 == '' ? 0 : 4, right: header11 == '' ? 0 : 4),
+          decoration: BoxDecoration(color: mapColor[header11], borderRadius: BorderRadius.all(Radius.circular(6))),
+          child: Text(
+            header11,
+            style: TextStyle(
+              fontSize: header11 == '' ? 0 : Get.textTheme.bodyText2!.fontSize!,
+              color: getColorInvert(header11),
+            ),
           ),
         ),
-      ),
         alignment: PlaceholderAlignment.bottom),
+    TextSpan(
+      text: header12,
+      style: TextStyle(color: titleColor, fontFamily: 'BeVietNam', fontSize: Get.textTheme.bodyText1!.fontSize, fontWeight: titleWeight),
+    )
+  ]);
+}
+
+TextSpan customTitleChildNoPrefixNoLock(
+  FontWeight titleWeight,
+  Color titleColor,
+  String header12,
+) {
+  return TextSpan(children: [
     TextSpan(
       text: header12,
       style: TextStyle(color: titleColor, fontFamily: 'BeVietNam', fontSize: Get.textTheme.bodyText1!.fontSize, fontWeight: titleWeight),
@@ -601,12 +618,7 @@ Widget viewContent(int index, ViewController controller) => Column(
                 ignoreSafeArea: false),
             onLongPress: () {
               GlobalController.i
-                  .getHttp(
-                      true,
-                      {
-                        'cookie':
-                            GlobalController.i.userLoginCookie
-                      },
+                  .getHttp(true, {'cookie': '${controller.data['xfCsrfPost']}; ${GlobalController.i.userLoginCookie}'},
                       '${GlobalController.i.url + controller.htmlData.elementAt(index)['userLink']}?tooltip=true&_xfToken=${GlobalController.i.token}&_xfResponseType=json')
                   .then((value) {
                 if (value['status'] == 'ok') {
@@ -672,7 +684,7 @@ Widget viewContent(int index, ViewController controller) => Column(
                         )
                       ],
                     ),
-                    title: 'Member profile',
+                    title: 'Member Profile',
                   );
                   print(controller.data['memberTooltip']['username']);
                 }
@@ -690,6 +702,7 @@ Widget viewContent(int index, ViewController controller) => Column(
             await controller.scrollToIndex(controller.findIndex(postID), 0);
           }
         }),
+        //Divider(),
         Padding(
           padding: EdgeInsets.fromLTRB(5, 7, 5, 7),
           child: GetBuilder<ViewController>(
@@ -783,7 +796,7 @@ Widget viewContent(int index, ViewController controller) => Column(
               );
             },
           ),
-        )
+        ),
       ],
     );
 
@@ -878,6 +891,11 @@ Widget customHtml(String postContent, List imageList, Function(String index, Str
       ..remove('noscript')
       ..remove(GlobalController.i.userStorage.read('showImage') ?? true ? '' : 'img'),
     customRender: {
+      'hr': (renderContext, child) {
+        return Divider(
+          endIndent: Get.width / 2,
+        );
+      },
       "img": (renderContext, child) {
         double? width = double.tryParse(renderContext.tree.element!.attributes['width'].toString());
         double? height = double.tryParse(renderContext.tree.element!.attributes['height'].toString());
@@ -942,7 +960,7 @@ Widget customHtml(String postContent, List imageList, Function(String index, Str
                 clearMemoryCacheWhenDispose: true,
                 cache: true,
                 scale: 2,
-                constraints: BoxConstraints(maxWidth: Get.width, maxHeight: Get.height),
+                constraints: BoxConstraints(maxWidth: width != null ? width : Get.width * 0.8, maxHeight: height != null ? height : Get.height * 0.8),
                 clearMemoryCacheIfFailed: true,
                 enableMemoryCache: false,
                 cacheMaxAge: Duration(days: 2),
@@ -965,7 +983,6 @@ Widget customHtml(String postContent, List imageList, Function(String index, Str
                           ),
                         );
                     case LoadState.completed:
-                      // TODO: Handle this case.
                       break;
                     case LoadState.failed:
                       if (width != null && height != null) {
@@ -1062,8 +1079,9 @@ Widget customHtml(String postContent, List imageList, Function(String index, Str
     style: {
       "code": Style(color: Colors.blue),
       "table": Style(backgroundColor: Get.theme.cardColor),
-      "body": Style(fontSize: FontSize(Get.textTheme.bodyText1!.fontSize), padding: EdgeInsets.zero, margin: EdgeInsets.only(left: 3, right: 3)),
-      //"div": Style(display: Display.INLINE, margin: EdgeInsets.zero),
+      "body": Style(
+          fontSize: FontSize(Get.textTheme.bodyText1!.fontSize! + 2), padding: EdgeInsets.zero, margin: EdgeInsets.only(left: 10, right: 3, top: 10)),
+      "article": Style(padding: EdgeInsets.zero, margin: EdgeInsets.zero),
       "blockquote": Style(
           padding: EdgeInsets.all(5),
           width: double.infinity,

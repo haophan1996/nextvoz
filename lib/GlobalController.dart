@@ -1,4 +1,4 @@
-import 'package:dio/dio.dart';
+import 'package:dio_http/dio_http.dart';
 import 'package:get/get.dart';
 import 'dart:convert';
 import 'dart:ui';
@@ -74,6 +74,8 @@ class GlobalController extends GetxController {
       }
     }
   }
+
+
 
   Future<dom.Document?> getBodyBeta(Function(int) onError, Function(double) onDownload, Dio dios, String url, bool isHomePage) async {
     onDownload(0.1);

@@ -166,19 +166,6 @@ loginVerification(String userName, String provider, TextEditingController input,
                       focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Get.theme.primaryColor, width: 1)),
                       enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.transparent)))),
             )),
-            GetBuilder<LoginController>(
-                id: 'updateCheckBox',
-                builder: (controller) {
-                  return CheckboxListTile(
-                      contentPadding: EdgeInsets.only(left: Get.width / 4),
-                      controlAffinity: ListTileControlAffinity.leading,
-                      title: Text('Trust this device'),
-                      value: controller.checkBoxTrust.value,
-                      onChanged: (value) {
-                        controller.checkBoxTrust.value = value!;
-                        controller.update(['updateCheckBox']);
-                      });
-                }),
             Container(
               width: Get.width * 0.5,
               height: Get.textTheme.headline5!.fontSize! + 10.0,

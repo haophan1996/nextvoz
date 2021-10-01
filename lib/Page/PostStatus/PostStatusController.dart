@@ -141,7 +141,7 @@ class PostStatusController extends GetxController {
     }
 
     var body = {'_xfWithData': '1', '_xfToken': '${data['token']}', '_xfResponseType': 'json', 'message_html': '$html'};
-
+    print(html);
     await GlobalController.i.getHttpPost(true, headers, body, "${data['link']}add-reply").then((value) {
       if (Get.isDialogOpen == true) Get.back();
       if (value['status'] == 'ok') {
@@ -458,6 +458,11 @@ class PostStatusController extends GetxController {
     keyEditor.currentState!.javascriptExecutor.insertCustomEmojiVoz(img.path);
   }
 
+  insertImageSticker(String url, int width, int height, String title) async {
+     var img = await GlobalController.i.getImageFileFromAssets(url);
+     keyEditor.currentState!.javascriptExecutor.insertCustomSticker(img.path, width, height, title);
+  }
+
   toolbarActive() async {
     if (isToolClicked.value == true) {
       keyEditor.currentState!.focus();
@@ -509,8 +514,11 @@ class PostStatusController extends GetxController {
       if (element.attributes['src']!.contains('https://', 0) == false) {
         if (element.attributes['class']!.contains('smilie')) {
           html = html!.replaceAll(element.outerHtml, mapEmojiVoz[element.attributes['src']!.split('/').last.replaceAll('-', '/')].toString());
-        } else if (element.attributes['class']!.contains('bbImage') /*element.attributes['src']!.contains('com.example.vozforums') || */) {
-          print('hey im not');
+        } else if (element.attributes['title']?.contains('Pepe') ?? false == true){
+          html = html!.replaceAll(element.attributes['src'].toString(), 'https://raw.githubusercontent.com/haophan69/Pepe/main/${element.attributes['title']}');
+          print(html);
+        }else if (element.attributes['class']!.contains('bbImage')) {
+          print('he');
           html = html!.replaceAll(element.attributes['src'].toString(), await uploadImage(element.attributes['src'].toString()));
         }
       }

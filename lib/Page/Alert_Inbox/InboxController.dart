@@ -1,4 +1,4 @@
-import 'package:dio/dio.dart';
+import 'package:dio_http/dio_http.dart';
 import 'package:get/get.dart';
 import 'package:the_next_voz/Routes/pages.dart';
 import '../../GlobalController.dart';

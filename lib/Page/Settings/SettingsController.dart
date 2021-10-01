@@ -10,7 +10,7 @@ import 'package:device_info_plus/device_info_plus.dart';
 class SettingsController extends GetxController {
   RxDouble fontSizeView = 15.0.obs;
   RxBool switchValuePost = true.obs, switchImage = true.obs, switchSignature = true.obs, switchDefaultsPage = true.obs;
-  bool switchSwipeLeftRight = false;
+  bool switchSwipeLeftRight = false, memberSignature = false;
   late double sizeIconBottomBarDouble;
   var langIndex, darkModeIndex;
   int sizeIconBottomBar = 0;
@@ -39,6 +39,7 @@ class SettingsController extends GetxController {
     switchValuePost.value = GlobalController.i.userStorage.read('scrollToMyRepAfterPost') ?? true;
     switchImage.value = GlobalController.i.userStorage.read('showImage') ?? true;
     switchSignature.value = GlobalController.i.userStorage.read('signature') ?? true;
+    memberSignature = GlobalController.i.userStorage.read('memberSignature') ?? false;
     switchDefaultsPage.value = GlobalController.i.userStorage.read('defaultsPage') ?? false;
     switchSwipeLeftRight = GlobalController.i.userStorage.read('switchSwipeLeftRight') ?? false;
   }
@@ -99,6 +100,7 @@ class SettingsController extends GetxController {
     await GlobalController.i.userStorage.write('defaultsPage', switchDefaultsPage.value);
     await GlobalController.i.userStorage.write('signature', switchSignature.value);
     await GlobalController.i.userStorage.write('switchSwipeLeftRight', switchSwipeLeftRight);
+    await GlobalController.i.userStorage.write('memberSignature', memberSignature);
     Get.back();
   }
 

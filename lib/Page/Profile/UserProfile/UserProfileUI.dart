@@ -54,8 +54,11 @@ class UserProfileUI extends GetView<UserProfileController> {
         text: TextSpan(
           children: <TextSpan>[
             TextSpan(
-                text: 'Oops! We ran into some problems.\n', style: TextStyle(color: Colors.redAccent, fontFamily: 'BeVietNam',fontWeight: FontWeight.bold, fontSize: 16)),
-            TextSpan(text: 'This member limits who may view their full profile.', style: TextStyle(color: Get.theme.primaryColor, fontFamily: 'BeVietNam',fontSize: 16)),
+                text: 'Oops! We ran into some problems.\n',
+                style: TextStyle(color: Colors.redAccent, fontFamily: 'BeVietNam', fontWeight: FontWeight.bold, fontSize: 16)),
+            TextSpan(
+                text: 'This member limits who may view their full profile.',
+                style: TextStyle(color: Get.theme.primaryColor, fontFamily: 'BeVietNam', fontSize: 16)),
           ],
         ),
       ),
@@ -88,19 +91,40 @@ class UserProfileUI extends GetView<UserProfileController> {
                       children: <TextSpan>[
                         TextSpan(
                             text: '${controller.data['userName'] ??= 'Loading Username...'}\n',
-                            style: TextStyle(fontFamily: 'BeVietNam',color: Color(0xFFFD6E00), fontWeight: FontWeight.bold, fontSize: 16)),
+                            style: TextStyle(
+                              fontFamily: 'BeVietNam',
+                              color: Color(0xFFFD6E00),
+                              fontWeight: FontWeight.bold,
+                              fontSize: Get.textTheme.bodyText1!.fontSize,
+                            )),
                         TextSpan(
                             text: '${controller.data['title'] ??= 'Loading Title...'}\n',
-                            style: TextStyle(fontFamily: 'BeVietNam',color: Get.theme.primaryColor, fontSize: 16)),
+                            style: TextStyle(
+                              fontFamily: 'BeVietNam',
+                              color: Get.theme.primaryColor,
+                              fontSize: Get.textTheme.bodyText1!.fontSize,
+                            )),
                         TextSpan(
                             text: controller.data['from'] != '' ? '${controller.data['from']}\n' : '',
-                            style: TextStyle(fontFamily: 'BeVietNam',color: Get.theme.primaryColor, fontSize: 16)),
+                            style: TextStyle(
+                              fontFamily: 'BeVietNam',
+                              color: Get.theme.primaryColor,
+                              fontSize: Get.textTheme.bodyText1!.fontSize,
+                            )),
                         TextSpan(
                             text: 'Joined: ${controller.data['joined'] ??= 'Loading...'}\n',
-                            style: TextStyle(fontFamily: 'BeVietNam',color: Get.theme.primaryColor, fontSize: 16)),
+                            style: TextStyle(
+                              fontFamily: 'BeVietNam',
+                              color: Get.theme.primaryColor,
+                              fontSize: Get.textTheme.bodyText1!.fontSize,
+                            )),
                         TextSpan(
                             text: 'Last seen: ${controller.data['lastSeen'] ??= 'Loading...'}',
-                            style: TextStyle(fontFamily: 'BeVietNam',color: Get.theme.primaryColor, fontSize: 16)),
+                            style: TextStyle(
+                              fontFamily: 'BeVietNam',
+                              color: Get.theme.primaryColor,
+                              fontSize: Get.textTheme.bodyText1!.fontSize,
+                            )),
                       ],
                     ),
                   ),
@@ -110,69 +134,64 @@ class UserProfileUI extends GetView<UserProfileController> {
             ),
             Row(
               children: [
-                customCupertinoButton(Alignment.center, EdgeInsets.zero, Text('Send private message'), () async {
-                  await Get.toNamed(Routes.CreatePost, arguments: [GlobalController.i.xfCsrfPost, GlobalController.i.token, 'link', '', '', '2', '',controller.data['userName']]);
+                customCupertinoButton(
+                    Alignment.center,
+                    EdgeInsets.zero,
+                    Text(
+                      'Send private message',
+                      style: TextStyle(fontSize: Get.textTheme.bodyText1!.fontSize),
+                    ), () async {
+                  await Get.toNamed(Routes.CreatePost,
+                      arguments: [GlobalController.i.xfCsrfPost, GlobalController.i.token, 'link', '', '', '2', '', controller.data['userName']]);
                 })
               ],
             ),
-            Padding(
-              padding: EdgeInsets.only(bottom: 10, top: 10),
-              child: Stack(
-                children: [
-                  RichText(
-                    textAlign: TextAlign.start,
-                    text: TextSpan(
-                      children: <TextSpan>[
-                        TextSpan(text: '\t\t\tTOTAL POSTS\n', style: TextStyle(fontFamily: 'BeVietNam',color: Colors.grey, fontSize: 16)),
-                        TextSpan(
-                            text: 'Messages \n',
-                            recognizer: TapGestureRecognizer()
-                              ..onTap = () {
-                                Get.toNamed(Routes.SearchResult, arguments: [
-                                  SearchType.SearchEverything,
-                                  {
-                                    'postBy': controller.data['userName'],
-                                    'order': 'relevance',
-                                  }
-                                ]);
-                              },
-                            style: TextStyle(fontFamily: 'BeVietNam',color: Colors.blue, fontSize: 16)),
-                        TextSpan(text: 'Reaction score\n', style: TextStyle(fontFamily: 'BeVietNam',color: Get.theme.primaryColor, fontSize: 16)),
-                        TextSpan(text: 'Points\n', style: TextStyle(fontFamily: 'BeVietNam',color: Get.theme.primaryColor, fontSize: 16)),
-                      ],
-                    ),
-                  ),
-                  Align(
-                      alignment: Alignment.centerRight,
-                      child: Padding(
-                        padding: EdgeInsets.only(),
-                        child: RichText(
-                          textAlign: TextAlign.start,
-                          textDirection: TextDirection.rtl,
-                          text: TextSpan(
-                            children: <TextSpan>[
-                              TextSpan(
-                                  text: '\n${controller.data['messages'] ??= 'Loading...'}\n',
-                                  style: TextStyle(fontFamily: 'BeVietNam',color: Get.theme.primaryColor, fontSize: 16)),
-                              TextSpan(
-                                  text: '${controller.data['reactionScore'] ??= 'Loading...'}\n',
-                                  style: TextStyle(fontFamily: 'BeVietNam',color: Get.theme.primaryColor, fontSize: 16)),
-                              TextSpan(
-                                  text: '${controller.data['pointTrophies'] ??= 'Loading...'}\n',
-                                  style: TextStyle(fontFamily: 'BeVietNam',color: Get.theme.primaryColor, fontSize: 16)),
-                            ],
-                          ),
-                        ),
-                      )),
+            RichText(
+              textAlign: TextAlign.start,
+              text: TextSpan(
+                children: <TextSpan>[
+                  TextSpan(
+                      text: 'TOTAL POSTS\n',
+                      style: TextStyle(fontFamily: 'BeVietNam', color: Colors.grey, fontSize: Get.textTheme.headline6!.fontSize)),
+                  TextSpan(
+                      text: 'Messages: ',
+                      recognizer: TapGestureRecognizer()
+                        ..onTap = () {
+                          Get.toNamed(Routes.SearchResult, arguments: [
+                            SearchType.SearchEverything,
+                            {
+                              'postBy': controller.data['userName'],
+                              'order': 'relevance',
+                            }
+                          ]);
+                        },
+                      style: TextStyle(fontFamily: 'BeVietNam', color: Colors.blue, fontSize: Get.textTheme.bodyText1!.fontSize)),
+                  TextSpan(
+                      text: '${controller.data['messages'] ??= 'Loading...'}\n',
+                      style: TextStyle(fontFamily: 'BeVietNam', color: Get.theme.primaryColor, fontSize: Get.textTheme.bodyText2!.fontSize)),
+                  TextSpan(
+                      text: 'Reaction score: ',
+                      style: TextStyle(fontFamily: 'BeVietNam', color: Get.theme.primaryColor, fontSize: Get.textTheme.bodyText1!.fontSize)),
+                  TextSpan(
+                      text: '${controller.data['reactionScore'] ??= 'Loading...'}\n',
+                      style: TextStyle(fontFamily: 'BeVietNam', color: Get.theme.primaryColor, fontSize: Get.textTheme.bodyText2!.fontSize)),
+                  TextSpan(
+                      text: 'Points: ',
+                      style: TextStyle(fontFamily: 'BeVietNam', color: Get.theme.primaryColor, fontSize: Get.textTheme.bodyText1!.fontSize)),
+                  TextSpan(
+                      text: '${controller.data['pointTrophies'] ??= 'Loading...'}\n',
+                      style: TextStyle(fontFamily: 'BeVietNam', color: Get.theme.primaryColor, fontSize: Get.textTheme.bodyText2!.fontSize)),
                 ],
               ),
             ), //totalPosts
-            Align(alignment: Alignment.topLeft, child: Text('\t\t\tACTION', style: TextStyle(color: Colors.grey))),
+            Align(
+                alignment: Alignment.topLeft,
+                child: Text('ACTION', style: TextStyle(color: Colors.grey, fontSize: Get.textTheme.headline6!.fontSize))),
             RichText(
                 text: TextSpan(children: [
               TextSpan(
                 text: 'All Threads\n',
-                style: TextStyle(fontFamily: 'BeVietNam',color: Colors.blue, fontSize: 16),
+                style: TextStyle(fontFamily: 'BeVietNam', color: Colors.blue, fontSize: Get.textTheme.bodyText1!.fontSize),
                 recognizer: TapGestureRecognizer()
                   ..onTap = () {
                     Get.toNamed(Routes.SearchResult, arguments: [
@@ -181,10 +200,12 @@ class UserProfileUI extends GetView<UserProfileController> {
                     ]);
                   },
               ),
-              TextSpan(text: 'Profile posts\n', style: TextStyle(fontFamily: 'BeVietNam',color: Get.theme.primaryColor, fontSize: 16)),
+              TextSpan(
+                  text: 'Profile posts\n',
+                  style: TextStyle(fontFamily: 'BeVietNam', color: Get.theme.primaryColor, fontSize: Get.textTheme.bodyText1!.fontSize)),
               TextSpan(
                 text: 'Latest activity\n',
-                style: TextStyle(fontFamily: 'BeVietNam',color: Colors.blue, fontSize: 16),
+                style: TextStyle(fontFamily: 'BeVietNam', color: Colors.blue, fontSize: Get.textTheme.bodyText1!.fontSize),
                 recognizer: TapGestureRecognizer()
                   ..onTap = () {
                     //print(controller.data['linkProfileUser'] + AlertPlusType.ProfileLatestActivity);
@@ -197,7 +218,9 @@ class UserProfileUI extends GetView<UserProfileController> {
                     ]);
                   },
               ),
-              TextSpan(text: 'About\n', style: TextStyle(fontFamily: 'BeVietNam',color: Get.theme.primaryColor, fontSize: 16)),
+              TextSpan(
+                  text: 'About\n',
+                  style: TextStyle(fontFamily: 'BeVietNam', color: Get.theme.primaryColor, fontSize: Get.textTheme.bodyText1!.fontSize)),
             ])),
           ],
         ),

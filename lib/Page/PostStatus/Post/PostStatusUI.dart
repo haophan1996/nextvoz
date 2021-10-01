@@ -17,57 +17,57 @@ class PostStatusUI extends GetView<PostStatusController> {
         appBar: appBarOnly(
             controller.data['isEditPost'] == true ? 'editPost'.tr : 'createPost'.tr,
             [
-              // PopupMenuButton(
-              //   child: IconButton(
-              //     icon: Icon(Icons.more_vert),
-              //     onPressed: null,
-              //   ),
-              //   itemBuilder: (context) {
-              //     return [
-              //       PopupMenuItem(
-              //         child: Text(controller.data['isEditPost'] == true ? 'Save' : 'Post'),
-              //         value: 0,
-              //       ),
-              //       PopupMenuItem(
-              //         child: Text('Clear content'),
-              //         value: 1,
-              //       ),
-              //       PopupMenuItem(
-              //         child: Text('Hide keyboard'),
-              //         value: 2,
-              //       ),
-              //       PopupMenuItem(
-              //         child: Text('Show Keyboard'),
-              //         value: 3,
-              //       ),
-              //       PopupMenuItem(
-              //         child: Text('View Code'),
-              //         value: 4,
-              //       ),
-              //     ];
-              //   },
-              //   onSelected: (val) async {
-              //     switch (val) {
-              //       case 0:
-              //         controller.data['isEditPost'] == true ? await controller.editPost() : await controller.post();
-              //         break;
-              //       case 1:
-              //         await controller.keyEditor.currentState?.clear();
-              //         await controller.keyEditor.currentState?.setHtml('</p>');
-              //         break;
-              //       case 2:
-              //         await SystemChannels.textInput.invokeMethod('TextInput.hide'); //controller.keyEditor.currentState?.unFocus();
-              //         break;
-              //       case 3:
-              //         await controller.keyEditor.currentState!.focus(); //controller.keyEditor.currentState?.focus();
-              //         break;
-              //       case 4:
-              //         String? html = await controller.keyEditor.currentState?.getHtml();
-              //         print(html);
-              //         break;
-              //     }
-              //   },
-              // )
+              PopupMenuButton(
+                child: IconButton(
+                  icon: Icon(Icons.more_vert),
+                  onPressed: null,
+                ),
+                itemBuilder: (context) {
+                  return [
+                    PopupMenuItem(
+                      child: Text(controller.data['isEditPost'] == true ? 'Save' : 'Post'),
+                      value: 0,
+                    ),
+                    PopupMenuItem(
+                      child: Text('Clear content'),
+                      value: 1,
+                    ),
+                    PopupMenuItem(
+                      child: Text('Hide keyboard'),
+                      value: 2,
+                    ),
+                    PopupMenuItem(
+                      child: Text('Show Keyboard'),
+                      value: 3,
+                    ),
+                    PopupMenuItem(
+                      child: Text('View Code'),
+                      value: 4,
+                    ),
+                  ];
+                },
+                onSelected: (val) async {
+                  switch (val) {
+                    case 0:
+                      controller.data['isEditPost'] == true ? await controller.editPost() : await controller.post();
+                      break;
+                    case 1:
+                      await controller.keyEditor.currentState?.clear();
+                      await controller.keyEditor.currentState?.setHtml('</p>');
+                      break;
+                    case 2:
+                      await SystemChannels.textInput.invokeMethod('TextInput.hide'); //controller.keyEditor.currentState?.unFocus();
+                      break;
+                    case 3:
+                      await controller.keyEditor.currentState!.focus(); //controller.keyEditor.currentState?.focus();
+                      break;
+                    case 4:
+                      String? html = await controller.keyEditor.currentState?.getHtml();
+                      print(html);
+                      break;
+                  }
+                },
+              )
             ]),
         body: Column(
           children: [
@@ -291,15 +291,15 @@ Widget emoji(BuildContext context, PostStatusController controller) {
           TabBar(
             tabs: [
               Text(
-                'Smilies Popo',
+                'Mini Popo',
                 style: TextStyle(color: Theme.of(context).primaryColor),
               ),
               Text(
-                'Smilies Popo',
+                'Big Popo',
                 style: TextStyle(color: Theme.of(context).primaryColor),
               ),
               Text(
-                'Gif',
+                'Pepe',
                 style: TextStyle(color: Theme.of(context).primaryColor),
               )
             ],
@@ -330,7 +330,18 @@ Widget emoji(BuildContext context, PostStatusController controller) {
                         });
                   },
                 ),
-                Text('c')
+                GridView.builder(
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 5),
+                  itemCount: 76,
+                  itemBuilder: (BuildContext context, int index) {
+                    return CupertinoButton(
+                        padding: EdgeInsets.zero,
+                        child: Image.asset('assets/Pepe/Pepe${index+1}.webp', width: 60, height: 60,),
+                        onPressed: () async {
+                          controller.insertImageSticker('Pepe/Pepe${index+1}.webp', 60, 60, 'Pepe${index+1}.webp');
+                        });
+                  },
+                )
               ],
             ),
           ),

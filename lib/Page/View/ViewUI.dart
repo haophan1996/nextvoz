@@ -203,7 +203,7 @@ class ViewUI extends GetView<ViewController> {
           automaticallyImplyLeading: true,
           title: Text(
             controller.data['subTypeHeader'] + controller.data['subHeader'],
-            style: TextStyle(fontSize: Get.theme.textTheme.bodyText2!.fontSize, color: Get.theme.primaryColor),
+            style: TextStyle(fontSize: Get.theme.textTheme.bodyText2!.fontSize, color: Get.theme.primaryColor,fontWeight: FontWeight.bold),
           ),
           floating: false,
           actions: [IconButton(onPressed: () async => await controller.onRefresh(), icon: Icon(Icons.refresh))],
