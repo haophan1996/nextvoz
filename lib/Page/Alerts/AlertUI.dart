@@ -112,12 +112,14 @@ class AlertsUI extends GetView<AlertsController> {
             // Go to status
             print('status');
           } else {
-            Get.toNamed(Routes.View, arguments: [
-              GlobalController.i.alertList.elementAt(index)['title'],
-              GlobalController.i.alertList.elementAt(index)['link'],
-              GlobalController.i.alertList.elementAt(index)['prefixTitle'],
-              GlobalController.i.alertList.elementAt(index)['link'].toString().contains('conversations/messages') ? 1 : 0
-            ]);
+            if (GlobalController.i.alertList.elementAt(index)['link'] != ''){
+              Get.toNamed(Routes.View, arguments: [
+                GlobalController.i.alertList.elementAt(index)['title'],
+                GlobalController.i.alertList.elementAt(index)['link'],
+                GlobalController.i.alertList.elementAt(index)['prefixTitle'],
+                GlobalController.i.alertList.elementAt(index)['link'].toString().contains('conversations/messages') ? 1 : 0
+              ]);
+            }
           }
         }, padding: EdgeInsets.zero,);
       });

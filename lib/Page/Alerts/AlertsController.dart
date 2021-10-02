@@ -97,20 +97,26 @@ class AlertsController extends GetxController {
         data['prefixTitle'] = '';
       }
 
-        if (data['title'] == 'your post'){
-          data['sentence'].split(data['title'])[1].contains('thread');
-          data['title2'] = data['title'] + ' ';
-          data['phase2'] = ' in the thread ';
-          data['title'] = ' '+data['sentence'].split('thread')[1].replaceAll(data['prefixTitle'],'').trim();
-          if (data['title'].contains('with')){
-            data['title'] = ' '+data['title'].split('with')[0].trim();
-          }
-        } else {
-          data['title2'] = '';
-          data['phase2'] = '';
+      if (data['title'] == 'your post') {
+        data['sentence'].split(data['title'])[1].contains('thread');
+        data['title2'] = data['title'] + ' ';
+        data['phase2'] = ' in the thread ';
+        data['title'] = ' ' + data['sentence'].split('thread')[1].replaceAll(data['prefixTitle'], '').trim();
+        if (data['title'].contains('with')) {
+          data['title'] = ' ' + data['title'].split('with')[0].trim();
         }
-        print(data['username'] + data['phase1'] + data['title2'] + data['phase2'] + data['prefixTitle'] + data['title'] + data['phase3'] + (data['hasReact'] == true ? data['react'] : ''));
-
+      } else {
+        data['title2'] = '';
+        data['phase2'] = '';
+      }
+      // print(data['username'] +
+      //     data['phase1'] +
+      //     data['title2'] +
+      //     data['phase2'] +
+      //     data['prefixTitle'] +
+      //     data['title'] +
+      //     data['phase3'] +
+      //     (data['hasReact'] == true ? data['react'] : ''));
 
       var avatar = element.getElementsByClassName('avatar avatar--xxs').first;
       if (avatar.getElementsByTagName('img').length > 0) {
@@ -127,23 +133,43 @@ class AlertsController extends GetxController {
       }
 
       GlobalController.i.alertList.add({
-        'username' : data['username'],
-        'phase1' : data['phase1'],
-        'title2' : data['title2'],
-        'phase2' : data['phase2'],
-        'prefixTitle' : data['prefixTitle'],
-        'title' : data['title'],
-        'phase3' : data['phase3'],
-        'hasReact' : data['hasReact'],
-        'react' : data['react'],
-        'time' : '\n'+data['time'],
-        'unread' : data['unread'],
-        'avatarLink' : data['avatarLink'],
-        'avatarColor1' : data['avatarColor1'],
-        'avatarColor2' : data['avatarColor2'],
-        'link' : data['link'],
+        'username': data['username'],
+        'phase1': data['phase1'],
+        'title2': data['title2'],
+        'phase2': data['phase2'],
+        'prefixTitle': data['prefixTitle'],
+        'title': data['title'],
+        'phase3': data['phase3'],
+        'hasReact': data['hasReact'],
+        'react': data['react'],
+        'time': '\n' + data['time'],
+        'unread': data['unread'],
+        'avatarLink': data['avatarLink'],
+        'avatarColor1': data['avatarColor1'],
+        'avatarColor2': data['avatarColor2'],
+        'link': data['link'],
       });
     });
+
+    if (GlobalController.i.alertList.length == 0) {
+      GlobalController.i.alertList.add({
+        'username': '',
+        'phase1': 'No Alerts',
+        'title2': '',
+        'phase2': '',
+        'prefixTitle': '',
+        'title': '',
+        'phase3': '',
+        'hasReact': '',
+        'react': '',
+        'time': '',
+        'unread': '',
+        'avatarLink': '',
+        'avatarColor1': '0x00000000',
+        'avatarColor2': '0x00000000',
+        'link': '',
+      });
+    }
     data['loadingStatus'] = 'done';
     update(['loadingState']);
   }
