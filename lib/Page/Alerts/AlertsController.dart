@@ -68,53 +68,69 @@ class AlertsController extends GetxController {
 
     value.getElementsByClassName('alert js-alert block-row block-row--separated').forEach((element) {
       data['unread'] = element.attributes['class']!.contains('is-unread') ? 'true' : 'false';
-      data['sentence'] = element.text.trim();
-      data['time'] = element.getElementsByClassName('u-dt')[0].text;
-      data['link'] = element.getElementsByClassName('fauxBlockLink-blockLink')[0].attributes['href'].toString();
+      data['time'] = element.getElementsByClassName('u-dt')[0].text.trim();
+
+      data['title1'] = element.getElementsByClassName('fauxBlockLink-blockLink')[0].text;
+
       if (element.getElementsByClassName('username ').length != 0) {
         data['username'] = element.getElementsByClassName('username ')[0].text + ' ';
+        data['sentence'] = element.text.split(data['time'])[0].split(data['username'])[1].trim();
       } else {
         data['username'] = '';
+        data['sentence'] = element.text.split(data['time'])[0].trim();
       }
-      data['sentence'] = data['sentence'].replaceAll(data['username'], '').replaceAll(data['time'], '').trim();
-      data['title'] = element.getElementsByClassName('fauxBlockLink-blockLink')[0].text;
-      data['phase1'] = data['sentence'].toString().split(data['title'])[0];
-      data['phase3'] = data['sentence'].replaceAll(data['title'], '').split(data['phase1'])[1];
-      data['title'] = data['title'].replaceAll(RegExp('\\s+'), ' ');
+      data['phase1'] = data['sentence'].split(data['title1'])[0].toString();
 
-      if (data['phase3'].contains('with')) {
-        data['hasReact'] = true;
-        data['react'] = data['phase3'].contains('Ưng') ? '1.png' : '2.png';
-        data['phase3'] = ' with ';
-      } else {
-        data['hasReact'] = false;
-      }
+      if (data['title1'] != '') {
+        data['phase1'] = data['sentence'].split(data['title1'])[0];
+      } else
+        data['phase1'] = data['sentence'];
 
-      if (element.getElementsByClassName('label').length != 0) {
-        data['prefixTitle'] = element.getElementsByClassName('label')[0].text;
-        data['title'] = data['title'].replaceAll(data['prefixTitle'], '');
+      if (data['title1'] == 'your post') {
+        data['title2'] = data['sentence'].split('in the thread')[1].split('with')[0].trim();
+        data['phase2'] = data['sentence'].split(data['title1'])[1].split(data['title2'])[0];
+        data['phase3'] = data['sentence'].split(data['title2'])[1];
       } else {
-        data['prefixTitle'] = '';
-      }
-
-      if (data['title'] == 'your post') {
-        data['sentence'].split(data['title'])[1].contains('thread');
-        data['title2'] = data['title'] + ' ';
-        data['phase2'] = ' in the thread ';
-        data['title'] = ' ' + data['sentence'].split('thread')[1].replaceAll(data['prefixTitle'], '').trim();
-        if (data['title'].contains('with')) {
-          data['title'] = ' ' + data['title'].split('with')[0].trim();
-        }
-      } else {
+        data['phase3'] = data['sentence'].replaceAll(data['phase1'], '').replaceAll(data['title1'], '');
         data['title2'] = '';
         data['phase2'] = '';
       }
+
+      if (data['phase3'].contains('with')) {
+        if (data['phase3'].contains('Ưng')) {
+          data['react'] = '1.png';
+        } else
+          data['react'] = '2.png';
+        data['phase3'] = ' with ';
+        data['hasReact'] = true;
+      } else
+        data['hasReact'] = false;
+
+      if (data['title1'] != 'your post') {
+        data['prefix1'] = '';
+        if (element.getElementsByClassName('label').length != 0) {
+          data['prefix1'] = element.getElementsByClassName('label')[0].text;
+          data['title1'] = data['title1'].split(data['prefix1'])[1];
+        }
+      } else {
+        data['prefix1'] = '';
+      }
+
+      if (data['title2'] != '') {
+        if (element.getElementsByClassName('label').length != 0) {
+          data['prefix2'] = element.getElementsByClassName('label')[0].text;
+          data['title2'] = data['title2'].split(data['prefix2'])[1];
+        }
+      } else
+        data['prefix2'] = '';
+
       // print(data['username'] +
       //     data['phase1'] +
-      //     data['title2'] +
+      //     data['prefix1']  +
+      //     data['title1'] +
       //     data['phase2'] +
-      //     data['prefixTitle'] +
-      //     data['title'] +
+      //     data['prefix2'] +
+      //     data['title2'] +
       //     data['phase3'] +
       //     (data['hasReact'] == true ? data['react'] : ''));
 
@@ -131,17 +147,19 @@ class AlertsController extends GetxController {
         data['avatarColor1'] = '0xFFF' + avatar.attributes['style'].toString().split('#')[1].split(';')[0];
         data['avatarColor2'] = '0xFFF' + avatar.attributes['style'].toString().split('#')[2];
       }
+      data['link'] = element.getElementsByClassName('fauxBlockLink-blockLink')[0].attributes['href'].toString();
 
       GlobalController.i.alertList.add({
-        'username': data['username'],
-        'phase1': data['phase1'],
-        'title2': data['title2'],
-        'phase2': data['phase2'],
-        'prefixTitle': data['prefixTitle'],
-        'title': data['title'],
-        'phase3': data['phase3'],
-        'hasReact': data['hasReact'],
-        'react': data['react'],
+        'username': data['username'] ?? '',
+        'phase1': data['phase1'] ?? '',
+        'prefix1': data['prefix1'] ?? '',
+        'title1': data['title1'] ?? '',
+        'phase2': data['phase2'] ?? '',
+        'prefix2' : data['prefix2'],
+        'title2' : data['title2'],
+        'phase3' : data['phase3'],
+        'hasReact': data['hasReact'] ?? '',
+        'react': data['react'] ?? '',
         'time': '\n' + data['time'],
         'unread': data['unread'],
         'avatarLink': data['avatarLink'],

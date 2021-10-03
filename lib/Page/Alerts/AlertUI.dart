@@ -22,106 +22,130 @@ class AlertsUI extends GetView<AlertsController> {
     );
   }
 
-  Widget alertList()=> ListView.builder(
+  Widget alertList() => ListView.builder(
       itemCount: GlobalController.i.alertList.length,
       itemBuilder: (context, index) {
-        return CupertinoButton(child: Container(
-          decoration: BoxDecoration(
-              color: GlobalController.i.alertList.elementAt(index)['unread'] == 'true' ? Get.theme.canvasColor : Colors.transparent,
-              border: Border(
-                bottom: BorderSide(width: 0.5, color: Theme.of(context).primaryColor),
-              )),
-          child: Row(
-            children: [
-              Padding(
-                padding: EdgeInsets.only(left: 5, right: 5),
-                child: displayAvatar(
-                    35,
-                    GlobalController.i.alertList.elementAt(index)['avatarColor1'],
-                    GlobalController.i.alertList.elementAt(index)['avatarColor2'],
-                    GlobalController.i.alertList.elementAt(index)['username'],
-                    GlobalController.i.alertList.elementAt(index)['avatarLink']),
-              ),
-              Expanded(
-                child: Padding(
-                  padding: EdgeInsets.only(top: 10, bottom: 10),
-                  child: RichText(
-                    text: TextSpan(children: [
-                      TextSpan(
-                          text: GlobalController.i.alertList.elementAt(index)['username'],
-                          style: TextStyle(
-                              fontFamily: 'BeVietNam', fontSize: Theme.of(context).textTheme.bodyText1!.fontSize, color: Colors.blue)),
-                      TextSpan(
-                          text: GlobalController.i.alertList.elementAt(index)['phase1'],
-                          style: TextStyle(fontFamily: 'BeVietNam', fontSize: Theme.of(context).textTheme.bodyText1!.fontSize)),
-                      TextSpan(
-                          text: GlobalController.i.alertList.elementAt(index)['title2'],
-                          style: TextStyle(
-                              fontFamily: 'BeVietNam', fontSize: Theme.of(context).textTheme.bodyText1!.fontSize, color: Colors.blue)),
-                      TextSpan(
-                          text: GlobalController.i.alertList.elementAt(index)['phase'],
-                          style: TextStyle(
-                              fontFamily: 'BeVietNam', fontSize: Theme.of(context).textTheme.bodyText1!.fontSize)),
-                      GlobalController.i.alertList.elementAt(index)['prefixTitle'] != ''
-                          ? WidgetSpan(
-                        child: Container(
-                          padding: EdgeInsets.only(left: 2, right: 2),
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.all(Radius.circular(6)),
-                              color: mapColor[GlobalController.i.alertList.elementAt(index)['prefixTitle']]),
-                          child: Text(
-                            GlobalController.i.alertList.elementAt(index)['prefixTitle'],
-                            style: TextStyle(
-                                fontFamily: 'BeVietNam',
-                                fontSize: Theme.of(context).textTheme.bodyText1!.fontSize,
-                                color: getColorInvert(GlobalController.i.alertList.elementAt(index)['prefixTitle'])),
+        return CupertinoButton(
+          alignment: Alignment.topLeft,
+          child: Container(
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+                color: GlobalController.i.alertList.elementAt(index)['unread'] == 'true' ? Get.theme.canvasColor : Colors.transparent,
+                border: Border(
+                  bottom: BorderSide(width: 0.5, color: Theme.of(context).primaryColor),
+                )),
+            child: Row(
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(left: 5, right: 5),
+                  child: displayAvatar(
+                      35,
+                      GlobalController.i.alertList.elementAt(index)['avatarColor1'],
+                      GlobalController.i.alertList.elementAt(index)['avatarColor2'],
+                      GlobalController.i.alertList.elementAt(index)['username'],
+                      GlobalController.i.alertList.elementAt(index)['avatarLink']),
+                ),
+                Expanded(
+                  child: Padding(
+                    padding: EdgeInsets.only(top: 10, bottom: 10,right: 5),
+                    child: RichText(
+                      text: TextSpan(children: [
+                        TextSpan(
+                            text: GlobalController.i.alertList.elementAt(index)['username'],
+                            style: TextStyle(fontFamily: 'BeVietNam', fontSize: Theme.of(context).textTheme.bodyText1!.fontSize, color: Colors.blue)),
+                        TextSpan(
+                            text: GlobalController.i.alertList.elementAt(index)['phase1'],
+                            style: TextStyle(fontFamily: 'BeVietNam', fontSize: Theme.of(context).textTheme.bodyText1!.fontSize)),
+                        GlobalController.i.alertList.elementAt(index)['prefix1'] != ''
+                            ? WidgetSpan(
+                          child: Container(
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.all(Radius.circular(6)),
+                                color: mapColor[GlobalController.i.alertList.elementAt(index)['prefix1']]),
+                            child: Text(
+                              GlobalController.i.alertList.elementAt(index)['prefix1'],
+                              style: TextStyle(
+                                  fontFamily: 'BeVietNam',
+                                  fontSize: Theme.of(context).textTheme.bodyText1!.fontSize,
+                                  color: getColorInvert(GlobalController.i.alertList.elementAt(index)['prefix1'])),
+                            ),
                           ),
-                        ),
-                      )
-                          : TextSpan(),
-                      TextSpan(
-                          text: GlobalController.i.alertList.elementAt(index)['title'],
-                          style: TextStyle(
-                              fontFamily: 'BeVietNam', fontSize: Theme.of(context).textTheme.bodyText1!.fontSize, color: Colors.blue)),
-                      TextSpan(
-                          text: GlobalController.i.alertList.elementAt(index)['phase2'],
-                          style: TextStyle(fontSize: Theme.of(context).textTheme.bodyText1!.fontSize, fontFamily: 'BeVietNam')),
-                      GlobalController.i.alertList.elementAt(index)['hasReact'] == true
-                          ? WidgetSpan(
-                          child: Image.asset(
-                            'assets/reaction/${GlobalController.i.alertList.elementAt(0)['react']}',
-                            width: Theme.of(context).textTheme.headline6!.fontSize,
-                          ))
-                          : TextSpan(),
-                      TextSpan(
-                          text: GlobalController.i.alertList.elementAt(index)['time'].toString(), style: TextStyle(fontFamily: 'BeVietNam')),
-                    ]),
+                        )
+                            : TextSpan(),
+                        TextSpan(
+                            text: GlobalController.i.alertList.elementAt(index)['title1'],
+                            style: TextStyle(fontFamily: 'BeVietNam', fontSize: Theme.of(context).textTheme.bodyText1!.fontSize, color: Colors.blue)),
+
+                        TextSpan(
+                            text: GlobalController.i.alertList.elementAt(index)['phase2'],
+                            style: TextStyle(fontFamily: 'BeVietNam', fontSize: Theme.of(context).textTheme.bodyText1!.fontSize)),
+
+                        GlobalController.i.alertList.elementAt(index)['prefix2'] != ''
+                            ? WidgetSpan(
+                          child: Container(
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.all(Radius.circular(6)),
+                                color: mapColor[GlobalController.i.alertList.elementAt(index)['prefix2']]),
+                            child: Text(
+                              GlobalController.i.alertList.elementAt(index)['prefix2'],
+                              style: TextStyle(
+                                  fontFamily: 'BeVietNam',
+                                  fontSize: Theme.of(context).textTheme.bodyText1!.fontSize,
+                                  color: getColorInvert(GlobalController.i.alertList.elementAt(index)['prefix2'])),
+                            ),
+                          ),
+                        )
+                            : TextSpan(),
+
+                        TextSpan(
+                            text: GlobalController.i.alertList.elementAt(index)['title2'],
+                            style: TextStyle(fontFamily: 'BeVietNam', fontSize: Theme.of(context).textTheme.bodyText1!.fontSize, color: Colors.blue)),
+
+                        TextSpan(
+                            text: GlobalController.i.alertList.elementAt(index)['phase3'],
+                            style: TextStyle(fontFamily: 'BeVietNam', fontSize: Theme.of(context).textTheme.bodyText1!.fontSize)),
+
+                        GlobalController.i.alertList.elementAt(index)['hasReact'] == true
+                            ? WidgetSpan(
+                            child: Image.asset(
+                              'assets/reaction/${GlobalController.i.alertList.elementAt(index)['react']}',
+                              width: Theme.of(context).textTheme.headline6!.fontSize,
+                            ))
+                            : TextSpan(),
+
+                        TextSpan(
+                            text: GlobalController.i.alertList.elementAt(index)['time'],
+                            style: TextStyle(fontFamily: 'BeVietNam', fontSize: Theme.of(context).textTheme.bodyText1!.fontSize)),
+                      ]),
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ), onPressed: (){
-          if (GlobalController.i.alertList.elementAt(index)['unread'] == 'true') {
-            GlobalController.i.alertList.elementAt(index)['unread'] = 'false';
-            controller.update(['loadingState']);
-          }
-          if (GlobalController.i.alertList.elementAt(index)['link'].contains('/u/', 0) == true) {
-            Get.toNamed(Routes.Profile, arguments: [GlobalController.i.alertList.elementAt(index)['link']], preventDuplicates: false);
-          } else if (GlobalController.i.alertList.elementAt(index)['link'].contains('/profile-posts/', 0) == true) {
-            // Go to status
-            print('status');
-          } else {
-            if (GlobalController.i.alertList.elementAt(index)['link'] != ''){
-              Get.toNamed(Routes.View, arguments: [
-                GlobalController.i.alertList.elementAt(index)['title'],
-                GlobalController.i.alertList.elementAt(index)['link'],
-                GlobalController.i.alertList.elementAt(index)['prefixTitle'],
-                GlobalController.i.alertList.elementAt(index)['link'].toString().contains('conversations/messages') ? 1 : 0
-              ]);
+          onPressed: () {
+            if (GlobalController.i.alertList.elementAt(index)['unread'] == 'true') {
+              GlobalController.i.alertList.elementAt(index)['unread'] = 'false';
+              controller.update(['loadingState']);
             }
-          }
-        }, padding: EdgeInsets.zero,);
+            if (GlobalController.i.alertList.elementAt(index)['link'].contains('/u/', 0) == true) {
+              Get.toNamed(Routes.Profile, arguments: [GlobalController.i.alertList.elementAt(index)['link']], preventDuplicates: false);
+            } else if (GlobalController.i.alertList.elementAt(index)['link'].contains('/profile-posts/', 0) == true) {
+              // Go to status
+              print('status');
+            } else {
+              if (GlobalController.i.alertList.elementAt(index)['link'] != '') {
+                Get.toNamed(Routes.View, arguments: [
+                  GlobalController.i.alertList.elementAt(index)['title1'] == 'your post' ? GlobalController.i.alertList.elementAt(index)['title2'] : GlobalController.i.alertList.elementAt(index)['title1'],
+                  GlobalController.i.alertList.elementAt(index)['link'],
+                  GlobalController.i.alertList.elementAt(index)['title1']== 'your post' ? GlobalController.i.alertList.elementAt(index)['prefix2'] : GlobalController.i.alertList.elementAt(index)['prefix1'],
+                  GlobalController.i.alertList.elementAt(index)['link'].toString().contains('conversations/messages') ? 1 : 0
+                ]);
+              }
+            }
+          },
+          padding: EdgeInsets.zero,
+        );
       });
 
   Widget loading() => Stack(
