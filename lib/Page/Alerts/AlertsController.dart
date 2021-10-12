@@ -2,13 +2,10 @@ import 'package:dio_http/dio_http.dart';
 import 'package:get/get.dart';
 import '/GlobalController.dart';
 import 'package:html/dom.dart' as dom;
-import 'package:html/parser.dart' as parser;
 
 class AlertsController extends GetxController {
   var dio = Dio(), percentDownload = 0.0;
   Map<String, dynamic> data = {};
-
-  late dom.Document value;
 
   refreshList() async {
     GlobalController.i.alertList.clear();
@@ -50,7 +47,6 @@ class AlertsController extends GetxController {
         update(['download'], true);
       }, dio, GlobalController.i.url + '/account/alerts?page=1', false).then((values) {
         performQueryHtml(values!);
-        value = values;
       });
     }
   }
@@ -169,7 +165,7 @@ class AlertsController extends GetxController {
       });
     });
 
-    if (GlobalController.i.alertList.length == 0) {
+    if (value.getElementsByClassName('alert js-alert block-row block-row--separated').length==0) {
       GlobalController.i.alertList.add({
         'username': '',
         'phase1': 'No Alerts',

@@ -2,6 +2,7 @@ import 'package:the_next_voz/Page/Login/AccountList/AccountListBindings.dart';
 import 'package:the_next_voz/Page/Login/AccountList/AccountListUI.dart';
 import 'package:the_next_voz/Page/Login/BrowserLogin/BrowserLoginBindings.dart';
 import 'package:the_next_voz/Page/Login/BrowserLogin/BrowserLoginSigninUI.dart';
+import 'package:the_next_voz/Page/View/ViewUITab.dart';
 
 import '/Page/PostStatus/Create/CreatePostUI.dart';
 import '/Page/Profile/UserFollIgr/UserFollIgrBindings.dart';
@@ -70,7 +71,7 @@ class AppPage {
         maintainState: false),
     GetPage(
         name: Routes.View,
-        page: () => ViewUI(),
+        page: () => ViewUITab(),
         binding: ViewBinding(),
         transition: Transition.rightToLeft,
         transitionDuration: Duration(milliseconds: 200),

@@ -570,7 +570,7 @@ Widget dialogButtonYesNo(Function onDone) => Row(
     );
 
 Widget viewContent(int index, ViewController controller) => Column(
-      key: controller.formKeyList.elementAt(index),
+      //key: controller.formKeyList.elementAt(index),
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Material(

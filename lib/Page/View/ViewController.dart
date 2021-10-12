@@ -362,8 +362,7 @@ class ViewController extends GetxController {
       update(['updatePageNum']);
     });
   }
-  
-  
+
   Future<void> loadInboxView(String link) async {
     data['_commentImg'] = '';
     await GlobalController.i.getBodyBeta((value) {
